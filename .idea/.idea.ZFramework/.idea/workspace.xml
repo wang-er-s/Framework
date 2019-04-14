@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7e49361a-a62d-4a42-9f37-c1dc48e64ac7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ZFramework/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZFramework/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZFramework/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZFramework/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/s1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/s1.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,53 +16,37 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Manager/InputMgr.cs">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+            <state relative-caret-position="216">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
               <folding>
-                <marker date="1552798470223" expanded="true" signature="6:110" ph="..." />
-                <marker date="1552798470223" expanded="true" signature="159:1633" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="413:734" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="456:728" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="755:1587" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="802:852" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="891:942" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="983:1030" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1069:1117" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1158:1205" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1244:1292" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1333:1381" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1420:1469" ph="{...}" />
-                <marker date="1552798470223" expanded="true" signature="1610:1631" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="162:1110" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="238:343" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="401:434" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="494:708" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="768:828" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="856:998" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="888:976" ph="{...}" />
+                <marker date="1552807570712" expanded="true" signature="1004:1049" ph="///  ... " />
+                <marker date="1552807570712" expanded="true" signature="1077:1108" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="17" lean-forward="true" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
-              <folding>
-                <marker date="1552802728234" expanded="true" signature="6:78" ph="..." />
-                <marker date="1552802728234" expanded="true" signature="144:258" ph="{...}" />
-                <marker date="1552802728234" expanded="true" signature="195:216" ph="{...}" />
-                <marker date="1552802728234" expanded="true" signature="235:256" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/Assets/Test.cs">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/CustomFactory.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="33" lean-forward="true" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
+            <state relative-caret-position="378">
+              <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
               <folding>
                 <marker date="1545922266000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-                <marker date="1545922266000" expanded="true" signature="55:81" ph="..." />
                 <marker date="1545922266000" expanded="true" signature="103:387" ph="{...}" />
                 <marker date="1545922266000" expanded="true" signature="153:385" ph="{...}" />
                 <marker date="1545922266000" expanded="true" signature="203:256" ph="{...}" />
@@ -75,42 +59,41 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="35" column="34" selection-start-line="35" selection-start-column="34" selection-end-line="35" selection-end-column="34" />
+            <state relative-caret-position="216">
+              <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
               <folding>
-                <marker date="1544516750000" expanded="true" signature="6:146" ph="..." />
-                <marker date="1544516750000" expanded="true" signature="168:5355" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="209:290" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="328:674" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="524:668" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="726:939" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="1006:5353" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="1050:1250" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="1260:1322" ph="/// 存放物品类型和对象池的字典 ... " />
-                <marker date="1544516750000" expanded="true" signature="1414:1470" ph="/// 存放对象的模版 ... " />
-                <marker date="1544516750000" expanded="true" signature="1565:1803" ph="/// 初始化所需对象的对象池 ... " />
-                <marker date="1544516750000" expanded="true" signature="1922:2921" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="1986:2378" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="2059:2334" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="2161:2316" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="2488:2580" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="2624:2726" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="2931:3056" ph="/// 获得物体 ... " />
-                <marker date="1544516750000" expanded="true" signature="3138:3538" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="3203:3309" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="3362:3457" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="3548:3680" ph="/// 存入物体 ... " />
-                <marker date="1544516750000" expanded="true" signature="3773:4035" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="3838:3939" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="4045:4174" ph="/// 获得物品剩余数量 ... " />
-                <marker date="1544516750000" expanded="true" signature="4239:4467" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="4304:4408" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="4477:4531" ph="/// 清理对象池 ... " />
-                <marker date="1544516750000" expanded="true" signature="4560:4998" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="4688:4915" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="4794:4901" ph="{...}" />
-                <marker date="1544516750000" expanded="true" signature="5008:5067" ph="/// 创建一个物体并初始化 ... " />
-                <marker date="1544516750000" expanded="true" signature="5156:5345" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="168:5300" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="209:235" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="273:619" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="469:613" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="671:884" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="951:5298" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="995:1195" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="1205:1267" ph="/// 存放物品类型和对象池的字典 ... " />
+                <marker date="1552804472974" expanded="true" signature="1359:1415" ph="/// 存放对象的模版 ... " />
+                <marker date="1552804472974" expanded="true" signature="1510:1748" ph="/// 初始化所需对象的对象池 ... " />
+                <marker date="1552804472974" expanded="true" signature="1867:2866" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="1931:2323" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="2004:2279" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="2106:2261" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="2433:2525" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="2569:2671" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="2876:3001" ph="/// 获得物体 ... " />
+                <marker date="1552804472974" expanded="true" signature="3083:3483" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="3148:3254" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="3307:3402" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="3493:3625" ph="/// 存入物体 ... " />
+                <marker date="1552804472974" expanded="true" signature="3718:3980" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="3783:3884" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="3990:4119" ph="/// 获得物品剩余数量 ... " />
+                <marker date="1552804472974" expanded="true" signature="4184:4412" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="4249:4353" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="4422:4476" ph="/// 清理对象池 ... " />
+                <marker date="1552804472974" expanded="true" signature="4505:4943" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="4633:4860" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="4739:4846" ph="{...}" />
+                <marker date="1552804472974" expanded="true" signature="4953:5012" ph="/// 创建一个物体并初始化 ... " />
+                <marker date="1552804472974" expanded="true" signature="5101:5290" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -119,10 +102,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ObjectPool.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
+            <state relative-caret-position="270">
               <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
               <folding>
-                <marker date="1544496094000" expanded="true" signature="6:78" ph="..." />
                 <marker date="1544496094000" expanded="true" signature="100:5764" ph="{...}" />
                 <marker date="1544496094000" expanded="true" signature="133:199" ph="{...}" />
                 <marker date="1544496094000" expanded="true" signature="228:5761" ph="{...}" />
@@ -167,11 +149,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SafeObjectPool.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
+            <state relative-caret-position="432">
               <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
               <folding>
                 <marker date="1545924687000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-                <marker date="1545924687000" expanded="true" signature="55:81" ph="..." />
                 <marker date="1545924687000" expanded="true" signature="103:2299" ph="{...}" />
                 <marker date="1545924687000" expanded="true" signature="111:164" ph="/// I pool able. ... " />
                 <marker date="1545924687000" expanded="true" signature="195:272" ph="{...}" />
@@ -200,11 +181,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/Pool.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="259">
-              <caret line="18" column="39" lean-forward="true" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
+            <state relative-caret-position="324">
+              <caret line="18" column="39" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
               <folding>
                 <marker date="1545923879000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-                <marker date="1545923879000" expanded="true" signature="55:141" ph="..." />
                 <marker date="1545923879000" expanded="true" signature="163:664" ph="{...}" />
                 <marker date="1545923879000" expanded="true" signature="210:662" ph="{...}" />
                 <marker date="1545923879000" expanded="true" signature="244:310" ph="{...}" />
@@ -217,11 +197,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SimpleObjectPool.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
+            <state relative-caret-position="234">
               <caret line="13" column="74" selection-start-line="13" selection-start-column="74" selection-end-line="13" selection-end-column="74" />
               <folding>
                 <marker date="1545924706000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-                <marker date="1545924706000" expanded="true" signature="55:81" ph="..." />
                 <marker date="1545924706000" expanded="true" signature="103:740" ph="{...}" />
                 <marker date="1545924706000" expanded="true" signature="152:738" ph="{...}" />
                 <marker date="1545924706000" expanded="true" signature="310:559" ph="{...}" />
@@ -235,11 +214,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/DefaultFactory.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
+            <state relative-caret-position="162">
               <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
               <folding>
                 <marker date="1545921127000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-                <marker date="1545921127000" expanded="true" signature="55:81" ph="..." />
                 <marker date="1545921127000" expanded="true" signature="103:258" ph="{...}" />
                 <marker date="1545921127000" expanded="true" signature="170:256" ph="{...}" />
                 <marker date="1545921127000" expanded="true" signature="202:250" ph="{...}" />
@@ -251,10 +229,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/PlayerControl.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
+            <state relative-caret-position="432">
               <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
               <folding>
-                <marker date="1552801380524" expanded="true" signature="6:78" ph="..." />
                 <marker date="1552801380524" expanded="true" signature="122:824" ph="{...}" />
                 <marker date="1552801380524" expanded="true" signature="273:373" ph="{...}" />
                 <marker date="1552801380524" expanded="true" signature="392:822" ph="{...}" />
@@ -293,6 +270,7 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Base/ConstData.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Manager/InputMgr.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Player/PlayerControl.cs" />
+        <option value="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs" />
       </list>
     </option>
@@ -302,9 +280,9 @@
       <facet id="riderModule/invalid/Default Android Facet" />
     </ignored-facets>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-3" />
-    <option name="y" value="272" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="426" />
+    <option name="y" value="216" />
     <option name="width" value="1370" />
     <option name="height" value="975" />
   </component>
@@ -314,10 +292,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="SolutionExplorer">
-        <option name="show-all-files" value="false" />
-      </pane>
-      <pane id="FileSystemExplorer" />
       <pane id="UnityExplorer">
         <subPane>
           <expand>
@@ -372,6 +346,10 @@
         </subPane>
         <option name="show-hidden-items" value="false" />
       </pane>
+      <pane id="FileSystemExplorer" />
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
       <pane id="AssemblyExplorer" />
     </panes>
   </component>
@@ -421,12 +399,13 @@
       <updated>1546786130290</updated>
       <workItem from="1546786132021" duration="137000" />
       <workItem from="1552793403026" duration="6054000" />
-      <workItem from="1552800907565" duration="1970000" />
+      <workItem from="1552800907565" duration="4371000" />
+      <workItem from="1553697658385" duration="6000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8161000" />
+    <option name="totallyTimeSpent" value="10568000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -438,10 +417,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="2062" height="1126" extended-state="6" />
-    <editor active="true" />
+    <frame x="341" y="173" width="1096" height="780" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.113386616" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21911196" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Capture Tool" order="3" />
@@ -467,7 +445,7 @@
       <window_info anchor="bottom" id="Unity" order="17" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info active="true" anchor="right" content_ui="combo" id="Hierarchy" order="2" visible="true" weight="0.24975026" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24975026" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="right" id="Device File Explorer" order="4" side_tool="true" />
       <window_info anchor="right" id="Database" order="5" />
@@ -577,25 +555,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/PlayerControl.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
-          <folding>
-            <marker date="1552801380524" expanded="true" signature="6:78" ph="..." />
-            <marker date="1552801380524" expanded="true" signature="122:824" ph="{...}" />
-            <marker date="1552801380524" expanded="true" signature="273:373" ph="{...}" />
-            <marker date="1552801380524" expanded="true" signature="392:822" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Manager/InputMgr.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+        <state relative-caret-position="432">
+          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
           <folding>
-            <marker date="1552798470223" expanded="true" signature="6:110" ph="..." />
             <marker date="1552798470223" expanded="true" signature="159:1633" ph="{...}" />
             <marker date="1552798470223" expanded="true" signature="413:734" ph="{...}" />
             <marker date="1552798470223" expanded="true" signature="456:728" ph="{...}" />
@@ -615,11 +579,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/CustomFactory.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="33" lean-forward="true" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
+        <state relative-caret-position="378">
+          <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
           <folding>
             <marker date="1545922266000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-            <marker date="1545922266000" expanded="true" signature="55:81" ph="..." />
             <marker date="1545922266000" expanded="true" signature="103:387" ph="{...}" />
             <marker date="1545922266000" expanded="true" signature="153:385" ph="{...}" />
             <marker date="1545922266000" expanded="true" signature="203:256" ph="{...}" />
@@ -628,12 +591,53 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding>
+            <marker date="1552804472974" expanded="true" signature="6:146" ph="..." />
+            <marker date="1552804472974" expanded="true" signature="168:5300" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="209:235" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="273:619" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="469:613" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="671:884" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="951:5298" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="995:1195" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="1205:1267" ph="/// 存放物品类型和对象池的字典 ... " />
+            <marker date="1552804472974" expanded="true" signature="1359:1415" ph="/// 存放对象的模版 ... " />
+            <marker date="1552804472974" expanded="true" signature="1510:1748" ph="/// 初始化所需对象的对象池 ... " />
+            <marker date="1552804472974" expanded="true" signature="1867:2866" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="1931:2323" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="2004:2279" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="2106:2261" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="2433:2525" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="2569:2671" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="2876:3001" ph="/// 获得物体 ... " />
+            <marker date="1552804472974" expanded="true" signature="3083:3483" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="3148:3254" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="3307:3402" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="3493:3625" ph="/// 存入物体 ... " />
+            <marker date="1552804472974" expanded="true" signature="3718:3980" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="3783:3884" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="3990:4119" ph="/// 获得物品剩余数量 ... " />
+            <marker date="1552804472974" expanded="true" signature="4184:4412" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="4249:4353" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="4422:4476" ph="/// 清理对象池 ... " />
+            <marker date="1552804472974" expanded="true" signature="4505:4943" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="4633:4860" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="4739:4846" ph="{...}" />
+            <marker date="1552804472974" expanded="true" signature="4953:5012" ph="/// 创建一个物体并初始化 ... " />
+            <marker date="1552804472974" expanded="true" signature="5101:5290" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ObjectPool.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
+        <state relative-caret-position="270">
           <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
           <folding>
-            <marker date="1544496094000" expanded="true" signature="6:78" ph="..." />
             <marker date="1544496094000" expanded="true" signature="100:5764" ph="{...}" />
             <marker date="1544496094000" expanded="true" signature="133:199" ph="{...}" />
             <marker date="1544496094000" expanded="true" signature="228:5761" ph="{...}" />
@@ -674,27 +678,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/DefaultFactory.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-          <folding>
-            <marker date="1545921127000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-            <marker date="1545921127000" expanded="true" signature="55:81" ph="..." />
-            <marker date="1545921127000" expanded="true" signature="103:258" ph="{...}" />
-            <marker date="1545921127000" expanded="true" signature="170:256" ph="{...}" />
-            <marker date="1545921127000" expanded="true" signature="202:250" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SafeObjectPool.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
+        <state relative-caret-position="432">
           <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
           <folding>
             <marker date="1545924687000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-            <marker date="1545924687000" expanded="true" signature="55:81" ph="..." />
             <marker date="1545924687000" expanded="true" signature="103:2299" ph="{...}" />
             <marker date="1545924687000" expanded="true" signature="111:164" ph="/// I pool able. ... " />
             <marker date="1545924687000" expanded="true" signature="195:272" ph="{...}" />
@@ -721,11 +710,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/Pool.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="18" column="39" lean-forward="true" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
+        <state relative-caret-position="324">
+          <caret line="18" column="39" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="39" />
           <folding>
             <marker date="1545923879000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-            <marker date="1545923879000" expanded="true" signature="55:141" ph="..." />
             <marker date="1545923879000" expanded="true" signature="163:664" ph="{...}" />
             <marker date="1545923879000" expanded="true" signature="210:662" ph="{...}" />
             <marker date="1545923879000" expanded="true" signature="244:310" ph="{...}" />
@@ -736,11 +724,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SimpleObjectPool.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
+        <state relative-caret-position="234">
           <caret line="13" column="74" selection-start-line="13" selection-start-column="74" selection-end-line="13" selection-end-column="74" />
           <folding>
             <marker date="1545924706000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
-            <marker date="1545924706000" expanded="true" signature="55:81" ph="..." />
             <marker date="1545924706000" expanded="true" signature="103:740" ph="{...}" />
             <marker date="1545924706000" expanded="true" signature="152:738" ph="{...}" />
             <marker date="1545924706000" expanded="true" signature="310:559" ph="{...}" />
@@ -750,60 +737,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/DefaultFactory.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="34" selection-start-line="35" selection-start-column="34" selection-end-line="35" selection-end-column="34" />
+        <state relative-caret-position="162">
+          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
           <folding>
-            <marker date="1544516750000" expanded="true" signature="6:146" ph="..." />
-            <marker date="1544516750000" expanded="true" signature="168:5355" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="209:290" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="328:674" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="524:668" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="726:939" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="1006:5353" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="1050:1250" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="1260:1322" ph="/// 存放物品类型和对象池的字典 ... " />
-            <marker date="1544516750000" expanded="true" signature="1414:1470" ph="/// 存放对象的模版 ... " />
-            <marker date="1544516750000" expanded="true" signature="1565:1803" ph="/// 初始化所需对象的对象池 ... " />
-            <marker date="1544516750000" expanded="true" signature="1922:2921" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="1986:2378" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="2059:2334" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="2161:2316" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="2488:2580" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="2624:2726" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="2931:3056" ph="/// 获得物体 ... " />
-            <marker date="1544516750000" expanded="true" signature="3138:3538" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="3203:3309" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="3362:3457" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="3548:3680" ph="/// 存入物体 ... " />
-            <marker date="1544516750000" expanded="true" signature="3773:4035" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="3838:3939" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="4045:4174" ph="/// 获得物品剩余数量 ... " />
-            <marker date="1544516750000" expanded="true" signature="4239:4467" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="4304:4408" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="4477:4531" ph="/// 清理对象池 ... " />
-            <marker date="1544516750000" expanded="true" signature="4560:4998" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="4688:4915" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="4794:4901" ph="{...}" />
-            <marker date="1544516750000" expanded="true" signature="5008:5067" ph="/// 创建一个物体并初始化 ... " />
-            <marker date="1544516750000" expanded="true" signature="5156:5345" ph="{...}" />
+            <marker date="1545921127000" expanded="true" signature="0:48" ph="/* Create by Soso ... */" />
+            <marker date="1545921127000" expanded="true" signature="103:258" ph="{...}" />
+            <marker date="1545921127000" expanded="true" signature="170:256" ph="{...}" />
+            <marker date="1545921127000" expanded="true" signature="202:250" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/PlayerControl.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
+          <folding>
+            <marker date="1552801380524" expanded="true" signature="122:824" ph="{...}" />
+            <marker date="1552801380524" expanded="true" signature="273:373" ph="{...}" />
+            <marker date="1552801380524" expanded="true" signature="392:822" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Player/BaseBoom.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="17" lean-forward="true" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+        <state relative-caret-position="216">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
           <folding>
-            <marker date="1552802728234" expanded="true" signature="6:78" ph="..." />
-            <marker date="1552802728234" expanded="true" signature="144:258" ph="{...}" />
-            <marker date="1552802728234" expanded="true" signature="195:216" ph="{...}" />
-            <marker date="1552802728234" expanded="true" signature="235:256" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="162:1110" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="238:343" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="401:434" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="494:708" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="768:828" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="856:998" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="888:976" ph="{...}" />
+            <marker date="1552807570712" expanded="true" signature="1004:1049" ph="///  ... " />
+            <marker date="1552807570712" expanded="true" signature="1077:1108" ph="{...}" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Test.cs">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>

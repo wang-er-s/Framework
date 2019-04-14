@@ -10,11 +10,7 @@ namespace ZFramework
 
     public enum ComplexPoolObjectType
     {
-        PopUpText,
-
-        PopUpDiamondText,
-
-        PopUpCoinText
+        Boom,
     }
 
     public struct ComplexObjPoolItem

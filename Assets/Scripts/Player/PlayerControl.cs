@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-
     private InputMgr inputMgr;
     private CharacterController cc;
     private Vector3 moveDir;
@@ -16,7 +15,14 @@ public class PlayerControl : MonoBehaviour
         cc = GetComponent<CharacterController>();
     }
 
-    void Update()
+    private void Update() {
+        if(inputMgr.IsAttack)
+        {
+            
+        }
+    }
+
+    private void LateUpdate()
     {
         moveDir = Vector3.zero;
         if (inputMgr.IsForward)
@@ -29,6 +35,11 @@ public class PlayerControl : MonoBehaviour
             moveDir += Vector3.right;
         cc.SimpleMove(moveDir * speed * Time.deltaTime);
         transform.LookAt(transform.position + moveDir);
-
     }
+
+    private void CreateBoom()
+    {
+        
+    }
+
 }
