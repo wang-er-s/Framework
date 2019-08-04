@@ -8,20 +8,20 @@ using System;
 using UnityEditor;
 #endif
 
-namespace ZFramework
+namespace SF
 {
 	public class GenerateUnityPackage  
 	{
-        [MenuItem("Assets/ZFramework/导出UnityPackage %-Ctrl+e")]
+        [MenuItem("Assets/SF/导出UnityPackage %-Ctrl+e")]
         private static void Create()
         {
-            string packageName = "ZFramework" + DateTime.Now.ToString("yyyyMMddhhtt");
+            string packageName = "SF" + DateTime.Now.ToString("yyyyMMddhhtt");
             string[] assetPathNames = new string[Selection.objects.Length];
             for (int i = 0; i < assetPathNames.Length; i++)
             {
                 assetPathNames[i] = AssetDatabase.GetAssetPath(Selection.objects[i]);
             }
-            if (assetPathNames.Length <= 0) assetPathNames = new string[] { "Assets/ZFramework" };
+            if (assetPathNames.Length <= 0) assetPathNames = new string[] { "Assets/SF" };
             assetPathNames = AssetDatabase.GetDependencies(assetPathNames);
             AssetDatabase.ExportPackage(assetPathNames, "C:\\Users\\zzzz\\Desktop\\"+ packageName+ ".unitypackage", ExportPackageOptions.Interactive | ExportPackageOptions.Recurse | ExportPackageOptions.IncludeDependencies);
         }

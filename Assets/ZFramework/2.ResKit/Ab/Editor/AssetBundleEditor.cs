@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SF;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace ZFramework
+namespace SF
 {
     public struct MarkAsset : IEquatable<MarkAsset>
     {

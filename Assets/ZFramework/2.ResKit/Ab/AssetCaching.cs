@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ZFramework
+namespace SF
 {
     public class AssetCaching
     {

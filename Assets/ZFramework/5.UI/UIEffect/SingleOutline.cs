@@ -2,7 +2,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ZFramework
+namespace SF
 {
 	[AddComponentMenu("UI/Effects/SingleOutline", 16)]
 	public class SingleOutline : Outline

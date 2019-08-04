@@ -5,12 +5,13 @@
 using UnityEngine;
 using System;
 
-namespace ZFramework
+namespace SF
 {
 	public interface IPool<T>
 	{
         T Spawn();
 
         bool DeSpawn(T obj);
+
 	}
 }

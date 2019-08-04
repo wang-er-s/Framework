@@ -5,7 +5,7 @@
 using UnityEngine;
 using System;
 
-namespace ZFramework
+namespace SF
 {
     public class DefaultFactory<T> : IFactory<T> where T : new()
     {

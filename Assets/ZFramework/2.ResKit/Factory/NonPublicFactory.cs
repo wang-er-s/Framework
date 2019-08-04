@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-namespace ZFramework
+namespace SF
 {
     public class NonPublicFactory<T> : IFactory<T> where T : class
     {

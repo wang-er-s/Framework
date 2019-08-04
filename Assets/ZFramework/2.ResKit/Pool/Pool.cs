@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ZFramework
+namespace SF
 {
     public abstract class Pool<T> : IPool<T>
     {

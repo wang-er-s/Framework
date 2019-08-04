@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 
-namespace ZFramework
+namespace SF
 {
 	/// <inheritdoc />
 	/// <summary>

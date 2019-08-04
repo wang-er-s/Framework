@@ -1,8 +1,8 @@
 /****************************************************************************
  * Copyright (c) 2018.3 dtknowlove@qq.com
  * 
- * http://ZFramework.io
- * https://github.com/liangxiegame/ZFramework
+ * http://SF.io
+ * https://github.com/liangxiegame/SF
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

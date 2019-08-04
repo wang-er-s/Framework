@@ -5,7 +5,7 @@
 using UnityEngine;
 using System;
 
-namespace ZFramework
+namespace SF
 {
 	/// <summary>
 	/// 线程安全的int类型

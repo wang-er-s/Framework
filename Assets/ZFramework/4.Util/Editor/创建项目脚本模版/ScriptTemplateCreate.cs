@@ -109,7 +109,7 @@ public class ScriptTemplateCreate : EditorWindow
         sb.AppendLine ( "*/" );
         sb.AppendLine ( "using UnityEngine;" );
         sb.AppendLine ( "using System;" );
-        sb.AppendLine ( "using ZFramework;" );
+        sb.AppendLine ( "using SF;" );
         sb.AppendLine ();
         sb.AppendFormat ( "public class {0}  ", scriptName );
         if ( isMono )

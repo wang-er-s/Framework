@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-namespace ZFramework
+namespace SF
 {
 	public class Singleton<T> where T : class
 	{

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 
-namespace ZFramework
+namespace SF
 {
 	/// <summary>
 	/// 当定时器达到时间后的触发

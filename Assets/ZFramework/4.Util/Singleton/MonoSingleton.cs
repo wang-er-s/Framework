@@ -4,7 +4,7 @@
 */
 using UnityEngine;
 
-namespace ZFramework
+namespace SF
 {
 	public class MonoSingleton<T>  : MonoBehaviour where T : MonoBehaviour
 	{

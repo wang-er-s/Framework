@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace ZFramework
+namespace SF
 {
     public delegate void LoadProgress(string bundleName, float process);
 

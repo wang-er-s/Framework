@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.IO;
 
-namespace ZFramework
+namespace SF
 {
 	public static class PathUtil  
 	{

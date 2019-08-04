@@ -5,7 +5,7 @@
 using UnityEngine;
 using System;
 
-namespace ZFramework
+namespace SF
 {
     public interface IFactory<T>
     {

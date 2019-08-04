@@ -1134,7 +1134,7 @@ public static class ReflectionExtension
 {
     public static void Example ()
     {
-        var selfType = ReflectionExtension.GetAssemblyCSharp ().GetType ( "ZFramework.ReflectionExtension" );
+        var selfType = ReflectionExtension.GetAssemblyCSharp ().GetType ( "SF.ReflectionExtension" );
         Debug.Log ( selfType );
     }
 

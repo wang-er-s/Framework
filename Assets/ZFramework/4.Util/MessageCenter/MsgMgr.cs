@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace ZFramework
+namespace SF
 {
     public class MsgMgr : Singleton<MsgMgr>
     {
