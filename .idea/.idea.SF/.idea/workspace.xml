@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="76026060-e8f1-496a-93e9-eedd04666fb0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TestPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TestPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/1.Extension.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/1.Extension/DotNetExtensions.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/1.Extension/DotNetExtensions.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/1.Extension/UnityAPIExtensions.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/1.Extension/UnityAPIExtensions.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleLoader.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleLoader.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleManifestLoader.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleManifestLoader.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleRelation.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetBundleRelation.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetCaching.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/AssetCaching.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/Editor.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/Editor/AssetBundleEditor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/Editor/AssetBundleEditor.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/LoadTest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/LoadTest.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/OneSceneAssetBundles.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Ab/OneSceneAssetBundles.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/CustomFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/CustomFactory.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/DefaultFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/DefaultFactory.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/IFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/IFactory.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/NonPublicFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Factory/NonPublicFactory.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ComplexObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/IPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/IPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/MonoObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/MonoObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/NonPublicObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/NonPublicObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/ObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/Pool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/Pool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SafeObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SafeObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SimpleObjectPool.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/Pool/SimpleObjectPool.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/ResLoader.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/2.ResKit/ResLoader.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/AudioManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/AudioManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/MainManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/MainManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/TimerManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/3.Manager/TimerManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/CMapList.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/CMapList.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/DoubleLinkedList.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/DoubleLinkedList.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/DoubleLinkedListNode.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/DataStructure/DoubleLinkedListNode.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/创建项目脚本模版.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/创建项目脚本模版/ScriptTemplateCreate.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/创建项目脚本模版/ScriptTemplateCreate.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/自动打包.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/自动打包/GenerateUnityPackage.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Editor/自动打包/GenerateUnityPackage.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Document.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Document.md.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scenes.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scenes/Example_CircleMask.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scenes/Example_CircleMask.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scenes/Example_RectMask.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scenes/Example_RectMask.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/CircleGuideCtrl.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/CircleGuideCtrl.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/GuideCtrl.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/GuideCtrl.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/RectGuideCtrl.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Scripts/RectGuideCtrl.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Shader/CircleGuideShader.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Shader/CircleGuideShader.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Shader/RectGuideShader.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Guide/Shader/RectGuideShader.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/IJsonWrapper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/IJsonWrapper.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonData.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonData.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonException.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonException.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonMapper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonMapper.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonReader.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonReader.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonWriter.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/JsonWriter.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/Lexer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/Lexer.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/ParserToken.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/LitJson/ParserToken.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Log.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Log/DebuggerLog.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Log/DebuggerLog.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Log/Log.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Log/Log.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/MessageCenter.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/MessageCenter/Message.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/MessageCenter/Message.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/MessageCenter/MsgMgr.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/MessageCenter/MsgMgr.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Platform.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Platform/Platform.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Platform/Platform.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/DontDestoryOnLoad.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/DontDestoryOnLoad.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/Empty4Raycast.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/Empty4Raycast.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/Hide.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/ScriptCollection/Hide.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/ISingleton.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/ISingleton.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/MonoSingleton.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/MonoSingleton.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/Singleton.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Singleton/Singleton.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Timer.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Timer/ConcurrentInt.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Timer/ConcurrentInt.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Util.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Util/MathUtil.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Util/MathUtil.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Util/PathUtil.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/4.Util/Util/PathUtil.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/Editor.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/Editor/CreateNoRaycast.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/Editor/CreateNoRaycast/CreateNoRaycast.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/Editor/CreateNoRaycast/CreateNoRaycast.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/UIEffect.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/UIEffect/SingleOutline.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ZFramework/5.UI/UIEffect/SingleOutline.cs.meta" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/UnityGuiView.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-22">
+              <caret line="93" lean-forward="true" selection-start-line="93" selection-end-line="93" />
+              <folding>
+                <marker date="1565625744360" expanded="true" signature="6:57" ph="..." />
+                <marker date="1565625744360" expanded="true" signature="79:2820" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="225:2818" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="331:389" ph="/// 显示之后的回掉函数 ... " />
+                <marker date="1565625744360" expanded="true" signature="445:503" ph="/// 隐藏之后的回掉函数 ... " />
+                <marker date="1565625744360" expanded="true" signature="660:2338" ph="界面显示隐藏的调用和回调方法" />
+                <marker date="1565625744360" expanded="true" signature="767:909" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="993:1106" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="1116:1193" ph="/// 初始化View，当BindingContext改变时执行 ... " />
+                <marker date="1565625744360" expanded="true" signature="1291:1451" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="1497:1588" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="1620:1762" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="1772:1832" ph="/// alpha 1-&gt;0时 ... " />
+                <marker date="1565625744360" expanded="true" signature="1869:1979" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="1996:2069" ph="/// 当gameObject将被销毁时，这个方法被调用 ... " />
+                <marker date="1565625744360" expanded="true" signature="2109:2318" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="2158:2215" ph="{...}" />
+                <marker date="1565625744360" expanded="true" signature="2348:2812" ph="绑定的方法" />
+                <marker date="1565625744360" expanded="true" signature="2555:2748" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/IView.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="108">
+              <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+              <folding>
+                <marker date="1565624998687" expanded="true" signature="6:32" ph="..." />
+                <marker date="1565624998687" expanded="true" signature="54:307" ph="{...}" />
+                <marker date="1565624998687" expanded="true" signature="114:305" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Test.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+              <folding>
+                <marker date="1565625015068" expanded="true" signature="6:123" ph="..." />
+                <marker date="1565625015068" expanded="true" signature="158:199" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupViewModel.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="446">
+              <caret line="30" column="12" selection-start-line="30" selection-start-column="12" selection-end-line="30" selection-end-column="12" />
+              <folding>
+                <marker date="1565624606552" expanded="true" signature="6:59" ph="..." />
+                <marker date="1565624606552" expanded="true" signature="84:1260" ph="{...}" />
+                <marker date="1565624606552" expanded="true" signature="134:1258" ph="{...}" />
+                <marker date="1565624606552" expanded="true" signature="626:902" ph="{...}" />
+                <marker date="1565624606552" expanded="true" signature="936:1178" ph="{...}" />
+                <marker date="1565624606552" expanded="true" signature="1219:1252" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/ViewModelBase.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+              <folding>
+                <marker date="1565624589480" expanded="true" signature="20:526" ph="{...}" />
+                <marker date="1565624589480" expanded="true" signature="62:524" ph="{...}" />
+                <marker date="1565624589480" expanded="true" signature="302:349" ph="{...}" />
+                <marker date="1565624589480" expanded="true" signature="396:444" ph="{...}" />
+                <marker date="1565624589480" expanded="true" signature="485:518" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupView.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="140">
+              <caret line="32" column="13" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
+              <folding>
+                <marker date="1565625257560" expanded="true" signature="6:69" ph="..." />
+                <marker date="1565625257560" expanded="true" signature="94:3168" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="154:3166" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="628:708" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="756:940" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1029:1116" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1192:1267" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1349:1424" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1507:1572" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1654:2068" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="1694:2058" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2112:2188" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2231:2305" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2348:2551" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2444:2541" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2605:2692" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2735:2967" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2778:2860" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="2877:2957" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="3007:3070" ph="{...}" />
+                <marker date="1565625257560" expanded="true" signature="3104:3160" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/BindableProperty.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="36" lean-forward="true" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
+              <folding>
+                <marker date="1565624016426" expanded="true" signature="20:913" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="59:911" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="241:579" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="267:326" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="342:569" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="400:555" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="638:778" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="688:768" ph="{...}" />
+                <marker date="1565624016426" expanded="true" signature="821:905" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/PropertyBinder.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="104">
+              <caret line="7" column="11" lean-forward="true" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+              <folding>
+                <marker date="1565625071126" expanded="true" signature="6:101" ph="..." />
+                <marker date="1565625071126" expanded="true" signature="123:1488" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="184:1486" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="655:868" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="934:955" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="995:1215" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="1040:1205" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="1111:1191" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="1256:1480" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="1301:1470" ph="{...}" />
+                <marker date="1565625071126" expanded="true" signature="1374:1456" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Core/IView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Core/PropertyBinder.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9A8FBA43-4CCA-4B9A-B864-A53345FA83FF/9b/e64be031/InputField.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Core/BindableProperty.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupViewModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/C0EF81E1-639B-423A-B35C-E0E4C08B5B7A/35/db475e98/UnityEvent`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/CAFB29D5-2338-47FB-B4ED-CF8D7C32B1E3/78/6c0578d5/Type.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Core/ViewModelBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/SF/UI/Core/UnityGuiView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Test.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Core/BindableProperty.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Core/ViewModelBase.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Example/SetupViewModel.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Core/IView.cs" />
+        <option value="$PROJECT_DIR$/Assets/Test.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Core/PropertyBinder.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Example/SetupView.cs" />
+        <option value="$PROJECT_DIR$/Assets/SF/UI/Core/UnityGuiView.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/.idea.SF/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/.idea.SF/.idea/indexLayout.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="657" />
+    <option name="y" value="92" />
+    <option name="width" value="1800" />
+    <option name="height" value="1229" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+      <pane id="UnityExplorer">
+        <option name="show-hidden-items" value="false" />
+        <option name="show-project-names" value="true" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Discover.Launch.Via.Unity" value="true" />
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" pid="8060">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" value="8060" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76026060-e8f1-496a-93e9-eedd04666fb0" name="Default Changelist" comment="" />
+      <created>1565619646803</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1565619646803</updated>
+      <workItem from="1565619660099" duration="5117000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="5117000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="2062" height="1126" extended-state="6" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17224164" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="NuGet" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Unit Tests" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Performance Profiler" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3299285" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39938712" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Errors In Solution" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Unit Tests Coverage" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/C0EF81E1-639B-423A-B35C-E0E4C08B5B7A/35/db475e98/UnityEvent`1.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="59" column="26" selection-start-line="59" selection-start-column="26" selection-end-line="59" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9A8FBA43-4CCA-4B9A-B864-A53345FA83FF/9b/e64be031/InputField.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="1302" column="8" selection-start-line="1302" selection-start-column="8" selection-end-line="1302" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupViewModel.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="30" column="12" selection-start-line="30" selection-start-column="12" selection-end-line="30" selection-end-column="12" />
+          <folding>
+            <marker date="1565624606552" expanded="true" signature="6:59" ph="..." />
+            <marker date="1565624606552" expanded="true" signature="84:1260" ph="{...}" />
+            <marker date="1565624606552" expanded="true" signature="134:1258" ph="{...}" />
+            <marker date="1565624606552" expanded="true" signature="626:902" ph="{...}" />
+            <marker date="1565624606552" expanded="true" signature="936:1178" ph="{...}" />
+            <marker date="1565624606552" expanded="true" signature="1219:1252" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/IView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+          <folding>
+            <marker date="1565624998687" expanded="true" signature="6:32" ph="..." />
+            <marker date="1565624998687" expanded="true" signature="54:307" ph="{...}" />
+            <marker date="1565624998687" expanded="true" signature="114:305" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/ViewModelBase.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+          <folding>
+            <marker date="1565624589480" expanded="true" signature="20:526" ph="{...}" />
+            <marker date="1565624589480" expanded="true" signature="62:524" ph="{...}" />
+            <marker date="1565624589480" expanded="true" signature="302:349" ph="{...}" />
+            <marker date="1565624589480" expanded="true" signature="396:444" ph="{...}" />
+            <marker date="1565624589480" expanded="true" signature="485:518" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Test.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+          <folding>
+            <marker date="1565625015068" expanded="true" signature="6:123" ph="..." />
+            <marker date="1565625015068" expanded="true" signature="158:199" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/BindableProperty.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="36" lean-forward="true" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
+          <folding>
+            <marker date="1565624016426" expanded="true" signature="20:913" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="59:911" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="241:579" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="267:326" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="342:569" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="400:555" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="638:778" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="688:768" ph="{...}" />
+            <marker date="1565624016426" expanded="true" signature="821:905" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/PropertyBinder.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="7" column="11" lean-forward="true" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding>
+            <marker date="1565625071126" expanded="true" signature="6:101" ph="..." />
+            <marker date="1565625071126" expanded="true" signature="123:1488" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="184:1486" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="655:868" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="934:955" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="995:1215" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="1040:1205" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="1111:1191" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="1256:1480" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="1301:1470" ph="{...}" />
+            <marker date="1565625071126" expanded="true" signature="1374:1456" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/CAFB29D5-2338-47FB-B4ED-CF8D7C32B1E3/78/6c0578d5/Type.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="1500" column="27" selection-start-line="1500" selection-start-column="27" selection-end-line="1500" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Core/UnityGuiView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-22">
+          <caret line="93" lean-forward="true" selection-start-line="93" selection-end-line="93" />
+          <folding>
+            <marker date="1565625744360" expanded="true" signature="6:57" ph="..." />
+            <marker date="1565625744360" expanded="true" signature="79:2820" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="225:2818" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="331:389" ph="/// 显示之后的回掉函数 ... " />
+            <marker date="1565625744360" expanded="true" signature="445:503" ph="/// 隐藏之后的回掉函数 ... " />
+            <marker date="1565625744360" expanded="true" signature="660:2338" ph="界面显示隐藏的调用和回调方法" />
+            <marker date="1565625744360" expanded="true" signature="767:909" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="993:1106" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="1116:1193" ph="/// 初始化View，当BindingContext改变时执行 ... " />
+            <marker date="1565625744360" expanded="true" signature="1291:1451" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="1497:1588" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="1620:1762" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="1772:1832" ph="/// alpha 1-&gt;0时 ... " />
+            <marker date="1565625744360" expanded="true" signature="1869:1979" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="1996:2069" ph="/// 当gameObject将被销毁时，这个方法被调用 ... " />
+            <marker date="1565625744360" expanded="true" signature="2109:2318" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="2158:2215" ph="{...}" />
+            <marker date="1565625744360" expanded="true" signature="2348:2812" ph="绑定的方法" />
+            <marker date="1565625744360" expanded="true" signature="2555:2748" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/SF/UI/Example/SetupView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="32" column="13" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
+          <folding>
+            <marker date="1565625257560" expanded="true" signature="6:69" ph="..." />
+            <marker date="1565625257560" expanded="true" signature="94:3168" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="154:3166" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="628:708" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="756:940" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1029:1116" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1192:1267" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1349:1424" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1507:1572" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1654:2068" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="1694:2058" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2112:2188" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2231:2305" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2348:2551" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2444:2541" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2605:2692" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2735:2967" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2778:2860" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="2877:2957" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="3007:3070" ph="{...}" />
+            <marker date="1565625257560" expanded="true" signature="3104:3160" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

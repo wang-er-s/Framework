@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\zzzz\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\zzzz\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_SF.1610564823.00" t="ExcludeRecursive" />
+    <e p="D:\_UnityProject\SF" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="SF" t="Include">
+          <e p="1.Extension" t="Include">
+            <e p="DotNetExtensions.cs" t="Include" />
+            <e p="UnityAPIExtensions.cs" t="Include" />
+          </e>
+          <e p="2.ResKit" t="Include">
+            <e p="Ab" t="Include">
+              <e p="AssetBundleLoader.cs" t="Include" />
+              <e p="AssetBundleManager.cs" t="Include" />
+              <e p="AssetBundleManifestLoader.cs" t="Include" />
+              <e p="AssetBundleRelation.cs" t="Include" />
+              <e p="AssetCaching.cs" t="Include" />
+              <e p="Editor" t="Include">
+                <e p="AssetBundleEditor.cs" t="Include" />
+              </e>
+              <e p="LoadTest.cs" t="Include" />
+              <e p="OneSceneAssetBundles.cs" t="Include" />
+            </e>
+            <e p="Factory" t="Include">
+              <e p="CustomFactory.cs" t="Include" />
+              <e p="DefaultFactory.cs" t="Include" />
+              <e p="IFactory.cs" t="Include" />
+              <e p="NonPublicFactory.cs" t="Include" />
+            </e>
+            <e p="Pool" t="Include">
+              <e p="ComplexObjectPool.cs" t="Include" />
+              <e p="IPool.cs" t="Include" />
+              <e p="MonoObjectPool.cs" t="Include" />
+              <e p="NonPublicObjectPool.cs" t="Include" />
+              <e p="ObjectPool.cs" t="Include" />
+              <e p="Pool.cs" t="Include" />
+              <e p="SafeObjectPool.cs" t="Include" />
+              <e p="SimpleObjectPool.cs" t="Include" />
+            </e>
+            <e p="ResLoader.cs" t="Include" />
+          </e>
+          <e p="3.Manager" t="Include">
+            <e p="AudioManager.cs" t="Include" />
+            <e p="MainManager.cs" t="Include" />
+            <e p="TimerManager.cs" t="Include" />
+          </e>
+          <e p="4.Util" t="Include">
+            <e p="DataStructure" t="Include">
+              <e p="CMapList.cs" t="Include" />
+              <e p="DoubleLinkedList.cs" t="Include" />
+              <e p="DoubleLinkedListNode.cs" t="Include" />
+            </e>
+            <e p="Editor" t="Include">
+              <e p="创建项目脚本模版" t="Include">
+                <e p="ScriptTemplateCreate.cs" t="Include" />
+              </e>
+              <e p="自动打包" t="Include">
+                <e p="GenerateUnityPackage.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Guide" t="Include">
+              <e p="Scripts" t="Include">
+                <e p="CircleGuideCtrl.cs" t="Include" />
+                <e p="GuideCtrl.cs" t="Include" />
+                <e p="RectGuideCtrl.cs" t="Include" />
+              </e>
+              <e p="Shader" t="Include">
+                <e p="CircleGuideShader.shader" t="Include" />
+                <e p="RectGuideShader.shader" t="Include" />
+              </e>
+            </e>
+            <e p="LitJson" t="Include">
+              <e p="IJsonWrapper.cs" t="Include" />
+              <e p="JsonData.cs" t="Include" />
+              <e p="JsonException.cs" t="Include" />
+              <e p="JsonMapper.cs" t="Include" />
+              <e p="JsonReader.cs" t="Include" />
+              <e p="JsonWriter.cs" t="Include" />
+              <e p="Lexer.cs" t="Include" />
+              <e p="ParserToken.cs" t="Include" />
+            </e>
+            <e p="Log" t="Include">
+              <e p="DebuggerLog.cs" t="Include" />
+              <e p="Log.cs" t="Include" />
+            </e>
+            <e p="MessageCenter" t="Include">
+              <e p="Message.cs" t="Include" />
+              <e p="MsgMgr.cs" t="Include" />
+            </e>
+            <e p="Platform" t="Include">
+              <e p="Platform.cs" t="Include" />
+            </e>
+            <e p="ScriptCollection" t="Include">
+              <e p="DontDestoryOnLoad.cs" t="Include" />
+              <e p="Empty4Raycast.cs" t="Include" />
+              <e p="Hide.cs" t="Include" />
+            </e>
+            <e p="Singleton" t="Include">
+              <e p="ISingleton.cs" t="Include" />
+              <e p="MonoSingleton.cs" t="Include" />
+              <e p="Singleton.cs" t="Include" />
+            </e>
+            <e p="Timer" t="Include">
+              <e p="ConcurrentInt.cs" t="Include" />
+            </e>
+            <e p="Util" t="Include">
+              <e p="MathUtil.cs" t="Include" />
+              <e p="PathUtil.cs" t="Include" />
+            </e>
+          </e>
+          <e p="5.UI" t="Include">
+            <e p="Editor" t="Include">
+              <e p="CreateNoRaycast" t="Include">
+                <e p="CreateNoRaycast.cs" t="Include" />
+              </e>
+            </e>
+            <e p="UIEffect" t="Include">
+              <e p="SingleOutline.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Core" t="Include">
+            <e p="Message" t="Include">
+              <e p="MessageAggregator.cs" t="Include" />
+              <e p="MessageArgs.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Enums.cs" t="Include" />
+          <e p="UI" t="Include">
+            <e p="Core" t="Include">
+              <e p="BindableProperty.cs" t="Include" />
+              <e p="IView.cs" t="Include" />
+              <e p="ObservableList.cs" t="Include" />
+              <e p="PropertyBinder.cs" t="Include" />
+              <e p="UnityGuiView.cs" t="Include" />
+              <e p="ViewModelBase.cs" t="Include" />
+            </e>
+            <e p="Example" t="Include">
+              <e p="SetupView.cs" t="Include" />
+              <e p="SetupViewModel.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Test.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="SF.sln" t="IncludeFlat" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
