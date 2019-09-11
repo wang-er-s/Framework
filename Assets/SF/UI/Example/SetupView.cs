@@ -1,4 +1,5 @@
 using SF.UI.Core;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using State = SF.Enums.State;
 
@@ -25,13 +26,14 @@ namespace SF.UI.Example
 
         public SetupViewModel ViewModel
         {
-            get { return (SetupViewModel) BindingContext; }
+            get { return (SetupViewModel) Data; }
         }
 
         protected override void OnInitialize()
         {
-            Bind(nameInputField, ViewModel.Name, OnNamePropertyValueChanged);
-            nameInputField.onValueChanged.AddListener((str)=>iptName_ValueChanged());
+            Bind(nameMessageText, Data.Job).For((data) => nameMessageText.text = data);
+            Bind(joinInButton, Data.OnButtonClick);
+            Bind(joinToggle, Data.OnToggleChanged);
         }
 
 

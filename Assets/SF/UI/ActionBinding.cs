@@ -14,7 +14,7 @@ namespace CSTest2
             BtnViewModel viewModel = new BtnViewModel();
             Binding<BtnViewModel> binding = new Binding<BtnViewModel>();
             viewModel.Name = new BindData<string>("啊啊啊", null);
-            binding.BindComponent<Text, string>(btn.Text, ((text, data) => text.TextValue = data)).Set(viewModel.Name);
+            binding.BindComponent<Text, string>(btn.Text, ((data) => btn.Text.TextValue = data)).Set(viewModel.Name);
             Stopwatch s1 = Stopwatch.StartNew();
             s1.Start();
             //Type type = viewModel.GetType();
@@ -30,7 +30,7 @@ namespace CSTest2
     }
     class Binding<TViewModel>
     {
-        public BindComponent<TComponent, TData> BindComponent<TComponent, TData>(TComponent component, Action<TComponent, TData> data)
+        public BindComponent<TComponent, TData> BindComponent<TComponent, TData>(TComponent component, Action<TData> data)
         {
             return new BindComponent<TComponent, TData>(component, data);
         }
@@ -40,9 +40,9 @@ namespace CSTest2
     {
         private string PropertyName;
         private TComponent component;
-        private Action<TComponent, TData> ValueChangeEvent;
+        private Action<TData> ValueChangeEvent;
 
-        public BindComponent(TComponent component, Action<TComponent, TData> data)
+        public BindComponent(TComponent component, Action<TData> data)
         {
             this.component = component;
             ValueChangeEvent = data;
@@ -50,7 +50,7 @@ namespace CSTest2
 
         public void Set(BindData<TData> data)
         {
-            data.AddChangeEvent((value) => ValueChangeEvent(component, value));
+            data.AddChangeEvent((value) => ValueChangeEvent(value));
         }
     }
 

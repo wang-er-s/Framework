@@ -26,6 +26,16 @@ namespace SF.UI.Example
             Debug.Log(Name.Value + "加入当前Clan，职业：" + Job.Value + ",攻击力：" + ATK.Value + "成功率：" + SuccessRate.Value);
         }
 
+        public void OnToggleChanged(bool value)
+        {
+            Debug.Log(value);
+        }
+
+        public void OnButtonClick()
+        {
+
+        }
+
         public override void OnCreate()
         {
             

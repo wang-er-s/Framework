@@ -1,10 +1,10 @@
-﻿namespace SF.UI.Core
+﻿using System;
+
+namespace SF.UI.Core
 {
     public class BindableProperty<T>
     {
-        public delegate void ValueChangedHandler(T oldValue, T newValue);
-
-        public ValueChangedHandler OnValueChanged;
+        private event Action<T> OnValueChanged;
 
         private T _value;
         public T Value
@@ -19,17 +19,22 @@
                 {
                     T old = _value;
                     _value = value;
-                    ValueChanged(old, _value);
+                    ValueChanged( _value);
                 }
             }
         }
 
-        private void ValueChanged(T oldValue, T newValue)
+        private void ValueChanged(T newValue)
         {
-            if (OnValueChanged != null)
-            {
-                OnValueChanged(oldValue, newValue);
-            }
+            OnValueChanged?.Invoke(newValue);
+        }
+
+        public void AddChangeEvent(Action<T> changeAction)
+        {
+            if (OnValueChanged == null)
+                OnValueChanged = changeAction;
+            else
+                OnValueChanged += changeAction;
         }
 
         public override string ToString()
