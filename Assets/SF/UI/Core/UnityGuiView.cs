@@ -99,7 +99,7 @@ namespace SF.UI.Core
             return new BindField<TComponent, TData>(component, field);
         }
         
-        protected BindFunc<TComponent> Bind<TComponent>(TComponent component, UnityEvent dataChanged)
+        protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged)
         {
             return new BindFunc<TComponent>(component, dataChanged);
         }

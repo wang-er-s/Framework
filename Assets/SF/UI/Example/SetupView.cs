@@ -33,9 +33,8 @@ namespace SF.UI.Example
         {
             Bind(nameMessageText, Data.Job).For((data) => nameMessageText.text = data);
             Bind(joinInButton, Data.OnButtonClick);
-            Bind(joinToggle, Data.OnToggleChanged);
+            Bind<Toggle,bool>(joinToggle, Data.OnToggleChanged);
         }
-
 
         private void OnSuccessRatePropertyValueChanged(float oldValue, float newValue)
         {
