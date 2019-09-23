@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace SF.UI.Core
 {
@@ -11,7 +12,6 @@ namespace SF.UI.Core
      [RequireComponent(typeof(CanvasGroup))]
     public abstract class UnityGuiView<T>:MonoBehaviour,IView<T> where T:ViewModelBase,new()
     {
-        public readonly BindableProperty<T> ViewModelProperty = new BindableProperty<T>();
         /// <summary>
         /// 显示之后的回掉函数
         /// </summary>
@@ -21,7 +21,8 @@ namespace SF.UI.Core
         /// </summary>
         public Action HideAction { get; set; }
 
-        public T Data => ViewModelProperty.Value ?? (ViewModelProperty.Value = new T());
+        private T _data;
+        public T Data => _data ?? (_data = new T());
 
         #region 界面显示隐藏的调用和回调方法
 
@@ -76,20 +77,6 @@ namespace SF.UI.Core
             HideAction?.Invoke();
             Data.OnHide();
         }
-       
-        /// <summary>
-        /// 当gameObject将被销毁时，这个方法被调用
-        /// </summary>
-        public virtual void OnDestroy()
-        {
-            if (Data.IsShow)
-            {
-                Close(true);
-            }
-            Data.OnDestory();
-            ViewModelProperty.OnValueChanged = null;
-        }
-
         #endregion
 
         #region 绑定的方法
@@ -98,7 +85,12 @@ namespace SF.UI.Core
         {
             return new BindField<TComponent, TData>(component, field);
         }
-        
+
+        protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, BindableProperty<TData1> field1, BindableProperty<TData2> field2)
+        {
+            return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2);
+        }
+
         protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged)
         {
             return new BindFunc<TComponent>(component, dataChanged);
@@ -112,17 +104,4 @@ namespace SF.UI.Core
         #endregion
     }
 
-    public class BindFuncWithPara<TComponent, TValue>
-    {
-        private TComponent component;
-        private UnityEvent<TValue> dataChange;
-
-        public BindFuncWithPara(TComponent component, Action<TValue> dataChange)
-        {
-            this.component = component;
-            this.dataChange = dataChange;
-        }
-
-        public BindFuncWithPara<TComponent, TValue> For()
-    }
 }

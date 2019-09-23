@@ -1,26 +1,22 @@
 ﻿using System;
+using UnityEngine.Experimental.UIElements;
 
 namespace SF.UI.Core
 {
-    public class BindableProperty<T>
+    public class BindableProperty<T> : INotifyWhenChanged<T>
     {
         private event Action<T> OnValueChanged;
 
         private T _value;
         public T Value
         {
-            get
-            {
-                return _value;
-            }
+            get => _value;
             set
             {
-                if (!Equals(_value, value))
-                {
-                    T old = _value;
-                    _value = value;
-                    ValueChanged( _value);
-                }
+                if (Equals(_value, value)) return;
+                T old = _value;
+                _value = value;
+                ValueChanged(_value);
             }
         }
 
@@ -41,5 +37,10 @@ namespace SF.UI.Core
         {
             return (Value != null ? Value.ToString() : "null");
         }
+    }
+
+    public interface INotifyWhenChanged<out T>
+    {
+        void AddChangeEvent(Action<T> changedAction);
     }
 }
