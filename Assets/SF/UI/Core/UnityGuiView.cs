@@ -81,7 +81,7 @@ namespace SF.UI.Core
 
         #region 绑定的方法
 
-        protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,BindableProperty<TData> field)
+        protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,BindableProperty<TData> field) where TComponent : Component
         {
             return new BindField<TComponent, TData>(component, field);
         }

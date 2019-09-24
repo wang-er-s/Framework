@@ -7,10 +7,10 @@ namespace SF.UI.Example
     public class SetupViewModel : ViewModelBase
     {
         public BindableProperty<string> Name = new BindableProperty<string>();
-        public BindableProperty<string> Job=new BindableProperty<string>(); 
+        public BindableProperty<string> Job = new BindableProperty<string>();
         public BindableProperty<int> ATK = new BindableProperty<int>();
-        public BindableProperty<float> SuccessRate=new BindableProperty<float>(); 
-        public BindableProperty<Enums.State> State=new BindableProperty<Enums.State>();
+        public BindableProperty<float> SuccessRate = new BindableProperty<float>();
+        public BindableProperty<bool> Visible = new BindableProperty<bool>();
 
         public void OnToggleChanged(bool value)
         {
@@ -29,7 +29,7 @@ namespace SF.UI.Example
 
         public override void OnCreate()
         {
-            
+
         }
     }
 }

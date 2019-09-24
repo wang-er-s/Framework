@@ -20,7 +20,7 @@ namespace SF.UI.Core
             }
         }
 
-        private void ValueChanged(T newValue)
+        public void ValueChanged(T newValue)
         {
             OnValueChanged?.Invoke(newValue);
         }

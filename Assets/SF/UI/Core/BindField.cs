@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.SF.UI.Wrap;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.SF.UI.Core
 {
-    public class BindField<TComponent, TData>
+    public class BindField<TComponent, TData> where  TComponent : Component
     {
         private TComponent component;
         private Action<TData> ValueChangeEvent;
+        private Func<TData, TData> wrapFunc;
         private BindableProperty<TData> field;
 
         public BindField(TComponent component, BindableProperty<TData> field)
@@ -26,9 +29,25 @@ namespace Assets.SF.UI.Core
             return this;
         }
 
+        public BindField<TComponent, TData> Wrap(Func<TData,TData> wrapFunc)
+        {
+            this.wrapFunc = wrapFunc;
+            return this;
+        }
+
         public void Init()
         {
-            field?.AddChangeEvent((value) => ValueChangeEvent(value));
+            if (ValueChangeEvent == null)
+                ValueChangeEvent = WrapTool.GetWrapper<TData>(component).GetDefaultBindFunc();
+            if (wrapFunc != null)
+            {
+                field?.AddChangeEvent((value) => ValueChangeEvent(wrapFunc(value)));
+            }
+            else
+            {
+                field?.AddChangeEvent((value) => ValueChangeEvent(value));
+            }
+            field?.ValueChanged(field.Value);
         }
 
     }
@@ -63,6 +82,8 @@ namespace Assets.SF.UI.Core
         {
             field1.AddChangeEvent((data1) => ValueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
             field2.AddChangeEvent((data2) => ValueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
+            field1?.ValueChanged(field1.Value);
+            field2?.ValueChanged(field2.Value);
         }
 
     }

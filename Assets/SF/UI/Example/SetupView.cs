@@ -18,16 +18,38 @@ namespace SF.UI.Example
 
         private void Awake()
         {
-            Bind(nameMessageText, Data.Name).For((data) => nameMessageText.text = data).Init();
-            Bind<Text,string,int,string>(mulBindText,Data.Name,Data.ATK).For((data)=>mulBindText.text = data).Wrap((name,atk)=>$"name={name},atk={atk}").Init();
-            //Bind(joinInButton, Data.OnButtonClick).For(joinInButton.onClick).Init();
-            //Bind<Toggle, bool>(joinToggle, Data.OnToggleChanged).For(joinToggle.onValueChanged).Init();
-            //Bind<InputField, string>(atkInputField, Data.OnInputChanged).For(atkInputField.onValueChanged).Init();
+            Bind(nameMessageText, Data.Name).Init();
+            //Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).For(data => mulBindText.text = data).Wrap((name, atk) => $"name={name},atk={atk}").Init();
+            //Bind(joinInButton, Data.OnButtonClick).For(joinInButton.onClick).Wrap(callback =>
+            //{
+            //    return () =>
+            //    {
+            //        callback();
+            //        print("Wrap °´Å¥");
+            //    };
+            //}).Init();
+            //Bind<Toggle, bool>(joinToggle, Data.OnToggleChanged).For(joinToggle.onValueChanged).Wrap((valueChangedFunc) =>
+            //{
+            //    return (value) =>
+            //    {
+            //        valueChangedFunc(value);
+            //        print("Wrap Toggle");
+            //    };
+            //}).Init();
+            //Bind<InputField, string>(atkInputField, Data.OnInputChanged).For(atkInputField.onValueChanged).Wrap((valueChangedFunc) =>
+            //{
+            //    return (value) =>
+            //    {
+            //        valueChangedFunc(value);
+            //        print("Wrap InputField");
+            //    };
+            //}).Init();
+            //Bind(joinToggle, Data.Visible).For(isShow => joinToggle.isOn = isShow).Init();
         }
 
         protected override void OnInitialize()
         {
-            
+
         }
     }
 }

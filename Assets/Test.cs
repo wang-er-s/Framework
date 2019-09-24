@@ -17,6 +17,7 @@ public class Test : MonoBehaviour
     private void Start()
     {
         view.ViewModel.Name.Value = "哈哈哈";
+        view.ViewModel.Visible.Value = false;
     }
 
 }
