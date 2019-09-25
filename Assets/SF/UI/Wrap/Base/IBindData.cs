@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Assets.SF.UI.Wrap
 {
-    interface IBindCommand<T>
+    public interface IBindData<T>
     {
+        Action<T> GetBindFieldFunc();
     }
 }

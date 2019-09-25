@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.SF.UI.Wrap
+namespace Assets.SF.UI.Wrap.Base
 {
-    public interface IBindData<T>
+    public interface ITwoWayBind
     {
-        Action<T> GetDefaultBindFunc();
     }
 }

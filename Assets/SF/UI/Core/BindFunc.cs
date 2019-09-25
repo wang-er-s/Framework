@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.SF.UI.Wrap;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.SF.UI.Core
 {
 
-    public class BindFunc<TComponent>
+    public class BindFunc<TComponent> where TComponent : Component
     {
 
         private TComponent component;
         private Action vmFunc;
         private UnityEvent cmpFunc;
         private Func<Action, Action> wrapFunc;
+        private IBindCommand bindCommand;
 
         public BindFunc(TComponent component, Action vmFunc)
         {
@@ -36,6 +39,9 @@ namespace Assets.SF.UI.Core
 
         public void Init()
         {
+            bindCommand = WrapTool.GetBindCommand(component);
+            if (cmpFunc == null)
+                cmpFunc = bindCommand.GetBindCommandFunc(); 
             if (wrapFunc == null)
             {
                 cmpFunc.AddListener(() => vmFunc());
@@ -48,17 +54,24 @@ namespace Assets.SF.UI.Core
 
     }
 
-    public class BindFuncWithPara<TComponent, TValue>
+    public class BindFuncWithPara<TComponent, TValue> where TComponent : Component
     {
         private TComponent component;
         private Action<TValue> vmFunc;
         private Func<Action<TValue>, Action<TValue>> wrapFunc;
         private UnityEvent<TValue> cmpFunc;
+        private IBindCommand<TValue> bindCommand;
 
-        public BindFuncWithPara(TComponent component, Action<TValue> vmFunc)
+        //public BindFuncWithPara(TComponent component, Action<TValue> vmFunc)
+        //{
+        //    this.component = component;
+        //    this.vmFunc = vmFunc;
+        //}
+
+        public BindFuncWithPara(TComponent component, TValue vmFunc)
         {
             this.component = component;
-            this.vmFunc = vmFunc;
+            //this.vmFunc = vmFunc;
         }
 
         public BindFuncWithPara<TComponent, TValue> For(UnityEvent<TValue> cmpFunc)
@@ -75,6 +88,9 @@ namespace Assets.SF.UI.Core
 
         public void Init()
         {
+            bindCommand = WrapTool.GetBindCommand<TValue>(component);
+            if (cmpFunc == null)
+                cmpFunc = bindCommand.GetBindCommandFunc();
             if (wrapFunc == null)
             {
                 cmpFunc.AddListener((value) => vmFunc(value));

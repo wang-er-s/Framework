@@ -16,29 +16,36 @@ namespace Assets.SF.UI.Core
         private Action<TData> ValueChangeEvent;
         private Func<TData, TData> wrapFunc;
         private BindableProperty<TData> field;
+        private IBindData<TData> bindData;
 
-        public BindField(TComponent component, BindableProperty<TData> field)
+        public BindField(TComponent _component, BindableProperty<TData> _field)
         {
-            this.component = component;
-            this.field = field;
+            component = _component;
+            field = _field;
         }
 
-        public BindField<TComponent, TData> For(Action<TData> dataChanged)
+        public BindField<TComponent, TData> For(Action<TData> _dataChanged)
         {
-            ValueChangeEvent = dataChanged;
+            ValueChangeEvent = _dataChanged;
             return this;
         }
 
-        public BindField<TComponent, TData> Wrap(Func<TData,TData> wrapFunc)
+        public BindField<TComponent, TData> Wrap(Func<TData,TData> _wrapFunc)
         {
-            this.wrapFunc = wrapFunc;
+            wrapFunc = _wrapFunc;
+            return this;
+        }
+
+        public BindField<TComponent, TData> TwoWayBind()
+        {
             return this;
         }
 
         public void Init()
         {
+            bindData = WrapTool.GetBindData<TData>(component);
             if (ValueChangeEvent == null)
-                ValueChangeEvent = WrapTool.GetWrapper<TData>(component).GetDefaultBindFunc();
+                ValueChangeEvent = bindData.GetBindFieldFunc();
             if (wrapFunc != null)
             {
                 field?.AddChangeEvent((value) => ValueChangeEvent(wrapFunc(value)));
@@ -52,34 +59,38 @@ namespace Assets.SF.UI.Core
 
     }
 
-    public class BindField<TComponent, TData1, TData2, TResult>
+    public class BindField<TComponent, TData1, TData2, TResult> where  TComponent : Component
     {
         private TComponent component;
         private Action<TResult> ValueChangeEvent;
         private BindableProperty<TData1> field1;
         private BindableProperty<TData2> field2;
+        private IBindData<TResult> bindData;
         private Func<TData1, TData2, TResult> wrapFunc;
-        public BindField(TComponent component, BindableProperty<TData1> field1, BindableProperty<TData2> field2)
+        public BindField(TComponent _component, BindableProperty<TData1> _field1, BindableProperty<TData2> _field2)
         {
-            this.component = component;
-            this.field1 = field1;
-            this.field2 = field2;
+            component = _component;
+            field1 = _field1;
+            field2 = _field2;
         }
 
-        public BindField<TComponent, TData1, TData2, TResult> For(Action<TResult> dataChanged)
+        public BindField<TComponent, TData1, TData2, TResult> For(Action<TResult> _dataChanged)
         {
-            ValueChangeEvent = dataChanged;
+            ValueChangeEvent = _dataChanged;
             return this;
         }
 
-        public BindField<TComponent, TData1, TData2, TResult> Wrap(Func<TData1, TData2, TResult> wrapFunc)
+        public BindField<TComponent, TData1, TData2, TResult> Wrap(Func<TData1, TData2, TResult> _wrapFunc)
         {
-            this.wrapFunc = wrapFunc;
+            wrapFunc = _wrapFunc;
             return this;
         }
 
         public void Init()
         {
+            bindData = WrapTool.GetBindData<TResult>(component);
+            if (ValueChangeEvent == null)
+                ValueChangeEvent = bindData.GetBindFieldFunc();
             field1.AddChangeEvent((data1) => ValueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
             field2.AddChangeEvent((data2) => ValueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
             field1?.ValueChanged(field1.Value);

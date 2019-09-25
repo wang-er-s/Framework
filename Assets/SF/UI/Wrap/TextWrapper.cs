@@ -16,7 +16,7 @@ namespace Assets.SF.UI.Wrap
             text = _text;
         }
 
-        public Action<string> GetDefaultBindFunc()
+        public Action<string> GetBindFieldFunc()
         {
             return (value) => text.text = value;
         }

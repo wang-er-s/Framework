@@ -19,24 +19,17 @@ namespace SF.UI.Example
         private void Awake()
         {
             Bind(nameMessageText, Data.Name).Init();
-            //Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).For(data => mulBindText.text = data).Wrap((name, atk) => $"name={name},atk={atk}").Init();
-            //Bind(joinInButton, Data.OnButtonClick).For(joinInButton.onClick).Wrap(callback =>
-            //{
-            //    return () =>
-            //    {
-            //        callback();
-            //        print("Wrap °´Å¥");
-            //    };
-            //}).Init();
-            //Bind<Toggle, bool>(joinToggle, Data.OnToggleChanged).For(joinToggle.onValueChanged).Wrap((valueChangedFunc) =>
-            //{
-            //    return (value) =>
-            //    {
-            //        valueChangedFunc(value);
-            //        print("Wrap Toggle");
-            //    };
-            //}).Init();
-            //Bind<InputField, string>(atkInputField, Data.OnInputChanged).For(atkInputField.onValueChanged).Wrap((valueChangedFunc) =>
+            Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).Wrap((name, atk) => $"name={name},atk={atk}").Init();
+            Bind(joinInButton, Data.OnButtonClick).Wrap(callback =>
+            {
+                return () =>
+                {
+                    callback();
+                    print("Wrap °´Å¥");
+                };
+            }).Init();
+            Bind(joinToggle, joinToggle.isOn).Init();
+            //Bind<InputField, string>(atkInputField, Data.OnInputChanged).Wrap((valueChangedFunc) =>
             //{
             //    return (value) =>
             //    {
@@ -44,7 +37,7 @@ namespace SF.UI.Example
             //        print("Wrap InputField");
             //    };
             //}).Init();
-            //Bind(joinToggle, Data.Visible).For(isShow => joinToggle.isOn = isShow).Init();
+            Bind(joinToggle, Data.Visible).Init();
         }
 
         protected override void OnInitialize()
