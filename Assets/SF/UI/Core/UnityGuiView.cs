@@ -24,6 +24,8 @@ namespace SF.UI.Core
         private T _data;
         public T Data => _data ?? (_data = new T());
 
+        protected BindSet<T> bindSet;
+
         #region 界面显示隐藏的调用和回调方法
 
         public void Create(bool immediate = false, Action<Transform> action = null)
@@ -81,12 +83,12 @@ namespace SF.UI.Core
 
         #region 绑定的方法
 
-        protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,BindableProperty<TData> field) where TComponent : Component
+        protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,TData field) where TComponent : Component
         {
             return new BindField<TComponent, TData>(component, field);
         }
 
-        protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, BindableProperty<TData1> field1, BindableProperty<TData2> field2) where TComponent : Component
+        protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, TData1 field1, TData2 field2) where TComponent : Component
         {
             return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2);
         }

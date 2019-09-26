@@ -1,8 +1,12 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
+
 namespace SF.UI.Core
 {
-    public abstract class ViewModelBase
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        private bool _isInitialized;
+        public event PropertyChangedEventHandler PropertyChanged;
         public ViewModelBase ParentViewModel { get; set; }
         public bool IsShow { get; private set; }
         
@@ -20,9 +24,24 @@ namespace SF.UI.Core
             IsShow = false;
         }
 
-        public virtual void OnDestory()
+        public virtual void OnDestroy()
         {
             
+        }
+
+        protected bool Set<T>(ref T field, T value)
+        {
+            if (field.Equals(value))
+                return false;
+            field = value;
+            OnPropertyChanged(nameof(field));
+            return true;
+        }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

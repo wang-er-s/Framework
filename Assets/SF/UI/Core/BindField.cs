@@ -1,16 +1,26 @@
 ﻿using SF.UI.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.SF.UI.Wrap;
-using UnityEngine;
 using UnityEngine.Events;
+using Component = UnityEngine.Component;
 
 namespace Assets.SF.UI.Core
 {
-    public class BindField<TComponent, TData> where  TComponent : Component
+    public class BindSet<TVM> where TVM : ViewModelBase
+    {
+        private TVM vm;
+        public void Bind<TComponent>(TComponent component, string field)
+        {
+            vm.PropertyChanged += (component,);
+        }
+    }
+
+    public class BindField<TComponent> where  TComponent : Component
     {
         private TComponent component;
         private Action<TData> ValueChangeEvent;
