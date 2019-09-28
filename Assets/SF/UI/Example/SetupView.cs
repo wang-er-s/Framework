@@ -18,26 +18,26 @@ namespace SF.UI.Example
 
         private void Awake()
         {
-            Bind(nameMessageText, Data.Name).Init();
-            Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).Wrap((name, atk) => $"name={name},atk={atk}").Init();
-            Bind(joinInButton, Data.OnButtonClick).Wrap(callback =>
-            {
-                return () =>
-                {
-                    callback();
-                    print("Wrap °´Å¥");
-                };
-            }).Init();
-            Bind(joinToggle, joinToggle.isOn).Init();
-            //Bind<InputField, string>(atkInputField, Data.OnInputChanged).Wrap((valueChangedFunc) =>
+            //Bind(nameMessageText, Data.Name).Init();
+            //Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).Wrap((name, atk) => $"name={name},atk={atk}").Init();
+            //Bind(joinInButton, Data.OnButtonClick).Wrap(callback =>
             //{
-            //    return (value) =>
+            //    return () =>
             //    {
-            //        valueChangedFunc(value);
-            //        print("Wrap InputField");
+            //        callback();
+            //        print("Wrap °´Å¥");
             //    };
             //}).Init();
-            Bind(joinToggle, Data.Visible).Init();
+            //Bind(joinToggle, joinToggle.isOn).Init();
+            ////Bind<InputField, string>(atkInputField, Data.OnInputChanged).Wrap((valueChangedFunc) =>
+            ////{
+            ////    return (value) =>
+            ////    {
+            ////        valueChangedFunc(value);
+            ////        print("Wrap InputField");
+            ////    };
+            ////}).Init();
+            //Bind(joinToggle, Data.Visible).Init();
         }
 
         protected override void OnInitialize()

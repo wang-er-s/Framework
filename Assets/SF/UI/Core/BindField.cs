@@ -16,11 +16,10 @@ namespace Assets.SF.UI.Core
         private TVM vm;
         public void Bind<TComponent>(TComponent component, string field)
         {
-            vm.PropertyChanged += (component,);
         }
     }
 
-    public class BindField<TComponent> where  TComponent : Component
+    public class BindField<TComponent,TData> where  TComponent : Component
     {
         private TComponent component;
         private Action<TData> ValueChangeEvent;

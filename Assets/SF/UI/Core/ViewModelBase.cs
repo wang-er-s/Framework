@@ -1,12 +1,12 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace SF.UI.Core
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase 
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public ViewModelBase ParentViewModel { get; set; }
         public bool IsShow { get; private set; }
         
@@ -29,19 +29,19 @@ namespace SF.UI.Core
             
         }
 
-        protected bool Set<T>(ref T field, T value)
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
-            if (field.Equals(value))
+            if (value.Equals(field))
                 return false;
             field = value;
-            OnPropertyChanged(nameof(field));
+            OnPropertyChanged(name, field);
             return true;
         }
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged<T>(string name, T value)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //存储Name对应的BindProperty，来设置OnValueChanged的回调
+            Debug.Log($"{name}的值为{value}");
         }
     }
 }

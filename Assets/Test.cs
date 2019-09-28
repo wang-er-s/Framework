@@ -14,14 +14,12 @@ using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    public SetupView view;
-    public InputField inputField;
+    private SetupViewModel vm;
 
     private void Start()
     {
-        //view.ViewModel.Name.Value = "哈哈哈";
-        //view.ViewModel.Visible.Value = false;
-        //Exp((t)=>t.Function);
+        vm = new SetupViewModel();
+        vm.Name = "哈哈哈";
     }
 
     private void Function()

@@ -83,25 +83,25 @@ namespace SF.UI.Core
 
         #region 绑定的方法
 
-        protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,TData field) where TComponent : Component
-        {
-            return new BindField<TComponent, TData>(component, field);
-        }
+        //protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,TData field) where TComponent : Component
+        //{
+        //    return new BindField<TComponent, TData>(component, field);
+        //}
 
-        protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, TData1 field1, TData2 field2) where TComponent : Component
-        {
-            return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2);
-        }
+        //protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, TData1 field1, TData2 field2) where TComponent : Component
+        //{
+        //    return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2);
+        //}
 
-        protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged) where TComponent : Component
-        {
-            return new BindFunc<TComponent>(component, dataChanged);
-        }
+        //protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged) where TComponent : Component
+        //{
+        //    return new BindFunc<TComponent>(component, dataChanged);
+        //}
 
-        protected BindFuncWithPara<TComponent, TValue> Bind<TComponent, TValue>(TComponent component, TValue dataChanged) where TComponent : Component
-        {
-            return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
-        }
+        //protected BindFuncWithPara<TComponent, TValue> Bind<TComponent, TValue>(TComponent component, TValue dataChanged) where TComponent : Component
+        //{
+        //    return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
+        //}
 
         #endregion
     }
