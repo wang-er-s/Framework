@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -5,8 +7,9 @@ using UnityEngine;
 
 namespace SF.UI.Core
 {
-    public abstract class ViewModelBase 
+    public abstract class ViewModelBase
     {
+        private Dictionary<string, object> binds = new Dictionary<string, object>();
         public ViewModelBase ParentViewModel { get; set; }
         public bool IsShow { get; private set; }
         
@@ -40,8 +43,25 @@ namespace SF.UI.Core
 
         protected virtual void OnPropertyChanged<T>(string name, T value)
         {
-            //存储Name对应的BindProperty，来设置OnValueChanged的回调
-            Debug.Log($"{name}的值为{value}");
+            BindingAbleProperty<T> property = GetBindingAbleProperty<T>(name);
+            property.Value = value;
         }
+
+        public BindingAbleProperty<T> GetBindingAbleProperty<T>(string name)
+        {
+            BindingAbleProperty<T> property;
+
+            if (binds.TryGetValue(name,out object obj))
+            {
+                property = (BindingAbleProperty<T>)obj;
+            }
+            else
+            {
+                property = new BindingAbleProperty<T>();
+                binds.Add(name, property);
+            }
+            return property;
+        }
+
     }
 }

@@ -14,12 +14,11 @@ using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    private SetupViewModel vm;
+    public SetupView view;
 
     private void Start()
     {
-        vm = new SetupViewModel();
-        vm.Name = "哈哈哈";
+        view.Data.Name = "哈哈哈";
     }
 
     private void Function()

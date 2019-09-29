@@ -8,23 +8,22 @@ using UnityEngine.UI;
 
 namespace Assets.SF.UI.Wrap
 {
-    public class InputFieldWrapper : IBindData<string>, IBindCommand<string>
+    public class InputFieldWrapper : BaseWrapper<InputField>, IBindData<string>, IBindCommand<string>
     {
-        private readonly InputField inputField;
 
         public InputFieldWrapper(InputField _inputField)
         {
-            inputField = _inputField;
+            component = _inputField;
         }
 
         public Action<string> GetBindFieldFunc()
         {
-            return (value) => inputField.text = value;
+            return (value) => component.text = value;
         }
 
         public UnityEvent<string> GetBindCommandFunc()
         {
-            return inputField.onValueChanged;
+            return component.onValueChanged;
         }
     }
 }

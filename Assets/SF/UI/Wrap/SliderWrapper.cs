@@ -28,7 +28,7 @@ namespace Assets.SF.UI.Wrap
             return slider.onValueChanged;
         }
 
-        public void TwoWayBind(BindableProperty<float> property)
+        public void TwoWayBind(BindingAbleProperty<float> property)
         {
             slider.onValueChanged.AddListener((value) => property.Value = value);
         }

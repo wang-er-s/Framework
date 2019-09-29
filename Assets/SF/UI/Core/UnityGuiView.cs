@@ -1,6 +1,8 @@
 using Assets.SF.UI.Core;
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
+using Assets.SF.UI.Wrap;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -24,7 +26,6 @@ namespace SF.UI.Core
         private T _data;
         public T Data => _data ?? (_data = new T());
 
-        protected BindSet<T> bindSet;
 
         #region 界面显示隐藏的调用和回调方法
 
@@ -83,25 +84,31 @@ namespace SF.UI.Core
 
         #region 绑定的方法
 
-        //protected BindField<TComponent,TData> Bind<TComponent, TData>(TComponent component,TData field) where TComponent : Component
-        //{
-        //    return new BindField<TComponent, TData>(component, field);
-        //}
+        protected BindField<TComponent, TData> Bind<TComponent, TData>(Component component,  Expression<Func<T,TData>> filed ) where TComponent : Component
+        {
+            return new BindField<TComponent, TData>(WrapTool. component, GetBindPropertyByExpression(filed));
+        }
 
-        //protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1,TData2,TResult>(TComponent component, TData1 field1, TData2 field2) where TComponent : Component
-        //{
-        //    return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2);
-        //}
+        protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1, TData2, TResult>(TComponent component, Expression<Func<T, TData1>> field1, Expression<Func<T, TData2>> field2,Func<TData1,TData2,TResult> wrapFunc) where TComponent : Component
+        {
+            return new BindField<TComponent, TData1, TData2, TResult>(component, GetBindPropertyByExpression(field1),
+                GetBindPropertyByExpression(field2), wrapFunc);
+        }
 
-        //protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged) where TComponent : Component
-        //{
-        //    return new BindFunc<TComponent>(component, dataChanged);
-        //}
+        protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged) where TComponent : Component
+        {
+            return new BindFunc<TComponent>(component, dataChanged);
+        }
 
-        //protected BindFuncWithPara<TComponent, TValue> Bind<TComponent, TValue>(TComponent component, TValue dataChanged) where TComponent : Component
-        //{
-        //    return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
-        //}
+        protected BindFuncWithPara<TComponent, TValue> BindCommand<TComponent, TValue>(TComponent component, Action<TValue> dataChanged) where TComponent : Component
+        {
+            return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
+        }
+
+        private BindingAbleProperty<TData> GetBindPropertyByExpression<TData>(Expression<Func<T, TData>> expression)
+        {
+            return Data.GetBindingAbleProperty<TData>((expression.Body as MemberExpression)?.Member.Name);
+        }
 
         #endregion
     }

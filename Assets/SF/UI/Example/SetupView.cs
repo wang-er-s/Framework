@@ -18,26 +18,34 @@ namespace SF.UI.Example
 
         private void Awake()
         {
-            //Bind(nameMessageText, Data.Name).Init();
-            //Bind<Text, string, int, string>(mulBindText, Data.Name, Data.ATK).Wrap((name, atk) => $"name={name},atk={atk}").Init();
-            //Bind(joinInButton, Data.OnButtonClick).Wrap(callback =>
+            Bind(nameMessageText, (vm)=>vm.Name).OneWay();
+            Bind(mulBindText, (vm) => vm.Name, (vm) => vm.ATK, (name, atk) => $"name = {name} atk = {atk.ToString()}").Init();
+            Bind(joinInButton, Data.OnButtonClick).Wrap(callback =>
+            {
+                return () =>
+                {
+                    callback();
+                    print("Wrap 按钮");
+                };
+            }).Init();
+            Bind(joinToggle, (vm)=>vm.Visible).Wrap((value) =>
+            {
+                Log.I($"改为{value}");
+                return value;
+            }).Revert();
+            Bind(atkInputField, (vm) => vm.Name).Wrap((value) =>
+            {
+                Log.I($"改为{value}");
+                return value;
+            }).TwoWay();
+            //BindCommand<InputField, string>(atkInputField, Data.OnInputChanged).Wrap((valueChangedFunc) =>
             //{
-            //    return () =>
+            //    return (value) =>
             //    {
-            //        callback();
-            //        print("Wrap 按钮");
+            //        valueChangedFunc(value);
+            //        print("Wrap InputField");
             //    };
             //}).Init();
-            //Bind(joinToggle, joinToggle.isOn).Init();
-            ////Bind<InputField, string>(atkInputField, Data.OnInputChanged).Wrap((valueChangedFunc) =>
-            ////{
-            ////    return (value) =>
-            ////    {
-            ////        valueChangedFunc(value);
-            ////        print("Wrap InputField");
-            ////    };
-            ////}).Init();
-            //Bind(joinToggle, Data.Visible).Init();
         }
 
         protected override void OnInitialize()

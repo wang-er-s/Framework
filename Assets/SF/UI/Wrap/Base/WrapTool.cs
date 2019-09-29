@@ -24,7 +24,6 @@ namespace Assets.SF.UI.Wrap
                 case Slider slider:
                     return (IBindData<T>) new SliderWrapper(slider);
             }
-            Log.E($"没有找到{component.name}这种类型，请自行添加");
             return null;
         }
 
@@ -39,7 +38,6 @@ namespace Assets.SF.UI.Wrap
                 case Slider slider:
                     return (IBindCommand<T>)new SliderWrapper(slider);
             }
-            Log.E($"没有找到{component.name}这种类型，请自行添加");
             return null;
         }
 
@@ -50,7 +48,6 @@ namespace Assets.SF.UI.Wrap
                 case Button button:
                     return (IBindCommand) new ButtonWrapper(button);
             }
-            Log.E($"没有找到{component.name}这种类型，请自行添加");
             return null;
         }
 

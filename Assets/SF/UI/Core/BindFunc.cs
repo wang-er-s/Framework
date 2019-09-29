@@ -68,7 +68,7 @@ namespace Assets.SF.UI.Core
         //    this.vmFunc = vmFunc;
         //}
 
-        public BindFuncWithPara(TComponent component, TValue vmFunc)
+        public BindFuncWithPara(TComponent component, Action<TValue> vmFunc)
         {
             this.component = component;
             //this.vmFunc = vmFunc;

@@ -11,23 +11,18 @@ using Component = UnityEngine.Component;
 
 namespace Assets.SF.UI.Core
 {
-    public class BindSet<TVM> where TVM : ViewModelBase
-    {
-        private TVM vm;
-        public void Bind<TComponent>(TComponent component, string field)
-        {
-        }
-    }
 
     public class BindField<TComponent,TData> where  TComponent : Component
     {
         private TComponent component;
-        private Action<TData> ValueChangeEvent;
+        private Action<TData> valueChangeEvent;
+        private UnityEvent<TData> componentChangEvent;
         private Func<TData, TData> wrapFunc;
-        private BindableProperty<TData> field;
+        private BindingAbleProperty<TData> field;
         private IBindData<TData> bindData;
+        private IBindCommand<TData> bindCommand;
 
-        public BindField(TComponent _component, BindableProperty<TData> _field)
+        public BindField(TComponent _component, BindingAbleProperty<TData> _field)
         {
             component = _component;
             field = _field;
@@ -35,7 +30,13 @@ namespace Assets.SF.UI.Core
 
         public BindField<TComponent, TData> For(Action<TData> _dataChanged)
         {
-            ValueChangeEvent = _dataChanged;
+            valueChangeEvent = _dataChanged;
+            return this;
+        }
+
+        public BindField<TComponent, TData> For(UnityEvent<TData> _componentChanged)
+        {
+            componentChangEvent = _componentChanged;
             return this;
         }
 
@@ -45,25 +46,48 @@ namespace Assets.SF.UI.Core
             return this;
         }
 
-        public BindField<TComponent, TData> TwoWayBind()
+        public void OneWay()
         {
-            return this;
-        }
-
-        public void Init()
-        {
-            bindData = WrapTool.GetBindData<TData>(component);
-            if (ValueChangeEvent == null)
-                ValueChangeEvent = bindData.GetBindFieldFunc();
+            Init();
             if (wrapFunc != null)
             {
-                field?.AddChangeEvent((value) => ValueChangeEvent(wrapFunc(value)));
+                field?.AddChangeEvent((value) => valueChangeEvent(wrapFunc(value)));
             }
             else
             {
-                field?.AddChangeEvent((value) => ValueChangeEvent(value));
+                field?.AddChangeEvent((value) => valueChangeEvent(value));
             }
-            field?.ValueChanged(field.Value);
+        }
+
+        public void TwoWay()
+        {
+            OneWay();
+            Revert();
+        }
+
+        public void Revert()
+        {
+            Init();
+            if (wrapFunc != null)
+            {
+                componentChangEvent?.AddListener((data) => field.Value = wrapFunc(data));
+            }
+            else
+            {
+                componentChangEvent?.AddListener((data) => field.Value = data);
+            }
+        }
+
+        private void Init()
+        {
+            if (bindData != null) return;
+            bindData = WrapTool.GetBindData<TData>(component);
+            bindCommand = WrapTool.GetBindCommand<TData>(component);
+            if (valueChangeEvent == null)
+                valueChangeEvent = bindData.GetBindFieldFunc();
+            if (componentChangEvent == null)
+                componentChangEvent = bindCommand?.GetBindCommandFunc();
+            
         }
 
     }
@@ -72,26 +96,21 @@ namespace Assets.SF.UI.Core
     {
         private TComponent component;
         private Action<TResult> ValueChangeEvent;
-        private BindableProperty<TData1> field1;
-        private BindableProperty<TData2> field2;
+        private BindingAbleProperty<TData1> field1;
+        private BindingAbleProperty<TData2> field2;
         private IBindData<TResult> bindData;
         private Func<TData1, TData2, TResult> wrapFunc;
-        public BindField(TComponent _component, BindableProperty<TData1> _field1, BindableProperty<TData2> _field2)
+        public BindField(TComponent _component, BindingAbleProperty<TData1> _field1, BindingAbleProperty<TData2> _field2, Func<TData1, TData2, TResult> _wrapFunc)
         {
             component = _component;
             field1 = _field1;
             field2 = _field2;
+            wrapFunc = _wrapFunc;
         }
 
         public BindField<TComponent, TData1, TData2, TResult> For(Action<TResult> _dataChanged)
         {
             ValueChangeEvent = _dataChanged;
-            return this;
-        }
-
-        public BindField<TComponent, TData1, TData2, TResult> Wrap(Func<TData1, TData2, TResult> _wrapFunc)
-        {
-            wrapFunc = _wrapFunc;
             return this;
         }
 
@@ -102,8 +121,6 @@ namespace Assets.SF.UI.Core
                 ValueChangeEvent = bindData.GetBindFieldFunc();
             field1.AddChangeEvent((data1) => ValueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
             field2.AddChangeEvent((data2) => ValueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
-            field1?.ValueChanged(field1.Value);
-            field2?.ValueChanged(field2.Value);
         }
 
     }
