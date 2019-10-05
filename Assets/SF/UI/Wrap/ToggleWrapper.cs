@@ -8,11 +8,11 @@ using UnityEngine.UI;
 
 namespace Assets.SF.UI.Wrap
 {
-    public class ToggleWrapper : IBindData<bool>,IBindCommand<bool>
+    public class ToggleWrapper : BaseWrapper<Toggle>, IBindData<bool>,IBindCommand<bool>
     {
         private readonly Toggle toggle;
 
-        public ToggleWrapper(Toggle _toggle)
+        public ToggleWrapper(Toggle _toggle) : base(_toggle)
         {
             toggle = _toggle;
         }

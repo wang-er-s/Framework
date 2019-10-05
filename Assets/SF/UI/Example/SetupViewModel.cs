@@ -41,6 +41,12 @@ namespace SF.UI.Example
             set => Set(ref visible, value);
         }
 
+        private string path;
+        public string Path
+        {
+            get => path;
+            set => Set(ref path, value);
+        }
 
         public void OnToggleChanged(bool value)
         {

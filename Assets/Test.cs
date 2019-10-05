@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using SF.UI.Core;
@@ -11,37 +12,23 @@ using SF.UI.Example;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
+using Component = UnityEngine.Component;
 
 public class Test : MonoBehaviour
 {
     public SetupView view;
+    public InputField inputField;
 
     private void Start()
     {
-        view.Data.Name = "哈哈哈";
-    }
-
-    private void Function()
-    {
-
-    }
-
-    private void Exp<T>(Expression<Func<Test,T>> expression)
-    {
-
+        view.ViewModel.Path = "img";
     }
 
 }
 
-class AA : INotifyPropertyChanged
+class AA
 {
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    public string Name { get; set; }
 }
 
 

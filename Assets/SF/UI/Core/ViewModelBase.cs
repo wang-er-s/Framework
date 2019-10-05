@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -9,10 +10,16 @@ namespace SF.UI.Core
 {
     public abstract class ViewModelBase
     {
-        private Dictionary<string, object> binds = new Dictionary<string, object>();
+        private Dictionary<string, object> binds;
         public ViewModelBase ParentViewModel { get; set; }
         public bool IsShow { get; private set; }
-        
+
+        protected ViewModelBase()
+        {
+            OnCreate();
+            binds = new Dictionary<string, object>();
+        }
+
         public abstract void OnCreate();
 
 
@@ -34,32 +41,40 @@ namespace SF.UI.Core
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
-            if (value.Equals(field))
+            if (Equals(field,value))
                 return false;
             field = value;
             OnPropertyChanged(name, field);
             return true;
         }
 
-        protected virtual void OnPropertyChanged<T>(string name, T value)
+        protected void OnPropertyChanged<T>(string name, T value)
         {
-            BindingAbleProperty<T> property = GetBindingAbleProperty<T>(name);
+            BindableProperty<T> property = GetBindingAbleProperty<T>(name);
             property.Value = value;
         }
 
-        public BindingAbleProperty<T> GetBindingAbleProperty<T>(string name)
+        public BindableProperty<T> GetBindingAbleProperty<T>(string name)
         {
-            BindingAbleProperty<T> property;
+            BindableProperty<T> property;
 
             if (binds.TryGetValue(name,out object obj))
             {
-                property = (BindingAbleProperty<T>)obj;
+                property = (BindableProperty<T>)obj;
             }
             else
             {
-                property = new BindingAbleProperty<T>();
-                binds.Add(name, property);
+                property = CreateBindableProperty<T>(name);
             }
+            return property;
+        }
+
+        private BindableProperty<T> CreateBindableProperty<T>(string name)
+        {
+            var property = new BindableProperty<T>();
+            binds.Add(name, property);
+            var propertyInfo = GetType().GetProperty(name, typeof(T));
+            property.AddChangeEvent((value) => propertyInfo.SetValue(this, value));
             return property;
         }
 

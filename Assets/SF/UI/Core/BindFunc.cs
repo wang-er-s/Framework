@@ -16,6 +16,7 @@ namespace Assets.SF.UI.Core
         private TComponent component;
         private Action vmFunc;
         private UnityEvent cmpFunc;
+        private BaseWrapper<TComponent> baseWrapper;
         private Func<Action, Action> wrapFunc;
         private IBindCommand bindCommand;
 
@@ -37,67 +38,64 @@ namespace Assets.SF.UI.Core
             return this;
         }
 
-        public void Init()
+        public void OneWay()
         {
-            bindCommand = WrapTool.GetBindCommand(component);
+            baseWrapper = WrapTool.GetWrapper(component);
+            bindCommand = baseWrapper as IBindCommand;
             if (cmpFunc == null)
-                cmpFunc = bindCommand.GetBindCommandFunc(); 
+                cmpFunc = bindCommand?.GetBindCommandFunc(); 
             if (wrapFunc == null)
             {
-                cmpFunc.AddListener(() => vmFunc());
+                cmpFunc?.AddListener(() => vmFunc());
             }
             else
             {
-                cmpFunc.AddListener(() => wrapFunc(vmFunc)());
+                cmpFunc?.AddListener(() => wrapFunc(vmFunc)());
             }
         }
 
     }
 
-    public class BindFuncWithPara<TComponent, TValue> where TComponent : Component
+    public class BindFuncWithPara<TComponent, TData> where TComponent : Component
     {
         private TComponent component;
-        private Action<TValue> vmFunc;
-        private Func<Action<TValue>, Action<TValue>> wrapFunc;
-        private UnityEvent<TValue> cmpFunc;
-        private IBindCommand<TValue> bindCommand;
+        private Action<TData> vmFunc;
+        private Func<Action<TData>, Action<TData>> wrapFunc;
+        private UnityEvent<TData> cmpFunc;
+        private BaseWrapper<TComponent> baseWrapper;
+        private IBindCommand<TData> bindCommand;
 
-        //public BindFuncWithPara(TComponent component, Action<TValue> vmFunc)
-        //{
-        //    this.component = component;
-        //    this.vmFunc = vmFunc;
-        //}
-
-        public BindFuncWithPara(TComponent component, Action<TValue> vmFunc)
+        public BindFuncWithPara(TComponent component, Action<TData> vmFunc)
         {
             this.component = component;
-            //this.vmFunc = vmFunc;
+            this.vmFunc = vmFunc;
         }
 
-        public BindFuncWithPara<TComponent, TValue> For(UnityEvent<TValue> cmpFunc)
+        public BindFuncWithPara<TComponent, TData> For(UnityEvent<TData> cmpFunc)
         {
             this.cmpFunc = cmpFunc;
             return this;
         }
 
-        public BindFuncWithPara<TComponent, TValue> Wrap(Func<Action<TValue>, Action<TValue>> wrapFunc)
+        public BindFuncWithPara<TComponent, TData> Wrap(Func<Action<TData>, Action<TData>> wrapFunc)
         {
             this.wrapFunc = wrapFunc;
             return this;
         }
 
-        public void Init()
+        public void OneWay()
         {
-            bindCommand = WrapTool.GetBindCommand<TValue>(component);
+            baseWrapper = WrapTool.GetWrapper(component);
+            bindCommand = baseWrapper as IBindCommand<TData>;
             if (cmpFunc == null)
-                cmpFunc = bindCommand.GetBindCommandFunc();
+                cmpFunc = bindCommand?.GetBindCommandFunc();
             if (wrapFunc == null)
             {
-                cmpFunc.AddListener((value) => vmFunc(value));
+                cmpFunc?.AddListener((value) => vmFunc(value));
             }
             else
             {
-                cmpFunc.AddListener((value) => wrapFunc(vmFunc)(value));
+                cmpFunc?.AddListener((value) => wrapFunc(vmFunc)(value));
             }
         }
     }

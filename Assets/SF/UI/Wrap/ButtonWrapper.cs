@@ -8,11 +8,11 @@ using UnityEngine.UI;
 
 namespace Assets.SF.UI.Wrap
 {
-    public class ButtonWrapper : IBindCommand
+    public class ButtonWrapper : BaseWrapper<Button>, IBindCommand
     {
         private readonly Button button;
 
-        public ButtonWrapper(Button _button)
+        public ButtonWrapper(Button _button) : base(_button)
         {
             button = _button;
         }

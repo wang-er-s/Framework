@@ -3,7 +3,7 @@ using UnityEngine.Experimental.UIElements;
 
 namespace SF.UI.Core
 {
-    public class BindingAbleProperty<T> : INotifyWhenChanged<T>
+    public class BindableProperty<T> : INotifyWhenChanged<T>
     {
         private event Action<T> OnValueChanged;
 
@@ -27,11 +27,11 @@ namespace SF.UI.Core
 
         public void AddChangeEvent(Action<T> changeAction)
         {
+            changeAction(_value);
             if (OnValueChanged == null)
                 OnValueChanged = changeAction;
             else
                 OnValueChanged += changeAction;
-            ValueChanged(_value);
         }
 
         public void RemoveChangeEvent(Action<T> changeAction)

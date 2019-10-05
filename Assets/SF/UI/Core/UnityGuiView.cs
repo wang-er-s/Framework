@@ -84,9 +84,9 @@ namespace SF.UI.Core
 
         #region 绑定的方法
 
-        protected BindField<TComponent, TData> Bind<TComponent, TData>(Component component,  Expression<Func<T,TData>> filed ) where TComponent : Component
+        protected BindField<TComponent, TData> Bind<TComponent, TData>(TComponent component,  Expression<Func<T,TData>> filed ) where TComponent : Component
         {
-            return new BindField<TComponent, TData>(WrapTool. component, GetBindPropertyByExpression(filed));
+            return new BindField<TComponent, TData>(component, GetBindPropertyByExpression(filed));
         }
 
         protected BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1, TData2, TResult>(TComponent component, Expression<Func<T, TData1>> field1, Expression<Func<T, TData2>> field2,Func<TData1,TData2,TResult> wrapFunc) where TComponent : Component
@@ -95,17 +95,19 @@ namespace SF.UI.Core
                 GetBindPropertyByExpression(field2), wrapFunc);
         }
 
-        protected BindFunc<TComponent> Bind<TComponent>(TComponent component, Action dataChanged) where TComponent : Component
+        protected BindFunc<TComponent> BindCommand<TComponent>(TComponent component,Func<T,Action> command ) where TComponent : Component
         {
+            Action dataChanged = command?.Invoke(Data);
             return new BindFunc<TComponent>(component, dataChanged);
         }
 
-        protected BindFuncWithPara<TComponent, TValue> BindCommand<TComponent, TValue>(TComponent component, Action<TValue> dataChanged) where TComponent : Component
+        protected BindFuncWithPara<TComponent, TValue> BindCommand<TComponent, TValue>(TComponent component, Func<T, Action<TValue>> command  ) where TComponent : Component
         {
+            Action<TValue> dataChanged = command?.Invoke(Data);
             return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
         }
 
-        private BindingAbleProperty<TData> GetBindPropertyByExpression<TData>(Expression<Func<T, TData>> expression)
+        private BindableProperty<TData> GetBindPropertyByExpression<TData>(Expression<Func<T, TData>> expression)
         {
             return Data.GetBindingAbleProperty<TData>((expression.Body as MemberExpression)?.Member.Name);
         }

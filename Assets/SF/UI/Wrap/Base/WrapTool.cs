@@ -6,49 +6,41 @@ using System.Threading.Tasks;
 using SF;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = System.Object;
 
 namespace Assets.SF.UI.Wrap
 {
     public static class WrapTool
     {
-        public static IBindData<T> GetBindData<T>(Component component)
+
+        public static BaseWrapper<T> GetWrapper<T>(T component) where T : Component
         {
             switch (component)
             {
                 case Text text:
-                    return (IBindData<T>) new TextWrapper(text);
+                    return (BaseWrapper<T>) getWrapper(nameof(Text), component);
                 case Toggle toggle:
-                    return (IBindData<T>) new ToggleWrapper(toggle);
+                    return (BaseWrapper<T>)getWrapper(nameof(Toggle), component);
                 case InputField inputField:
-                    return (IBindData<T>) new InputFieldWrapper(inputField);
+                    return (BaseWrapper<T>)getWrapper(nameof(InputField), component);
                 case Slider slider:
-                    return (IBindData<T>) new SliderWrapper(slider);
+                    return (BaseWrapper<T>)getWrapper(nameof(Slider), component);
+                case Image img:
+                    return (BaseWrapper<T>)getWrapper(nameof(Image), component);
+                case Button btn:
+                    return (BaseWrapper<T>)getWrapper(nameof(Button), component);
             }
-            return null;
+            throw new NullReferenceException($"没有找到{component.GetType().Name}的包装器，自行添加");
         }
 
-        public static IBindCommand<T> GetBindCommand<T>(Component component)
+        private static Object getWrapper(string componentName,Component component)
         {
-            switch (component)
+            Type type = Type.GetType($"Assets.SF.UI.Wrap.{componentName}Wrapper");
+            if (type == null)
             {
-                case Toggle toggle:
-                    return (IBindCommand<T>)new ToggleWrapper(toggle);
-                case InputField inputField:
-                    return (IBindCommand<T>)new InputFieldWrapper(inputField);
-                case Slider slider:
-                    return (IBindCommand<T>)new SliderWrapper(slider);
+                throw new NullReferenceException($"没有找到{componentName}的包装器，自行添加");
             }
-            return null;
-        }
-
-        public static IBindCommand GetBindCommand(Component component)
-        {
-            switch (component)
-            {
-                case Button button:
-                    return (IBindCommand) new ButtonWrapper(button);
-            }
-            return null;
+            return Activator.CreateInstance(type, args:component);
         }
 
     }

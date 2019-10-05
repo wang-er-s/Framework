@@ -9,11 +9,11 @@ using UnityEngine.UI;
 
 namespace Assets.SF.UI.Wrap
 {
-    public class SliderWrapper: IBindData<float>, IBindCommand<float>
+    public class SliderWrapper: BaseWrapper<Slider>, IBindData<float>, IBindCommand<float>
     {
         private readonly Slider slider;
 
-        public SliderWrapper(Slider _slider)
+        public SliderWrapper(Slider _slider) : base(_slider)
         {
             slider = _slider;
         }
@@ -28,7 +28,7 @@ namespace Assets.SF.UI.Wrap
             return slider.onValueChanged;
         }
 
-        public void TwoWayBind(BindingAbleProperty<float> property)
+        public void TwoWayBind(BindableProperty<float> property)
         {
             slider.onValueChanged.AddListener((value) => property.Value = value);
         }

@@ -9,8 +9,19 @@ using UnityEngine.UI;
 
 namespace Assets.SF.UI.Wrap
 {
-    public abstract class BaseWrapper<T>  where T: Component
+    public abstract class BaseWrapper<T> : IBindData<bool> where T : Component
     {
         protected T component;
+
+        protected BaseWrapper(T _component)
+        {
+            component = _component;
+        }
+
+        Action<bool> IBindData<bool>.GetBindFieldFunc()
+        {
+            return(value) => component.gameObject.SetActive(value);
+        }
     }
+
 }

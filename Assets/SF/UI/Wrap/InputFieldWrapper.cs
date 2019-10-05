@@ -11,7 +11,7 @@ namespace Assets.SF.UI.Wrap
     public class InputFieldWrapper : BaseWrapper<InputField>, IBindData<string>, IBindCommand<string>
     {
 
-        public InputFieldWrapper(InputField _inputField)
+        public InputFieldWrapper(InputField _inputField) : base(_inputField)
         {
             component = _inputField;
         }
@@ -23,7 +23,7 @@ namespace Assets.SF.UI.Wrap
 
         public UnityEvent<string> GetBindCommandFunc()
         {
-            return component.onValueChanged;
+            return component.onEndEdit;
         }
     }
 }
