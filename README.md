@@ -1,9 +1,10 @@
 # Nine-Framework
-使用方法
-- Wrap意味着对前面传入的方法或者字段进行包装后再使用
-- OnWay当数据改变，同步到组件
-- Revert当组件改变，同步到数据
-- TwoWay其中一个改变，同步到另一个
+持续开发中....
+> 使用方法
+>> Wrap意味着对前面传入的方法或者字段进行包装后再使用
+>> OnWay当数据改变，同步到组件
+>> Revert当组件改变，同步到数据
+>> TwoWay其中一个改变，同步到另一个
 ```csharp
 //nameMessageText show or hide by vm.visible
 Bind(nameMessageText, (vm) => vm.Visible).OneWay();
