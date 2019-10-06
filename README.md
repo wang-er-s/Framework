@@ -1,5 +1,5 @@
 # ZF
-'''c#
+'''
             //nameMessageText show or hide by vm.visible
             Bind(nameMessageText, (vm) => vm.Visible).OneWay();
             //nameMessageText.text show text by vm.Name
