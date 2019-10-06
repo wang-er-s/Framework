@@ -28,10 +28,7 @@ namespace Nine.UI.Core
         public void AddChangeEvent(Action<T> changeAction)
         {
             changeAction(_value);
-            if (OnValueChanged == null)
-                OnValueChanged = changeAction;
-            else
-                OnValueChanged += changeAction;
+            OnValueChanged += changeAction;
         }
 
         public void RemoveChangeEvent(Action<T> changeAction)

@@ -10,22 +10,29 @@ using UnityEngine.UI;
 namespace Nine.UI.Core
 {
 
-    
-     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class UnityGuiView<T>:MonoBehaviour,IView<T> where T:ViewModelBase,new()
+
+    [RequireComponent(typeof(CanvasGroup))]
+    public abstract class View<T> : MonoBehaviour, IView<T> where T : ViewModel
     {
         /// <summary>
         /// 显示之后的回掉函数
         /// </summary>
         public Action ShowAction { get; set; }
+
         /// <summary>
         /// 隐藏之后的回掉函数
         /// </summary>
         public Action HideAction { get; set; }
 
-        private T _data;
-        public T Data => _data ?? (_data = new T());
+        private CanvasGroup canvasGroup;
 
+        private T _data;
+        public T Data => _data ?? (_data = Activator.CreateInstance<T>());
+
+        void Awake()
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+        }
 
         #region 界面显示隐藏的调用和回调方法
 
@@ -33,8 +40,7 @@ namespace Nine.UI.Core
         {
             if(!immediate)
                 action?.Invoke(transform);
-            OnInitialize();
-            OnCreate();
+            OnShow();
         }
 
         public void Close(bool immediate = false, Action<Transform> action = null)
@@ -44,19 +50,8 @@ namespace Nine.UI.Core
             OnClose();
         }
 
-        /// <summary>
-        /// 初始化View，当BindingContext改变时执行
-        /// </summary>
-        protected abstract void OnInitialize();
-        
-        
-        private void OnCreate()
-        {
-            //立即显示
-            transform.localScale = Vector3.one;
-            GetComponent<CanvasGroup>().alpha = 1;
-            OnShow();
-        }
+
+        protected abstract void OnCreate();
         
         public virtual void OnShow()
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Nine.UI.Core
 {
-    public interface IView<out T> where T : ViewModelBase
+    public interface IView<out T> where T : ViewModel
     {
         T Data { get; }
         void Create(bool immediate=false,Action<Transform> action=null);

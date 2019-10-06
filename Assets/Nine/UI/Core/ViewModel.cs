@@ -8,19 +8,21 @@ using UnityEngine;
 
 namespace Nine.UI.Core
 {
-    public abstract class ViewModelBase
+    public abstract class ViewModel
     {
         private Dictionary<string, object> binds;
-        public ViewModelBase ParentViewModel { get; set; }
+        public ViewModel ParentViewModel { get; set; }
         public bool IsShow { get; private set; }
 
-        protected ViewModelBase()
+        protected ViewModel()
         {
             OnCreate();
             binds = new Dictionary<string, object>();
         }
 
-        public abstract void OnCreate();
+        public virtual void OnCreate()
+        {
+        }
 
 
         public virtual void OnShow()

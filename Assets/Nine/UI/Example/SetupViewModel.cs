@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Nine.UI.Example
 {
-    public class SetupViewModel : ViewModelBase
+    public class SetupViewModel : ViewModel
     {
         private string name;
         public string Name
@@ -48,6 +48,8 @@ namespace Nine.UI.Example
             set => Set(ref path, value);
         }
 
+        public BindableList<ItemViewModel> Items { get; private set; }
+
         public void OnToggleChanged(bool value)
         {
             Debug.Log(value);
@@ -65,7 +67,19 @@ namespace Nine.UI.Example
 
         public override void OnCreate()
         {
-
+            Items.Add(new ItemViewModel() {Path = "img"});
         }
     }
+
+    public class ItemViewModel : ViewModel
+    {
+        private string path;
+
+        public string Path
+        {
+            get => path;
+            set => Set(ref path, value);
+        }
+    }
+
 }

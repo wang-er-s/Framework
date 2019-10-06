@@ -18,17 +18,24 @@ public class Test : MonoBehaviour
 {
     public SetupView view;
     public InputField inputField;
+    private event Action a1;
 
     private void Start()
     {
-        view.ViewModel.Path = "img";
+        Debug.Log(nameof(View<ViewModel>));
     }
-
 }
 
-class AA
+class AA : INotifyPropertyChanged
 {
     public string Name { get; set; }
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
 

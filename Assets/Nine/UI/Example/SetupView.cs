@@ -5,7 +5,7 @@ using State = Nine.Enums.State;
 
 namespace Nine.UI.Example
 {
-    public class SetupView : UnityGuiView<SetupViewModel>
+    public class SetupView : View<SetupViewModel>
     {
 
         public Text nameMessageText;
@@ -14,9 +14,8 @@ namespace Nine.UI.Example
         public Toggle joinToggle;
         public Button joinInButton;
         public Image img;
-        public SetupViewModel ViewModel => Data;
 
-        private void Awake()
+        protected override void OnCreate()
         {
             //nameMessageText show or hide by vm.visible
             Bind(nameMessageText, (vm) => vm.Visible).OneWay();
@@ -36,10 +35,10 @@ namespace Nine.UI.Example
             //image bind path, when path changed, img.sprite change to res.load(path)
             Bind(img, (vm) => vm.Path).OneWay();
             Bind(joinToggle, (vm) => vm.Visible).Wrap((value) =>
-              {
-                  Log.I($"改为{value}");
-                  return value;
-              }).Revert();
+            {
+                Log.I($"改为{value}");
+                return value;
+            }).Revert();
             Bind(atkInputField, (vm) => vm.Name).Wrap((value) =>
             {
                 Log.I($"改为{value}");
@@ -53,11 +52,6 @@ namespace Nine.UI.Example
                     print("Wrap InputField");
                 };
             }).OneWay();
-        }
-
-        protected override void OnInitialize()
-        {
-
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nine;
+using Nine.UI.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = System.Object;
@@ -29,6 +30,8 @@ namespace Assets.Nine.UI.Wrap
                     return (BaseWrapper<T>)getWrapper(nameof(Image), component);
                 case Button btn:
                     return (BaseWrapper<T>)getWrapper(nameof(Button), component);
+                case View<ViewModel> view:
+                    return (BaseWrapper<T>)getWrapper(nameof(View<ViewModel>), component);
             }
             throw new NullReferenceException($"没有找到{component.GetType().Name}的包装器，自行添加");
         }
