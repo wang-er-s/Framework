@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nine.UI.Core;
 
 namespace Assets.Nine.UI.Wrap
 {

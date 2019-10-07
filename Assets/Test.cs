@@ -22,7 +22,15 @@ public class Test : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log(nameof(View<ViewModel>));
+        
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            view.Data.Items.Add(new ItemViewModel() { Path = "img" });
+        }
     }
 }
 

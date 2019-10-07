@@ -10,7 +10,6 @@ using UnityEngine.UI;
 namespace Nine.UI.Core
 {
 
-
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class View<T> : MonoBehaviour, IView<T> where T : ViewModel
     {
@@ -36,44 +35,51 @@ namespace Nine.UI.Core
 
         #region 界面显示隐藏的调用和回调方法
 
-        public void Create(bool immediate = false, Action<Transform> action = null)
+        void IView<T>.Create(T vm)
         {
-            if(!immediate)
-                action?.Invoke(transform);
-            OnShow();
+            _data = vm;
+            OnCreate();
         }
 
-        public void Close(bool immediate = false, Action<Transform> action = null)
+        void IView<T>.Close()
         {
-            if(!immediate)
-                action?.Invoke(transform);
             OnClose();
         }
 
-
-        protected abstract void OnCreate();
-        
-        public virtual void OnShow()
+        void IView<T>.Show()
         {
             Data.OnShow();
             ShowAction?.Invoke();
+            OnShow();
         }
 
-        private void OnClose()
+        void IView<T>.Hide()
         {
-            OnHide();
-            transform.localScale = Vector3.zero;
-            GetComponent<CanvasGroup>().alpha = 0;
-        }
-
-        /// <summary>
-        /// alpha 1->0时
-        /// </summary>
-        public virtual void OnHide()
-        {
-            //回掉函数
             HideAction?.Invoke();
             Data.OnHide();
+            OnHide();
+        }
+
+
+        protected virtual void OnCreate()
+        {
+        }
+
+        protected virtual void OnShow()
+        {
+        }
+
+        protected virtual void OnClose()
+        {
+        }
+
+        protected virtual void OnHide()
+        {
+        }
+
+        void OnDestroy()
+        {
+            OnClose();
         }
         #endregion
 
@@ -100,6 +106,11 @@ namespace Nine.UI.Core
         {
             Action<TValue> dataChanged = command?.Invoke(Data);
             return new BindFuncWithPara<TComponent, TValue>(component, dataChanged);
+        }
+
+        protected BindList<TVm> BindList<TVm>(View<TVm> view, BindableList<TVm> list) where TVm : ViewModel
+        {
+            return new BindList<TVm>(view, list);
         }
 
         private BindableProperty<TData> GetBindPropertyByExpression<TData>(Expression<Func<T, TData>> expression)

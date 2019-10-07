@@ -3,10 +3,12 @@ using UnityEngine;
 
 namespace Nine.UI.Core
 {
-    public interface IView<out T> where T : ViewModel
+    public interface IView<T> where T : ViewModel
     {
         T Data { get; }
-        void Create(bool immediate=false,Action<Transform> action=null);
-        void Close(bool immediate=false,Action<Transform> action=null);
+        void Create(T vm);
+        void Close();
+        void Show();
+        void Hide();
     }
 }

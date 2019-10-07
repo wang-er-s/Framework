@@ -48,7 +48,8 @@ namespace Nine.UI.Example
             set => Set(ref path, value);
         }
 
-        public BindableList<ItemViewModel> Items { get; private set; }
+        //public BindableList<ItemViewModel> Items { get; private set; }
+        public BindableList<ItemViewModel> Items = new BindableList<ItemViewModel>();
 
         public void OnToggleChanged(bool value)
         {
@@ -67,7 +68,6 @@ namespace Nine.UI.Example
 
         public override void OnCreate()
         {
-            Items.Add(new ItemViewModel() {Path = "img"});
         }
     }
 
