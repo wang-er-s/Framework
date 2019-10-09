@@ -16,12 +16,12 @@ namespace Assets.Nine.UI.Wrap
             component = _inputField;
         }
 
-        public Action<string> GetBindFieldFunc()
+        Action<string> IBindData<string>.GetBindFieldFunc()
         {
             return (value) => component.text = value;
         }
 
-        public UnityEvent<string> GetBindCommandFunc()
+        UnityEvent<string> IBindCommand<string>.GetBindCommandFunc()
         {
             return component.onEndEdit;
         }

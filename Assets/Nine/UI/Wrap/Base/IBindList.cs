@@ -8,7 +8,7 @@ using Nine.UI.Core;
 
 namespace Assets.Nine.UI.Wrap
 {
-    public interface IBindList<T>
+    public interface IBindList<T> where T : ViewModel
     {
         Action<NotifyCollectionChangedAction, T, T, int> GetBindListFunc();
     }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Nine.UI.Wrap
 {
-    public class ToggleWrapper : BaseWrapper<Toggle>, IBindData<bool>,IBindCommand<bool>
+    public class ToggleWrapper : BaseWrapper<Toggle>, IBindData<bool>, IBindCommand<bool>
     {
         private readonly Toggle toggle;
 
@@ -17,12 +17,12 @@ namespace Assets.Nine.UI.Wrap
             toggle = _toggle;
         }
 
-        public Action<bool> GetBindFieldFunc()
+        Action<bool> IBindData<bool>.GetBindFieldFunc()
         {
             return (value) => toggle.isOn = value;
         }
 
-        public UnityEvent<bool> GetBindCommandFunc()
+        UnityEvent<bool> IBindCommand<bool>.GetBindCommandFunc()
         {
             return toggle.onValueChanged;
         }

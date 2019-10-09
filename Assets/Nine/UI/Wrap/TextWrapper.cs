@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Nine.UI.Wrap
 {
-    public class TextWrapper : BaseWrapper<Text>, IBindData<string>, IBindData<bool>
+    public class TextWrapper : BaseWrapper<Text>, IBindData<string>
     {
         private readonly Text text;
         public TextWrapper(Text _text) : base(_text)
@@ -16,14 +16,10 @@ namespace Assets.Nine.UI.Wrap
             text = _text;
         }
 
-        public Action<string> GetBindFieldFunc()
+        Action<string> IBindData<string>.GetBindFieldFunc()
         {
             return (value) => text.text = value;
         }
 
-        Action<bool> IBindData<bool>.GetBindFieldFunc()
-        {
-            return (value) => text.gameObject.SetActive(value);
-        }
     }
 }

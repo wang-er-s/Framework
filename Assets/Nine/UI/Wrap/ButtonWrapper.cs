@@ -17,7 +17,7 @@ namespace Assets.Nine.UI.Wrap
             button = _button;
         }
 
-        public UnityEvent GetBindCommandFunc()
+        UnityEvent IBindCommand.GetBindCommandFunc()
         {
             return button.onClick;
         }

@@ -10,21 +10,21 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Nine.UI.Wrap
 {
-    class ViewWrapper : BaseWrapper<View<ViewModel>>, IBindList<ViewModel>
+    public class ViewWrapper : BaseWrapper<View>,IBindList<ViewModel>
     {
 
         private Transform content;
         private Transform item;
-        private View<ViewModel> view;
+        private View view;
 
-        public ViewWrapper(View<ViewModel> _view) : base(_view)
+        public ViewWrapper(View _view) : base(_view)
         {
             view = _view;
             item = view.transform;
             content = item.parent;
         }
 
-        public Action< NotifyCollectionChangedAction, ViewModel, ViewModel, int> GetBindListFunc()
+        Action< NotifyCollectionChangedAction, ViewModel, ViewModel, int> IBindList<ViewModel>.GetBindListFunc()
         {
             return BindListFunc;
         }
@@ -51,7 +51,7 @@ namespace Assets.Nine.UI.Wrap
 
         private void AddItem(int index, ViewModel vm)
         {
-            UIMgr.Ins.CreateListItem(view, vm, index + 1);
+            UIMgr.Ins.CreateListItem(item, vm, index + 1);
         }
 
         private void RemoveItem(int index)

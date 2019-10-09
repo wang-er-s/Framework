@@ -6,7 +6,6 @@ using Nine;
 using Nine.UI.Core;
 using UnityEngine;
 using UnityEngine.UI;
-using View = Nine.UI.Core.IView<Nine.UI.Core.ViewModel>;
 
 namespace Nine.UI.Core
 {
@@ -26,7 +25,7 @@ namespace Nine.UI.Core
     {
         public static UIMgr Ins;
 
-        private Dictionary<string, View> existUI;
+        private Dictionary<string, IView> existUI;
 
         private Transform bgTrans;
         private Transform commonTrans;
@@ -42,7 +41,7 @@ namespace Nine.UI.Core
         void Awake()
         {
             Ins = this;
-            existUI = new Dictionary<string, View>();
+            existUI = new Dictionary<string, IView>();
         }
 
         public static void Init()
@@ -104,21 +103,21 @@ namespace Nine.UI.Core
             panel.Close();
         }
 
-        public void CreateListItem(View<ViewModel> view , ViewModel vm, int index)
+        public void CreateListItem(Transform view , ViewModel vm, int index)
         {
-            GameObject go = Instantiate(view.gameObject, view.transform.parent);
+            GameObject go = Instantiate(view.gameObject, view.parent);
             go.Show();
             go.transform.SetSiblingIndex(index);
-            View v = go.GetComponent<View<ViewModel>>();
+            IView v = go.GetComponent<IView>();
             v.Create(vm);
         }
 
-        private View CreateUI(string panelName)
+        private IView CreateUI(string panelName)
         {
             GameObject go;
             //TODO 有Assetbundle后再修改
             go = Instantiate(Resources.Load<GameObject>(panelName));
-            return go.GetComponent<View>();
+            return go.GetComponent<IView>();
         }
 
     }

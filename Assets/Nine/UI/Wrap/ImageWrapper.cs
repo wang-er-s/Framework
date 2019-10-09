@@ -18,7 +18,7 @@ namespace Assets.Nine.UI.Wrap
             image = _image;
         }
 
-        public Action<string> GetBindFieldFunc()
+        Action<string> IBindData<string>.GetBindFieldFunc()
         {
             //TODO 图片资源加载方式
             return (value) => image.sprite = string.IsNullOrEmpty(value) ? null : Resources.Load<Sprite>(value);

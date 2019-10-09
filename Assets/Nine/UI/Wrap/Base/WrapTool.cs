@@ -30,8 +30,8 @@ namespace Assets.Nine.UI.Wrap
                     return (BaseWrapper<T>)getWrapper(nameof(Image), component);
                 case Button btn:
                     return (BaseWrapper<T>)getWrapper(nameof(Button), component);
-                case View<ViewModel> view:
-                    return (BaseWrapper<T>)getWrapper(nameof(View<ViewModel>), component);
+                case View view:
+                    return (BaseWrapper<T>)getWrapper(nameof(View), component);
             }
             throw new NullReferenceException($"没有找到{component.GetType().Name}的包装器，自行添加");
         }

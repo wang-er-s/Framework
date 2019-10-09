@@ -22,16 +22,29 @@ public class Test : MonoBehaviour
 
     private void Start()
     {
-        
+        AA a1 = new AA();
+        DoUI(a1.Name);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            view.Data.Items.Add(new ItemViewModel() { Path = "img" });
+            view.viewModel.Items.Add(new ItemViewModel() { Path = "img" });
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            view.viewModel.Items.RemoveAt(0);
         }
     }
+
+    protected void DoUI(object property)
+    {
+        Type type = property.GetType();
+        Debug.Log("Type ToString: " + type.ToString() + " | Name: " + type.Name + " | Full Name: " + type.FullName);
+    }
+
 }
 
 class AA : INotifyPropertyChanged

@@ -12,12 +12,12 @@ namespace Assets.Nine.UI.Core
     public class BindList<TVm> : IBindSet where TVm : ViewModel
     {
         private Transform content;
-        private View<TVm> view;
+        private View view;
         private BindableList<TVm> list;
-        private BaseWrapper<View<TVm>> wrapper;
-        private IBindList<TVm> bindList;
+        private BaseWrapper<View> wrapper;
+        private IBindList<ViewModel> bindList;
 
-        public BindList(View<TVm> _view, BindableList<TVm> _list)
+        public BindList(View _view, BindableList<TVm> _list)
         {
             view = _view;
             content = view.transform.parent;
@@ -27,9 +27,8 @@ namespace Assets.Nine.UI.Core
 
         public void Init()
         {
-            //TODO ItemView<ItemViewModel> 与 View<ViewModel> 是两个类，不能获取到Wrapper，考虑替换掉View的泛型生成VM
             wrapper = WrapTool.GetWrapper(view);
-            bindList = wrapper as IBindList<TVm>;
+            bindList = wrapper as IBindList<ViewModel>;
             list.AddListener(bindList.GetBindListFunc());
         }
 

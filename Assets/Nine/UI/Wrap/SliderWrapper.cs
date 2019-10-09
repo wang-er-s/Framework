@@ -18,12 +18,12 @@ namespace Assets.Nine.UI.Wrap
             slider = _slider;
         }
 
-        public Action<float> GetBindFieldFunc()
+        Action<float> IBindData<float>.GetBindFieldFunc()
         {
             return (value) => slider.value = value;
         }
 
-        public UnityEvent<float> GetBindCommandFunc()
+        UnityEvent<float> IBindCommand<float>.GetBindCommandFunc()
         {
             return slider.onValueChanged;
         }
