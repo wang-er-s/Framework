@@ -18,46 +18,48 @@ public class Test : MonoBehaviour
 {
     public SetupView view;
     public InputField inputField;
-    private event Action a1;
+    public Text text;
+    private string outMsg;
 
     private void Start()
     {
-        AA a1 = new AA();
-        DoUI(a1.Name);
+         GetName((aa) => aa.Name);
+         text.text = outMsg;
     }
 
-    void Update()
+    void GetName(Expression<Func<AA, string>> expression)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        try
         {
-            view.viewModel.Items.Add(new ItemViewModel() { Path = "img" });
+            var body = expression.Body as MemberExpression;
+            outMsg = body.Member.Name;
         }
-
-        if (Input.GetKeyDown(KeyCode.Q))
+        catch (Exception e)
         {
-            view.viewModel.Items.RemoveAt(0);
+            outMsg = e.Message;
         }
     }
 
-    protected void DoUI(object property)
+    void GetName2(LambdaExpression expression)
     {
-        Type type = property.GetType();
-        Debug.Log("Type ToString: " + type.ToString() + " | Name: " + type.Name + " | Full Name: " + type.FullName);
+        try
+        {
+            var body = expression.Body as MemberExpression;
+            outMsg = body.Member.Name;
+        }
+        catch (Exception e)
+        {
+            outMsg = e.Message;
+        }
     }
 
 }
 
-class AA : INotifyPropertyChanged
+public class AA
 {
     public string Name { get; set; }
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }
+
 
 
 

@@ -770,6 +770,8 @@ GameObject:
   - component: {fileID: 861387448}
   - component: {fileID: 861387450}
   - component: {fileID: 861387449}
+  - component: {fileID: 861387452}
+  - component: {fileID: 861387451}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -833,6 +835,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 861387447}
   m_CullTransparentMesh: 0
+--- !u!114 &861387451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861387447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f4e79c71be8b048bac1420f492ca9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  img: {fileID: 861387449}
+--- !u!225 &861387452
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861387447}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &884759643
 GameObject:
   m_ObjectHideFlags: 0
@@ -1905,7 +1932,7 @@ MonoBehaviour:
   joinToggle: {fileID: 1669847195}
   joinInButton: {fileID: 564522346}
   img: {fileID: 1102730929}
-  item: {fileID: 861387448}
+  item: {fileID: 861387451}
 --- !u!225 &2007399769
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1930,6 +1957,7 @@ GameObject:
   - component: {fileID: 2026832324}
   - component: {fileID: 2026832323}
   - component: {fileID: 2026832322}
+  - component: {fileID: 2026832326}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2015,6 +2043,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2026832326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026832321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07fa6f42f4ab49a4a8acef56dc879989, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2054079060
 GameObject:
   m_ObjectHideFlags: 0
