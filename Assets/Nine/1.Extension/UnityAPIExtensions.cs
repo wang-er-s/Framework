@@ -494,6 +494,30 @@ public static class RectTransformExtension
         selfRectTrans.sizeDelta = sizeDelta;
         return selfRectTrans;
     }
+    
+    public static RectTransform SetLeft(this RectTransform selfRectTrans, float left)
+    {
+        selfRectTrans.offsetMin = new Vector2(left, selfRectTrans.offsetMin.y);
+        return selfRectTrans;
+    }
+ 
+    public static RectTransform SetRight(this RectTransform selfRectTrans, float right)
+    {
+        selfRectTrans.offsetMax = new Vector2(-right, selfRectTrans.offsetMax.y);
+        return selfRectTrans;
+    }
+ 
+    public static RectTransform SetTop(this RectTransform selfRectTrans, float top)
+    {
+        selfRectTrans.offsetMax = new Vector2(selfRectTrans.offsetMax.x, -top);
+        return selfRectTrans;
+    }
+ 
+    public static RectTransform SetBottom(this RectTransform selfRectTrans, float bottom)
+    {
+        selfRectTrans.offsetMin = new Vector2(selfRectTrans.offsetMin.x, bottom);
+        return selfRectTrans;
+    }
 
     public static Vector2 GetWorldSize ( this RectTransform selfRectTrans )
     {
