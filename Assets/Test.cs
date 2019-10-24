@@ -9,56 +9,24 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Nine.UI.Core;
 using Nine.UI.Example;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
 using Component = UnityEngine.Component;
 
 public class Test : MonoBehaviour
 {
-    public SetupView view;
-    public InputField inputField;
-    public Text text;
-    private string outMsg;
-
-    private void Start()
+    public Image img;
+    private void Start ()
     {
-         GetName((aa) => aa.Name);
-         text.text = outMsg;
+        print ( img.type );
+        img.type = Image.Type.Filled;
+        print(img.type);
     }
-
-    void GetName(Expression<Func<AA, string>> expression)
-    {
-        try
-        {
-            var body = expression.Body as MemberExpression;
-            outMsg = body.Member.Name;
-        }
-        catch (Exception e)
-        {
-            outMsg = e.Message;
-        }
-    }
-
-    void GetName2(LambdaExpression expression)
-    {
-        try
-        {
-            var body = expression.Body as MemberExpression;
-            outMsg = body.Member.Name;
-        }
-        catch (Exception e)
-        {
-            outMsg = e.Message;
-        }
-    }
-
+    
 }
 
-public class AA
-{
-    public string Name { get; set; }
-}
+
 
 
 

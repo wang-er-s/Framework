@@ -2,6 +2,7 @@
 using Nine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,157 +10,185 @@ using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 using Object = UnityEngine.Object;
 
-public class OverrideUIMenu 
+#pragma warning disable
+public class OverrideUIMenu
 {
-	[MenuItem("GameObject/UI/Text")]
-	private static DText CreateText ()
-	{
-		DText txt = new GameObject("Text").AddComponent<DText>();
-		SetTransform(txt.transform);
-        return txt;
-    }
-	
-	[MenuItem("GameObject/UI/Image")]
-	private static DImage CreateImage ()
-	{
-		DImage img = new GameObject("Image").AddComponent<DImage>();
-		SetTransform(img.transform);
-        return img;
-    }
-
-    [MenuItem("GameObject/UI/Raw Image")]
-    private static DRawImage CreateRawImage()
+    [MenuItem ( "GameObject/UI/@@ Text" )]
+    private static void CreateText ()
     {
-        DRawImage img = new GameObject("RawImage").AddComponent<DRawImage>();
-        SetTransform(img.transform);
-        return img;
+        Text text = CreateDefaultUI<Text> ();
+        ChangeComponent<Text, DText> ( text );
     }
 
-    [MenuItem("GameObject/UI/Button")]
-    private static DButton CreateButton()
+    [MenuItem ( "GameObject/UI/@@ Image" )]
+    private static void CreateImage ()
     {
-        DButton btn = new GameObject("Button").AddComponent<DButton>();
-        SetTransform(btn.transform);
-        Transform txt = CreateText().transform;
-        txt.transform.SetParent(btn.transform, false);
-        btn.gameObject.AddComponent<DImage>();
-        return btn;
+        Image image = CreateDefaultUI<Image> ();
+        ChangeComponent<Image, DImage> ( image );
     }
 
-    [MenuItem("GameObject/UI/Toggle2")]
-    private static DToggle CreateToggle ()
+    [MenuItem ( "GameObject/UI/@@ Raw Image" )]
+    private static void CreateRawImage ()
     {
-	    DToggle toggle = new GameObject("Toggle").AddComponent<DToggle>();
-	    toggle.isOn = true;
-	    SetTransform(toggle.transform);
-	    toggle.GetComponent<RectTransform> ().SetSizeWidth ( 160 ).SetSizeHeight ( 20 );
-	    DImage bg = CreateImage ();
-	    bg.sprite = CreateBuildInSprite ( UISPRITE );
-	    bg.GetType ().GetField ( "m_Type" ).SetValue ( bg, Image.Type.Sliced );
-	    bg.fillCenter = true;
-	    RectTransform bgRect = bg.GetComponent<RectTransform> ();
-	    bg.name = "Background";
-	    bgRect.SetParent ( toggle.transform, false );
-	    bgRect.localPosition = new Vector2 ( 10, -10 );
-	    SetAnchors ( bg, new Vector2 ( 0, 1 ), new Vector2 ( 0, 1 ) );
-	    bgRect.SetSizeWidth ( 20 ).SetSizeHeight ( 20 );
-	    DText lable = CreateText ();
-	    lable.name = "Lable";
-	    lable.text = "Toggle";
-	    lable.color = Color.black;
-	    var labRect = lable.rectTransform;
-	    labRect.SetParent(toggle.transform, false);
-	    SetAnchors ( labRect, Vector2.zero, Vector2.one );
-	    labRect.SetLeft ( 23 ).SetTop ( 2 ).SetRight ( 5 ).SetBottom ( 1 );
-	    DImage checkmark = CreateImage ();
-	    checkmark.name = CHECKMARK;
-	    checkmark.sprite = CreateBuildInSprite ( CHECKMARK );
-	    checkmark.GetComponent<RectTransform> ().SetSizeWidth ( 20 ).SetSizeHeight ( 20 );
-	    checkmark.transform.SetParent(bgRect, false);
-	    toggle.targetGraphic = bg;
-	    toggle.graphic = checkmark;
-	    
-	    return toggle;
+        RawImage img = CreateDefaultUI<RawImage> ( "Raw Image" );
+        ChangeComponent<RawImage, DRawImage> ( img );
     }
 
-    private static void SetTransform(Transform transform)
+    [MenuItem ( "GameObject/UI/@@ Button" )]
+    private static void CreateButton ()
+    {
+        Button button = CreateDefaultUI<Button> ();
+        DImage dImage = ChangeComponent<Image, DImage> ( button.GetComponent<Image> () );
+        DButton dButton = ChangeComponent<Button, DButton> ( button );
+        dButton.targetGraphic = dImage;
+        DText dText = ChangeComponent<Text, DText> ( dButton.GetComponentInChildren<Text> () );
+    }
+
+    [MenuItem ( "GameObject/UI/@@ Toggle" )]
+    private static void CreateToggle ()
+    {
+        Toggle toggle = CreateDefaultUI<Toggle> ();
+        DText dText = ChangeComponent<Text, DText> ( toggle.GetComponentInChildren<Text> () );
+        DImage checkmark = ChangeComponent<Image, DImage> (
+            toggle.transform.GetChild ( 0 ).Find ( "Checkmark" ).GetComponent<Image> () );
+        DImage bg = ChangeComponent<Image, DImage> ( toggle.transform.Find ( "Background" ).GetComponent<Image> () );
+        DToggle dToggle = ChangeComponent<Toggle, DToggle> ( toggle );
+        dToggle.targetGraphic = bg;
+        dToggle.graphic       = checkmark;
+    }
+
+    private static void CreateSlider ()
+    {
+        Slider slider = CreateDefaultUI<Slider> ();
+    }
+
+    private static void SetTransform ( Transform transform )
     {
         Transform activeTransform = Selection.activeTransform;
-        GameObject canvasObj = SecurityCheck();
-        if (!activeTransform) // 在根文件夹创建的， 自己主动移动到 Canvas下
+        GameObject canvasObj = SecurityCheck ();
+        if ( !activeTransform ) // 在根文件夹创建的， 自己主动移动到 Canvas下
         {
-            transform.SetParent(canvasObj.transform, false);
+            transform.SetParent ( canvasObj.transform, false );
             transform.gameObject.layer = canvasObj.layer;
         }
         else
         {
-            if (!activeTransform.GetComponentInParent<Canvas>()) // 没有在UI树下
+            if ( !activeTransform.GetComponentInParent<Canvas> () ) // 没有在UI树下
             {
-                transform.SetParent(canvasObj.transform, false);
+                transform.SetParent ( canvasObj.transform, false );
                 transform.gameObject.layer = canvasObj.layer;
             }
             else
             {
-                transform.SetParent(activeTransform, false);
+                transform.SetParent ( activeTransform, false );
                 transform.gameObject.layer = activeTransform.gameObject.layer;
             }
         }
         Selection.activeObject = transform;
     }
 
-    private static void SetAnchors ( Component component, Vector2 min, Vector2 max )
+    private static TResult ChangeComponent<TSource, TResult> ( TSource source ) where TResult : Component
+                                                                                where TSource : Component
     {
-	    SetAnchors ( component.GetComponent<RectTransform>(), min, max );
+        GameObject go = source.gameObject;
+        List<object> fieldValues;
+        List<object> propertyValues;
+        GetComponentValues ( source, out fieldValues, out propertyValues );
+        Object.DestroyImmediate ( source );
+        TResult result = go.AddComponent<TResult> ();
+        SetComponetValues ( result, fieldValues, propertyValues );
+        return result;
+        ;
     }
 
-    private static void SetAnchors ( RectTransform rectTrans, Vector2 min, Vector2 max )
+    private static void GetComponentValues<T> ( T component, out List<object> fieldValues,
+                                               out List<object> propertyValues ) where T : Component
     {
-	    rectTrans.anchorMin = min;
-	    rectTrans.anchorMax = max;
+        var fields = typeof ( T ).GetFields ();
+        var propertys = typeof ( T ).GetProperties ();
+        fieldValues    = new List<object> ();
+        propertyValues = new List<object> ();
+        foreach ( FieldInfo field in fields )
+        {
+            fieldValues.Add ( field.GetValue ( component ) );
+        }
+        foreach ( PropertyInfo property in propertys )
+        {
+            if ( !property.CanWrite ) continue;
+            propertyValues.Add ( property.GetValue ( component ) );
+        }
     }
 
-    private static Transform CreateEmpty (Transform parent = null)
+    private static void SetComponetValues<T> ( T component, List<object> fieldValues, List<object> propertyValues )
+        where T : Component
     {
-	    GameObject go = new GameObject("GameObject");
-	    SetTransform(go.transform);
-	    if ( parent != null )
-	    {
-		    go.transform.SetParent(parent);
-	    }
-	    return go.transform;
+        var fields = typeof ( T ).GetFields ();
+        var propertys = typeof ( T ).GetProperties ();
+        for ( int i = 0; i < fields.Length; i++ )
+        {
+            fields[ i ].SetValue ( component, fieldValues[ i ] );
+        }
+        int index = 0;
+        foreach ( PropertyInfo property in propertys )
+        {
+            if ( !property.CanWrite ) continue;
+            property.SetValue ( component, propertyValues[ index ] );
+            index++;
+        }
     }
 
-    private static Sprite CreateBuildInSprite (string name)
+    private static DImage ChangeImage ( Image img )
     {
-	    return AssetDatabase.GetBuiltinExtraResource<Sprite> ( $"UI/Skin/{name}.psd" );
+        GameObject go = img.gameObject;
+        Sprite sprite = img.sprite;
+        Image.Type type = img.type;
+        bool fillCenter = img.fillCenter;
+        Object.DestroyImmediate ( img );
+        DImage dImage = go.AddComponent<DImage> ();
+        dImage.sprite     = sprite;
+        dImage.type       = type;
+        dImage.fillCenter = fillCenter;
+        return dImage;
     }
-	
-	// 假设第一次创建UI元素 可能没有 Canvas、EventSystem对象！
-	private static GameObject SecurityCheck()
-	{
-		Canvas     cv = Object.FindObjectOfType<Canvas>();
-		GameObject canvas;
-		if (!cv)
-		{
-			canvas = new GameObject("Canvas", typeof(Canvas));
-			Undo.RegisterCreatedObjectUndo(canvas, "Canvas");
-		}
-		else
-		{
-			canvas = cv.gameObject;
-		}
 
-		if (!Object.FindObjectOfType<EventSystem>())
-		{
-			GameObject go = new GameObject("EventSystem", typeof(EventSystem));
-			Undo.RegisterCreatedObjectUndo(go, "EventSystem");
-		}
+    private static Sprite CreateBuildInSprite ( string name )
+    {
+        return AssetDatabase.GetBuiltinExtraResource<Sprite> ( $"UI/Skin/{name}.psd" );
+    }
 
-		canvas.layer = LayerMask.NameToLayer("UI");
-		return canvas;
-	}
+    private static T CreateDefaultUI<T> ( string menuItem = "" ) where T : Component
+    {
+        string item = string.IsNullOrEmpty ( menuItem ) ? typeof ( T ).Name : menuItem;
+        EditorApplication.ExecuteMenuItem ( $"GameObject/UI/{item}" );
+        return Selection.activeGameObject.GetComponent<T> ();
+    }
 
-	private const string CHECKMARK = "Checkmark";
-	private const string UISPRITE = "UISprite";
+    // 假设第一次创建UI元素 可能没有 Canvas、EventSystem对象！
+    private static GameObject SecurityCheck ()
+    {
+        Canvas cv = Object.FindObjectOfType<Canvas> ();
+        GameObject canvas;
+        if ( !cv )
+        {
+            canvas = new GameObject ( "Canvas", typeof ( Canvas ) );
+            Undo.RegisterCreatedObjectUndo ( canvas, "Canvas" );
+        }
+        else
+        {
+            canvas = cv.gameObject;
+        }
 
+        if ( !Object.FindObjectOfType<EventSystem> () )
+        {
+            GameObject go = new GameObject ( "EventSystem", typeof ( EventSystem ) );
+            Undo.RegisterCreatedObjectUndo ( go, "EventSystem" );
+        }
+
+        canvas.layer = LayerMask.NameToLayer ( "UI" );
+        return canvas;
+    }
+
+    private static Color DefaultColor = new Color ( 50f / 255, 50f / 255, 50f / 255 );
+    private const string CHECKMARK = "Checkmark";
+    private const string UISPRITE = "UISprite";
 }

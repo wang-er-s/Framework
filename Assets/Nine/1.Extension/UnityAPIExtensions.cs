@@ -595,6 +595,20 @@ public static class TransformExtension
         return selfComponent;
     }
 
+    public static Transform FindAllChild ( this Transform selfTransform, string name )
+    {
+        foreach ( Transform child in selfTransform )
+        {
+            if ( child.name == name )
+                return child;
+        }
+        foreach ( Transform child in selfTransform )
+        {
+            return child.FindAllChild ( name );
+        }
+        return null;
+    }
+
     /// <summary>
     /// 设置成为顶端 Transform
     /// </summary>
