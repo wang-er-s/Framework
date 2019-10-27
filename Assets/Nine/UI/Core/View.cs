@@ -34,19 +34,22 @@ namespace Nine.UI.Core
 
         #region 界面显示隐藏的调用和回调方法
 
-        void IView.Create(ViewModel vm)
+        void IView.Create (ViewModel vm)
         {
-            data = vm;
-            OnCreate(vm);
+            data = vm ?? CreateVM ();
+            data.OnCreate();
+            OnCreate ();
         }
 
-        void IView.Close()
+        void IView.Destroy()
         {
-            OnClose();
+            OnDestroy();
+            data.OnDestroy();
         }
 
         void IView.Show()
         {
+            SetCanvas (true);
             data.OnShow();
             ShowAction?.Invoke();
             OnShow();
@@ -54,13 +57,14 @@ namespace Nine.UI.Core
 
         void IView.Hide()
         {
+            SetCanvas(false);
             HideAction?.Invoke();
             data.OnHide();
             OnHide();
         }
 
 
-        protected virtual void OnCreate(ViewModel vm)
+        protected virtual void OnCreate()
         {
         }
 
@@ -68,7 +72,7 @@ namespace Nine.UI.Core
         {
         }
 
-        protected virtual void OnClose()
+        protected virtual void OnDestroy()
         {
         }
 
@@ -76,11 +80,16 @@ namespace Nine.UI.Core
         {
         }
 
-        void OnDestroy()
+        private void SetCanvas (bool visible)
         {
-            OnClose();
+            canvasGroup.interactable = visible;
+            canvasGroup.alpha = visible ? 1 : 0;
+            canvasGroup.blocksRaycasts = !visible;
         }
+        
         #endregion
+
+        protected abstract ViewModel CreateVM ();
 
     }
 

@@ -6,7 +6,7 @@ namespace Nine.UI.Core
     public interface IView
     {
         void Create(ViewModel vm);
-        void Close();
+        void Destroy();
         void Show();
         void Hide();
     }

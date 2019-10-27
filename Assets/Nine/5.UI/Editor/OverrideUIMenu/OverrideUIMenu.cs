@@ -57,9 +57,17 @@ public class OverrideUIMenu
         dToggle.graphic       = checkmark;
     }
 
+    [MenuItem ( "GameObject/UI/@@ Slider" )]
     private static void CreateSlider ()
     {
         Slider slider = CreateDefaultUI<Slider> ();
+        DSlider dSlider = ChangeComponent<Slider, DSlider> ( slider );
+        DImage handle = ChangeComponent<Image, DImage> ( dSlider.FindInAllChild ( "Handle" ).GetComponent<Image> () );
+        DImage fill = ChangeComponent<Image, DImage> ( dSlider.FindInAllChild ( "Fill" ).GetComponent<Image> () );
+        ChangeComponent<Image, DImage> ( dSlider.FindInAllChild ( "Background" ).GetComponent<Image> () );
+        dSlider.targetGraphic = handle;
+        dSlider.fillRect = fill.rectTransform;
+        dSlider.handleRect = handle.rectTransform;
     }
 
     private static void SetTransform ( Transform transform )

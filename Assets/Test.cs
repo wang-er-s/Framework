@@ -16,14 +16,19 @@ using Component = UnityEngine.Component;
 
 public class Test : MonoBehaviour
 {
-    public Image img;
+    public SetupView view;
+
     private void Start ()
     {
-        print ( img.type );
-        img.type = Image.Type.Filled;
-        print(img.type);
     }
-    
+
+    private void Update ()
+    {
+        if ( Input.GetKeyDown ( KeyCode.Space ) )
+        {
+            view.viewModel.Process = 0.4f;
+        }
+    }
 }
 
 

@@ -86,7 +86,7 @@ namespace Nine.UI.Core
         {
             foreach (var panel in existUI.Values)
             {
-                panel.Close();
+                panel.Destroy();
             }
 
             existUI.Clear();
@@ -100,7 +100,7 @@ namespace Nine.UI.Core
         public void CloseUI(string panelName)
         {
             if(! existUI.TryGetValue(panelName, out var panel)) return;
-            panel.Close();
+            panel.Destroy();
         }
 
         public void CreateListItem(Transform view , ViewModel vm, int index)

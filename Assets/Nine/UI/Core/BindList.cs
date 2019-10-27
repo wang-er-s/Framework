@@ -22,10 +22,10 @@ namespace Assets.Nine.UI.Core
             view = _view;
             content = view.transform.parent;
             list = _list;
+            Init();
         }
-
-
-        public void Init()
+        
+        private void Init()
         {
             wrapper = WrapTool.GetWrapper(view);
             bindList = wrapper as IBindList<ViewModel>;

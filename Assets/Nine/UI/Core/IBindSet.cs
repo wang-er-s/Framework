@@ -8,6 +8,5 @@ namespace Assets.Nine.UI.Core
 {
     public interface IBindSet
     {
-        void Init();
     }
 }

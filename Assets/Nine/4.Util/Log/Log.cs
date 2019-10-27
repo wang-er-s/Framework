@@ -7,27 +7,27 @@ using System;
 
 namespace Nine
 {
-	public static class Log  
-	{
+    public static class Log
+    {
 
         public static bool IsOpenLog = true;
 
-        public static void W(object obj, params object[] args)
+        public static void Warning ( object obj, params object[] args )
         {
-            if (IsOpenLog)
-                Debug.LogWarning(obj);
+            if ( !IsOpenLog ) return;
+            Debug.LogWarning ( obj );
         }
 
-        public static void E(object obj, params object[] args)
+        public static void Error ( object obj, params object[] args )
         {
-            if (IsOpenLog)
-                Debug.LogError(obj);
+            if ( !IsOpenLog ) return;
+            Debug.LogError ( obj );
         }
 
-        public static void I(object obj, params object[] args)
+        public static void Info ( object obj, params object[] args )
         {
-            if (IsOpenLog)
-                Debug.Log(obj);
+            if ( !IsOpenLog ) return;
+            Debug.Log ( obj );
         }
     }
 }

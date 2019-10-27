@@ -119,7 +119,7 @@ namespace Nine
             sceneName = sceneName.ToLower();
             if (!nameSceneDict.ContainsKey(sceneName))
             {
-                Log.E("请在读取配置表完成后再加载");
+                Log.Error("请在读取配置表完成后再加载");
             }
             StartCoroutine(nameSceneDict[sceneName].LoadAllAssetBundle(lp, loadCompleteCallBack));
         }

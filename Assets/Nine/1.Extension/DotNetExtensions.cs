@@ -1691,7 +1691,7 @@ public static class StringExtention
             Debug.LogWarning ( "字符转换 没有适合的转换类型，返回默认值" );
             return defultValue != type.DefaultForType () ? defultValue : type.DefaultForType ();
         }
-        catch ( Exception e )
+        catch ( Exception )
         {
             Debug.LogWarning ( "字符转换 解析失败，返回默认值" );
             return type.DefaultForType ();

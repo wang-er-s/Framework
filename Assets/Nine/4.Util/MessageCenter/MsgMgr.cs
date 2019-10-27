@@ -20,7 +20,7 @@ namespace Nine
         {
             if (listener == null)
             {
-                Log.E("AddListener: listener不能为空");
+                Log.Error("AddListener: listener不能为空");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace Nine
         {
             if (listener == null)
             {
-                Log.E("RemoveListener: listener不能为空");
+                Log.Error("RemoveListener: listener不能为空");
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace Nine
                 }
                 catch (System.Exception e)
                 {
-                    Log.E("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
+                    Log.Error("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Nine
                 }
                 catch (System.Exception e)
                 {
-                    Log.E("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
+                    Log.Error("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
                 }
             }
         }
