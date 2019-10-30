@@ -49,12 +49,12 @@ namespace Nine.UI.Example
         public override void OnCreate () { }
     }
 
-    public class ItemViewModel : ViewModel
+    public class ItemViewModel : ViewModel , IBindMulView
     {
         private string path;
 
         public string Path { get => path; set => Set ( ref path, value ); }
 
-        public int Tag;
+        public int Tag { get; set; }
     }
 }

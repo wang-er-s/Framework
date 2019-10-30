@@ -83,9 +83,8 @@ namespace Assets.Nine.UI.Wrap
 
         private int GetTag (ViewModel vm)
         {
-            object obj = vm.GetFieldByReflect ("Tag");
-            if ( obj == null ) return 0;
-            return (int) obj;
+            if ( !(vm is IBindMulView _vm) ) return 0;
+            return _vm.Tag;
         }
 
     }
