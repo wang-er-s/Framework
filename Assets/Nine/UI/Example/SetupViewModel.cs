@@ -54,5 +54,7 @@ namespace Nine.UI.Example
         private string path;
 
         public string Path { get => path; set => Set ( ref path, value ); }
+
+        public int Tag;
     }
 }

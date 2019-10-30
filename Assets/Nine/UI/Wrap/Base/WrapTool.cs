@@ -33,7 +33,8 @@ namespace Assets.Nine.UI.Wrap
                 case View view:
                     return (BaseWrapper<T>)getWrapper(nameof(View), component);
             }
-            throw new NullReferenceException($"没有找到{component.GetType().Name}的包装器，自行添加");
+            Log.Error ($"没有找到{component.GetType ().Name}的包装器，自行添加");
+            throw new NullReferenceException();
         }
 
         private static Object getWrapper(string componentName,Component component)
@@ -41,7 +42,8 @@ namespace Assets.Nine.UI.Wrap
             Type type = Type.GetType($"Assets.Nine.UI.Wrap.{componentName}Wrapper");
             if (type == null)
             {
-                throw new NullReferenceException($"没有找到{componentName}的包装器，自行添加");
+                Log.Error ($"没有找到{componentName}的包装器，自行添加");
+                throw new NullReferenceException();
             }
             return Activator.CreateInstance(type, args:component);
         }

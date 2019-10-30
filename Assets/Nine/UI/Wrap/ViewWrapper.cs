@@ -15,13 +15,18 @@ namespace Assets.Nine.UI.Wrap
 
         private Transform content;
         private Transform item;
-        private View view;
+        private int tag;
 
         public ViewWrapper(View _view) : base(_view)
         {
-            view = _view;
-            item = view.transform;
+            item = _view.transform;
             content = item.parent;
+            tag = 0;
+        }
+
+        public void SetTag (int _tag)
+        {
+            tag = _tag;
         }
 
         Action< NotifyCollectionChangedAction, ViewModel, ViewModel, int> IBindList<ViewModel>.GetBindListFunc()
@@ -32,6 +37,8 @@ namespace Assets.Nine.UI.Wrap
         private void BindListFunc(NotifyCollectionChangedAction type, ViewModel oldViewModel, ViewModel newViewModel,
             int index)
         {
+            int _tag = GetTag (newViewModel);
+            if(_tag != tag) return;
             switch (type)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -72,6 +79,13 @@ namespace Assets.Nine.UI.Wrap
             {
                 RemoveItem(i);
             }
+        }
+
+        private int GetTag (ViewModel vm)
+        {
+            object obj = vm.GetFieldByReflect ("Tag");
+            if ( obj == null ) return 0;
+            return (int) obj;
         }
 
     }

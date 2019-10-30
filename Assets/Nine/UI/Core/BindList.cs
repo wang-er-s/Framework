@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Nine.UI.Wrap;
+using Nine;
 using Nine.UI.Core;
 using UnityEngine;
 
@@ -12,25 +13,37 @@ namespace Assets.Nine.UI.Core
     public class BindList<TVm> : IBindSet where TVm : ViewModel
     {
         private Transform content;
-        private View view;
+        private List<View> views;
+        private List<int> tags;
         private BindableList<TVm> list;
-        private BaseWrapper<View> wrapper;
-        private IBindList<ViewModel> bindList;
+        private List<ViewWrapper> wrappers;
 
-        public BindList(View _view, BindableList<TVm> _list)
+        public BindList (BindableList<TVm> _list, params View[] _view)
         {
-            view = _view;
-            content = view.transform.parent;
+            views = _view.ToList ();
+            content = views[0].transform.parent;
             list = _list;
-            Init();
+        }
+
+        public BindList<TVm> SetTag (params int[] _tags)
+        {
+            tags = _tags.ToList ();
+            if(tags.Count != views.Count)
+                Log.Error("Tag must have the same length as view");
+            return this;
         }
         
-        private void Init()
+        public void Init()
         {
-            wrapper = WrapTool.GetWrapper(view);
-            bindList = wrapper as IBindList<ViewModel>;
-            list.AddListener(bindList.GetBindListFunc());
+            wrappers = new List<ViewWrapper> (views.Count);
+            for ( int i = 0; i < views.Count; i++ )
+            {
+                var wrapper = new ViewWrapper(views[i]);
+                wrapper.SetTag (tags?[i] ?? i);
+                IBindList<ViewModel> bindList = wrapper;
+                list.AddListener(bindList.GetBindListFunc());
+                wrappers.Add(wrapper);
+            }
         }
-
     }
 }
