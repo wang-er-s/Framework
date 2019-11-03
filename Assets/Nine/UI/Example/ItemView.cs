@@ -15,6 +15,7 @@ namespace Assets.Nine.UI.Example
     public class ItemView : View
     {
         public Image img;
+        public Text text;
         public ItemViewModel viewModel;
 
         protected override void OnCreate()

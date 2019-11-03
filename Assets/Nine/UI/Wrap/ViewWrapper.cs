@@ -10,18 +10,19 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Nine.UI.Wrap
 {
-    public class ViewWrapper : BaseWrapper<View>,IBindList<ViewModel>
+    public class ViewWrapper : BaseWrapper<View>, IBindList<ViewModel>
     {
-
         private Transform content;
         private Transform item;
         private int tag;
+        private int index;
 
-        public ViewWrapper(View _view) : base(_view)
+        public ViewWrapper (View _view, int _index = 0) : base (_view)
         {
             item = _view.transform;
             content = item.parent;
             tag = 0;
+            index = _index;
         }
 
         public void SetTag (int _tag)
@@ -29,55 +30,57 @@ namespace Assets.Nine.UI.Wrap
             tag = _tag;
         }
 
-        Action< NotifyCollectionChangedAction, ViewModel, ViewModel, int> IBindList<ViewModel>.GetBindListFunc()
+        Action<NotifyCollectionChangedAction, ViewModel, ViewModel, int> IBindList<ViewModel>.GetBindListFunc ()
         {
             return BindListFunc;
         }
 
-        private void BindListFunc(NotifyCollectionChangedAction type, ViewModel oldViewModel, ViewModel newViewModel,
-            int index)
+        private void BindListFunc
+            (NotifyCollectionChangedAction type, ViewModel oldViewModel, ViewModel newViewModel, int index)
         {
             int _tag = GetTag (newViewModel);
-            if(_tag != tag) return;
-            switch (type)
+            if ( _tag != tag ) return;
+            switch ( type )
             {
                 case NotifyCollectionChangedAction.Add:
-                    AddItem(index, newViewModel);
+                    AddItem (index, newViewModel);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    RemoveItem(index);
+                    RemoveItem (index);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    ReplaceItem(index, newViewModel);
+                    ReplaceItem (index, newViewModel);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    Clear();
+                    Clear ();
                     break;
+                case NotifyCollectionChangedAction.Move: break;
+                default: throw new ArgumentOutOfRangeException (nameof (type), type, null);
             }
         }
-
-        private void AddItem(int index, ViewModel vm)
+        
+        private void AddItem (int index, ViewModel vm)
         {
-            UIMgr.Ins.CreateListItem(item, vm, index + 1);
+            UIMgr.Ins.CreateListItem (item, vm, index + 1);
         }
 
-        private void RemoveItem(int index)
+        private void RemoveItem (int index)
         {
-            Object.Destroy(content.GetChild(index + 1).gameObject);
+            Object.Destroy (content.GetChild (index + 1).gameObject);
         }
 
-        private void ReplaceItem(int index, ViewModel vm)
+        private void ReplaceItem (int index, ViewModel vm)
         {
-            RemoveItem(index);
-            AddItem(index, vm);
+            RemoveItem (index);
+            AddItem (index, vm);
         }
 
-        private void Clear()
+        private void Clear ()
         {
             int childCount = content.childCount;
-            for (int i = 0; i < childCount - 1; i++)
+            for ( int i = 1; i < childCount - 1; i++ )
             {
-                RemoveItem(i);
+                RemoveItem (i);
             }
         }
 
@@ -86,6 +89,5 @@ namespace Assets.Nine.UI.Wrap
             if ( !(vm is IBindMulView _vm) ) return 0;
             return _vm.Tag;
         }
-
     }
 }

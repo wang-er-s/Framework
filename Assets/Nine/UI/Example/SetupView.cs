@@ -15,18 +15,16 @@ namespace Nine.UI.Example
         public Toggle joinToggle;
         public Button joinInButton;
         public Image img;
-        public ItemView item1;
-        public ItemView item2;
         public Slider slider;
         public SetupViewModel viewModel;
-
-        protected void Start ()
+        public View subView;
+        
+        protected override void OnCreate ()
         {
-            //viewModel = (SetupViewModel) data;
-            viewModel = (SetupViewModel)CreateVM ();
+            viewModel = (SetupViewModel) data;
             BindFactory<SetupView, SetupViewModel> binding =
                 new BindFactory<SetupView, SetupViewModel> (this, viewModel);
-            /*//nameMessa|geText show or hide by vm.visible
+            //nameMessa|geText show or hide by vm.visible
             binding.Bind (nameMessageText, (vm) => vm.Visible).OneWay ();
             //nameMessageText.text show text by vm.Name
             binding.Bind (nameMessageText, (vm) => vm.Name).OneWay ();
@@ -62,8 +60,9 @@ namespace Nine.UI.Example
                     valueChangedFunc (value);
                     print ("Wrap InputField");
                 };
-            }).OneWay ();*/
-            binding.BindList (viewModel.Items, item1, item2).Init();
+            }).OneWay ();
+            //binding.BindList (viewModel.Items, item1, item2).Init();
+            AddSubView(subView);
         }
 
         protected override void OnDestroy ()

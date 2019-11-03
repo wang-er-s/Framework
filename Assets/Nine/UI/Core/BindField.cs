@@ -14,6 +14,9 @@ namespace Assets.Nine.UI.Core
 
     public class BindField<TComponent,TData> where  TComponent : Component
     {
+
+        public static BindField<TComponent, TData> Empty = new BindField<TComponent, TData> (null, null);
+        
         private TComponent component;
         private Action<TData> valueChangeEvent;
         private UnityEvent<TData> componentChangEvent;

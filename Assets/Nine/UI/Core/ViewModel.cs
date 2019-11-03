@@ -20,9 +20,7 @@ namespace Nine.UI.Core
             binds = new Dictionary<string, object>();
         }
 
-        public virtual void OnCreate()
-        {
-        }
+        public abstract void OnCreate ();
 
 
         public virtual void OnShow()

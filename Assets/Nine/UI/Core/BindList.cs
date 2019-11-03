@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Assets.Nine.UI.Wrap;
 using Nine;
@@ -45,5 +46,59 @@ namespace Assets.Nine.UI.Core
                 wrappers.Add(wrapper);
             }
         }
+    }
+
+    public class BindIpairsView<TVm> : IBindSet where TVm : ViewModel
+    {
+        private BindableList<TVm> list;
+        private List<View> views;
+
+        public BindIpairsView (ref BindableList<TVm> _list, string itemName, Transform root)
+        {
+            list = _list;
+            ParseItems (itemName, root);
+        }
+        
+        public void Init()
+        {
+            list.Clear();
+            for ( int i = 0; i < views.Count; i++ )
+            {
+                list.Add (views[i].data as TVm);
+            }
+        }
+
+        private void ParseItems (string itemName, Transform root)
+        {
+            views = new List<View> ();
+            Regex regex = new Regex (@"[/w ]*?(?<=\[)[?](?=\])");
+            if ( !regex.IsMatch (itemName) )
+            {
+                Log.Error ($"{itemName} not match (skill[?]) pattern!");
+                return;
+            }
+            Transform upTransform = null;
+            for ( int i = 0; i < Int32.MaxValue; i++ )
+            {
+                string item = regex.Replace (itemName, i.ToString ());
+                View view;
+                if ( upTransform == null )
+                {
+                    view = root.FindInAllChild (item)?.GetComponent<View> ();
+                    upTransform = view.transform.parent;
+                }
+                else
+                {
+                    view = upTransform.Find (item)?.GetComponent<View> ();
+                    if ( view == null )
+                    {
+                        view = root.FindInAllChild (item)?.GetComponent<View> ();
+                    }
+                }
+                if(view == null) break;
+                views.Add(view);
+            }
+        }
+        
     }
 }

@@ -1,5 +1,6 @@
 using Assets.Nine.UI.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Assets.Nine.UI.Wrap;
@@ -13,38 +14,44 @@ namespace Nine.UI.Core
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class View : MonoBehaviour, IView
     {
-        /// <summary>
-        /// 显示之后的回掉函数
-        /// </summary>
+
         public Action ShowAction { get; set; }
 
-        /// <summary>
-        /// 隐藏之后的回掉函数
-        /// </summary>
         public Action HideAction { get; set; }
+
+        private List<View> subViews;
 
         private CanvasGroup canvasGroup;
 
-        protected ViewModel data;
+        public ViewModel data { get; private set; }
 
         void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
+            subViews = new List<View> ();
+        }
+
+        private void Start ()
+        {
+            ((IView)this).Create (CreateVM ());
         }
 
         #region 界面显示隐藏的调用和回调方法
 
         void IView.Create (ViewModel vm)
         {
+            if ( data != null ) return;
             data = vm ?? CreateVM ();
-            data.OnCreate();
+            data.OnCreate ();
             OnCreate ();
+            subViews.ForEach ((subView) => subView.OnCreate ());
         }
 
         void IView.Destroy()
         {
             OnDestroy();
             data.OnDestroy();
+            subViews.ForEach ((subView) => subView.OnDestroy ());
         }
 
         void IView.Show()
@@ -53,6 +60,7 @@ namespace Nine.UI.Core
             data.OnShow();
             ShowAction?.Invoke();
             OnShow();
+            subViews.ForEach ((subView) => subView.OnShow ());
         }
 
         void IView.Hide()
@@ -61,12 +69,11 @@ namespace Nine.UI.Core
             HideAction?.Invoke();
             data.OnHide();
             OnHide();
+            subViews.ForEach ((subView) => subView.OnHide ());
         }
 
 
-        protected virtual void OnCreate()
-        {
-        }
+        protected abstract void OnCreate ();
 
         protected virtual void OnShow()
         {
@@ -90,6 +97,12 @@ namespace Nine.UI.Core
         #endregion
 
         protected abstract ViewModel CreateVM ();
+
+        protected void AddSubView (View view)
+        {
+            subViews.Add(view);
+        }
+        
 
     }
 

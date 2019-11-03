@@ -2415,7 +2415,7 @@ public static class StringExtention
     /// <returns></returns>
     public static string ReplaceFirst ( this string input, string oldValue, string newValue, int startAt = 0 )
     {
-        var index = input.IndexOf ( oldValue, startAt );
+        var index = input.IndexOf ( oldValue, startAt, StringComparison.Ordinal);
         if ( index < 0 )
         {
             return input;

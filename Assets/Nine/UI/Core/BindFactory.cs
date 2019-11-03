@@ -13,7 +13,6 @@ namespace Assets.Nine.UI.Core
         where TView : View
         where TVm : ViewModel
     {
-
         private TView view;
         private TVm vm;
 
@@ -55,6 +54,12 @@ namespace Assets.Nine.UI.Core
             (BindableList<TItemVm> list, params View[] views) where TItemVm : ViewModel
         {
             return new BindList<TItemVm> (list, views);
+        }
+
+        public BindIpairsView<TItemVm> BindIpairs<TItemVm>
+            (BindableList<TItemVm> list, string pattern) where TItemVm : ViewModel
+        {
+            return new BindIpairsView<TItemVm> (ref list, pattern, view.transform);
         }
 
         private BindableProperty<TData> GetBindPropertyByExpression<TData> (Expression<Func<TVm, TData>> expression)

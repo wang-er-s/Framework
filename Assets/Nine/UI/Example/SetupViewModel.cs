@@ -29,7 +29,7 @@ namespace Nine.UI.Example
         public float Process { get => process; set => Set ( ref process, value ); }
 
         //public BindableList<ItemViewModel> Items { get; private set; }
-        public BindableList<ItemViewModel> Items = new BindableList<ItemViewModel> ();
+        
 
         public void OnToggleChanged ( bool value )
         {
@@ -46,7 +46,9 @@ namespace Nine.UI.Example
             Debug.Log ( "按钮点击了" );
         }
 
-        public override void OnCreate () { }
+        public override void OnCreate ()
+        {
+        }
     }
 
     public class ItemViewModel : ViewModel , IBindMulView
@@ -56,5 +58,10 @@ namespace Nine.UI.Example
         public string Path { get => path; set => Set ( ref path, value ); }
 
         public int Tag { get; set; }
+
+        public override void OnCreate ()
+        {
+            
+        }
     }
 }
