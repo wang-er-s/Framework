@@ -17,7 +17,9 @@ namespace AD
         /// <summary>
         /// WWW对象
         /// </summary>
+#pragma warning disable 618
         private WWW www;
+#pragma warning restore 618
 
         /// <summary>
         /// 包名
@@ -64,7 +66,9 @@ namespace AD
         /// <returns></returns>
         public IEnumerator Load()
         {
+#pragma warning disable 618
             www = new WWW(bundlePath);
+#pragma warning restore 618
 
             while (!www.isDone)
             {

@@ -1,6 +1,4 @@
 using AD.UI.Core;
-using AD.UI.Core;
-using AD.AD.UI.Example;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

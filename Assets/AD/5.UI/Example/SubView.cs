@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using AD.UI.Core;
-using AD.UI.Core;
 using AD.UI.Example;
 using UnityEngine;
 

@@ -35,7 +35,6 @@ namespace AD.UI.Core
 
         public Camera UICamera { get; private set; }
         public Canvas Canvas { get; private set; }
-        private CanvasScaler canvasScaler;
         private GraphicRaycaster graphicRaycaster;
 
         void Awake()
@@ -47,16 +46,6 @@ namespace AD.UI.Core
         public static void Init()
         {
 
-        }
-
-        public void SetResolution(int width, int height)
-        {
-            canvasScaler.referenceResolution = new UnityEngine.Vector2(width, height);
-        }
-
-        public void SetMatchOnWidthOrHeight(float heightPercent)
-        {
-            canvasScaler.matchWidthOrHeight = heightPercent;
         }
 
         public void Create(string uiBehaviourName, UILevel canvasLevel)

@@ -4,40 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace AD.AD.ResKit
+namespace AD.ResKit
 {
-    public delegate void OnAssetGot(System.Object asset, ulong cbId);
-    public class ResMgr
+    
+    public static class ResMgr
     {
-        public ulong GetAsset(string assetPath, OnAssetGot cb, bool isManifest = false)
+        public static Object Load(string assetPath)
         {
-            
-            return 0;
+            return Resources.Load(assetPath);
         }
 
-        public object GetAssetSync(string assetPath)
+        public static T Load<T>(string assetPath) where T : Object
         {
-
-            return null;
+            return Resources.Load<T>(assetPath);
         }
-
-        public void RecycleAsset(string assetPath)
-        {
-            
-        }
-
-        public void DeleteNoRefBundles()
-        {
-            
-        }
-
-        public void Gc(bool delNoRef)
-        {
-            if (delNoRef)
-                DeleteNoRefBundles();
-            Resources.UnloadUnusedAssets();
-            GC.Collect();
-        }
+        
     }
 }

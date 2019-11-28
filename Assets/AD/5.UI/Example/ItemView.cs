@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using AD.UI.Core;
 using AD;
-using AD.UI.Core;
 using AD.UI.Example;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Example
+namespace AD.UI.Example
 {
 
     public class ItemView : View

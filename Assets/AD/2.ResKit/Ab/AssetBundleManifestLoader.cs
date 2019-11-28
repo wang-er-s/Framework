@@ -60,7 +60,9 @@ namespace AD
         /// <returns></returns>
         public IEnumerator Load()
         {
+#pragma warning disable 618
             WWW www = new WWW(manifestPath);
+#pragma warning restore 618
             yield return www;
 
             if (www.error != null)

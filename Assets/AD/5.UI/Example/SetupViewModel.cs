@@ -1,5 +1,4 @@
 using AD.UI.Core;
-using AD.AD.UI.Example;
 using AD.Core.Message;
 using UnityEngine;
 

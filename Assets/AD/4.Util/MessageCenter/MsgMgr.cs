@@ -4,80 +4,53 @@
 */
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace AD
 {
-    public class MsgMgr : Singleton<MsgMgr>
+    public class MsgMgr : PrivateSingleton<MsgMgr>
     {
-        private MsgMgr() { }
-
-        public delegate void EventListenerDelegate(Message evt);
-
-        private Dictionary<int, EventListenerDelegate> events = new Dictionary<int, EventListenerDelegate>();
-
-        public void AddListener(int type, EventListenerDelegate listener)
+        private MsgMgr()
         {
-            if (listener == null)
-            {
-                Log.Error("AddListener: listener不能为空");
-                return;
-            }
-
-            EventListenerDelegate myListener = null;
-            events.TryGetValue(type, out myListener);
-            events[type] = (EventListenerDelegate)Delegate.Combine(myListener, listener);
+            _eventDispatcher = new EventDispatcher();
         }
 
+        private EventDispatcher _eventDispatcher;
 
-        public void RemoveListener(int type, EventListenerDelegate listener)
+        public static void Register<T>(Action<T> listener)
         {
-            if (listener == null)
-            {
-                Log.Error("RemoveListener: listener不能为空");
-                return;
-            }
-
-            events[type] = (EventListenerDelegate)Delegate.Remove(events[type], listener);
+            Instance._eventDispatcher.Register(listener);
         }
 
-        public void Clear()
+        public static void UnRegister<T>(Action<T> listener)
         {
-            events.Clear();
+            Instance._eventDispatcher.UnRegister(listener);
         }
 
-        public void SendMessage(Message evt)
+        public static void Clear()
         {
-            EventListenerDelegate listenerDelegate;
-            if (events.TryGetValue(evt.Type, out listenerDelegate))
-            {
-                try
-                {
-                    listenerDelegate?.Invoke(evt);
-                }
-                catch (System.Exception e)
-                {
-                    Log.Error("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
-                }
-            }
+            Instance._eventDispatcher.Clear();
         }
 
-        public void SendMessage(int type, params System.Object[] param)
+        public static void SendMsg<T>(T msg)
         {
-            EventListenerDelegate listenerDelegate;
-            if (events.TryGetValue(type, out listenerDelegate))
-            {
-                Message evt = new Message(type, param);
-                try
-                {
-                    listenerDelegate?.Invoke(evt);
-                }
-                catch (System.Exception e)
-                {
-                    Log.Error("SendMessage:" + evt.Type.ToString() + e.Message + e.StackTrace, e);
-                }
-            }
+            Instance._eventDispatcher.SendMessage(msg);
         }
 
+        public static void Register(int tag, Action listener)
+        {
+            Instance._eventDispatcher.Register(tag, listener);
+        }
+
+        public static void UnRegister(int tag, Action listener)
+        {
+            Instance._eventDispatcher.UnRegister(tag, listener);
+        }
+
+        public static void SendMsg(int tag)
+        {
+            Instance._eventDispatcher.SendMessage(tag);
+        }
     }
 }
