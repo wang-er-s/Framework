@@ -37,7 +37,7 @@ namespace AD.UI.Example
                     callback ();
                     print ("Wrap 按钮");
                 };
-            }).OneWay ();
+            }).Init ();
             binding.Bind (slider, viewModel.Process).TwoWay ();
             //image bind path, when path changed, img.sprite change to res.load(path)
             binding.Bind (img, viewModel.Path).OneWay ();

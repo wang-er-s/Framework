@@ -38,7 +38,7 @@ namespace AD.UI.Core
             return this;
         }
 
-        public void OneWay()
+        public void Init()
         {
             baseWrapper = WrapTool.GetWrapper(component);
             bindCommand = baseWrapper as IBindCommand;

@@ -74,7 +74,7 @@ namespace AD.UI.Core
             Regex regex = new Regex (@"[/w ]*?(?<=\[)[?](?=\])");
             if ( !regex.IsMatch (itemName) )
             {
-                Log.Error ($"{itemName} not match (skill[?]) pattern!");
+                Log.Error ($"{itemName} not match (skill[?]) pattern.");
                 return;
             }
             Transform upTransform = null;
