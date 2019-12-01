@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AD.UI.Core;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public interface IBindList<T> where T : ViewModel
     {

@@ -7,7 +7,7 @@ using AD.UI.Core;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public class SliderWrapper: BaseWrapper<Slider>, IBindData<float>, IBindCommand<float>
     {

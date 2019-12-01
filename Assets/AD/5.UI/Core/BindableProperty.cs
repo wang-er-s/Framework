@@ -4,6 +4,16 @@ namespace AD.UI.Core
 {
     public class BindableProperty<T> : INotifyWhenChanged<T>
     {
+
+        public BindableProperty(T value)
+        {
+            _value = value;
+        }
+        
+        public BindableProperty()
+        {
+        }
+        
         private event Action<T> OnValueChanged;
 
         private T _value;

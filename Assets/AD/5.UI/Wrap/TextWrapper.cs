@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AD.UI.Core;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public class TextWrapper : BaseWrapper<Text>, IBindData<string>
     {

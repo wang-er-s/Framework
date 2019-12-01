@@ -23,31 +23,28 @@ namespace AD.UI.Core
         }
 
         public BindField<TComponent, TData> Bind<TComponent, TData>
-            (TComponent component, Expression<Func<TVm, TData>> filed) where TComponent : Component
+            (TComponent component, BindableProperty<TData> filed) where TComponent : Component
         {
-            return new BindField<TComponent, TData> (component, GetBindPropertyByExpression (filed));
+            return new BindField<TComponent, TData>(component, filed);
         }
 
         public BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1, TData2, TResult>
-        (TComponent component, Expression<Func<TVm, TData1>> field1, Expression<Func<TVm, TData2>> field2,
+        (TComponent component, BindableProperty<TData1>  field1, BindableProperty<TData2> field2,
          Func<TData1, TData2, TResult> wrapFunc) where TComponent : Component
         {
-            return new BindField<TComponent, TData1, TData2, TResult> (component, GetBindPropertyByExpression (field1),
-                                                                       GetBindPropertyByExpression (field2), wrapFunc);
+            return new BindField<TComponent, TData1, TData2, TResult>(component, field1, field2, wrapFunc);
         }
 
         public BindFunc<TComponent> BindCommand<TComponent>
-            (TComponent component, Func<TVm, Action> command) where TComponent : Component
+            (TComponent component, Action command) where TComponent : Component
         {
-            Action dataChanged = command?.Invoke (vm);
-            return new BindFunc<TComponent> (component, dataChanged);
+            return new BindFunc<TComponent> (component, command);
         }
 
         public BindFuncWithPara<TComponent, TValue> BindCommand<TComponent, TValue>
-            (TComponent component, Func<TVm, Action<TValue>> command) where TComponent : Component
+            (TComponent component,  Action<TValue> command) where TComponent : Component
         {
-            Action<TValue> dataChanged = command?.Invoke (vm);
-            return new BindFuncWithPara<TComponent, TValue> (component, dataChanged);
+            return new BindFuncWithPara<TComponent, TValue> (component, command);
         }
 
         public BindList<TItemVm> BindList<TItemVm>
@@ -61,10 +58,6 @@ namespace AD.UI.Core
         {
             return new BindIpairsView<TItemVm> (ref list, pattern, view.transform);
         }
-
-        private BindableProperty<TData> GetBindPropertyByExpression<TData> (Expression<Func<TVm, TData>> expression)
-        {
-            return vm.GetBindingAbleProperty<TData> ((expression.Body as MemberExpression)?.Member.Name);
-        }
+        
     }
 }

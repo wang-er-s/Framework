@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AD.AD.UI.Wrap;
+using AD.UI.Wrap;
 using UnityEngine.Events;
 using Component = UnityEngine.Component;
 
@@ -23,7 +23,6 @@ namespace AD.UI.Core
         private Func<TData, TData> wrapFunc;
         private BindableProperty<TData> field;
         private IBindData<TData> bindData;
-        private IBindCommand<TData> bindCommand;
         private BaseWrapper<TComponent> baseWrapper;
 
         public BindField(TComponent _component, BindableProperty<TData> _field)
@@ -37,6 +36,11 @@ namespace AD.UI.Core
             valueChangeEvent = _dataChanged;
             return this;
         }
+        
+        public BindFieldWrap<TComponent, TData, TResult> For<TResult>(Action<TResult> _dataChanged)
+        {
+            return new BindFieldWrap<TComponent, TData, TResult>(component, field, _dataChanged, null);
+        }
 
         public BindField<TComponent, TData> For(UnityEvent<TData> _componentChanged)
         {
@@ -44,6 +48,11 @@ namespace AD.UI.Core
             return this;
         }
 
+        public BindFieldWrap<TComponent, TData, TResult> Wrap<TResult>(Func<TData,TResult> _wrapFunc)
+        {
+            return new BindFieldWrap<TComponent, TData, TResult>(component, field,null, _wrapFunc);
+        }
+        
         public BindField<TComponent, TData> Wrap(Func<TData,TData> _wrapFunc)
         {
             wrapFunc = _wrapFunc;
@@ -73,11 +82,8 @@ namespace AD.UI.Core
             if (bindData != null) return;
             baseWrapper = WrapTool.GetWrapper(component);
             bindData = baseWrapper as IBindData<TData>;
-            bindCommand = baseWrapper as IBindCommand<TData>;
             if (valueChangeEvent == null)
                 valueChangeEvent = bindData?.GetBindFieldFunc();
-            if (componentChangEvent == null)
-                componentChangEvent = bindCommand?.GetBindCommandFunc();
             
         }
 

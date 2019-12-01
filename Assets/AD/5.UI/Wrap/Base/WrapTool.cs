@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = System.Object;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public static class WrapTool
     {
@@ -39,10 +39,11 @@ namespace AD.AD.UI.Wrap
 
         private static Object getWrapper(string componentName,Component component)
         {
-            Type type = Type.GetType($"Assets.AD.UI.Wrap.{componentName}Wrapper");
+            string typePath = $"{typeof(WrapTool).Namespace}.{componentName}Wrapper";
+            Type type = Type.GetType(typePath);
             if (type == null)
             {
-                Log.Error ($"没有找到{componentName}的包装器，自行添加");
+                Log.Error ($"没有找到{typePath}类，自行添加");
                 throw new NullReferenceException();
             }
             return Activator.CreateInstance(type, args:component);

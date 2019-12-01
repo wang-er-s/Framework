@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public class ImageWrapper : BaseWrapper<Image>,IBindData<string>
     {

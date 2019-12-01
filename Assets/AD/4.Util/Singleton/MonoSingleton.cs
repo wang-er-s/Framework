@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AD
 {
-	public class MonoSingleton<T>  : MonoBehaviour where T : MonoBehaviour
+	public class MonoSingleton<T>  : MonoBehaviour,ISingleton where T : MonoSingleton<T>
 	{
 		private static T mInstance = null;
 		
@@ -20,12 +20,7 @@ namespace AD
 				{
 					if ( null == mInstance )
 					{
-						mInstance = FindObjectOfType<T>();
-                        if (mInstance == null)
-                        {
-                            mInstance = new GameObject(typeof(T).Name).AddComponent<T>();
-                            Object.DontDestroyOnLoad(mInstance.gameObject);
-                        }
+						mInstance = MonoSingletonCreator.CreateMonoSingleton<T>();
 					}
 				}
 
@@ -38,5 +33,10 @@ namespace AD
 			Destroy ( mInstance.gameObject );
 			mInstance = null;
 		}
-    }
+
+		public virtual void OnSingletonInit()
+		{
+			
+		}
+	}
 }

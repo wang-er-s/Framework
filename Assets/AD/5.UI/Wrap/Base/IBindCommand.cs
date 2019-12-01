@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Events;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public interface IBindCommand<T>
     {

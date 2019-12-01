@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AD;
-using AD.AD.UI.Wrap;
+using AD.UI.Wrap;
 using AD.UI.Core;
 using UnityEngine;
 

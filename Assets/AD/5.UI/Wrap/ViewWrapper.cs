@@ -8,7 +8,7 @@ using AD.UI.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public class ViewWrapper : BaseWrapper<View>, IBindList<ViewModel>
     {
@@ -61,7 +61,7 @@ namespace AD.AD.UI.Wrap
         
         private void AddItem (int index, ViewModel vm)
         {
-            UIMgr.Ins.CreateListItem (item, vm, index + 1);
+            UIMgr.CreateListItem (item, vm, index + 1);
         }
 
         private void RemoveItem (int index)

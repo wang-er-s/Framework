@@ -3,9 +3,12 @@
 using System;
 using System.Collections.Generic;
 using AD;
+using AD.ResKit;
 using AD.UI.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace AD.UI.Core
 {
@@ -21,57 +24,52 @@ namespace AD.UI.Core
         Guide = 3, //新手引导层
     }
 
-    public class UIMgr : MonoBehaviour
+    public class UIMgr
     {
-        public static UIMgr Ins;
+        private static Dictionary<string, IView> existUI = new Dictionary<string, IView>();
 
-        private Dictionary<string, IView> existUI;
+        private static Transform bgTrans;
+        private static Transform commonTrans;
+        private static Transform popTrans;
+        private static Transform toastTrans;
+        private static Transform guideTrans;
+ 
+        public static Camera UICamera { get; private set; }
+        public static Canvas Canvas { get; private set; }
 
-        private Transform bgTrans;
-        private Transform commonTrans;
-        private Transform popTrans;
-        private Transform toastTrans;
-        private Transform guideTrans;
-
-        public Camera UICamera { get; private set; }
-        public Canvas Canvas { get; private set; }
-        private GraphicRaycaster graphicRaycaster;
-
-        void Awake()
+        static UIMgr()
         {
-            Ins = this;
-            existUI = new Dictionary<string, IView>();
+            Canvas = Object.FindObjectOfType<Canvas>();
+            bgTrans = Canvas.transform.Find("Bg");
+            commonTrans = Canvas.transform.Find("Common");
+            popTrans = Canvas.transform.Find("Pop");
+            toastTrans = Canvas.transform.Find("Toast");
+            guideTrans = Canvas.transform.Find("Guide");
         }
 
-        public static void Init()
-        {
-
-        }
-
-        public void Create(string uiBehaviourName, UILevel canvasLevel)
+        public static void Create(string uiBehaviourName, UILevel canvasLevel = UILevel.Common)
         {
 
             if (!existUI.TryGetValue(uiBehaviourName, out var panel))
             {
-                panel = CreateUI(uiBehaviourName);
+                panel = CreateUI(uiBehaviourName, canvasLevel);
             }
-
             panel.Create(null);
         }
 
-        public void ShowUI(string panelName)
+        public static void ShowUI(string panelName)
         {
             if (!existUI.TryGetValue(panelName, out var panel)) return;
             panel.Show();
         }
 
-        public void HideUI(string panelName)
+        public static void HideUI(string panelName)
         {
             if (!existUI.TryGetValue(panelName, out var panel)) return;
             panel.Hide();
         }
 
-        public void CloseAllUI()
+        public static void CloseAllUI()
         {
             foreach (var panel in existUI.Values)
             {
@@ -81,31 +79,50 @@ namespace AD.UI.Core
             existUI.Clear();
         }
 
-        public void HideAllUI()
+        public static void HideAllUI()
         {
             existUI.Values.ForEach(panel => panel.Hide());
         }
 
-        public void CloseUI(string panelName)
+        public static void CloseUI(string panelName)
         {
             if(! existUI.TryGetValue(panelName, out var panel)) return;
             panel.Destroy();
         }
 
-        public void CreateListItem(Transform view , ViewModel vm, int index)
+        public static void CreateListItem(Transform view , ViewModel vm, int index)
         {
-            GameObject go = Instantiate(view.gameObject, view.parent);
+            GameObject go = Object.Instantiate(view.gameObject, view.parent);
             go.Show();
             go.transform.SetSiblingIndex(index);
             IView v = go.GetComponent<IView>();
             v.Create(vm);
         }
 
-        private IView CreateUI(string panelName)
+        private static IView CreateUI(string panelName,UILevel canvasLevel )
         {
-            GameObject go;
-            //TODO 有Assetbundle后再修改
-            go = Instantiate(Resources.Load<GameObject>(panelName));
+            Transform par = commonTrans;
+            switch (canvasLevel)
+            {
+                case UILevel.Bg:
+                    par = bgTrans;
+                    break;
+                case UILevel.Common:
+                    par = commonTrans;
+                    break;
+                case UILevel.Pop:
+                    par = popTrans;
+                    break;
+                case UILevel.Toast:
+                    par = toastTrans;
+                    break;
+                case UILevel.Guide:
+                    par = guideTrans;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(canvasLevel), canvasLevel, null);
+            }
+            GameObject go = Object.Instantiate(ResMgr.Load<GameObject>(panelName), par);
             return go.GetComponent<IView>();
         }
 

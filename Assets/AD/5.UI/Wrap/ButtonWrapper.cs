@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public class ButtonWrapper : BaseWrapper<Button>, IBindCommand
     {

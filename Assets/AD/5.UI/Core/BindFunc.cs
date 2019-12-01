@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AD.AD.UI.Wrap;
+using AD.UI.Wrap;
 using UnityEngine;
 using UnityEngine.Events;
 

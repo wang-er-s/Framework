@@ -21,7 +21,7 @@ namespace AD.UI.Example
         {
             viewModel = data as ItemViewModel;
             BindFactory<ItemView, ItemViewModel> binding = new BindFactory<ItemView, ItemViewModel>(this, this.viewModel);
-            binding.Bind(img, (vm) => vm.Path).OneWay();
+            binding.Bind(img, viewModel.Path).OneWay();
         }
 
         protected override ViewModel CreateVM ()

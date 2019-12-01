@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.AD.UI.Wrap
+namespace AD.UI.Wrap
 {
     public abstract class BaseWrapper<T> : IBindData<bool> where T : Component
     {
