@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using AD;
-using AD.ResKit;
 using AD.UI.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -122,10 +121,9 @@ namespace AD.UI.Core
                 default:
                     throw new ArgumentOutOfRangeException(nameof(canvasLevel), canvasLevel, null);
             }
-            GameObject go = Object.Instantiate(ResMgr.Load<GameObject>(panelName), par);
+            // TODO 更改资源加载方式
+            GameObject go = Object.Instantiate(Resources.Load<GameObject>(panelName), par);
             return go.GetComponent<IView>();
         }
-
     }
-
 }
