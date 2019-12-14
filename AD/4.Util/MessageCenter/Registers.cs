@@ -68,8 +68,8 @@ namespace AD
 
         public Action<T> this[int index]
         {
-            get => events[index];
-            set => events[index] = value;
+            get { return events[index]; }
+            set { events[index] = value; }
         }
     }
     
