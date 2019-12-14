@@ -15,7 +15,8 @@ namespace AD
                 Log.Error("AddListener: listener不能为空");
                 return;
             }
-            if (typeEventDic.TryGetValue(typeof(T), out var iRegisters))
+            IRegisters iRegisters;
+            if (typeEventDic.TryGetValue(typeof(T), out iRegisters))
             {
                 Registers<T> registers = iRegisters as Registers<T>;
                 registers.Add(listener);
@@ -35,7 +36,8 @@ namespace AD
                 Log.Error("RemoveListener: listener不能为空");
                 return;
             }
-            if (!typeEventDic.TryGetValue(typeof(T), out var iRegisters)) return;
+            IRegisters iRegisters;
+            if (!typeEventDic.TryGetValue(typeof(T), out iRegisters)) return;
             Registers<T> registers = iRegisters as Registers<T>;
             registers.Remove(listener);
         }
@@ -57,7 +59,8 @@ namespace AD
 
         public void SendMessage<T>(T msg)
         {
-            if (typeEventDic.TryGetValue(typeof(T), out var iRegisters))
+            IRegisters iRegisters;
+            if (typeEventDic.TryGetValue(typeof(T), out iRegisters))
             {
                 try
                 {
@@ -80,7 +83,8 @@ namespace AD
                 Log.Error("AddListener: listener不能为空");
                 return;
             }
-            if (enumEventDic.TryGetValue(tag, out var registers))
+            List<Action> registers;
+            if (enumEventDic.TryGetValue(tag, out registers))
             {
                 registers.Add(listener);
             }
@@ -98,13 +102,15 @@ namespace AD
                 Log.Error("RemoveListener: listener不能为空");
                 return;
             }
-            if (!enumEventDic.TryGetValue(tag, out var registers)) return;
+            List<Action> registers;
+            if (!enumEventDic.TryGetValue(tag, out registers)) return;
             registers.Remove(listener);
         }
 
         public void SendMessage(int tag)
         {
-            if (enumEventDic.TryGetValue(tag, out var registers))
+            List<Action> registers;
+            if (enumEventDic.TryGetValue(tag, out registers))
             {
                 try
                 {
