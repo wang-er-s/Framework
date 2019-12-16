@@ -62,7 +62,7 @@ namespace AD.UI.Core
             return this;
         }
 
-        private void Init()
+        private void InitEvent()
         {
             baseWrapper = WrapTool.GetWrapper(component);
             bindData = baseWrapper as IBindData<TData>;
@@ -75,7 +75,7 @@ namespace AD.UI.Core
 
         public void InitBind()
         {
-            Init();
+            InitEvent();
             switch (bindType)
             {
                 case BindType.OnWay:
@@ -86,6 +86,7 @@ namespace AD.UI.Core
                     componentChangEvent?.AddListener((data) => field.Value = wrapFunc == null ? data : wrapFunc(data));
                     break;
                 case BindType.Revert:
+                    valueChangeEvent?.Invoke(field.Value);
                     componentChangEvent?.AddListener((data) => field.Value = wrapFunc == null ? data : wrapFunc(data));
                     break;
             }
@@ -124,7 +125,7 @@ namespace AD.UI.Core
             return this;
         }
 
-        private void Init()
+        private void InitEvent()
         {
             baseWrapper = WrapTool.GetWrapper(component);
             bindData = baseWrapper as IBindData<TResult>;
@@ -139,7 +140,7 @@ namespace AD.UI.Core
 
         public void InitBind()
         {
-            Init();
+            InitEvent();
             field1.AddChangeEvent((data1) => valueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
             field2.AddChangeEvent((data2) => valueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
         }

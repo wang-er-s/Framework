@@ -37,11 +37,11 @@ namespace AD.UI.Example
                     onBtnClick();
                     Debug.Log("点击了button");
                 }; })).InitBind();
+            binding.BindCommand(joinInButton, ()=> viewModel.OnInputChanged("a") ).InitBind();
             binding.TwoWayBind(slider, viewModel.Process).InitBind();
             //image bind path, when path changed, img.sprite change to res.load(path)
             binding.Bind (img, viewModel.Path);
             // Toggle control viewModel.Visible
-            // 反向绑定没有初始化 数据的值、、待修改
             binding.RevertBind(joinToggle, viewModel.Visible).Wrap ((value) =>
             {
                 Debug.Log ($"Toggle 改为{value}");

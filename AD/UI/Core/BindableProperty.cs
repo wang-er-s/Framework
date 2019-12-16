@@ -23,7 +23,6 @@ namespace AD.UI.Core
             set
             {
                 if (Equals(_value, value)) return;
-                T old = _value;
                 _value = value;
                 ValueChanged(_value);
             }

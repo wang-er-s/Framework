@@ -11,7 +11,7 @@ namespace AD.UI.Core
         private event Action<NotifyCollectionChangedAction, T, T, int> collectionChanged;
         private IList<T> items;
         private static object locker = new object();
-        private event Action<BindableList<T>> listChanged;
+        private event Action<BindableList<T>> listUpdateChanged;
         public int Count => items.Count;
         public bool IsReadOnly => items.IsReadOnly;
 
@@ -76,10 +76,8 @@ namespace AD.UI.Core
         {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
-            if (Count <= 0) return false;
-            int index = IndexOf(item);
-            if (index < 0) return false;
-            return items.Remove(item);
+            RemoveItem(IndexOf(item));
+            return true;
         }
 
         public int IndexOf(T item)
@@ -91,7 +89,7 @@ namespace AD.UI.Core
         {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
-            Insert(index, item);
+            InsertItem(index, item);
         }
 
         public void RemoveAt(int index)
@@ -132,6 +130,24 @@ namespace AD.UI.Core
             }
         }
 
+        private void RemoveItem(T item)
+        {
+            lock (locker)
+            {
+                var index = items.IndexOf(item);
+                RemoveItem(index);
+            }
+        }
+
+        private void InsertItem( int index ,T item)
+        {
+            lock (locker)
+            {
+                items.Insert(index, item);
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, default(T), item, index);
+            }
+        }
+
         protected void ClearItems()
         {
             lock (locker)
@@ -165,13 +181,13 @@ namespace AD.UI.Core
 
         public void AddListUpdateListener(Action<BindableList<T>> listener)
         {
-            listChanged += listener;
+            listUpdateChanged += listener;
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction type, T originItem, T item, int index)
         {
             collectionChanged?.Invoke(type, originItem, item, index);
-            listChanged?.Invoke(this);
+            listUpdateChanged?.Invoke(this);
         }
     }
 }

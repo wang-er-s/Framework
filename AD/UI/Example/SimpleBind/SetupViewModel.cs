@@ -19,7 +19,7 @@ namespace AD.UI.Example
             Job = new BindableProperty<string>();
             ATK = new BindableProperty<int>();
             SuccessRage = new BindableProperty<float>();
-            Visible = new BindableProperty<bool>(true);
+            Visible = new BindableProperty<bool>(false);
             Path = new BindableProperty<string>("梅菜扣肉");
             Process = new BindableProperty<float>(0.5f);
         }

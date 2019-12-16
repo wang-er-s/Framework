@@ -25,8 +25,7 @@ public class ListBindView : View
         binding.RevertBind(dropdown, viewModel.SelectedDropDownIndex).InitBind();
         binding.BindList(viewModel.Items, item).InitBind();
         binding.BindCommand(addBtn,viewModel.AddItem).InitBind();
-        // 删除释放绑定？
-        //binding.BindCommand(deleteBtn, viewModel.DeleteSelectedItem).InitBind();
+        binding.BindCommand(deleteBtn, viewModel.DeleteSelectedItem).InitBind();
         binding.BindCommand(updateBtn, viewModel.UpdateItem).InitBind();
 
     }
@@ -37,15 +36,13 @@ public class ListBindViewModel : ViewModel
     public BindableList<ItemViewModel> Items { get; private set; }
     public List<Dropdown.OptionData> DropdownData { get; private set; }
     public BindableProperty<int> SelectedDropDownIndex { get; private set; }
-    public BindableProperty<int> SelectedItemIndex { get; private set; }
 
-    private EventService EventService;
-
+    private ItemViewModel selectedItem;
+    
     public ListBindViewModel()
     {
         Items = new BindableList<ItemViewModel>();
         SelectedDropDownIndex = new BindableProperty<int>(0);
-        SelectedItemIndex = new BindableProperty<int>(-1);
         DropdownData = new List<Dropdown.OptionData>()
         {
             new Dropdown.OptionData("回锅肉"),
@@ -54,12 +51,14 @@ public class ListBindViewModel : ViewModel
             new Dropdown.OptionData("辣子鸡丁"),
             new Dropdown.OptionData("鱼香肉丝"),
         };
+        Items.AddListUpdateListener((list) => OnUpdateItem());
     }
 
     public void DeleteSelectedItem()
     {
-        if(SelectedItemIndex.Value == -1) return;
-        Items.RemoveAt(SelectedItemIndex.Value);
+        if(selectedItem == null) return;
+        Items.Remove(selectedItem);
+        selectedItem = null;
     }
 
     public void AddItem()
@@ -70,15 +69,12 @@ public class ListBindViewModel : ViewModel
 
     public void UpdateItem()
     {
-        if(SelectedItemIndex.Value == -1) return;
-        var item = Items[SelectedItemIndex.Value];
-        item.Path.Value = DropdownData[SelectedDropDownIndex.Value].text;
+        if(selectedItem == null) return;
+        selectedItem.Path.Value = DropdownData[SelectedDropDownIndex.Value].text;
     }
     
     private void AddItem(ItemViewModel itemViewModel)
     {
-        Items.AddListUpdateListener((list)=>itemViewModel.Last.Value = itemViewModel.Index.Value == list.Count - 1);
-        SelectedItemIndex.AddChangeEvent((index)=>itemViewModel.Selected.Value = itemViewModel.Index.Value == index);
         Items.Add(itemViewModel);
     }
 
@@ -86,17 +82,28 @@ public class ListBindViewModel : ViewModel
     {
         ItemViewModel vm = new ItemViewModel
         {
-            Index = new BindableProperty<int>(Items.Count),
             Last = new BindableProperty<bool>(false),
             Path = new BindableProperty<string>(DropdownData[SelectedDropDownIndex.Value].text),
         };
-        vm.OnItemClick = () => OnItemClick(vm.Index.Value);
+        vm.OnItemClick = () => OnItemClick(vm);
         return vm;
     }
 
-    private void OnItemClick(int index)
+    private void OnItemClick(ItemViewModel viewModel)
     {
-        SelectedItemIndex.Value = index;
+        if (selectedItem != null)
+            selectedItem.Selected.Value = false;
+        selectedItem = viewModel;
+        selectedItem.Selected.Value = true;
+    }
+
+    private void OnUpdateItem()
+    {
+        var lastVm = Items[Items.Count - 1];
+        foreach (var itemViewModel in Items)
+        {
+            itemViewModel.Last.Value = itemViewModel == lastVm;
+        }
     }
     
 }

@@ -46,7 +46,7 @@ namespace AD.UI.Core
             return this;
         }
 
-        private void Init()
+        private void InitEvent()
         {
             if (bindData != null) return;
             baseWrapper = WrapTool.GetWrapper(component);
@@ -60,7 +60,7 @@ namespace AD.UI.Core
 
         public void InitBind()
         {
-            Init();
+            InitEvent();
             if (wrapFunc == null && revertWrapFunc == null)
                 Debug.LogError(
                     $"{component.name} --> BindableProperty type is not match valueChangeEvent , must have a wrap func.");
