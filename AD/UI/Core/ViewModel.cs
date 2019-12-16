@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace AD.UI.Core
 {
-    public abstract class ViewModel
+    public abstract class ViewModel 
     {
-        public ViewModel ParentViewModel { get; set; }
+        
         public bool IsShow { get; private set; }
 
         public virtual void OnShow()

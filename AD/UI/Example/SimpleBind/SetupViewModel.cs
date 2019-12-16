@@ -13,17 +13,14 @@ namespace AD.UI.Example
         public BindableProperty<string> Path { get; private set; }
         public BindableProperty<float> Process { get; private set; }
 
-        public BindableList<ItemViewModel> Items { get; private set; }
-
         public SetupViewModel()
         {
             Name = new BindableProperty<string>();
             Job = new BindableProperty<string>();
             ATK = new BindableProperty<int>();
             SuccessRage = new BindableProperty<float>();
-            Visible = new BindableProperty<bool>();
+            Visible = new BindableProperty<bool>(true);
             Path = new BindableProperty<string>("梅菜扣肉");
-            Items = new BindableList<ItemViewModel>();
             Process = new BindableProperty<float>(0.5f);
         }
 
@@ -41,13 +38,6 @@ namespace AD.UI.Example
         {
             Debug.Log("按钮点击了");
         }
-        
-    }
-
-    public class ItemViewModel : ViewModel, IBindMulView
-    {
-        public BindableProperty<string> Path { get; private set; }
-        public int Tag { get; set; }
         
     }
 }

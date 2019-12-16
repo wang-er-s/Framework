@@ -30,7 +30,8 @@ namespace AD.UI.Core
                     return;
                 }
                 vm = value;
-                OnVmChange();
+                if (vm != null)
+                    OnVmChange();
             }
         }
 

@@ -23,13 +23,13 @@ namespace AD.UI.Wrap
             {typeof(Button),typeof(ButtonWrapper)},
             {typeof(View), typeof(ViewWrapper)},
             {typeof(Image), typeof(ImageWrapper)},
+            {typeof(Dropdown), typeof(DropdownWrapper)},
         };
         
         private static readonly object[] Args = new object[1];
 
         public static BaseWrapper<T> GetWrapper<T>(T component) where T : Component
         {
-            //TODO 看看?
             foreach (var type in SupportWrapperTypes)
             {
                 if (type.Key.IsInstanceOfType(component))

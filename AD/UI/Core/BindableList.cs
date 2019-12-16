@@ -11,7 +11,7 @@ namespace AD.UI.Core
         private event Action<NotifyCollectionChangedAction, T, T, int> collectionChanged;
         private IList<T> items;
         private static object locker = new object();
-
+        private event Action<BindableList<T>> listChanged;
         public int Count => items.Count;
         public bool IsReadOnly => items.IsReadOnly;
 
@@ -163,13 +163,15 @@ namespace AD.UI.Core
             if (collectionChanged != null) collectionChanged -= listener;
         }
 
+        public void AddListUpdateListener(Action<BindableList<T>> listener)
+        {
+            listChanged += listener;
+        }
+
         private void OnCollectionChanged(NotifyCollectionChangedAction type, T originItem, T item, int index)
         {
-            if(collectionChanged == null) return;
-            lock (collectionChanged)
-            {
-                collectionChanged(type, originItem, item, index);
-            }
+            collectionChanged?.Invoke(type, originItem, item, index);
+            listChanged?.Invoke(this);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using AD.UI.Core;
 using UnityEngine;
 using UnityEngine.Events;
@@ -23,45 +24,31 @@ namespace AD.UI.Example
             BindFactory<SetupView, SetupViewModel> binding =
                 new BindFactory<SetupView, SetupViewModel> (this, viewModel);
             //nameMessa|geText show or hide by vm.visible
-            binding.Bind (nameMessageText, viewModel.Visible);
+            binding.Bind (nameMessageText, viewModel.Visible).InitBind();
             //nameMessageText.text show text by vm.Name
-            binding.Bind (nameMessageText, viewModel.Name);
+            binding.Bind(nameMessageText, viewModel.Process).Wrap(process => $"进度为:{process}").InitBind();
             //mulBindText.text show text by (vm.ATK , vm.Name) , and wrap by third para
             binding.Bind (mulBindText, viewModel.Name, viewModel.ATK,
-                          (name, atk) => $"name = {name} atk = {atk.ToString ()}");
+                          (name, atk) => $"name = {name} atk = {atk.ToString ()}").InitBind();
             //button bind vm.OnButtonClick
-            binding.BindCommand (joinInButton, viewModel.OnButtonClick).Wrap (callback =>
-            {
+            binding.BindCommand (joinInButton, viewModel.OnButtonClick).Wrap((onBtnClick => { 
                 return () =>
                 {
-                    callback ();
-                    print ("Wrap 按钮");
-                };
-            });
-            binding.TwoWayBind(slider, viewModel.Process);
+                    onBtnClick();
+                    Debug.Log("点击了button");
+                }; })).InitBind();
+            binding.TwoWayBind(slider, viewModel.Process).InitBind();
             //image bind path, when path changed, img.sprite change to res.load(path)
             binding.Bind (img, viewModel.Path);
-            binding.Bind (joinToggle, viewModel.Visible).Wrap ((value) =>
+            // Toggle control viewModel.Visible
+            // 反向绑定没有初始化 数据的值、、待修改
+            binding.RevertBind(joinToggle, viewModel.Visible).Wrap ((value) =>
             {
-                Debug.Log ($"改为{value}");
+                Debug.Log ($"Toggle 改为{value}");
                 return value;
-            }).Revert ();
-            binding.TwoWayBind (atkInputField, viewModel.ATK).Wrap ((value) =>
-            {
-                Debug.Log ($"改为{value}");
-                return value;
-            });
-            binding.BindCommand<InputField, string> (atkInputField, viewModel.OnInputChanged).Wrap (valueChangedFunc =>
-            {
-                return (value) =>
-                {
-                    valueChangedFunc (value);
-                    print ("Wrap InputField");
-                };
-            });
-            //binding.BindList (viewModel.Items, item1, item2).Init();
-            AddSubView(subView);
-            binding.InitBind();
+            }).InitBind();
+            //将inputField的值付给ATK
+            binding.RevertBind(atkInputField, viewModel.ATK).Wrap<string>(val => int.Parse(val) * 2).InitBind();
         }
 
         protected override void OnDestroy ()

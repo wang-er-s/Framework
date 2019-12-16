@@ -43,6 +43,7 @@ namespace AD.UI.Core
                 wrapper.SetTag (tags?[i] ?? i);
                 IBindList<ViewModel> bindList = wrapper;
                 list.AddListener(bindList.GetBindListFunc());
+                views[i].Hide();
                 wrappers.Add(wrapper);
             }
         }
@@ -75,6 +76,7 @@ namespace AD.UI.Core
                 View view;
                 if ( upTransform == null )
                 {
+                    
                     view = root.FindInAllChild (item)?.GetComponent<View> ();
                     upTransform = view.transform.parent;
                 }
@@ -93,10 +95,9 @@ namespace AD.UI.Core
 
         public void InitBind()
         {
-            list.Clear();
-            foreach (var view in views)
+            for (int i = 0; i < views.Count; i++)
             {
-                list.Add (view.VM as TVm);
+                views[i].VM = list[i];
             }
         }
     }

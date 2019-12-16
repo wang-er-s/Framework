@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AD.UI.Wrap;
+using UnityEngine;
 using UnityEngine.Events;
 using Component = UnityEngine.Component;
 
@@ -15,8 +16,6 @@ namespace AD.UI.Core
     public class BindField<TComponent,TData> : IInitBind where  TComponent : Component
     {
 
-        public static BindField<TComponent, TData> Empty = new BindField<TComponent, TData> (null, null);
-        
         private TComponent component;
         private Action<TData> valueChangeEvent;
         private UnityEvent<TData> componentChangEvent;
@@ -27,10 +26,11 @@ namespace AD.UI.Core
         private BaseWrapper<TComponent> baseWrapper;
         private BindType bindType;
 
-        public BindField(TComponent _component, BindableProperty<TData> _field, BindType bindType = BindType.OnWay)
+        public BindField(TComponent _component, BindableProperty<TData> _field, BindType _bindType = BindType.OnWay)
         {
             component = _component;
             field = _field;
+            bindType = _bindType;
         }
 
         public BindField<TComponent, TData> For(UnityEvent<TData> _dataChanged)
@@ -50,21 +50,20 @@ namespace AD.UI.Core
             return new BindFieldWrap<TComponent, TData, TResult>(component, field,null, _wrapFunc);
         }
         
+        public BindFieldWrap<TComponent, TData, TResult> Wrap<TResult>(Func<TResult,TData> _revertWrapFunc)
+        {
+            return new BindFieldWrap<TComponent, TData, TResult>(component, field, null,
+                revertWrapFunc: _revertWrapFunc);
+        }
+        
         public BindField<TComponent, TData> Wrap(Func<TData,TData> _wrapFunc)
         {
             wrapFunc = _wrapFunc;
             return this;
         }
 
-        public BindField<TComponent, TData> Revert()
-        {
-            bindType = BindType.Revert;
-            return this;
-        }
-
         private void Init()
         {
-            if (bindData != null) return;
             baseWrapper = WrapTool.GetWrapper(component);
             bindData = baseWrapper as IBindData<TData>;
             bindCommand = baseWrapper as IBindCommand<TData>;

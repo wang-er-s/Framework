@@ -43,6 +43,16 @@ namespace AD.UI.Core
             guideTrans = Canvas.transform.Find("Guide");
         }
 
+        public static void RefreshCanvas()
+        {
+            Canvas = Object.FindObjectOfType<Canvas>();
+            bgTrans = Canvas.transform.Find("Bg");
+            commonTrans = Canvas.transform.Find("Common");
+            popTrans = Canvas.transform.Find("Pop");
+            toastTrans = Canvas.transform.Find("Toast");
+            guideTrans = Canvas.transform.Find("Guide");
+        }
+
         public static void Create(string uiBehaviourName, UILevel canvasLevel = UILevel.Common, ViewModel vm = null)
         {
             IView panel;
@@ -122,7 +132,7 @@ namespace AD.UI.Core
                     throw new ArgumentOutOfRangeException(nameof(canvasLevel), canvasLevel, null);
             }
             var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
-            GameObject go = Object.Instantiate(loadGo, Canvas.transform);
+            GameObject go = Object.Instantiate(loadGo, par);
             return go.GetComponent<IView>();
         }
 
