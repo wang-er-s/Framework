@@ -12,7 +12,7 @@ namespace AD
         {
             if (listener == null)
             {
-                Log.Error("AddListener: listener不能为空");
+                Debugger.Error("AddListener: listener不能为空");
                 return;
             }
             IRegisters iRegisters;
@@ -33,7 +33,7 @@ namespace AD
         {
             if (listener == null)
             {
-                Log.Error("RemoveListener: listener不能为空");
+                Debugger.Error("RemoveListener: listener不能为空");
                 return;
             }
             IRegisters iRegisters;
@@ -70,17 +70,17 @@ namespace AD
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"SendMessage:{typeof(T)} {e.Message} {e.StackTrace}");
+                    Debugger.Error($"SendMessage:{typeof(T)} {e.Message} {e.StackTrace}");
                 }
             }
-            Log.Warning($"{typeof(T)} must register first!");
+            Debugger.Warning($"{typeof(T)} must register first!");
         }
 
         public void Register(int tag, Action listener)
         {
             if (listener == null)
             {
-                Log.Error("AddListener: listener不能为空");
+                Debugger.Error("AddListener: listener不能为空");
                 return;
             }
             List<Action> registers;
@@ -99,7 +99,7 @@ namespace AD
         {
             if (listener == null)
             {
-                Log.Error("RemoveListener: listener不能为空");
+                Debugger.Error("RemoveListener: listener不能为空");
                 return;
             }
             List<Action> registers;
@@ -119,10 +119,10 @@ namespace AD
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"SendMessage: tag={tag} {e.Message} {e.StackTrace}");
+                    Debugger.Error($"SendMessage: tag={tag} {e.Message} {e.StackTrace}");
                 }
             }
-            Log.Warning($"tag={tag} must register first!");
+            Debugger.Warning($"tag={tag} must register first!");
         }
     }
 }

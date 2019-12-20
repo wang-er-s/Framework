@@ -6,7 +6,7 @@ using UnityEngine;
 namespace AD
 {
 
-    public class DebuggerLog : MonoBehaviour
+    public class EditorGUILog : MonoBehaviour
     {
         private class LogInfo
         {

@@ -41,6 +41,10 @@ namespace AD.UI.Example
             binding.TwoWayBind(slider, viewModel.Process).InitBind();
             //image bind path, when path changed, img.sprite change to res.load(path)
             binding.Bind (img, viewModel.Path);
+            binding.BindData(viewModel.Visible, (visible) =>
+            {
+                
+            });
             // Toggle control viewModel.Visible
             binding.RevertBind(joinToggle, viewModel.Visible).Wrap ((value) =>
             {
