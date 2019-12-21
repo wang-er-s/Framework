@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using AD.UI.Core;
 using UnityEngine;
@@ -22,3 +23,4 @@ public class ListBind : MonoBehaviour
         }
     }
 }
+*/

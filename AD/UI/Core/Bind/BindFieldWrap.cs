@@ -5,69 +5,54 @@ using UnityEngine.Events;
 
 namespace AD.UI.Core
 {
-    public class BindFieldWrap<TComponent,TData,TResult> : IInitBind where  TComponent : Component
+    public class BindFieldWrap<TComponent,TData,TResult> where  TComponent : Component
     {
-        
         private TComponent component;
-        private Action<TResult> valueChangeEvent;
-        private UnityEvent<TResult> componentChangEvent;
-        private Func<TData, TResult> wrapFunc;
-        private Func<TResult, TData> revertWrapFunc;
-        private BindableProperty<TData> field;
-        private IBindData<TResult> bindData;
-        private IBindCommand<TResult> bindCommand;
-        private BaseWrapper<TComponent> baseWrapper;
+        private Action<TResult> fieldValueChangeEvent;
+        private UnityEvent<TResult> componentValueChangeEvent;
+        private Func<TData, TResult> fieldWrapFunc;
+        private Func<TResult, TData> componentWrapFunc;
+        private IBindableField<TData> field;
+        private BaseWrapper<TComponent> wrapper;
 
-        public BindFieldWrap(TComponent component, BindableProperty<TData> field, Action<TResult> valueChangeEvent,
-            Func<TData, TResult> wrapFunc = null, Func<TResult, TData> revertWrapFunc = null)
+        private BindFieldWrap(TComponent _component, IBindableField<TData> _field,
+            Action<TResult> _fieldValueChangeEvent,
+            Func<TData, TResult> _fieldWrapFunc,
+            Func<TResult, TData> _componentWrapFunc,
+            UnityEvent<TResult> _componentValueChangeEvent)
         {
-            this.component = component;
-            this.valueChangeEvent = valueChangeEvent;
-            this.field = field;
-            this.wrapFunc = wrapFunc;
-            this.revertWrapFunc = revertWrapFunc;
+            component = _component;
+            fieldValueChangeEvent = _fieldValueChangeEvent;
+            componentValueChangeEvent = _componentValueChangeEvent;
+            field = _field;
+            fieldWrapFunc = _fieldWrapFunc;
+            componentWrapFunc = _componentWrapFunc;
+            InitEvent();
         }
 
-        public BindFieldWrap<TComponent, TData, TResult> Wrap(Func<TData, TResult> wrapFunc)
+        public BindFieldWrap(TComponent _component, IBindableField<TData> _field,
+            Func<TData, TResult> _fieldWrapFunc,
+            Action<TResult> _fieldValueChangeEvent = null) : this(
+            _component, _field, _fieldValueChangeEvent, _fieldWrapFunc, null, null)
         {
-            this.wrapFunc = wrapFunc;
-            return this;
         }
-        
-        public BindFieldWrap<TComponent, TData, TResult> For(Action<TResult> _valueChangeEvent)
+
+        public BindFieldWrap(TComponent _component, IBindableField<TData> _field,
+            Func<TResult, TData> _componentWrapFunc,
+            UnityEvent<TResult> _componentValueChangeEvent = null) : this(
+            _component, _field, null, null, _componentWrapFunc, _componentValueChangeEvent)
         {
-            valueChangeEvent = _valueChangeEvent;
-            return this;
-        }
-        
-        public BindFieldWrap<TComponent, TData, TResult> For(UnityEvent<TResult> _dataChanged)
-        {
-            componentChangEvent = _dataChanged;
-            return this;
         }
 
         private void InitEvent()
         {
-            if (bindData != null) return;
-            baseWrapper = WrapTool.GetWrapper(component);
-            bindData = baseWrapper as IBindData<TResult>;
-            bindCommand = baseWrapper as IBindCommand<TResult>;
-            if (valueChangeEvent == null)
-                valueChangeEvent = bindData?.GetBindFieldFunc();
-            if (componentChangEvent == null)
-                componentChangEvent = bindCommand?.GetBindCommandFunc();
-        }
-
-        public void InitBind()
-        {
-            InitEvent();
-            if (wrapFunc == null && revertWrapFunc == null)
-                Debug.LogError(
-                    $"{component.name} --> BindableProperty type is not match valueChangeEvent , must have a wrap func.");
-            if (wrapFunc != null)
-                field?.AddChangeEvent((value) => valueChangeEvent(wrapFunc(value)));
-            if (revertWrapFunc != null)
-                componentChangEvent?.AddListener((val) => field.Value = revertWrapFunc(val));
+            wrapper = WrapTool.GetWrapper(component);
+            componentValueChangeEvent = componentValueChangeEvent ?? (wrapper as IBindCommand<TResult>)?.GetBindCommandFunc();
+            fieldValueChangeEvent = fieldValueChangeEvent ?? (wrapper as IBindData<TResult>)?.GetBindFieldFunc();
+            if (fieldWrapFunc != null)
+                field?.AddListener((value) => fieldValueChangeEvent(fieldWrapFunc(value)));
+            if (componentWrapFunc != null)
+                componentValueChangeEvent?.AddListener((val) => field.Value = componentWrapFunc(val));
         }
     }
 }

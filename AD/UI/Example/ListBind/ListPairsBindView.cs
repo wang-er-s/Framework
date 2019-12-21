@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using AD.UI.Core;
 using AD.UI.Example;
@@ -24,10 +25,11 @@ public class ListPairsBindViewModel : ViewModel
     {
         Items = new BindableList<ItemViewModel>()
         {
-            new ItemViewModel(){Path = new BindableProperty<string>("回锅肉")},
-            new ItemViewModel(){Path = new BindableProperty<string>("梅菜扣肉")},
-            new ItemViewModel(){Path = new BindableProperty<string>("水煮鱼")},
-            new ItemViewModel(){Path = new BindableProperty<string>("鱼香肉丝")},
+            new ItemViewModel(){Path = new BindableField<string>("回锅肉")},
+            new ItemViewModel(){Path = new BindableField<string>("梅菜扣肉")},
+            new ItemViewModel(){Path = new BindableField<string>("水煮鱼")},
+            new ItemViewModel(){Path = new BindableField<string>("鱼香肉丝")},
         };
     }
 }
+*/

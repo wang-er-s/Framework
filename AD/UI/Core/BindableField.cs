@@ -2,22 +2,22 @@
 
 namespace AD.UI.Core
 {
-    public class BindableProperty<T> : INotifyWhenChanged<T>
+    public class BindableField<T> : IBindableField<T>
     {
 
-        public BindableProperty(T value)
+        public BindableField(T value)
         {
             _value = value;
         }
         
-        public BindableProperty()
+        public BindableField()
         {
         }
         
         private event Action<T> OnValueChanged;
 
         private T _value;
-        public T Value
+        T IBindableField<T>.Value
         {
             get { return _value; }
             set
@@ -33,26 +33,39 @@ namespace AD.UI.Core
             OnValueChanged?.Invoke(newValue);
         }
 
-        public void AddChangeEvent(Action<T> changeAction)
+        public void AddListener(Action<T> changeAction)
         {
             changeAction(_value);
             OnValueChanged += changeAction;
         }
 
-        public void RemoveChangeEvent(Action<T> changeAction)
+        public void RemoveListener(Action<T> changeAction)
         {
             if(OnValueChanged == null) return;
             OnValueChanged -= changeAction;
         }
 
+        public void ClearListener()
+        {
+            OnValueChanged = null;
+        }
+
         public override string ToString()
         {
-            return (Value != null ? Value.ToString() : "null");
+            return (_value != null ? _value.ToString() : "null");
+        }
+        
+        public static implicit operator T(BindableField<T> field)
+        {
+            return field._value;
         }
     }
 
-    public interface INotifyWhenChanged<out T>
+    public interface IBindableField<T>
     {
-        void AddChangeEvent(Action<T> changedAction);
+        T Value { get; set; }
+        void AddListener(Action<T> changedAction);
+        void RemoveListener(Action<T> changedAction);
+        void ClearListener();
     }
 }

@@ -9,31 +9,25 @@ using UnityEngine.SceneManagement;
 public class SimpleBind : MonoBehaviour
 {
 	private SetupViewModel vm;
+	private BindableField<int> Age;
 	// Use this for initialization
 	void Start ()
 	{
 		UIMgr.RefreshCanvas();
-		vm = new SetupViewModel();
+		vm = new SetupViewModel()
+		{
+			Visible = new BindableField<bool>(false),
+			Name =  new BindableField<string>("JJ")
+		};
 		UIMgr.Create("SimpleBind", vm: vm);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-		
-	}
 
 	private void OnGUI()
 	{
 		if (GUI.Button(new Rect(100, 100, 100, 100), "跳转场景"))
 		{
 			SceneManager.LoadScene(1);
-		}
-		if (GUI.Button(new Rect(200, 200, 100, 100), "更改数据"))
-		{
-			vm.Name.Value = "hahah";
-			vm.Visible.Value = true;
-			vm.ATK.Value = 12;
 		}
 	}
 }

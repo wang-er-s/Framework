@@ -28,7 +28,7 @@ namespace AD.UI.Wrap
             return slider.onValueChanged;
         }
 
-        public void TwoWayBind(BindableProperty<float> property)
+        public void TwoWayBind(IBindableField<float> property)
         {
             slider.onValueChanged.AddListener((value) => property.Value = value);
         }

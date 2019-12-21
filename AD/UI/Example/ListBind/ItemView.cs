@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,20 +38,21 @@ namespace AD.UI.Example
     
     public class ItemViewModel : ViewModel
     {
-        public BindableProperty<string> Path { get; set; }
+        public IBindableField<string> Path { get; set; }
         //如果是最后一个item，则要隐藏breakline
-        public BindableProperty<bool> Last { get; set; }
-        public BindableProperty<int> Index { get; set; }
-        public BindableProperty<bool> Selected { get; set; }
+        public IBindableField<bool> Last { get; set; }
+        public IBindableField<int> Index { get; set; }
+        public IBindableField<bool> Selected { get; set; }
         public Action OnItemClick { get; set; }
 
         public ItemViewModel()
         {
-            Path = new BindableProperty<string>();
-            Last = new BindableProperty<bool>();
-            Index = new BindableProperty<int>();
-            Selected = new BindableProperty<bool>();
+            Path = new BindableField<string>();
+            Last = new BindableField<bool>();
+            Index = new BindableField<int>();
+            Selected = new BindableField<bool>();
         }
 
     }
 }
+*/

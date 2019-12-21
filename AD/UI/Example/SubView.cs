@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using AD.UI.Core;
 using AD.UI.Example;
@@ -28,4 +28,4 @@ public class SubViewModel : ViewModel
         Items = new BindableList<ItemViewModel>();
     }
     
-}
+}*/

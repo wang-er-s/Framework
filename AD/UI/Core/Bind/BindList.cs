@@ -11,11 +11,10 @@ using UnityEngine;
 
 namespace AD.UI.Core
 {
-    public class BindList<TVm> : IBindSet, IInitBind where TVm : ViewModel
+    public class BindList<TVm> where TVm : ViewModel
     {
         private Transform content;
         private List<View> views;
-        private List<int> tags;
         private BindableList<TVm> list;
         private List<ViewWrapper> wrappers;
 
@@ -24,32 +23,24 @@ namespace AD.UI.Core
             views = _view.ToList ();
             content = views[0].transform.parent;
             list = _list;
+            InitEvent();
         }
 
-        public BindList<TVm> SetTag (params int[] _tags)
-        {
-            tags = _tags.ToList ();
-            if(tags.Count != views.Count)
-                Debug.LogError("Tag must have the same length as view");
-            return this;
-        }
-
-        public void InitBind()
+        private void InitEvent()
         {
             wrappers = new List<ViewWrapper> (views.Count);
             for ( int i = 0; i < views.Count; i++ )
             {
                 var wrapper = new ViewWrapper(views[i]);
-                wrapper.SetTag (tags?[i] ?? i);
-                IBindList<ViewModel> bindList = wrapper;
-                list.AddListener(bindList.GetBindListFunc());
+                wrapper.SetTag(i);
+                list.AddListener(((IBindList<ViewModel>) wrapper).GetBindListFunc());
                 views[i].Hide();
                 wrappers.Add(wrapper);
             }
         }
     }
 
-    public class BindIpairsView<TVm> : IBindSet,IInitBind where TVm : ViewModel
+    public class BindIpairsView<TVm> where TVm : ViewModel
     {
         private BindableList<TVm> list;
         private List<View> views;
@@ -58,6 +49,7 @@ namespace AD.UI.Core
         {
             list = _list;
             ParseItems (itemName, root);
+            InitEvent();
         }
 
         private void ParseItems (string itemName, Transform root)
@@ -93,7 +85,7 @@ namespace AD.UI.Core
             }
         }
 
-        public void InitBind()
+        private void InitEvent()
         {
             for (int i = 0; i < views.Count; i++)
             {

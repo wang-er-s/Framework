@@ -23,36 +23,22 @@ namespace AD.UI.Example
             viewModel = VM as SetupViewModel;
             BindFactory<SetupView, SetupViewModel> binding =
                 new BindFactory<SetupView, SetupViewModel> (this, viewModel);
-            //nameMessa|geText show or hide by vm.visible
-            binding.Bind (nameMessageText, viewModel.Visible).InitBind();
-            //nameMessageText.text show text by vm.Name
-            binding.Bind(nameMessageText, viewModel.Process).Wrap(process => $"进度为:{process}").InitBind();
-            //mulBindText.text show text by (vm.ATK , vm.Name) , and wrap by third para
+            binding.Bind(nameMessageText, viewModel.Visible);
+            binding.Bind(nameMessageText, viewModel.Process, process => $"进度为:{process}");
+            //binding.Bind(nameMessageText, viewModel.Name,  process => $"进度为:{process}");
             binding.Bind (mulBindText, viewModel.Name, viewModel.ATK,
-                          (name, atk) => $"name = {name} atk = {atk.ToString ()}").InitBind();
-            //button bind vm.OnButtonClick
-            binding.BindCommand (joinInButton, viewModel.OnButtonClick).Wrap((onBtnClick => { 
-                return () =>
-                {
-                    onBtnClick();
-                    Debug.Log("点击了button");
-                }; })).InitBind();
-            binding.BindCommand(joinInButton, ()=> viewModel.OnInputChanged("a") ).InitBind();
-            binding.TwoWayBind(slider, viewModel.Process).InitBind();
-            //image bind path, when path changed, img.sprite change to res.load(path)
-            binding.Bind (img, viewModel.Path);
-            binding.BindData(viewModel.Visible, (visible) =>
+                          (name, atk) => $"name = {name} atk = {atk.ToString ()}",(str)=>mulBindText.text = $"111{str}");
+            binding.Bind(joinInButton, viewModel.OnButtonClick, wrapFunc: click => () =>
             {
-                
+                click();
+                print("Wrap Button");
             });
-            // Toggle control viewModel.Visible
-            binding.RevertBind(joinToggle, viewModel.Visible).Wrap ((value) =>
-            {
-                Debug.Log ($"Toggle 改为{value}");
-                return value;
-            }).InitBind();
-            //将inputField的值付给ATK
-            binding.RevertBind(atkInputField, viewModel.ATK).Wrap<string>(val => int.Parse(val) * 2).InitBind();
+            binding.Bind(joinInButton, () => viewModel.OnInputChanged("a"));
+            binding.RevertBind(slider, viewModel.Process);
+            binding.Bind (img, viewModel.Path);
+            binding.BindData(viewModel.Visible, viewModel.OnToggleChanged);
+            binding.RevertBind(joinToggle, viewModel.Visible);
+            binding.RevertBind(atkInputField, viewModel.ATK, (string str) => int.Parse(str));
         }
 
         protected override void OnDestroy ()

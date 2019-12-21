@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using AD;
 using AD.UI.Core;
@@ -35,14 +36,18 @@ public class ListBindViewModel : ViewModel
 {
     public BindableList<ItemViewModel> Items { get; private set; }
     public List<Dropdown.OptionData> DropdownData { get; private set; }
-    public BindableProperty<int> SelectedDropDownIndex { get; private set; }
-
+    public BindableField<int> SelectedDropDownIndex { get; private set; }
+    private int selectedDropDownIndex
+    {
+        get { return SelectedDropDownIndex; }
+        set { ((IBindableField<int>) SelectedDropDownIndex).Value = value; }
+    }
     private ItemViewModel selectedItem;
     
     public ListBindViewModel()
     {
         Items = new BindableList<ItemViewModel>();
-        SelectedDropDownIndex = new BindableProperty<int>(0);
+        SelectedDropDownIndex = new BindableField<int>(0);
         DropdownData = new List<Dropdown.OptionData>()
         {
             new Dropdown.OptionData("回锅肉"),
@@ -70,7 +75,7 @@ public class ListBindViewModel : ViewModel
     public void UpdateItem()
     {
         if(selectedItem == null) return;
-        selectedItem.Path.Value = DropdownData[SelectedDropDownIndex.Value].text;
+        selectedItem.Path.Value = DropdownData[selectedDropDownIndex].text;
     }
     
     private void AddItem(ItemViewModel itemViewModel)
@@ -82,8 +87,8 @@ public class ListBindViewModel : ViewModel
     {
         ItemViewModel vm = new ItemViewModel
         {
-            Last = new BindableProperty<bool>(false),
-            Path = new BindableProperty<string>(DropdownData[SelectedDropDownIndex.Value].text),
+            Last = new BindableField<bool>(false),
+            Path = new BindableField<string>(DropdownData[selectedDropDownIndex].text),
         };
         vm.OnItemClick = () => OnItemClick(vm);
         return vm;
@@ -107,3 +112,4 @@ public class ListBindViewModel : ViewModel
     }
     
 }
+*/
