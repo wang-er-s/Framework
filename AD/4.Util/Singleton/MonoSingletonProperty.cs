@@ -2,11 +2,11 @@ namespace AD
 {
     using UnityEngine;
 
-    public static class MonoSingletonProperty<T> where T : MonoBehaviour, ISingleton
+    public static class MonoSingletonProperty<T> where T : MonoBehaviour
     {
         private static T mInstance = null;
 
-        public static T Instance
+        public static T Ins
         {
             get
             {

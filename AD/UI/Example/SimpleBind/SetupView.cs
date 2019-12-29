@@ -35,6 +35,7 @@ namespace AD.UI.Example
             });
             binding.Bind(joinInButton, () => viewModel.OnInputChanged("a"));
             binding.RevertBind(slider, viewModel.Process);
+            
             binding.Bind (img, viewModel.Path);
             binding.BindData(viewModel.Visible, viewModel.OnToggleChanged);
             binding.RevertBind(joinToggle, viewModel.Visible);

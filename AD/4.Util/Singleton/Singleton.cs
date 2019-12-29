@@ -16,7 +16,7 @@ namespace AD
 
 		private static T instance;
 
-		public static T Instance
+		public static T Ins
 		{
 			get
 			{
@@ -26,15 +26,7 @@ namespace AD
 					{
 						lock ( locker )
 						{
-							ConstructorInfo ci =
-								typeof ( T ).GetConstructor ( BindingFlags.NonPublic | BindingFlags.Instance, null,
-								                              EmptyTypes, null );
-							if ( ci == null )
-							{
-								throw new InvalidOperationException ( "class must contain a private constructor" );
-							}
-
-							instance = (T) ci.Invoke ( null );
+							instance = SingletonCreator.CreateSingleton<T>();
 						}
 					}
 				}

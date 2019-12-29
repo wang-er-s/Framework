@@ -38,17 +38,17 @@ namespace AD
             eventDispatcher.SendMessage(msg);
         }
 
-        public static void Register(int tag, Action listener)
+        public static void Register(string tag, Action listener)
         {
             eventDispatcher.Register(tag, listener);
         }
 
-        public static void UnRegister(int tag, Action listener)
+        public static void UnRegister(string tag, Action listener)
         {
             eventDispatcher.UnRegister(tag, listener);
         }
 
-        public static void SendMsg(int tag)
+        public static void SendMsg(string tag)
         {
             eventDispatcher.SendMessage(tag);
         }

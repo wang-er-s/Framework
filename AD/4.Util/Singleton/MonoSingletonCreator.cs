@@ -5,7 +5,7 @@ namespace AD
 {
     public class MonoSingletonCreator
     {
-        public static T CreateMonoSingleton<T>() where T : MonoBehaviour, ISingleton
+        public static T CreateMonoSingleton<T>() where T : MonoBehaviour
         {
             T instance = null;
 
@@ -13,7 +13,6 @@ namespace AD
 
             if (instance != null)
             {
-                instance.OnSingletonInit();
                 return instance;
             }
 
@@ -23,8 +22,7 @@ namespace AD
                 Object.DontDestroyOnLoad(obj);
                 instance = obj.AddComponent<T>();
             }
-
-            instance.OnSingletonInit();
+            
             return instance;
         }
     }

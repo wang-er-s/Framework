@@ -19,7 +19,7 @@ namespace AD
             eventDispatcher.Register(listener);
         }
 
-        public void Register(int tag, Action listener)
+        public void Register(string tag, Action listener)
         {
             eventDispatcher.Register(tag, listener);
         }
@@ -29,7 +29,7 @@ namespace AD
             eventDispatcher.UnRegister(listener);
         }
 
-        public void UnRegister(int tag, Action listener)
+        public void UnRegister(string tag, Action listener)
         {
             eventDispatcher.UnRegister(tag, listener);
         }
@@ -39,7 +39,7 @@ namespace AD
             eventDispatcher.SendMessage(msg);
         }
 
-        public void SendMsg(int tag)
+        public void SendMsg(string tag)
         {
             eventDispatcher.SendMessage(tag);
         }

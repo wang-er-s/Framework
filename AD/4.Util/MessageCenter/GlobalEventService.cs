@@ -9,11 +9,9 @@ namespace AD
     /// 可以使用lambda来注册
     /// 当传入MonoBehaviour的时候，可以在物体销毁的时候自动释放事件
     /// </summary>
-    public class EventService
+    public class GlobalEventService
     {
-        private EventDispatcher eventDispatcher;
-        
-        public EventService(MonoBehaviour mono) : this()
+        public GlobalEventService(MonoBehaviour mono)
         {
             var trigger = mono.GetComponent<MonoDestroyTrigger>();
             if (trigger == null)
@@ -21,33 +19,32 @@ namespace AD
             trigger.AddDisposeOnDestroy(UnRegisterAll);
         }
 
-        public EventService()
+        public GlobalEventService()
         {
-            eventDispatcher = new EventDispatcher();
         }
 
         private List<Action> unRegisterEvent = new List<Action>();
         
         public void Register<T>(Action<T> listener)
         {
-            eventDispatcher.Register(listener);
-            unRegisterEvent.Add(() => eventDispatcher.UnRegister(listener));
+            MsgMgr.Register(listener);
+            unRegisterEvent.Add(() => MsgMgr.UnRegister(listener));
         }
 
         public void Register(string tag, Action listener)
         {
-            eventDispatcher.Register(tag, listener);
-            unRegisterEvent.Add(() => eventDispatcher.UnRegister(tag, listener));
+            MsgMgr.Register(tag, listener);
+            unRegisterEvent.Add(() => MsgMgr.UnRegister(tag, listener));
         }
 
         public void UnRegister<T>(Action<T> listener)
         {
-            eventDispatcher.UnRegister(listener);
+            MsgMgr.UnRegister(listener);
         }
 
         public void UnRegister(string tag, Action listener)
         {
-            eventDispatcher.UnRegister(tag, listener);
+            MsgMgr.UnRegister(tag, listener);
         }
 
         public void UnRegisterAll()
@@ -55,5 +52,6 @@ namespace AD
             unRegisterEvent.ForEach((action) => action?.Invoke());
             unRegisterEvent.Clear();
         }
+
     }
 }

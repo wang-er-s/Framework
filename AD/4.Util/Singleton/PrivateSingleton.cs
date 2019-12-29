@@ -11,7 +11,7 @@ namespace AD
 
         private static T instance;
 
-        protected static T Instance
+        protected static T Ins
         {
             get
             {

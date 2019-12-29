@@ -6,7 +6,7 @@ namespace AD
     public class EventDispatcher
     {
         private Dictionary<Type, IRegisters> typeEventDic = new Dictionary<Type, IRegisters>();
-        private Dictionary<int, List<Action>> enumEventDic = new Dictionary<int, List<Action>>();
+        private Dictionary<string, List<Action>> enumEventDic = new Dictionary<string, List<Action>>();
 
         public void Register<T>(Action<T> listener)
         {
@@ -76,7 +76,7 @@ namespace AD
             Debugger.Warning($"{typeof(T)} must register first!");
         }
 
-        public void Register(int tag, Action listener)
+        public void Register(string tag, Action listener)
         {
             if (listener == null)
             {
@@ -95,7 +95,7 @@ namespace AD
             }
         }
 
-        public void UnRegister(int tag, Action listener)
+        public void UnRegister(string tag, Action listener)
         {
             if (listener == null)
             {
@@ -107,7 +107,7 @@ namespace AD
             registers.Remove(listener);
         }
 
-        public void SendMessage(int tag)
+        public void SendMessage(string tag)
         {
             List<Action> registers;
             if (enumEventDic.TryGetValue(tag, out registers))

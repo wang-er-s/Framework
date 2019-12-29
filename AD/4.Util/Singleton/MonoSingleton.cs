@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace AD
 {
-	public class MonoSingleton<T>  : MonoBehaviour,ISingleton where T : MonoSingleton<T>
+	public class MonoSingleton<T>  : MonoBehaviour where T : MonoSingleton<T>
 	{
 		private static T mInstance = null;
 		
 		private static readonly object locker = new object ();
 
-		public static T Instance
+		public static T Ins
 		{
 			get
 			{
