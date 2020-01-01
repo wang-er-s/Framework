@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AD.UI.Core;
-using AD;
+
 using AD.UI.Example;
 using UnityEngine;
 using UnityEngine.UI;

@@ -19,7 +19,8 @@ namespace AD
             if (instance == null)
             {
                 var obj = new GameObject(typeof(T).Name);
-                Object.DontDestroyOnLoad(obj);
+                if (Application.isPlaying)
+                    Object.DontDestroyOnLoad(obj);
                 instance = obj.AddComponent<T>();
             }
             

@@ -1,34 +1,10 @@
-﻿#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
-
-// KEngine - Toolset and framework for Unity3D
-// ===================================
-//
-// Author:  Kelly
-// Email: 23110388@qq.com
-// Github: https://github.com/mr-kelly/KEngine
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3.0 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library.
-
-#endregion
-
-using System.Collections;
+﻿using System.Collections;
 using System.IO;
 using UnityEngine;
 
 #if UNITY_5 || UNITY_2017_1_OR_NEWER
 
-namespace KEngine
+namespace AD
 {
     public class SceneLoader : AbstractResourceLoader
     {
@@ -85,7 +61,7 @@ namespace KEngine
             _mode = (LoaderMode)args[0];
             _url = url;
             _sceneName = Path.GetFileNameWithoutExtension(_url);
-            KResourceModule.Instance.StartCoroutine(Start());
+            ResourceModule.Ins.StartCoroutine(Start());
         }
 
         IEnumerator Start()
@@ -106,7 +82,7 @@ namespace KEngine
             }
 
             // load scene
-            Debuger.Assert(_assetFileBridge.Asset);
+            Debugger.Assert(_assetFileBridge.Asset);
             _loadedSceneName = _sceneName;
             if (_mode == LoaderMode.Sync)
                 UnityEngine.SceneManagement.SceneManager.LoadScene(_sceneName,
@@ -122,7 +98,7 @@ namespace KEngine
             }
 
             if (Application.isEditor)
-                KResourceModule.Instance.StartCoroutine(EditorLoadSceneBugFix(null));
+                ResourceModule.Ins.StartCoroutine(EditorLoadSceneBugFix(null));
 
             OnFinish(_assetFileBridge);
 

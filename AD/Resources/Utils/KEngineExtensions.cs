@@ -1,13 +1,13 @@
-﻿#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
+﻿#region Copyright (c) 2015 AD / Kelly <http://github.com/mr-kelly>, All rights reserved.
 
-// KEngine - Toolset and framework for Unity3D
+// AD - Toolset and framework for Unity3D
 // ===================================
 // 
-// Filename: KEngineExtensions.cs
+// Filename: ADExtensions.cs
 // Date:     2015/12/03
 // Author:  Kelly
 // Email: 23110388@qq.com
-// Github: https://github.com/mr-kelly/KEngine
+// Github: https://github.com/mr-kelly/AD
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -27,13 +27,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using KEngine;
+using AD;
 using UnityEngine;
 
 /// <summary>
 /// Extension Unity's function, to be more convinient
 /// </summary>
-public static class KEngineExtensions
+public static class ADExtensions
 {
     public static void SetWidth(this RectTransform rectTrans, float width)
     {
@@ -263,7 +263,7 @@ public static class KEngineExtensions
 }
 
 // C# 扩展, 扩充C#类的功能
-public static class KEngineToolExtensions
+public static class ADToolExtensions
 {
     // 扩展List/  
     public static void Shuffle<T>(this IList<T> list)

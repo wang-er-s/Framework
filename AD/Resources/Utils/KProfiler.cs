@@ -1,13 +1,13 @@
-﻿#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
+﻿#region Copyright (c) 2015 AD / Kelly <http://github.com/mr-kelly>, All rights reserved.
 
-// KEngine - Toolset and framework for Unity3D
+// AD - Toolset and framework for Unity3D
 // ===================================
 // 
 // Filename: KProfiler.cs
 // Date:     2015/12/03
 // Author:  Kelly
 // Email: 23110388@qq.com
-// Github: https://github.com/mr-kelly/KEngine
+// Github: https://github.com/mr-kelly/AD
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace KEngine
+namespace AD
 {
     public class KProfiler
     {

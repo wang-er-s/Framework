@@ -1,30 +1,4 @@
-﻿#region Copyright (c) Kingsoft Xishanju
-
-// KEngine - Asset Bundle framework for Unity3D
-// ===================================
-// 
-// Filename: KTool.cs
-// Date:        2016/01/20
-// Author:     Kelly
-// Email:       23110388@qq.com
-// Github:     https://github.com/mr-kelly/KEngine
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3.0 of the License, or (at your option) any later version.
-// 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library.
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -33,16 +7,16 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using KEngine;
+
 using UnityEngine;
 
-namespace KEngine
+namespace AD
 {
 
     /// <summary>
     /// Some tool function for time, bytes, MD5, or something...
     /// </summary>
-    public class KTool
+    public static class KTool
     {
         private static readonly Dictionary<string, Shader> CacheShaders = new Dictionary<string, Shader>();
         // Shader.Find是一个非常消耗的函数，因此尽量缓存起来
@@ -86,7 +60,7 @@ namespace KEngine
         }
 
         /// <summary>
-        /// 模仿 NGUISelectionTool的同名方法，将位置旋转缩放清零
+        /// 将位置旋转缩放清零
         /// </summary>
         /// <param name="t"></param>
         public static void ResetLocalTransform(Transform t)
@@ -96,7 +70,7 @@ namespace KEngine
             t.localScale = Vector3.one;
         }
 
-        // 最大公约数
+        /// 最大公约数
         public static int GetGCD(int a, int b)
         {
             if (a < b)
@@ -117,9 +91,6 @@ namespace KEngine
         /// <summary>
         /// Find Type from every assembly
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="qualifiedTypeName"></param>
-        /// <returns></returns>
         public static Type FindType(string qualifiedTypeName)
         {
             Type t = Type.GetType(qualifiedTypeName);
@@ -172,12 +143,6 @@ namespace KEngine
         /// <summary>
         /// 字典转到字符串A:1|B:2|C:3这类
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="K"></typeparam>
-        /// <param name="dict"></param>
-        /// <param name="delimeter1"></param>
-        /// <param name="delimeter2"></param>
-        /// <returns></returns>
         public static string DictToSplitStr<T, K>(Dictionary<T, K> dict, char delimeter1 = '|', char delimeter2 = ':')
         {
             var sb = new StringBuilder();
@@ -191,12 +156,6 @@ namespace KEngine
         /// <summary>
         /// A:1|B:2|C:3这类字符串转成字典
         /// </summary>
-        /// <typeparam name="T">string</typeparam>
-        /// <typeparam name="K">string</typeparam>
-        /// <param name="str">原始字符串</param>
-        /// <param name="delimeter1">分隔符1</param>
-        /// <param name="delimeter2">分隔符2</param>
-        /// <returns></returns>
         public static Dictionary<T, K> SplitToDict<T, K>(string str, char delimeter1 = '|', char delimeter2 = ':')
         {
             var dict = new Dictionary<T, K>();
@@ -229,10 +188,6 @@ namespace KEngine
         /// <summary>
         /// 截断字符串变成数组
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="str"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public static List<T> Split<T>(string str, params char[] args)
         {
             if (args.Length == 0)
@@ -264,25 +219,12 @@ namespace KEngine
         /// <summary>
         /// 从一个List中随机获取
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public static T GetRandomItemFromList<T>(IList<T> list)
+        public static T GetRandomItem<T>(this IList<T> list)
         {
             if (list.Count == 0)
                 return default(T);
 
             return list[UnityEngine.Random.Range(0, list.Count)];
-        }
-
-        /// <summary>
-        /// 波浪随机数整数版
-        /// </summary>
-        /// <param name="waveNumberStr"></param>
-        /// <returns></returns>
-        public static int GetWaveRandomNumberInt(string waveNumberStr)
-        {
-            return Mathf.RoundToInt(GetWaveRandomNumber(waveNumberStr));
         }
 
         /// <summary>
@@ -453,7 +395,7 @@ namespace KEngine
                         break;
                     default:
                         Log.Error("Unsupport Type {0} in StrBytesToArray(), You can custom this.", typeCode);
-                        Debuger.Assert(false);
+                        Debugger.Assert(false);
                         break;
                 }
 
@@ -921,49 +863,6 @@ namespace KEngine
                 return from;
         }
 
-        // 粒子特效比例缩放
-        public static void ScaleParticleSystem(GameObject gameObj, float scale)
-        {
-            var notFind = true;
-            foreach (ParticleSystem p in gameObj.GetComponentsInChildren<ParticleSystem>(true))
-            {
-                notFind = false;
-                p.startSize *= scale;
-                p.startSpeed *= scale;
-                p.startRotation *= scale;
-                p.transform.localScale *= scale;
-            }
-            if (notFind)
-            {
-                gameObj.transform.localScale = new Vector3(scale, scale, 1);
-            }
-        }
-
-        //设置粒子系统的RenderQueue
-        public static void SetParticleSystemRenderQueue(Transform parent, int renderQueue = 3900)
-        {
-            int childCount = parent.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform child = parent.GetChild(i);
-                if (child.childCount > 0)
-                    SetParticleSystemRenderQueue(child, renderQueue);
-                if (child.GetComponent<ParticleSystem>() != null)
-                {
-                    var particleSystem = child.GetComponent<ParticleSystem>();
-                    if (particleSystem.GetComponent<Renderer>().sharedMaterial != null)
-                        particleSystem.GetComponent<Renderer>().sharedMaterial.renderQueue = renderQueue;
-                }
-            }
-            if (parent.GetComponent<ParticleSystem>() != null)
-            {
-                var particleSystem = parent.GetComponent<ParticleSystem>();
-                //bug 当同一个窗口有多个使用相同的Material时，其它组件的Material在关闭后会被释放
-                if (particleSystem.GetComponent<Renderer>().sharedMaterial != null)
-                    particleSystem.GetComponent<Renderer>().sharedMaterial.renderQueue = renderQueue;
-            }
-        }
-
         public static void CopyTransformToTarget(Transform sourceTrans, Transform targetTrans)
         {
             targetTrans.localPosition = sourceTrans.localPosition;
@@ -1343,7 +1242,7 @@ namespace KEngine
         {
             get
             {
-                Debuger.Assert(index < MaxCount);
+                Debugger.Assert(index < MaxCount);
                 IntPtr p = (IntPtr)(SourceBytesPtr.ToInt32() + Marshal.SizeOf(typeof(T)) * index);
                 return (T)Marshal.PtrToStructure(p, typeof(T));
             }

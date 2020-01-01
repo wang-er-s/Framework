@@ -1,13 +1,13 @@
-﻿#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
+﻿#region Copyright (c) 2015 AD / Kelly <http://github.com/mr-kelly>, All rights reserved.
 
-// KEngine - Toolset and framework for Unity3D
+// AD - Toolset and framework for Unity3D
 // ===================================
 // 
 // Filename: AppEngine.cs
 // Date:     2015/12/03
 // Author:  Kelly
 // Email: 23110388@qq.com
-// Github: https://github.com/mr-kelly/KEngine
+// Github: https://github.com/mr-kelly/AD
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -29,9 +29,9 @@ using UnityEngine;
 using System.IO;
 using System.Text;
 
-//using KEngine.Table;
+//using AD.Table;
 
-namespace KEngine.Modules
+namespace AD.Modules
 {
     /// <summary>
     /// Unity SettingModule, with Resources.Load in product,  with File.Read in editor
@@ -65,13 +65,13 @@ namespace KEngine.Modules
         }
 
         /// <summary>
-        /// Load KEngineConfig.txt 's `SettingPath`
+        /// Load ADConfig.txt 's `SettingPath`
         /// </summary>
         protected static string SettingFolderName
         {
             get
             {
-                return AppEngine.GetConfig("KEngine.Setting", "SettingResourcesPath");
+                return AppEngine.GetConfig("AD.Setting", "SettingResourcesPath");
             }
         }
 
@@ -117,7 +117,7 @@ namespace KEngine.Modules
 #else
             byte[] fileContent;
             var loader = HotBytesLoader.Load(SettingFolderName + "/" + path, LoaderMode.Sync);
-            Debuger.Assert(!loader.IsError);
+            Debugger.Assert(!loader.IsError);
             fileContent = loader.Bytes;
             
             loader.Release();
@@ -135,7 +135,7 @@ namespace KEngine.Modules
 
         private static string GetFileSystemPath(string path)
         {
-            var compilePath = AppEngine.GetConfig("KEngine.Setting", "SettingCompiledPath");
+            var compilePath = AppEngine.GetConfig("AD.Setting", "SettingCompiledPath");
             var resPath = Path.Combine(compilePath, path);
             return resPath;
         }
@@ -203,7 +203,7 @@ namespace KEngine.Modules
         }
 		
         /// <summary>
-        /// KEngine 3 后，增加同步loadStreamingAssets文件，统一只用StreamingAsset路径
+        /// AD 3 后，增加同步loadStreamingAssets文件，统一只用StreamingAsset路径
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>

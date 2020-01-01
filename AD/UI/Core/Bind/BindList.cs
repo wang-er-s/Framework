@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AD;
+
 using AD.UI.Wrap;
 using AD.UI.Core;
 using UnityEngine;

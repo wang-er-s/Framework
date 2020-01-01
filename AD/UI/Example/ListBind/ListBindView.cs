@@ -1,7 +1,7 @@
 ﻿/*
 using System.Collections;
 using System.Collections.Generic;
-using AD;
+
 using AD.UI.Core;
 using AD.UI.Example;
 using UnityEngine;
