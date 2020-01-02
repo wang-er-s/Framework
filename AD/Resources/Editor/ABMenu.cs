@@ -1,19 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using AD;
 using UnityEditor;
 using UnityEngine;
 
-public class ABMenu
+namespace AD
 {
-    [MenuItem("Tools/打包")]
-    private static void PackBundle()
+    public class ABMenu
     {
-        string path = $"{ResPath.EditorProductFullPath}/{ResPath.BundlesDirName}/{ResPath.GetBuildPlatformName()}";
-        
-        Debug.Log(path);
-        Directory.CreateDirectory(path);
-        BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
+        [MenuItem("Tools/打包")]
+        private static void PackBundle()
+        {
+            string path = ResPath.EditorAssetBundleFullPath;
+            Debug.Log(path);
+            Directory.CreateDirectory(path);
+            Debug.Log(Thread.CurrentThread.ManagedThreadId);
+            Task task = new Task(() =>
+            {
+                BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None,
+                    BuildTarget.StandaloneWindows64);
+                Debug.Log(Thread.CurrentThread.ManagedThreadId);
+                Debug.Log("in");
+            });
+            task.ConfigureAwait(true);
+            task.Start();
+            while (!task.IsCompleted)
+            {
+            }
+            Debug.Log("completed");
+        }
     }
 }
+#endif

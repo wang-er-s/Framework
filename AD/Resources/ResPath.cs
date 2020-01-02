@@ -23,78 +23,49 @@ namespace AD
         {
             get { return Configs.BundlesDirName; }
         }
-
-        public static string FileProtocol
-        {
-            get { return GetFileProtocol(); }
-        } // for WWW...with file:///xxx
-
+        
         /// <summary>
-        /// Unity Editor load AssetBundle directly from the Asset Bundle Path,
-        /// whth file:// protocol
+        /// Unity Editor load or build AssetBundle directly from the Asset Bundle Path,
+        /// C://Project/ResPackage/Bundles
         /// </summary>
         public static string EditorAssetBundleFullPath
         {
-            get
-            {
-                return Configs.EditorAssetBundlePath;
-            }
+            get { return $"{EditorResFullPath}/{BundlesDirName}/{GetBuildPlatformName()}"; }
         }
 
         /// <summary>
-        /// Product Folder's Relative Path   -  Default: ../Product,   which means Assets/../Product
+        /// Product Folder Full Path , Default: C:\xxxxx\xxxx\../ResPackage
         /// </summary>
-        public static string ProductRelPath
+        public static string EditorResFullPath
         {
-            //get { return AD.AppEngine.GetConfig(ADDefaultConfigs.ProductRelPath); }
-            get { return "Resources"; }
+            get { return Path.GetFullPath(Configs.EditorResourcesDir); }
         }
-
-        /// <summary>
-        /// Product Folder Full Path , Default: C:\xxxxx\xxxx\../Product
-        /// </summary>
-        public static string EditorProductFullPath
-        {
-            get { return Path.GetFullPath(ProductRelPath); }
-        }
-
-        /// <summary>
-        /// StreamingAssetsPath/Bundles/Android/ etc.
-        /// WWW的读取，是需要Protocol前缀的
-        /// </summary>
-        public static string ProductPathWithProtocol { get; private set; }
-
-        public static string ProductPathWithoutFileProtocol { get; private set; }
 
         /// <summary>
         /// Bundles/Android/ etc... no prefix for streamingAssets
         /// </summary>
         public static string BundlesPathRelative { get; private set; }
 
-        public static string ApplicationPath { get; private set; }
+        public static string StreamingPath { get; private set; }
 
-        public static string DocumentResourcesPathWithoutFileProtocol
+        public static string PersistentPath
         {
-            get
-            {
-                return Application.persistentDataPath; ; // 各平台通用
-            }
+            get { return Application.persistentDataPath; }
         }
 
-        public static string DocumentResourcesPath;
 
-        private static string _unityEditorEditorUserBuildSettingsActiveBuildTarget;
+        private static string _unityEditorActiveBuildTarget;
 
         /// <summary>
         /// UnityEditor.EditorUserBuildSettings.activeBuildTarget, Can Run in any platform~
         /// </summary>
-        public static string UnityEditor_EditorUserBuildSettings_activeBuildTarget
+        public static string UnityEditor_activeBuildTarget
         {
             get
             {
-                if (Application.isPlaying && !string.IsNullOrEmpty(_unityEditorEditorUserBuildSettingsActiveBuildTarget))
+                if (Application.isPlaying && !string.IsNullOrEmpty(_unityEditorActiveBuildTarget))
                 {
-                    return _unityEditorEditorUserBuildSettingsActiveBuildTarget;
+                    return _unityEditorActiveBuildTarget;
                 }
                 var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
                 foreach (var a in assemblies)
@@ -105,7 +76,7 @@ namespace AD
                         var p = lockType.GetProperty("activeBuildTarget");
 
                         var em = p.GetGetMethod().Invoke(null, new object[] { }).ToString();
-                        _unityEditorEditorUserBuildSettingsActiveBuildTarget = em;
+                        _unityEditorActiveBuildTarget = em;
                         return em;
                     }
                 }
@@ -119,13 +90,13 @@ namespace AD
         /// Here, get Platform name that represent the AssetBundles Folder.
         /// </summary>
         /// <returns>Platform folder Name</returns>
-        public static string GetBuildPlatformName()
+        private static string GetBuildPlatformName()
         {
             string buildPlatformName = "Windows"; // default
 
             if (Application.isEditor)
             {
-                var buildTarget = UnityEditor_EditorUserBuildSettings_activeBuildTarget;
+                var buildTarget = UnityEditor_activeBuildTarget;
                 //UnityEditor.EditorUserBuildSettings.activeBuildTarget;
                 switch (buildTarget)
                 {
@@ -179,21 +150,7 @@ namespace AD
         }
 
         /// <summary>
-        /// On Windows, file protocol has a strange rule that has one more slash
-        /// </summary>
-        /// <returns>string, file protocol string</returns>
-        public static string GetFileProtocol()
-        {
-            string fileProtocol = "file://";
-            if (Application.platform == RuntimePlatform.WindowsEditor ||
-                Application.platform == RuntimePlatform.WindowsPlayer)
-                fileProtocol = "file:///";
-
-            return fileProtocol;
-        }
-
-        /// <summary>
-        /// 统一在字符串后加上.box, 取决于配置的AssetBundle后缀
+        /// 统一在字符串后加上.ab, 取决于配置的AssetBundle后缀
         /// </summary>
         /// <param name="path"></param>
         /// <param name="formats"></param>
@@ -215,7 +172,8 @@ namespace AD
         public static string GetResourceFullPath(string url, bool withFileProtocol = true, bool isLog = true)
         {
             string fullPath;
-            if (GetResourceFullPath(url, withFileProtocol, out fullPath, isLog) != ResourceModule.GetResourceFullPathType.Invalid)
+            if (GetResourceFullPath(url, withFileProtocol, out fullPath, isLog) !=
+                ResourceModule.GetResourceFullPathType.Invalid)
                 return fullPath;
 
             return null;
@@ -224,14 +182,15 @@ namespace AD
         /// <summary>
         /// 根据相对路径，获取到StreamingAssets完整路径，或Resources中的路径
         /// </summary>
-        public static GetResourceFullPathType GetResourceFullPath(string url, bool withFileProtocol, out string fullPath,
+        public static GetResourceFullPathType GetResourceFullPath(string url, bool withFileProtocol,
+            out string fullPath,
             bool isLog = true)
         {
             if (string.IsNullOrEmpty(url))
                 Log.Error("尝试获取一个空的资源路径！");
 
             string docUrl;
-            bool hasDocUrl = TryGetDocumentResourceUrl(url, withFileProtocol, out docUrl);
+            bool hasDocUrl = TryGetPersistentResourceUrl(url, withFileProtocol, out docUrl);
 
             string inAppUrl;
             bool hasInAppUrl = TryGetInAppStreamingUrl(url, withFileProtocol, out inAppUrl);
@@ -265,7 +224,8 @@ namespace AD
         public static bool ContainsResourceUrl(string resourceUrl)
         {
             string fullPath;
-            return GetResourceFullPath(resourceUrl, false, out fullPath, false) != ResourceModule.GetResourceFullPathType.Invalid;
+            return GetResourceFullPath(resourceUrl, false, out fullPath, false) !=
+                   ResourceModule.GetResourceFullPathType.Invalid;
         }
 
         /// <summary>
@@ -275,14 +235,11 @@ namespace AD
         /// <param name="withFileProtocol">是否带有file://前缀</param>
         /// <param name="newUrl"></param>
         /// <returns></returns>
-        public static bool TryGetDocumentResourceUrl(string url, bool withFileProtocol, out string newUrl)
+        public static bool TryGetPersistentResourceUrl(string url, bool withFileProtocol, out string newUrl)
         {
-            if (withFileProtocol)
-                newUrl = DocumentResourcesPath + url;
-            else
-                newUrl = DocumentResourcesPathWithoutFileProtocol + url;
+            newUrl = Path.Combine(PersistentPath, url);
 
-            if (File.Exists(DocumentResourcesPathWithoutFileProtocol + url))
+            if (File.Exists(newUrl))
             {
                 return true;
             }
@@ -300,10 +257,7 @@ namespace AD
         /// <returns></returns>
         public static bool TryGetInAppStreamingUrl(string url, bool withFileProtocol, out string newUrl)
         {
-            if (withFileProtocol)
-                newUrl = ProductPathWithProtocol + url;
-            else
-                newUrl = ProductPathWithoutFileProtocol + url;
+            newUrl = Path.Combine(StreamingPath, url);
 
             // 注意，StreamingAssetsPath在Android平台時，壓縮在apk里面，不要做文件檢查了
             if (!Application.isEditor && Application.platform == RuntimePlatform.Android)
@@ -314,7 +268,7 @@ namespace AD
             else
             {
                 // Editor, 非android运行，直接进行文件检查
-                if (!File.Exists(ProductPathWithoutFileProtocol + url))
+                if (!File.Exists(newUrl))
                 {
                     return false;
                 }
@@ -323,7 +277,7 @@ namespace AD
             // Windows/Edtiro平台下，进行大小敏感判断
             if (Application.isEditor)
             {
-                var result = FileExistsWithDifferentCase(ProductPathWithoutFileProtocol + url);
+                var result = FileExistsWithDifferentCase(newUrl);
                 if (!result)
                 {
                     Log.Error("[大小写敏感]发现一个资源 {0}，大小写出现问题，在Windows可以读取，手机不行，请改表修改！", url);
@@ -359,58 +313,38 @@ namespace AD
         static void InitResourcePath()
         {
 
-            string editorProductPath = EditorProductFullPath;
+            string editorProductPath = EditorResFullPath;
 
             BundlesPathRelative = string.Format("{0}/{1}/", BundlesDirName, GetBuildPlatformName());
-            DocumentResourcesPath = FileProtocol + DocumentResourcesPathWithoutFileProtocol;
 
             switch (Application.platform)
             {
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.OSXEditor:
-                    {
-                        ApplicationPath = string.Format("{0}{1}", GetFileProtocol(), editorProductPath);
-                        ProductPathWithProtocol = GetFileProtocol() + EditorProductFullPath + "/";
-                        ProductPathWithoutFileProtocol = EditorProductFullPath + "/";
-                        // Resources folder
-                    }
+                {
+                    StreamingPath = Application.streamingAssetsPath;
+                }
                     break;
                 case RuntimePlatform.WindowsPlayer:
                 case RuntimePlatform.OSXPlayer:
-                    {
-                        string path = Application.streamingAssetsPath.Replace('\\', '/');//Application.dataPath.Replace('\\', '/');
-                        //                        path = path.Substring(0, path.LastIndexOf('/') + 1);
-                        ApplicationPath = string.Format("{0}{1}", GetFileProtocol(), Application.dataPath);
-                        ProductPathWithProtocol = string.Format("{0}{1}/", GetFileProtocol(), path);
-                        ProductPathWithoutFileProtocol = string.Format("{0}/", path);
-                        // Resources folder
-                    }
+                {
+                    StreamingPath = $"{Application.dataPath}/StreamingAssets";
+                }
                     break;
                 case RuntimePlatform.Android:
-                    {
-                        ApplicationPath = string.Concat("jar:", GetFileProtocol(), Application.dataPath, "!/assets");
-                        ProductPathWithProtocol = string.Concat(ApplicationPath, "/");
-                        ProductPathWithoutFileProtocol = string.Concat(Application.dataPath,
-                            "!/assets/");
-                        // 注意，StramingAsset在Android平台中，是在壓縮的apk里，不做文件檢查
-                        // Resources folder
-                    }
+                {
+                    StreamingPath = $"jar:file://{Application.dataPath}!/assets/";
+                }
                     break;
                 case RuntimePlatform.IPhonePlayer:
-                    {
-                        ApplicationPath =
-                            System.Uri.EscapeUriString(GetFileProtocol() + Application.streamingAssetsPath); // MacOSX下，带空格的文件夹，空格字符需要转义成%20
-
-                        ProductPathWithProtocol = string.Format("{0}/", ApplicationPath);
-                        // only iPhone need to Escape the fucking Url!!! other platform works without it!!! Keng Die!
-                        ProductPathWithoutFileProtocol = Application.streamingAssetsPath + "/";
-                        // Resources folder
-                    }
+                {
+                    StreamingPath = $"{Application.dataPath}/Raw";
+                }
                     break;
                 default:
-                    {
-                        Debugger.Assert(false);
-                    }
+                {
+                    Debugger.Assert(false);
+                }
                     break;
             }
         }

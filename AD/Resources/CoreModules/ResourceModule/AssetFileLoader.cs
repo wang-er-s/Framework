@@ -80,10 +80,10 @@ namespace AD
 				}
 				else 
 				{
-					getAsset = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/" + Configs.ResourcesBuildDir + "/" + path, typeof(UnityEngine.Object));
+					getAsset = UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/" + Configs.EditorResourcesDir + "/" + path, typeof(UnityEngine.Object));
 					if (getAsset == null)
 					{
-						Log.Error("Asset is NULL(from {0} Folder): {1}", Configs.ResourcesBuildDir, path);
+						Log.Error("Asset is NULL(from {0} Folder): {1}", Configs.EditorResourcesDir, path);
 					}
 				}
 #else

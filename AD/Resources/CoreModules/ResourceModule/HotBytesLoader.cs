@@ -46,7 +46,7 @@ namespace AD
                 {
                     if (Application.isEditor) // Editor mode : 读取Product配置目录
                     {
-                        var loadSyncPath = Path.Combine(ResPath.ProductPathWithoutFileProtocol, url);
+                        var loadSyncPath = Path.Combine(ResPath.StreamingPath, url);
                         Bytes = ResourceModule.ReadAllBytes(loadSyncPath);
                     }
                     else // product mode: read streamingAssetsPath

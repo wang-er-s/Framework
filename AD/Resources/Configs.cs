@@ -6,7 +6,7 @@ using UnityEngine;
 public static class Configs
 {
     public const string AssetBundleExt = ".ab";
-    public const string ResourcesBuildDir = "Resources";
+    public const string EditorResourcesDir = "ResPackage";
     public const string BundlesDirName = "Bundles"; //---
     public const string EditorAssetBundlePath = "";
     public const bool LoadAssetBundle = true;

@@ -115,13 +115,7 @@ namespace AD
                 {
                     // TODO: Android下的错误可能是因为文件不存在!
                 }
-
-                string fileProtocol = ResPath.GetFileProtocol();
-                if (url.StartsWith(fileProtocol))
-                {
-                    string fileRealPath = url.Replace(fileProtocol, "");
-                    Log.Error("File {0} Exist State: {1}", fileRealPath, System.IO.File.Exists(fileRealPath));
-                }
+                
                 Log.Error("[KWWWLoader:Error]{0} {1}", Www.error, url);
 
                 OnFinish(null);
