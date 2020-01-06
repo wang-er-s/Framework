@@ -1,10 +1,12 @@
-﻿#if UNITY_EDITOR
+﻿
+using System;
+using Object = UnityEngine.Object;
+#if UNITY_EDITOR
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using AD;
 using UnityEditor;
-using UnityEngine;
 
 namespace AD
 {
@@ -16,7 +18,7 @@ namespace AD
             string path = ResPath.EditorAssetBundleFullPath;
             Directory.CreateDirectory(path);
             BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None,
-                    BuildTarget.StandaloneWindows64);
+                BuildTarget.StandaloneWindows64);
         }
     }
 
@@ -37,7 +39,12 @@ namespace AD
         {
             if (string.IsNullOrEmpty(assetRootPath))
                 return assetBundleName;
-            return assetBundleName.Replace(assetRootPath, "");
+            var name = assetBundleName.Replace(assetRootPath, "");
+            if (name.Length > 0 && (name[0] == '/' || name[0] == '\\'))
+            {
+                name = name.Substring(1);
+            }
+            return name;
         }
 
         [MenuItem(KCopyToStreamingAssets)]
@@ -50,56 +57,72 @@ namespace AD
         [MenuItem(KMarkAssetsWithDir)]
         private static void MarkAssetsWithDir()
         {
-            var settings = BuildScript.GetSettings();
-            assetRootPath = Configs.EditorResourcesDir;
-            var assetsManifest = BuildScript.GetManifest();
-            var assets = Selection.GetFiltered<Object>(SelectionMode.DeepAssets);
-            for (var i = 0; i < assets.Length; i++)
+            try
             {
-                var asset = assets[i];
-                var path = AssetDatabase.GetAssetPath(asset);
-                if (Directory.Exists(path) || path.EndsWith(".cs", System.StringComparison.CurrentCulture))
-                    continue;
-                if (EditorUtility.DisplayCancelableProgressBar(KMarkAssets, path, i * 1f / assets.Length))
-                    break;
-                var assetBundleName = TrimedAssetBundleName(Path.GetDirectoryName(path).Replace("\\", "/")) + "_g";
-                BuildScript.SetAssetBundleNameAndVariant(path, assetBundleName.ToLower(), null);
+                var settings = BuildScript.GetSettings();
+                assetRootPath = Configs.EditorResourcesDir;
+                var assetsManifest = BuildScript.GetManifest();
+                var assets = Selection.GetFiltered<Object>(SelectionMode.DeepAssets);
+                for (var i = 0; i < assets.Length; i++)
+                {
+                    var asset = assets[i];
+                    var path = AssetDatabase.GetAssetPath(asset);
+                    if (Directory.Exists(path) || path.EndsWith(".cs", System.StringComparison.CurrentCulture))
+                        continue;
+                    if (EditorUtility.DisplayCancelableProgressBar(KMarkAssets, path, i * 1f / assets.Length))
+                        break;
+                    var assetBundleName = TrimedAssetBundleName(Path.GetDirectoryName(path).Replace("\\", "/"));
+                    if (string.IsNullOrEmpty(assetBundleName))
+                    {
+                        assetBundleName = "root";
+                    }
+                    BuildScript.SetAssetBundleNameAndVariant(path, assetBundleName.ToLower(), null);
+                }
+                EditorUtility.SetDirty(assetsManifest);
+                AssetDatabase.SaveAssets();
             }
-            EditorUtility.SetDirty(assetsManifest);
-            AssetDatabase.SaveAssets();
-            EditorUtility.ClearProgressBar();
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
         }
 
         [MenuItem(KMarkAssetsWithFile)]
         private static void MarkAssetsWithFile()
         {
-            var settings = BuildScript.GetSettings();
-            assetRootPath = Configs.EditorResourcesDir;
-            var assetsManifest = BuildScript.GetManifest();
-            var assets = Selection.GetFiltered<Object>(SelectionMode.DeepAssets);
-            for (var i = 0; i < assets.Length; i++)
+            try
             {
-                var asset = assets[i];
-                var path = AssetDatabase.GetAssetPath(asset);
-                if (Directory.Exists(path) || path.EndsWith(".cs", System.StringComparison.CurrentCulture))
-                    continue;
-                if (EditorUtility.DisplayCancelableProgressBar(KMarkAssets, path, i * 1f / assets.Length))
-                    break;
+                var settings = BuildScript.GetSettings();
+                assetRootPath = Configs.EditorResourcesDir;
+                var assetsManifest = BuildScript.GetManifest();
+                var assets = Selection.GetFiltered<Object>(SelectionMode.DeepAssets);
+                for (var i = 0; i < assets.Length; i++)
+                {
+                    var asset = assets[i];
+                    var path = AssetDatabase.GetAssetPath(asset);
+                    if (Directory.Exists(path) || path.EndsWith(".cs", System.StringComparison.CurrentCulture))
+                        continue;
+                    if (EditorUtility.DisplayCancelableProgressBar(KMarkAssets, path, i * 1f / assets.Length))
+                        break;
 
-                var dir = Path.GetDirectoryName(path);
-                var name = Path.GetFileNameWithoutExtension(path);
-                if (dir == null)
-                    continue;
-                dir = dir.Replace("\\", "/") + "/";
-                if (name == null)
-                    continue;
+                    var dir = Path.GetDirectoryName(path);
+                    var name = Path.GetFileNameWithoutExtension(path);
+                    if (dir == null)
+                        continue;
+                    dir = dir.Replace("\\", "/") + "/";
+                    if (name == null)
+                        continue;
 
-                var assetBundleName = TrimedAssetBundleName(Path.Combine(dir, name));
-                BuildScript.SetAssetBundleNameAndVariant(path, assetBundleName.ToLower(), null);
+                    var assetBundleName = TrimedAssetBundleName(Path.Combine(dir, name));
+                    BuildScript.SetAssetBundleNameAndVariant(path, assetBundleName.ToLower(), null);
+                }
+                EditorUtility.SetDirty(assetsManifest);
+                AssetDatabase.SaveAssets();
             }
-            EditorUtility.SetDirty(assetsManifest);
-            AssetDatabase.SaveAssets();
-            EditorUtility.ClearProgressBar();
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
         }
 
         [MenuItem(KMarkAssetsWithName)]
