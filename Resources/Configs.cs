@@ -10,25 +10,25 @@ public static class Configs
 {
     static Configs()
     {
-        var config = Resources.Load<ResConfig>("ResConfig");
+        var config = Resources.Load<Settings>("ResConfig");
         Init(config);
     }
 
-    public static void Init(ResConfig config)
+    public static void Init(Settings config)
     {
         switch (config.LoadResourcesStyle)
         {
-            case ResConfig.LoadResStyle.LoadAsset:
+            case Settings.LoadResStyle.LoadAsset:
                 IsEditorLoadAsset = true;
                 IsLoadBundle = false;
                 IsUseResources = false;
                 break;
-            case ResConfig.LoadResStyle.AssetBundle:
+            case Settings.LoadResStyle.AssetBundle:
                 IsEditorLoadAsset = false;
                 IsLoadBundle = true;
                 IsUseResources = false;
                 break;
-            case ResConfig.LoadResStyle.Resources:
+            case Settings.LoadResStyle.Resources:
                 IsEditorLoadAsset = false;
                 IsLoadBundle = false;
                 IsUseResources = true;
@@ -38,9 +38,12 @@ public static class Configs
         ResourcePathPriorityType = config.ResourcePathPriorityType;
     }
 
-    public static string AssetBundleExt { get; private set; } = ".ab";
-    public static string EditorResourcesDir { get; private set; } = "BundleResources";
-    public static string BundlesDirName { get; private set; } = "Bundles";
+    public const string AssetBundleExt = ".ab";
+    public const string EditorResourcesDir  = "Assets/BundleResources";
+    public const string EditorAssetBundleDir  = "ResPackage";
+    public const string BundlesDirName  = "Bundles";
+    public const string AssetsManifestPath = "Manifest";
+    public const string AssetsSettingPath = "Setting";
     public static bool IsEditor { get; private set; } = true;
     public static bool IsLoadBundle { get; private set; } = false;
     public static bool IsUseResources { get; private set; } = true;
@@ -54,9 +57,12 @@ public static class Configs
 }
 
 [ShowOdinSerializedPropertiesInInspector]
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/SpawnManagerScriptableObject", order = 1)]
-public class ResConfig : ScriptableObject
+[CreateAssetMenu(fileName = "Setting", menuName = "ScriptableObjects/Settings", order = 1)]
+public class Settings : ScriptableObject
 {
+
+    public Dictionary<string, string> BundleAssets;
+    
     public enum LoadResStyle
     {
         LoadAsset,

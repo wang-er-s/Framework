@@ -93,7 +93,7 @@ namespace AD
             {
                 if (Configs.IsEditorLoadAsset)
                 {
-                    path = Path.Combine("Assets", Configs.EditorResourcesDir, path);
+                    path = Path.Combine(Configs.EditorResourcesDir, path);
                 }
                 else if (Configs.IsLoadBundle)
                 {
@@ -320,13 +320,10 @@ namespace AD
         {
             BuildPlatformName = GetBuildPlatformName();
             BundlesDirName = Configs.BundlesDirName;
-            EditorResFullPath = Path.GetFullPath(Configs.EditorResourcesDir);
+            EditorResFullPath = Path.GetFullPath(Configs.EditorAssetBundleDir);
             EditorAssetBundleFullPath = $"{EditorResFullPath}/{BundlesDirName}/{GetBuildPlatformName()}";
             EditorAssetFullPath = $"{Application.dataPath}/BundleResources";
             PersistentPath = Application.persistentDataPath;
-
-            string editorProductPath = EditorResFullPath;
-
             BundlesPathRelative = string.Format("{0}/{1}/", BundlesDirName, GetBuildPlatformName());
 
             switch (Application.platform)
