@@ -40,7 +40,7 @@ namespace AD
                 yield return null;
             }
 
-            var shader = loader.Bundle.mainAsset as Shader;
+            var shader = loader.Bundle.LoadAsset<Shader>("");
             Debug.Assert(shader);
 
             Desc = shader.name;

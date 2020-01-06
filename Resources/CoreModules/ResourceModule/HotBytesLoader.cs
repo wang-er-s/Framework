@@ -30,7 +30,8 @@ namespace AD
 
         private IEnumerator CoLoad(string url)
         {
-            /*var getResPathType = Path.Combine(ResPath.EditorResFullPath, url);
+            _fullUrl = ResPath.GetResFullPath(url);
+            var getResPathType = ResPath.ContainsResourceUrl(url);
             if (getResPathType == ResourceModule.GetResourceFullPathType.Invalid)
             {
                 if (Debug.isDebugBuild)
@@ -41,18 +42,10 @@ namespace AD
 
             if (_loaderMode == LoaderMode.Sync)
             {
-                // 存在应用内的，StreamingAssets内的，同步读取；否则去PersitentDataPath
-                if (getResPathType == ResourceModule.GetResourceFullPathType.InApp)
+                // 存在应用内的，StreamingAssets内的，同步读取；否则直接读取路径
+                if (!Application.isEditor && getResPathType == ResourceModule.GetResourceFullPathType.InApp)
                 {
-                    if (Application.isEditor) // Editor mode : 读取Product配置目录
-                    {
-                        var loadSyncPath = Path.Combine(ResPath.StreamingPath, url);
-                        Bytes = ResourceModule.ReadAllBytes(loadSyncPath);
-                    }
-                    else // product mode: read streamingAssetsPath
-                    {
-                        Bytes = ResourceModule.LoadSyncFromStreamingAssets(url);
-                    }
+                    Bytes = ResourceModule.LoadSyncFromStreamingAssets(url);
                 }
                 else
                 {
@@ -71,10 +64,6 @@ namespace AD
 
                 if (!_wwwLoader.IsSuccess)
                 {
-                    //if (AssetBundlerLoaderErrorEvent != null)
-                    //{
-                    //    AssetBundlerLoaderErrorEvent(this);
-                    //}
                     Debugger.Error("[HotBytesLoader]Error Load WWW: {0}", url);
                     OnFinish(null);
                     yield break;
@@ -84,7 +73,7 @@ namespace AD
 
             }
 
-            OnFinish(Bytes);*/
+            OnFinish(Bytes);
             yield return null;
         }
 

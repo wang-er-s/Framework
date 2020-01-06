@@ -75,6 +75,16 @@ namespace AD
 
         #region public
 
+        public static string GetBundleFullPath(string url)
+        {
+            string path = GetResFullPath(url);
+            if (Configs.IsLoadBundle)
+            {
+                path =  GetAssetBundlePath(path);
+            }
+            return path;
+        }
+
         public static string GetResFullPath(string url)
         {
             if (Configs.IsUseResources) return url;
@@ -107,14 +117,14 @@ namespace AD
             }
             return path;
         }
+        
 
         /// <summary>
         /// 检查资源是否存在StreamingAssets或者Persistent中
         /// </summary>
-        public static bool ContainsResourceUrl(string resourceUrl)
+        public static GetResourceFullPathType ContainsResourceUrl(string resourceUrl)
         {
-            return GetResourceFullPath(resourceUrl, out _, false) !=
-                   ResourceModule.GetResourceFullPathType.Invalid;
+            return GetResourceFullPath(resourceUrl, out _, false);
         }
 
         #endregion

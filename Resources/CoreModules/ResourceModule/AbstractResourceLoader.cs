@@ -319,29 +319,24 @@ namespace AD
 
         protected virtual void OnFinish(object resultObj)
         {
-            Action doFinish = () =>
+            // 如果ReadyDispose，无效！不用传入最终结果！
+            ResultObject = resultObj;
+
+            // 如果ReadyDisposed, 依然会保存ResultObject, 但在回调时会失败~无回调对象
+            var callbackObject = !IsReadyDisposed ? ResultObject : null;
+
+            FinishTiming = Time.realtimeSinceStartup;
+            Progress = 1;
+            IsError = callbackObject == null;
+
+            IsCompleted = true;
+            DoCallback(IsSuccess, callbackObject);
+
+            if (IsReadyDisposed)
             {
-                // 如果ReadyDispose，无效！不用传入最终结果！
-                ResultObject = resultObj;
-
-                // 如果ReadyDisposed, 依然会保存ResultObject, 但在回调时会失败~无回调对象
-                var callbackObject = !IsReadyDisposed ? ResultObject : null;
-
-                FinishTiming = Time.realtimeSinceStartup;
-                Progress = 1;
-                IsError = callbackObject == null;
-
-                IsCompleted = true;
-                DoCallback(IsSuccess, callbackObject);
-
-                if (IsReadyDisposed)
-                {
-                    //Dispose();
-                    Debugger.Log($"[BaseResourceLoader:OnFinish]时，准备Disposed {Url}");
-                }
-            };
-
-            doFinish();
+                //Dispose();
+                Debugger.Log($"[BaseResourceLoader:OnFinish]时，准备Disposed {Url}");
+            }
         }
 
         /// <summary>

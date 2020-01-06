@@ -80,6 +80,7 @@ namespace AD
             AssetFileLoader.AssetFileBridgeDelegate callback = null)
         {
             var request = AssetFileLoader.Load(path, callback);
+            var ab = AssetBundleLoader.Load("");
             return request;
         }
 

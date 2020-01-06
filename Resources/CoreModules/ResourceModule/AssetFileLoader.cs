@@ -58,7 +58,7 @@ namespace AD
         {
 
             Object getAsset = null;
-            path = ResPath.GetResFullPath(path);
+            path = ResPath.GetBundleFullPath(path);
             if (Configs.IsUseResources)
             {
                 string extension = Path.GetExtension(path);
@@ -71,7 +71,7 @@ namespace AD
                 }
                 OnFinish(getAsset);
             }
-			if (Configs.IsEditor && Configs.IsEditorLoadAsset) 
+			else if (Configs.IsEditor && Configs.IsEditorLoadAsset) 
 			{
 #if UNITY_EDITOR
 				if (path.EndsWith(".unity"))
@@ -124,8 +124,7 @@ namespace AD
                 var assetBundle = _bundleLoader.Bundle;
 
                 DateTime beginTime = DateTime.Now;
-#if UNITY_5 || UNITY_2017_1_OR_NEWER
-                // Unity 5 下，不能用mainAsset, 要取对象名
+
                 var abAssetName = Path.GetFileNameWithoutExtension(Url).ToLower();
                 if (!assetBundle.isStreamedSceneAssetBundle)
                 {
@@ -152,22 +151,6 @@ namespace AD
                     // but set a fault Object the result
                     getAsset = ResourceModule.Ins;
                 }
-#else
-                // 经过AddWatch调试，.mainAsset这个getter第一次执行时特别久，要做序列化
-                //AssetBundleRequest request = assetBundle.LoadAsync("", typeof(Object));// mainAsset
-                //while (!request.isDone)
-                //{
-                //    yield return null;
-                //}
-                try
-                {
-                    Debugger.Assert(getAsset = assetBundle.mainAsset);
-                }
-                catch
-                {
-                    Debugger.Error("[OnAssetBundleLoaded:mainAsset]{0}", path);
-                }
-#endif
 
                 ResourceModule.LogLoadTime("AssetFileBridge", path, beginTime);
 

@@ -35,7 +35,7 @@ namespace AD
 //                preSceneLoader._assetFileBridge.FullClear = true;
 //                preSceneLoader.Release();
                 preSceneLoader._loadedSceneName = string.Empty;
-                UnityEngine.SceneManagement.SceneManager.UnloadScene(preSceneLoader.SceneName);
+                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(preSceneLoader.SceneName);
                 preSceneLoader = null;
             }
         }
@@ -140,7 +140,7 @@ namespace AD
             _assetFileBridge.Release();
             if(_loadedSceneName == _sceneName)
             {
-            UnityEngine.SceneManagement.SceneManager.UnloadScene(_sceneName);
+                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(_sceneName);
             }
         }
         protected override void OnReadyDisposed()

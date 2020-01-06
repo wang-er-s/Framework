@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: ResConfig
+  m_Name: Data
   m_EditorClassIdentifier: AD::ResConfig
-  ResourcePathPriorityType: 2
+  LoadResourcesStyle: 0
+  ResourcePathPriorityType: 0

@@ -22,13 +22,7 @@ namespace AD
             var newHelp = newHelpGameObject.AddComponent<ResourceLoadedAssetDebugger>();
             newHelp.Type = type;
             newHelp.TheObject = theObject;
-            newHelp.MemorySize = string.Format("{0:F5}KB",
-#if UNITY_5_5 || UNITY_2017_1_OR_NEWER
-				UnityEngine.Profiling.Profiler.GetRuntimeMemorySize(theObject) / 1024f
-#else
-                UnityEngine.Profiler.GetRuntimeMemorySize(theObject) / 1024f
-#endif
-			);
+            newHelp.MemorySize = $"{UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(theObject) / 1024f:F5}KB";
             return newHelp;
         }
 

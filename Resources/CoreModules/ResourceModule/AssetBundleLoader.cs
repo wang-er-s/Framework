@@ -78,7 +78,7 @@ namespace AD
 
             _hasPreloadAssetBundleManifest = true;
             //            var mainAssetBundlePath = string.Format("{0}/{1}/{1}", KResourceModule.BundlesDirName,KResourceModule.BuildPlatformName);
-            HotBytesLoader bytesLoader = HotBytesLoader.Load(ResPath.BundlesPathRelative + ResPath.BuildPlatformName, LoaderMode.Sync);//string.Format("{0}/{1}", KResourceModule.BundlesDirName, KResourceModule.BuildPlatformName), LoaderMode.Sync);
+            HotBytesLoader bytesLoader = HotBytesLoader.Load( ResPath.BuildPlatformName, LoaderMode.Sync);
 
             _mainAssetBundle = AssetBundle.LoadFromMemory(bytesLoader.Bytes);//KResourceModule.LoadSyncFromStreamingAssets(mainAssetBundlePath));
             _assetBundleManifest = _mainAssetBundle.LoadAsset("AssetBundleManifest") as AssetBundleManifest;

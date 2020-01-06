@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using AD;
 using Sirenix.OdinInspector;
@@ -15,10 +16,25 @@ public static class Configs
 
     public static void Init(ResConfig config)
     {
+        switch (config.LoadResourcesStyle)
+        {
+            case ResConfig.LoadResStyle.LoadAsset:
+                IsEditorLoadAsset = true;
+                IsLoadBundle = false;
+                IsUseResources = false;
+                break;
+            case ResConfig.LoadResStyle.AssetBundle:
+                IsEditorLoadAsset = false;
+                IsLoadBundle = true;
+                IsUseResources = false;
+                break;
+            case ResConfig.LoadResStyle.Resources:
+                IsEditorLoadAsset = false;
+                IsLoadBundle = false;
+                IsUseResources = true;
+                break;
+        }
         IsEditor = config.IsEditor;
-        IsLoadBundle = config.IsLoadBundle;
-        IsEditorLoadAsset = config.IsEditorLoadAsset;
-        IsUseResources = config.IsUseResources;
         ResourcePathPriorityType = config.ResourcePathPriorityType;
     }
 
@@ -38,18 +54,17 @@ public static class Configs
 }
 
 [ShowOdinSerializedPropertiesInInspector]
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/SpawnManagerScriptableObject", order = 1)]
 public class ResConfig : ScriptableObject
 {
-    public ResConfig(bool isEditor = true,bool isEditorLoadAsset = false,bool isLoadBundle = false, bool isUseResources = true)
+    public enum LoadResStyle
     {
-        IsEditor = isEditor;
-        IsEditorLoadAsset = isEditorLoadAsset;
-        IsLoadBundle = isLoadBundle;
-        IsUseResources = isUseResources;
+        LoadAsset,
+        AssetBundle,
+        Resources,
     }
 
-
-    private bool isEditor = false;
+    private bool isEditor = true;
 
     [ShowInInspector]
     [LabelText("编辑模式")]
@@ -59,48 +74,26 @@ public class ResConfig : ScriptableObject
         set
         {
             isEditor = value;
-            if (!isEditor)
+            if (!isEditor && LoadResourcesStyle == LoadResStyle.LoadAsset)
             {
-                IsEditorLoadAsset = false;
+                LoadResourcesStyle = LoadResStyle.AssetBundle;
             }
         }
     }
 
-    private bool isEditorLoadAsset = false;
-
     [ShowInInspector]
-    [DisableIf("@IsEditor==false")]
-    [LabelText("使用LoadAssetAtPath加载")]
-    public bool IsEditorLoadAsset
-    {
-        get { return isEditorLoadAsset; }
-        set { isEditorLoadAsset = value; }
-    }
-
-    private bool isLoadBundle = false;
-
-    [ShowInInspector]
-    [InfoBox("勾选IsEditor后，会从Project/ResPackage/Bundles里面加载AB",InfoMessageType.Warning,VisibleIf = "IsLoadBundle")]
-    [LabelText("使用AssetBundle")]
-    public bool IsLoadBundle
-    {
-        get { return isLoadBundle; }
-        set { isLoadBundle = value; }
-    }
-
-    private bool isUseResources = false;
-
-    [ShowInInspector]
-    [LabelText("使用Resources")]
-    public bool IsUseResources
-    {
-        get { return isUseResources; }
-        set { isUseResources = value; }
-    }
+    [InfoBox("勾选IsEditor后，会从Project/ResPackage/Bundles里面加载AB",InfoMessageType.Warning,VisibleIf = "ShowOrHide")]
+    [EnumPaging]
+    public LoadResStyle LoadResourcesStyle = LoadResStyle.LoadAsset;
 
     [EnumPaging]
     [LabelText("资源加载优先级")]
     public KResourcePathPriorityType ResourcePathPriorityType =
         KResourcePathPriorityType.PersistentDataPathPriority;
 
+    private bool ShowOrHide()
+    {
+        return LoadResourcesStyle == LoadResStyle.AssetBundle;
+    }
+    
 }
