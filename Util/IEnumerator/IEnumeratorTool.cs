@@ -121,7 +121,6 @@ public class IEnumeratorTool : MonoBehaviour
         //停止所有携程
         if (isStopAllCoroutine)
         {
-            Debugger.Log("停止所有携程");
             StopAllCoroutines();
             isStopAllCoroutine = false;
         }

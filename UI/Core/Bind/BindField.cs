@@ -56,16 +56,23 @@ namespace AD.UI.Core
 
         private void InitEvent()
         {
-            wrapper = WrapTool.GetWrapper(component);
-            fieldValueChangeEvent = fieldValueChangeEvent ?? (wrapper as IBindData<TData>)?.GetBindFieldFunc();
-            componentValueChangeEvent = componentValueChangeEvent ?? (wrapper as IBindCommand<TData>)?.GetBindCommandFunc();
+            fieldValueChangeEvent = fieldValueChangeEvent ?? (component as IBindData<TData>)?.GetBindFieldFunc();
+            componentValueChangeEvent = componentValueChangeEvent ?? (component as IBindCommand<TData>)?.GetBindCommandFunc();
+            if (fieldValueChangeEvent == null)
+            {
+                wrapper = WrapTool.GetWrapper(component);
+                fieldValueChangeEvent = fieldValueChangeEvent ?? (wrapper as IBindData<TData>)?.GetBindFieldFunc();
+                componentValueChangeEvent = componentValueChangeEvent ?? (wrapper as IBindCommand<TData>)?.GetBindCommandFunc();
+            }
+            if(fieldValueChangeEvent == null )
+                Debugger.Error($"{component.GetType().Name}没有wrapper，而且自己没有实现IBindData{typeof(TData)}接口");
+            fieldValueChangeEvent?.Invoke(field.Value);
             switch (bindType)
             {
                 case BindType.OnWay:
                     field?.AddListener((value) => fieldValueChangeEvent(file2ComponentWrapFunc == null ? value : file2ComponentWrapFunc(value)));
                     break;
                 case BindType.Revert:
-                    fieldValueChangeEvent?.Invoke(field.Value);
                     componentValueChangeEvent?.AddListener((data) => field.Value = component2FieldWrapFunc == null ? data : component2FieldWrapFunc(data));
                     break;
             }
@@ -94,10 +101,17 @@ namespace AD.UI.Core
 
         private void InitEvent()
         {
-            wrapper = WrapTool.GetWrapper(component);
-            filedValueChangeEvent = filedValueChangeEvent ?? (wrapper as IBindData<TResult>)?.GetBindFieldFunc();
+            filedValueChangeEvent = filedValueChangeEvent ?? (component as IBindData<TResult>)?.GetBindFieldFunc();
+            if (filedValueChangeEvent == null)
+            {
+                wrapper = WrapTool.GetWrapper(component);
+                filedValueChangeEvent = filedValueChangeEvent ?? (wrapper as IBindData<TResult>)?.GetBindFieldFunc();
+            }
+            if(filedValueChangeEvent == null )
+                Debugger.Error($"{component.GetType().Name}没有wrapper，而且自己没有实现IBindData{typeof(TResult)}接口");
             field1.AddListener((data1) => filedValueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
             field2.AddListener((data2) => filedValueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
+            filedValueChangeEvent(wrapFunc(field1.Value, field2.Value));
         }
     }
 

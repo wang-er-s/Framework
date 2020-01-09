@@ -38,8 +38,8 @@ namespace AD.UI.Wrap
                     return (BaseWrapper<T>) Activator.CreateInstance(type.Value, Args);
                 }
             }
-            Debug.LogError ($"没有找到{component.GetType ().Name}的包装器，自行添加");
-            throw new NullReferenceException();
+            Debug.LogWarning($"没有找到{component.GetType ().Name}的包装器，自行添加");
+            return null;
         }
 
     }

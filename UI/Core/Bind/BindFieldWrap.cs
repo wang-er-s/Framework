@@ -50,7 +50,10 @@ namespace AD.UI.Core
             componentValueChangeEvent = componentValueChangeEvent ?? (wrapper as IBindCommand<TResult>)?.GetBindCommandFunc();
             fieldValueChangeEvent = fieldValueChangeEvent ?? (wrapper as IBindData<TResult>)?.GetBindFieldFunc();
             if (fieldWrapFunc != null)
-                field?.AddListener((value) => fieldValueChangeEvent(fieldWrapFunc(value)));
+            {
+                field.AddListener((value) => fieldValueChangeEvent(fieldWrapFunc(value)));
+                fieldValueChangeEvent(fieldWrapFunc(field.Value));
+            }
             if (componentWrapFunc != null)
                 componentValueChangeEvent?.AddListener((val) => field.Value = componentWrapFunc(val));
         }

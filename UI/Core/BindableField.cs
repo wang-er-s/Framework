@@ -35,7 +35,6 @@ namespace AD.UI.Core
 
         public void AddListener(Action<T> changeAction)
         {
-            changeAction(_value);
             OnValueChanged += changeAction;
         }
 

@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 namespace Plugins.XAsset.Editor
