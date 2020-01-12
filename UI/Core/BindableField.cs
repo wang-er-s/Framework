@@ -2,22 +2,22 @@
 
 namespace AD.UI.Core
 {
-    public class BindableField<T> : IBindableField<T>
+    public class BindableProperty<T> : IBindableProperty<T>
     {
 
-        public BindableField(T value)
+        public BindableProperty(T value)
         {
             _value = value;
         }
         
-        public BindableField()
+        public BindableProperty()
         {
         }
         
         private event Action<T> OnValueChanged;
 
         private T _value;
-        T IBindableField<T>.Value
+        T IBindableProperty<T>.Value
         {
             get { return _value; }
             set
@@ -54,17 +54,22 @@ namespace AD.UI.Core
             return (_value != null ? _value.ToString() : "null");
         }
         
-        public static implicit operator T(BindableField<T> field)
+        public static implicit operator T(BindableProperty<T> property)
         {
-            return field._value;
+            return property._value;
         }
     }
 
-    public interface IBindableField<T>
+    public interface IBindableProperty<T> : IClearListener
     {
         T Value { get; set; }
         void AddListener(Action<T> changedAction);
         void RemoveListener(Action<T> changedAction);
+    }
+
+    public interface IClearListener
+    {
         void ClearListener();
     }
+    
 }

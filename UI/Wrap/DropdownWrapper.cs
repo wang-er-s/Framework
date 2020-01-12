@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class DropdownWrapper : BaseWrapper<Dropdown> , IBindData<int>, IBindCommand<int>
+    public class DropdownWrapper : BaseWrapper<Dropdown> , IFieldChangeCb<int>, IComponentEvent<int>
     {
         private Dropdown dropdown;
         public DropdownWrapper(Dropdown _component) : base(_component)
@@ -12,12 +12,12 @@ namespace AD.UI.Wrap
             dropdown = _component;
         }
 
-        public Action<int> GetBindFieldFunc()
+        public Action<int> GetFieldChangeCb()
         {
             return (index) => dropdown.value = index;
         }
 
-        public UnityEvent<int> GetBindCommandFunc()
+        public UnityEvent<int> GetComponentEvent()
         {
             return dropdown.onValueChanged;
         }

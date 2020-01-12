@@ -1,12 +1,5 @@
-﻿/*
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using AD.UI.Core;
-
-using AD.UI.Example;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,34 +18,34 @@ namespace AD.UI.Example
         protected override void OnVmChange()
         {
             viewModel = VM as ItemViewModel;
-            BindFactory<ItemView, ItemViewModel> binding = new BindFactory<ItemView, ItemViewModel>(this, this.viewModel);
-            binding.Bind(itemImg, viewModel.Path).InitBind();
-            binding.Bind(nameTxt, viewModel.Path).InitBind();
+            UIBindFactory<ItemView, ItemViewModel> binding = new UIBindFactory<ItemView, ItemViewModel>(this, this.viewModel);
+            binding.Bind(itemImg, viewModel.Path);
+            binding.Bind(nameTxt, viewModel.Path);
             binding.BindData(viewModel.Last, (last) => breakLine.SetActive(!last));
             binding.BindData(viewModel.Selected, (value) => selected.SetActive(value));
             if (viewModel.OnItemClick != null)
-                binding.BindCommand(selfBtn, viewModel.OnItemClick).InitBind();
+                binding.Bind(selfBtn, viewModel.OnItemClick);
         }
 
     }
     
     public class ItemViewModel : ViewModel
     {
-        public IBindableField<string> Path { get; set; }
+        public IBindableProperty<string> Path { get; set; }
         //如果是最后一个item，则要隐藏breakline
-        public IBindableField<bool> Last { get; set; }
-        public IBindableField<int> Index { get; set; }
-        public IBindableField<bool> Selected { get; set; }
+        public IBindableProperty<bool> Last { get; set; }
+        public IBindableProperty<int> Index { get; set; }
+        public IBindableProperty<bool> Selected { get; set; }
         public Action OnItemClick { get; set; }
 
         public ItemViewModel()
         {
-            Path = new BindableField<string>();
-            Last = new BindableField<bool>();
-            Index = new BindableField<int>();
-            Selected = new BindableField<bool>();
+            Path = new BindableProperty<string>();
+            Last = new BindableProperty<bool>();
+            Index = new BindableProperty<int>();
+            Selected = new BindableProperty<bool>();
         }
 
     }
 }
-*/
+

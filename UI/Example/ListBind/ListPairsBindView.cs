@@ -1,9 +1,5 @@
-﻿/*
-using System.Collections;
-using System.Collections.Generic;
-using AD.UI.Core;
+﻿using AD.UI.Core;
 using AD.UI.Example;
-using UnityEngine;
 
 public class ListPairsBindView : View
 {
@@ -11,9 +7,9 @@ public class ListPairsBindView : View
     protected override void OnVmChange()
     {
         viewModel = VM as ListPairsBindViewModel;
-        BindFactory<ListPairsBindView, ListPairsBindViewModel> binding =
-            new BindFactory<ListPairsBindView, ListPairsBindViewModel>(this, viewModel);
-        binding.BindIpairs(viewModel.Items,"item[?]").InitBind();
+        UIBindFactory<ListPairsBindView, ListPairsBindViewModel> binding =
+            new UIBindFactory<ListPairsBindView, ListPairsBindViewModel>(this, viewModel);
+        binding.BindIpairs(viewModel.Items, "item[?]");
     }
 }
 
@@ -25,11 +21,11 @@ public class ListPairsBindViewModel : ViewModel
     {
         Items = new BindableList<ItemViewModel>()
         {
-            new ItemViewModel(){Path = new BindableField<string>("回锅肉")},
-            new ItemViewModel(){Path = new BindableField<string>("梅菜扣肉")},
-            new ItemViewModel(){Path = new BindableField<string>("水煮鱼")},
-            new ItemViewModel(){Path = new BindableField<string>("鱼香肉丝")},
+            new ItemViewModel(){Path = new BindableProperty<string>("回锅肉")},
+            new ItemViewModel(){Path = new BindableProperty<string>("梅菜扣肉")},
+            new ItemViewModel(){Path = new BindableProperty<string>("水煮鱼")},
+            new ItemViewModel(){Path = new BindableProperty<string>("鱼香肉丝")},
         };
     }
 }
-*/
+

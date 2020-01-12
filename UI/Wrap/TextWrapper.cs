@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class TextWrapper : BaseWrapper<Text>, IBindData<string>
+    public class TextWrapper : BaseWrapper<Text>, IFieldChangeCb<string>
     {
         private readonly Text text;
         public TextWrapper(Text _text) : base(_text)
@@ -16,7 +16,7 @@ namespace AD.UI.Wrap
             text = _text;
         }
 
-        Action<string> IBindData<string>.GetBindFieldFunc()
+        Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
             return (value) => text.text = value;
         }

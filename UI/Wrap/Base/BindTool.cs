@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using AD.UI.Core;
-using UnityEngine;
 using UnityEngine.UI;
-using Object = System.Object;
 
 namespace AD.UI.Wrap
 {
-    public static class WrapTool
+    public static class BindTool
     {
 
         private static readonly Dictionary<Type,Type> SupportWrapperTypes = new Dictionary<Type, Type>()
@@ -28,18 +22,17 @@ namespace AD.UI.Wrap
         
         private static readonly object[] Args = new object[1];
 
-        public static BaseWrapper<T> GetWrapper<T>(T component) where T : Component
+        public static object GetDefaultBind<T>(T component) where T : class
         {
             foreach (var type in SupportWrapperTypes)
             {
                 if (type.Key.IsInstanceOfType(component))
                 {
                     Args[0] = component;
-                    return (BaseWrapper<T>) Activator.CreateInstance(type.Value, Args);
+                    return Activator.CreateInstance(type.Value, Args);
                 }
             }
-            Debug.LogWarning($"没有找到{component.GetType ().Name}的包装器，自行添加");
-            return null;
+            return component;
         }
 
     }

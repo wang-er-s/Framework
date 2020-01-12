@@ -1,10 +1,6 @@
-﻿/*
-using System.Collections;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
 using AD.UI.Core;
 using AD.UI.Example;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class ListBindView : View
@@ -20,14 +16,13 @@ public class ListBindView : View
     protected override void OnVmChange()
     {
         viewModel = VM as ListBindViewModel;
-        BindFactory<ListBindView, ListBindViewModel> binding =
-            new BindFactory<ListBindView, ListBindViewModel>(this, viewModel);
+        var binding = new UIBindFactory<ListBindView, ListBindViewModel>(this, viewModel);
         dropdown.options = viewModel.DropdownData;
-        binding.RevertBind(dropdown, viewModel.SelectedDropDownIndex).InitBind();
-        binding.BindList(viewModel.Items, item).InitBind();
-        binding.BindCommand(addBtn,viewModel.AddItem).InitBind();
-        binding.BindCommand(deleteBtn, viewModel.DeleteSelectedItem).InitBind();
-        binding.BindCommand(updateBtn, viewModel.UpdateItem).InitBind();
+        binding.RevertBind(dropdown, viewModel.SelectedDropDownIndex);
+        binding.BindList(viewModel.Items, item);
+        binding.Bind(addBtn, viewModel.AddItem);
+        binding.Bind(deleteBtn, viewModel.DeleteSelectedItem);
+        binding.Bind(updateBtn, viewModel.UpdateItem);
 
     }
 }
@@ -36,18 +31,18 @@ public class ListBindViewModel : ViewModel
 {
     public BindableList<ItemViewModel> Items { get; private set; }
     public List<Dropdown.OptionData> DropdownData { get; private set; }
-    public BindableField<int> SelectedDropDownIndex { get; private set; }
+    public BindableProperty<int> SelectedDropDownIndex { get; private set; }
     private int selectedDropDownIndex
     {
         get { return SelectedDropDownIndex; }
-        set { ((IBindableField<int>) SelectedDropDownIndex).Value = value; }
+        set { ((IBindableProperty<int>) SelectedDropDownIndex).Value = value; }
     }
     private ItemViewModel selectedItem;
     
     public ListBindViewModel()
     {
         Items = new BindableList<ItemViewModel>();
-        SelectedDropDownIndex = new BindableField<int>(0);
+        SelectedDropDownIndex = new BindableProperty<int>(0);
         DropdownData = new List<Dropdown.OptionData>()
         {
             new Dropdown.OptionData("回锅肉"),
@@ -87,8 +82,8 @@ public class ListBindViewModel : ViewModel
     {
         ItemViewModel vm = new ItemViewModel
         {
-            Last = new BindableField<bool>(false),
-            Path = new BindableField<string>(DropdownData[selectedDropDownIndex].text),
+            Last = new BindableProperty<bool>(false),
+            Path = new BindableProperty<string>(DropdownData[selectedDropDownIndex].text),
         };
         vm.OnItemClick = () => OnItemClick(vm);
         return vm;
@@ -112,4 +107,4 @@ public class ListBindViewModel : ViewModel
     }
     
 }
-*/
+

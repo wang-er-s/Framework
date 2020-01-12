@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class SliderWrapper: BaseWrapper<Slider>, IBindData<float>, IBindCommand<float>
+    public class SliderWrapper: BaseWrapper<Slider>, IFieldChangeCb<float>, IComponentEvent<float>
     {
         private readonly Slider slider;
 
@@ -18,17 +18,17 @@ namespace AD.UI.Wrap
             slider = _slider;
         }
 
-        Action<float> IBindData<float>.GetBindFieldFunc()
+        Action<float> IFieldChangeCb<float>.GetFieldChangeCb()
         {
             return (value) => slider.value = value;
         }
 
-        UnityEvent<float> IBindCommand<float>.GetBindCommandFunc()
+        UnityEvent<float> IComponentEvent<float>.GetComponentEvent()
         {
             return slider.onValueChanged;
         }
 
-        public void TwoWayBind(IBindableField<float> property)
+        public void TwoWayBind(IBindableProperty<float> property)
         {
             slider.onValueChanged.AddListener((value) => property.Value = value);
         }

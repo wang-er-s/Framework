@@ -42,6 +42,12 @@ namespace AD.UI.Core
         }
 
         #region 界面显示隐藏的调用和回调方法
+
+        void IView.Create()
+        {
+            
+        }
+
         void IView.Destroy()
         {
             OnDestroy();
@@ -64,18 +70,15 @@ namespace AD.UI.Core
             OnHide();
             subViews.ForEach((subView) => subView.OnHide());
         }
+        
+        protected virtual void OnCreate(){}
 
-        protected virtual void OnShow()
-        {
-        }
+        protected virtual void OnShow(){}
 
-        protected virtual void OnDestroy()
-        {
-        }
 
-        protected virtual void OnHide()
-        {
-        }
+        protected virtual void OnDestroy(){}
+
+        protected virtual void OnHide(){}
 
         private void SetCanvas(bool visible)
         {

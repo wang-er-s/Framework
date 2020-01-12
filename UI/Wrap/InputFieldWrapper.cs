@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class InputFieldWrapper : BaseWrapper<InputField>, IBindData<string>, IBindCommand<string>
+    public class InputFieldWrapper : BaseWrapper<InputField>, IFieldChangeCb<string>, IComponentEvent<string>
     {
 
         public InputFieldWrapper(InputField _inputField) : base(_inputField)
@@ -16,12 +16,12 @@ namespace AD.UI.Wrap
             component = _inputField;
         }
 
-        Action<string> IBindData<string>.GetBindFieldFunc()
+        Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
             return (value) => component.text = value;
         }
 
-        UnityEvent<string> IBindCommand<string>.GetBindCommandFunc()
+        UnityEvent<string> IComponentEvent<string>.GetComponentEvent()
         {
             return component.onEndEdit;
         }

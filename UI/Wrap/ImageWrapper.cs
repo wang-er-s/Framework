@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class ImageWrapper : BaseWrapper<Image>,IBindData<string>
+    public class ImageWrapper : BaseWrapper<Image>,IFieldChangeCb<string>
     {
 
         private readonly Image image;
@@ -18,7 +18,7 @@ namespace AD.UI.Wrap
             image = _image;
         }
 
-        Action<string> IBindData<string>.GetBindFieldFunc()
+        Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
             //TODO 图片资源加载方式
             return (value) => image.sprite = string.IsNullOrEmpty(value) ? null : Resources.Load<Sprite>(value);

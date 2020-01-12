@@ -20,6 +20,11 @@ namespace AD.UI.Core
 
         public BindList (BindableList<TVm> _list, params View[] _view)
         {
+            SetValue(_list, _view);
+        }
+
+        public void SetValue(BindableList<TVm> _list, params View[] _view)
+        {
             views = _view.ToList ();
             content = views[0].transform.parent;
             list = _list;
@@ -46,6 +51,11 @@ namespace AD.UI.Core
         private List<View> views;
 
         public BindIpairsView (ref BindableList<TVm> _list, string itemName, Transform root)
+        {
+            SetValue(ref _list, itemName, root);
+        }
+
+        public void SetValue(ref BindableList<TVm> _list, string itemName, Transform root)
         {
             list = _list;
             ParseItems (itemName, root);

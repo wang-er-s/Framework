@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AD.UI.Core
 {
-    public class BindableList<T> : IList<T>
+    public class BindableList<T> : IList<T> , IClearListener
     {
         private event Action<NotifyCollectionChangedAction, T, T, int> collectionChanged;
         private IList<T> items;
@@ -188,6 +188,12 @@ namespace AD.UI.Core
         {
             collectionChanged?.Invoke(type, originItem, item, index);
             listUpdateChanged?.Invoke(this);
+        }
+
+        public void ClearListener()
+        {
+            listUpdateChanged = null;
+            collectionChanged = null;
         }
     }
 }

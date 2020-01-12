@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public abstract class BaseWrapper<T> : IBindData<bool> where T : Component
+    public abstract class BaseWrapper<T> : IFieldChangeCb<bool> where T : Component
     {
         protected T component;
 
@@ -18,7 +18,7 @@ namespace AD.UI.Wrap
             component = _component;
         }
 
-        Action<bool> IBindData<bool>.GetBindFieldFunc()
+        Action<bool> IFieldChangeCb<bool>.GetFieldChangeCb()
         {
             return(value) => component.gameObject.SetActive(value);
         }

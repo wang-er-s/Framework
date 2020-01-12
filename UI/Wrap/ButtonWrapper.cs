@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AD.UI.Wrap
 {
-    public class ButtonWrapper : BaseWrapper<Button>, IBindCommand
+    public class ButtonWrapper : BaseWrapper<Button>, IComponentEvent
     {
         private readonly Button button;
 
@@ -17,7 +17,7 @@ namespace AD.UI.Wrap
             button = _button;
         }
 
-        UnityEvent IBindCommand.GetBindCommandFunc()
+        UnityEvent IComponentEvent.GetComponentEvent()
         {
             return button.onClick;
         }

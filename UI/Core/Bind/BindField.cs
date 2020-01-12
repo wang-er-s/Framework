@@ -1,117 +1,128 @@
-﻿using AD.UI.Core;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using AD.UI.Wrap;
-using UnityEngine;
 using UnityEngine.Events;
-using Component = UnityEngine.Component;
 
 namespace AD.UI.Core
 {
 
-    public class BindField<TComponent,TData> where  TComponent : Component
+    public class BindField<TComponent,TData> where  TComponent : class
     {
 
         private TComponent component;
-        private Action<TData> fieldValueChangeEvent;
-        private UnityEvent<TData> componentValueChangeEvent;
-        private Func<TData, TData> file2ComponentWrapFunc;
-        private Func<TData, TData> component2FieldWrapFunc;
-        private IBindableField<TData> field;
-        private BaseWrapper<TComponent> wrapper;
+        private Action<TData> propChangeCb;
+        private UnityEvent<TData> componentEvent;
+        private Func<TData, TData> prop2CpntWrap;
+        private Func<TData, TData> cpnt2PropWrap;
+        private IBindableProperty<TData> _property;
+        private object defaultBind;
         private BindType bindType;
 
-        private BindField(TComponent _component, IBindableField<TData> _field, Action<TData> _valueChangeEvent,
-            UnityEvent<TData> _componentValueChangeEvent, BindType _bindType,
-            Func<TData, TData> _file2ComponentWrapFunc, Func<TData, TData> _component2FieldWrapFunc)
+        public BindField(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
+            UnityEvent<TData> _componentEvent, BindType _bindType,
+            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
+        {
+            UpdateValue(_component, property, _fieldChangeCb, _componentEvent, _bindType,
+                _property2CpntWrap, _cpnt2PropWrap);
+            InitEvent();
+            InitCpntValue();
+        }
+        
+        public void UpdateValue(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
+            UnityEvent<TData> _componentEvent, BindType _bindType,
+            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
+        {
+            SetValue(_component, property, _fieldChangeCb, _componentEvent, _bindType, _property2CpntWrap,
+                _cpnt2PropWrap);
+            InitCpntValue();
+        }
+
+        private void SetValue(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
+            UnityEvent<TData> _componentEvent, BindType _bindType,
+            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
         {
             component = _component;
-            field = _field;
+            _property = property;
             bindType = _bindType;
-            file2ComponentWrapFunc = _file2ComponentWrapFunc;
-            component2FieldWrapFunc = _component2FieldWrapFunc;
-            fieldValueChangeEvent = _valueChangeEvent;
-            componentValueChangeEvent = _componentValueChangeEvent;
-            InitEvent();
+            prop2CpntWrap = _property2CpntWrap;
+            cpnt2PropWrap = _cpnt2PropWrap;
+            propChangeCb = _fieldChangeCb;
+            componentEvent = _componentEvent;
         }
 
-        public BindField(TComponent _component, IBindableField<TData> _field, Action<TData> _valueChangeEvent,
-            Func<TData, TData> _wrapFunc = null, BindType _bindType = BindType.OnWay) : this(_component, _field,
-            _valueChangeEvent, null, _bindType, _wrapFunc, null)
+        /// <summary>
+        /// 将field的值初始化给component显示
+        /// </summary>
+        private void InitCpntValue()
         {
-        }
-
-        public BindField(TComponent _component, IBindableField<TData> _field,
-            UnityEvent<TData> _componentValueChangeEvent = null,
-            Func<TData, TData> _component2FieldWrapFunc = null,
-            BindType _bindType = BindType.Revert) :
-            this(_component, _field, null, _componentValueChangeEvent, _bindType,
-                null, _component2FieldWrapFunc)
-        {
+            propChangeCb?.Invoke(_property.Value);
         }
 
         private void InitEvent()
         {
-            fieldValueChangeEvent = fieldValueChangeEvent ?? (component as IBindData<TData>)?.GetBindFieldFunc();
-            componentValueChangeEvent = componentValueChangeEvent ?? (component as IBindCommand<TData>)?.GetBindCommandFunc();
-            if (fieldValueChangeEvent == null)
-            {
-                wrapper = WrapTool.GetWrapper(component);
-                fieldValueChangeEvent = fieldValueChangeEvent ?? (wrapper as IBindData<TData>)?.GetBindFieldFunc();
-                componentValueChangeEvent = componentValueChangeEvent ?? (wrapper as IBindCommand<TData>)?.GetBindCommandFunc();
-            }
-            if(fieldValueChangeEvent == null )
-                Debugger.Error($"{component.GetType().Name}没有wrapper，而且自己没有实现IBindData{typeof(TData)}接口");
-            fieldValueChangeEvent?.Invoke(field.Value);
+            defaultBind = BindTool.GetDefaultBind(component);
+            propChangeCb = propChangeCb ?? (defaultBind as IFieldChangeCb<TData>)?.GetFieldChangeCb();
+            componentEvent =
+                componentEvent ?? (defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
             switch (bindType)
             {
                 case BindType.OnWay:
-                    field?.AddListener((value) => fieldValueChangeEvent(file2ComponentWrapFunc == null ? value : file2ComponentWrapFunc(value)));
+                    _property.AddListener((value) =>
+                        propChangeCb(prop2CpntWrap == null ? value : prop2CpntWrap(value)));
                     break;
                 case BindType.Revert:
-                    componentValueChangeEvent?.AddListener((data) => field.Value = component2FieldWrapFunc == null ? data : component2FieldWrapFunc(data));
+                    componentEvent.AddListener((data) =>
+                        _property.Value = cpnt2PropWrap == null ? data : cpnt2PropWrap(data));
                     break;
             }
         }
     }
 
-    public class BindField<TComponent, TData1, TData2, TResult> where TComponent : Component
+    public class BindField<TComponent, TData1, TData2, TResult> where TComponent : class
     {
         private TComponent component;
-        private Action<TResult> filedValueChangeEvent;
-        private IBindableField<TData1> field1;
-        private IBindableField<TData2> field2;
+        private Action<TResult> filedChangeCb;
+        private IBindableProperty<TData1> property1;
+        private IBindableProperty<TData2> property2;
         private Func<TData1, TData2, TResult> wrapFunc;
-        private BaseWrapper<TComponent> wrapper;
+        private object defaultBind;
 
-        public BindField(TComponent _component, IBindableField<TData1> _field1, IBindableField<TData2> _field2,
-            Func<TData1, TData2, TResult> _wrapFunc, Action<TResult> _filedValueChangeEvent = null)
+        public BindField(TComponent _component, IBindableProperty<TData1> _property1, IBindableProperty<TData2> _property2,
+            Func<TData1, TData2, TResult> _wrapFunc, Action<TResult> _filedChangeCb = null)
+        {
+            SetValue(_component,_property1,_property2,_wrapFunc,_filedChangeCb);
+            InitEvent();
+            InitCpntValue();
+        }
+
+        public void UpdateValue(TComponent _component, IBindableProperty<TData1> _property1, IBindableProperty<TData2> _property2,
+            Func<TData1, TData2, TResult> _wrapFunc, Action<TResult> _filedChangeCb)
+        {
+            SetValue(_component,_property1,_property2,_wrapFunc,_filedChangeCb);
+            InitCpntValue();
+        }
+        
+        private void SetValue(TComponent _component, IBindableProperty<TData1> _property1, IBindableProperty<TData2> _property2,
+            Func<TData1, TData2, TResult> _wrapFunc, Action<TResult> _filedChangeCb)
         {
             component = _component;
-            field1 = _field1;
-            field2 = _field2;
+            property1 = _property1;
+            property2 = _property2;
             wrapFunc = _wrapFunc;
-            filedValueChangeEvent = _filedValueChangeEvent;
-            InitEvent();
+            filedChangeCb = _filedChangeCb;
+        }
+        
+        private void InitCpntValue()
+        {
+            filedChangeCb(wrapFunc(property1.Value, property2.Value));
         }
 
         private void InitEvent()
         {
-            filedValueChangeEvent = filedValueChangeEvent ?? (component as IBindData<TResult>)?.GetBindFieldFunc();
-            if (filedValueChangeEvent == null)
-            {
-                wrapper = WrapTool.GetWrapper(component);
-                filedValueChangeEvent = filedValueChangeEvent ?? (wrapper as IBindData<TResult>)?.GetBindFieldFunc();
-            }
-            if(filedValueChangeEvent == null )
-                Debugger.Error($"{component.GetType().Name}没有wrapper，而且自己没有实现IBindData{typeof(TResult)}接口");
-            field1.AddListener((data1) => filedValueChangeEvent?.Invoke(wrapFunc(data1, field2.Value)));
-            field2.AddListener((data2) => filedValueChangeEvent?.Invoke(wrapFunc(field1.Value, data2)));
-            filedValueChangeEvent(wrapFunc(field1.Value, field2.Value));
+            defaultBind = BindTool.GetDefaultBind(component);
+            filedChangeCb = filedChangeCb ?? (defaultBind as IFieldChangeCb<TResult>).GetFieldChangeCb();
+            property1.AddListener((data1) => filedChangeCb(wrapFunc(data1, property2.Value)));
+            property2.AddListener((data2) => filedChangeCb(wrapFunc(property1.Value, data2)));
+            filedChangeCb(wrapFunc(property1.Value, property2.Value));
         }
     }
 
