@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public class ToggleWrapper : BaseWrapper<Toggle>, IFieldChangeCb<bool>, IComponentEvent<bool>
     {

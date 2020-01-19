@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 
-namespace AD
+namespace Framework
 {
 	/// <inheritdoc />
 	/// <summary>

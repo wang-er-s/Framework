@@ -1,8 +1,8 @@
 using System;
-using AD.UI.Wrap;
+using Framework.UI.Wrap;
 using UnityEngine.Events;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class ConvertBindField<TComponent,TData,TResult> where  TComponent : class
     {
@@ -62,6 +62,8 @@ namespace AD.UI.Core
             defaultBind = BindTool.GetDefaultBind(component);
             componentEvent = componentEvent ?? (defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
             fieldChangeCb = fieldChangeCb ?? (defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            
+          
             Debugger.Assert(field2CpntConvert != null || cpnt2FieldConvert != null);
             if (field2CpntConvert != null)
             {

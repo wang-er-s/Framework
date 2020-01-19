@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.IO;
 
-namespace AD
+namespace Framework
 {
 	public static class PathUtil  
 	{

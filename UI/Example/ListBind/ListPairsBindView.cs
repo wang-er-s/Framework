@@ -1,5 +1,5 @@
-﻿using AD.UI.Core;
-using AD.UI.Example;
+﻿using Framework.UI.Core;
+using Framework.UI.Example;
 
 public class ListPairsBindView : View
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine.UI;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public static class BindTool
     {

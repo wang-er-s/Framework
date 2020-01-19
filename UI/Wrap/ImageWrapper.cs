@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public class ImageWrapper : BaseWrapper<Image>,IFieldChangeCb<string>
     {

@@ -1,4 +1,4 @@
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public enum BindType
     {

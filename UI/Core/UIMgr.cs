@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
 #if SLUA_SUPPORT
 	using SLua;

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public abstract class BaseWrapper<T> : IFieldChangeCb<bool> where T : Component
     {

@@ -1,4 +1,4 @@
-namespace AD
+namespace Framework
 {
     using System;
     using System.Reflection;

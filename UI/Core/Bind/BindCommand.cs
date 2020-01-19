@@ -1,8 +1,8 @@
 ﻿using System;
-using AD.UI.Wrap;
+using Framework.UI.Wrap;
 using UnityEngine.Events;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
 
     public class BindCommand<TComponent> where TComponent : class

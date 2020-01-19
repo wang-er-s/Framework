@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public abstract class ViewModel 
     {

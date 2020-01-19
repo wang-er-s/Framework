@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UI;
 
-namespace AD
+namespace Framework
 {
     public class DScrollRect : ScrollRect
     {

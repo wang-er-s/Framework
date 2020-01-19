@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class BindableList<T> : IList<T> , IClearListener
     {

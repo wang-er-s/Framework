@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using AD.UI.Core;
-using AD.UI.Example;
+using Framework.UI.Core;
+using Framework.UI.Example;
 using UnityEngine.UI;
 
 public class ListBindView : View

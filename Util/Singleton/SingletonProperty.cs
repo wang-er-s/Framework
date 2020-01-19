@@ -1,4 +1,4 @@
-namespace AD
+namespace Framework
 {
 	public static class SingletonProperty<T> where T : class
 	{

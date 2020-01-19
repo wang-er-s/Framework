@@ -4,11 +4,11 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public class ViewWrapper : BaseWrapper<View>, IBindList<ViewModel>
     {

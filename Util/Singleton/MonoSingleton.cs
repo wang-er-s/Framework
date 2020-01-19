@@ -4,7 +4,7 @@
 */
 using UnityEngine;
 
-namespace AD
+namespace Framework
 {
 	public class MonoSingleton<T>  : MonoBehaviour where T : MonoSingleton<T>
 	{

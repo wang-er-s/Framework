@@ -1,6 +1,8 @@
 {
-    "name": "AD",
-    "references": [],
+    "name": "SoUtil",
+    "references": [
+        "GUID:652953e24ea67844ba96c36404310072"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

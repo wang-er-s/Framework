@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public interface IFieldChangeCb<T>
     {

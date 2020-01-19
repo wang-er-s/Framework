@@ -1,7 +1,7 @@
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine;
 
-namespace AD.UI.Example
+namespace Framework.UI.Example
 {
     public class SetupViewModel : ViewModel
     {

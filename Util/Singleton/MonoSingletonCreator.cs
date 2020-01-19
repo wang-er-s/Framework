@@ -1,7 +1,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace AD
+namespace Framework
 {
     public class MonoSingletonCreator
     {

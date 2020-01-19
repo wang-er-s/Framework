@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class ObservableList<T> : IList<T>
     {

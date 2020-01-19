@@ -1,7 +1,7 @@
 ﻿/*
 using System.Collections;
 using System.Collections.Generic;
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

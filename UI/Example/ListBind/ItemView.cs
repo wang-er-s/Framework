@@ -1,9 +1,9 @@
 ﻿using System;
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AD.UI.Example
+namespace Framework.UI.Example
 {
 
     public class ItemView : View

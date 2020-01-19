@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public interface IView
     {

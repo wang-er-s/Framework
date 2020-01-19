@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace AD
+namespace Framework
 {
 	public static class MathUtil  
 	{

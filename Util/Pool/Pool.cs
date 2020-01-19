@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AD
+namespace Framework
 {
     public abstract class Pool<T> : IPool<T>
     {

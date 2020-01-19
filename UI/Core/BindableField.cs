@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class BindableProperty<T> : IBindableProperty<T>
     {

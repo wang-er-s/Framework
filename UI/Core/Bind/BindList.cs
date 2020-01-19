@@ -5,11 +5,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using AD.UI.Wrap;
-using AD.UI.Core;
+using Framework.UI.Wrap;
+using Framework.UI.Core;
 using UnityEngine;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class BindList<TVm> where TVm : ViewModel
     {

@@ -1,19 +1,16 @@
 {
-    "name": "UniteTest",
+    "name": "RunTest",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "AD"
+        "SoUtil"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "Debugger.dll"
+        "nunit.framework.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

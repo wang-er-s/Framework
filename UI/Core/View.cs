@@ -1,14 +1,14 @@
-using AD.UI.Core;
+using Framework.UI.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using AD.UI.Wrap;
+using Framework.UI.Wrap;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
 
     [RequireComponent(typeof(CanvasGroup))]

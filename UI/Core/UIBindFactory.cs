@@ -1,4 +1,4 @@
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
     public class UIBindFactory<TView, TVm> : BindFactory<TView, TVm> 
         where TView : View

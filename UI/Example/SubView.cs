@@ -1,7 +1,7 @@
 ﻿/*using System.Collections;
 using System.Collections.Generic;
-using AD.UI.Core;
-using AD.UI.Example;
+using Framework.UI.Core;
+using Framework.UI.Example;
 using UnityEngine;
 
 public class SubView : View

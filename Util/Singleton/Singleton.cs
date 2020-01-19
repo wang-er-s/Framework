@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-namespace AD
+namespace Framework
 {
 	public class Singleton<T> where T : class
 	{

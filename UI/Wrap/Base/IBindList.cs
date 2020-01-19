@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AD.UI.Core;
+using Framework.UI.Core;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public interface IBindList<T> where T : ViewModel
     {

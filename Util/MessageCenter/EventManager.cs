@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AD
+namespace Framework
 {
     /// <summary>
     /// MMGameEvents are used throughout the game for general game events (game started, game ended, life lost, etc.)

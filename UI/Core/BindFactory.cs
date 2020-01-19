@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace AD.UI.Core
+namespace Framework.UI.Core
 {
 
     public class BindFactory<TView, TVm>

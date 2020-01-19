@@ -1,6 +1,6 @@
 ﻿using UnityEngine.Events;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public interface IComponentEvent<T>
     {

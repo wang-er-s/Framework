@@ -5,7 +5,7 @@
 using UnityEngine;
 using System;
 
-namespace AD
+namespace Framework
 {
     public class DefaultFactory<T> : IFactory<T> where T : new()
     {

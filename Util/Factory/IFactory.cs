@@ -5,7 +5,7 @@
 using UnityEngine;
 using System;
 
-namespace AD
+namespace Framework
 {
     public interface IFactory<T>
     {

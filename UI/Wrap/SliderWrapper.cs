@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AD.UI.Core;
+using Framework.UI.Core;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AD.UI.Wrap
+namespace Framework.UI.Wrap
 {
     public class SliderWrapper: BaseWrapper<Slider>, IFieldChangeCb<float>, IComponentEvent<float>
     {

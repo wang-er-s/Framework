@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using AD.UI.Core;
-using AD.UI.Example;
+using Framework.UI.Core;
+using Framework.UI.Example;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
