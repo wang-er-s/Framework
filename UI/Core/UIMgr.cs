@@ -55,7 +55,7 @@ namespace Framework.UI.Core
             {
                 panel = CreateUI(uiBehaviourName, canvasLevel);
             }
-            panel.VM = vm;
+            panel.ViewModel = vm;
             panel.Create();
             return panel;
         }
@@ -99,7 +99,7 @@ namespace Framework.UI.Core
             go.Show();
             go.transform.SetSiblingIndex(index);
             IView v = go.GetComponent<IView>();
-            v.VM = vm;
+            v.ViewModel = vm;
         }
 
         private static IView CreateUI(string panelName,UILevel canvasLevel )

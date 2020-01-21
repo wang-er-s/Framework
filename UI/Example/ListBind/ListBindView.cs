@@ -5,24 +5,25 @@ using UnityEngine.UI;
 
 public class ListBindView : View
 {
-    
+    private UIBindFactory<ListBindView, ListBindViewModel> binding;
+    private ListBindViewModel vm;
     public ItemView item;
     public Dropdown dropdown;
     public Button deleteBtn;
     public Button addBtn;
     public Button updateBtn;
-    private ListBindViewModel viewModel;
 
     protected override void OnVmChange()
     {
-        viewModel = VM as ListBindViewModel;
-        var binding = new UIBindFactory<ListBindView, ListBindViewModel>(this, viewModel);
-        dropdown.options = viewModel.DropdownData;
-        binding.RevertBind(dropdown, viewModel.SelectedDropDownIndex);
-        binding.BindList(viewModel.Items, item);
-        binding.Bind(addBtn, viewModel.AddItem);
-        binding.Bind(deleteBtn, viewModel.DeleteSelectedItem);
-        binding.Bind(updateBtn, viewModel.UpdateItem);
+        vm = ViewModel as ListBindViewModel;
+        if (binding == null)
+            binding = new UIBindFactory<ListBindView, ListBindViewModel>(this, vm);
+        dropdown.options = vm.DropdownData;
+        binding.RevertBind(dropdown, vm.SelectedDropDownIndex);
+        binding.BindList(vm.Items, item);
+        binding.Bind(addBtn, vm.AddItem);
+        binding.Bind(deleteBtn, vm.DeleteSelectedItem);
+        binding.Bind(updateBtn, vm.UpdateItem);
 
     }
 }
@@ -85,16 +86,14 @@ public class ListBindViewModel : ViewModel
             Last = new BindableProperty<bool>(false),
             Path = new BindableProperty<string>(DropdownData[selectedDropDownIndex].text),
         };
-        vm.OnItemClick = () => OnItemClick(vm);
+        vm.ItemClickCb = OnItemClick;
         return vm;
     }
 
     private void OnItemClick(ItemViewModel viewModel)
     {
-        if (selectedItem != null)
-            selectedItem.Selected.Value = false;
+        selectedItem?.OnItemDeselected();
         selectedItem = viewModel;
-        selectedItem.Selected.Value = true;
     }
 
     private void OnUpdateItem()

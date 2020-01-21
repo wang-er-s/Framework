@@ -99,7 +99,7 @@ namespace Framework.UI.Core
         {
             for (int i = 0; i < views.Count; i++)
             {
-                views[i].VM = list[i];
+                views[i].ViewModel = list[i];
             }
         }
     }

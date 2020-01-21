@@ -35,5 +35,6 @@ namespace Plugins.XAsset.Editor
         public bool runtimeMode = true;
         public bool localServer = false;
         public string assetRootPath = "Assets/Plugins/XAsset/Demo/";
+        public string uiScriptPath = "Assets/Scripts/UI/";
     }
 }

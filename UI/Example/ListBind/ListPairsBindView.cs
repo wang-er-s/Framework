@@ -6,7 +6,7 @@ public class ListPairsBindView : View
     private ListPairsBindViewModel viewModel;
     protected override void OnVmChange()
     {
-        viewModel = VM as ListPairsBindViewModel;
+        viewModel = ViewModel as ListPairsBindViewModel;
         UIBindFactory<ListPairsBindView, ListPairsBindViewModel> binding =
             new UIBindFactory<ListPairsBindView, ListPairsBindViewModel>(this, viewModel);
         binding.BindIpairs(viewModel.Items, "item[?]");

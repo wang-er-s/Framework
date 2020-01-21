@@ -21,7 +21,7 @@ namespace Framework.UI.Example
 
         protected override void OnVmChange ()
         {
-            viewModel = VM as SetupViewModel;
+            viewModel = ViewModel as SetupViewModel;
             if(binding == null)
                 binding = new UIBindFactory<SetupView, SetupViewModel>(this, viewModel);
             binding.UpdateVm();

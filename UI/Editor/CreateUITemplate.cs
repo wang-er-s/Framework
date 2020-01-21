@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Framework.UI.Core;
+using Plugins.XAsset.Editor;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -36,30 +37,87 @@ public class CreateUITemplate
 
 		var panelCodeInfo = new PanelCodeInfo();
 
-		Debug.Log(clone.name);
-		panelCodeInfo.BehaviourName = clone.name.Replace("(clone)", string.Empty);
-		FillPanelInfo(clone.transform, panelCodeInfo);
-		CreateUIPanelCode(obj, uiPrefabPath, panelCodeInfo);
+		FillPanelInfo(clone.transform, uiPrefabPath, panelCodeInfo);
 
-		UISerializer.StartAddComponent2PrefabAfterCompile(obj);
+		Generate(panelCodeInfo);
+		
+		/*UISerializer.StartAddComponent2PrefabAfterCompile(obj);
 
-		HotScriptBind(obj);
+		HotScriptBind(obj);*/
 
 		Object.DestroyImmediate(clone);
 	}
 
-	private static void FillPanelInfo(Transform transform, PanelCodeInfo panelCodeInfo)
+	private static void FillPanelInfo(Transform transform, string prefabPath, PanelCodeInfo panelCodeInfo)
 	{
+		panelCodeInfo.BehaviourName = transform.name.Replace("(clone)", string.Empty);
+		panelCodeInfo.PanelPath = prefabPath;
 		var marks = transform.GetComponentsInChildren<UIMark>();
 		foreach (var uiMark in marks)
 		{
-			
+			string fullPath = PathToParent(uiMark.transform, transform);
+			if (!panelCodeInfo.FieldFullPathToUIMark.TryGetValue(fullPath, out var uiMarks))
+			{
+				uiMarks = new List<UIMark>();
+				panelCodeInfo.FieldFullPathToUIMark.Add(fullPath, uiMarks);
+			}
+			uiMarks.Add(uiMark);
 		}
 	}
 
-	private void CreateUIPanelCode(GameObject uiPrefab, string uiPrefabPath, PanelCodeInfo panelCodeInfo)
+	private static void Generate(PanelCodeInfo panelCodeInfo)
 	{
-		
+		var generateFilePath = $"{BuildScript.GetSettings().uiScriptPath}{panelCodeInfo.BehaviourName}.cs";
+		var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
+		var strBuilder = new StringBuilder();
+		strBuilder.AppendLine("using UnityEngine;");
+		strBuilder.AppendLine("using UnityEngine.UI;");
+		strBuilder.AppendLine("using Framework;");
+		strBuilder.AppendLine("using Framework.UI.Core;");
+		strBuilder.AppendLine();
+		strBuilder.AppendFormat("public class {0} : View", panelCodeInfo.BehaviourName);
+		strBuilder.AppendLine();
+		strBuilder.AppendLine("{");
+		strBuilder.AppendLine();
+		string vmName = $"{panelCodeInfo.BehaviourName}VM";
+		strBuilder.AppendLine($"\tprivate UIBindFactory<{panelCodeInfo.BehaviourName}, {vmName}> binding;");
+		strBuilder.AppendLine($"\tprivate {vmName} vm;");
+		foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark.Values)
+		{
+			foreach (var uiMark in uiMarks)
+			{
+				strBuilder.Append(
+					$"\t[SerializeField] public {uiMark.CurComponent.GetType().Name} {uiMark.FieldName};");
+			}
+		}
+		strBuilder.AppendLine();
+		strBuilder.AppendLine();
+
+		strBuilder.AppendLine("\tprotected override void OnVmChange()");
+		strBuilder.AppendLine("\t{");
+		strBuilder.AppendLine($"\t\tvm = ViewModel as {vmName};");
+		strBuilder.AppendLine("\t\tif (binding == null)");
+		strBuilder.AppendLine($"\t\t\tbinding = new UIBindFactory<{panelCodeInfo.BehaviourName}, {vmName}>(this, vm);");
+		strBuilder.AppendLine("\t}");
+		strBuilder.AppendLine();
+
+		strBuilder.AppendLine($"\tpublic static string Path = \"{GetPanelPath(panelCodeInfo)}\";");
+		strBuilder.AppendLine("}");
+		sw.Write(strBuilder);
+		sw.Flush();
+		sw.Close();
+
+	}
+
+	private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
+	{
+		var path = panelCodeInfo.PanelPath;
+		var rootPath = BuildScript.GetSettings().assetRootPath;
+		if (path.Contains(rootPath))
+		{
+			path = path.RemoveString(rootPath);
+		}
+		return path;
 	}
 	
 	public static string PathToParent(Transform trans, Transform parent)
@@ -81,58 +139,11 @@ public class CreateUITemplate
 		return retValue.ToString();
 	}
 	
-	private static void Generate(string generateFilePath, string behaviourName,PanelCodeInfo panelCodeInfo)
-	{
-		var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
-		var strBuilder = new StringBuilder();
-
-		strBuilder.AppendLine("/****************************************************************************");
-		strBuilder.AppendFormat(" * {0}.{1} {2}\n", DateTime.Now.Year, DateTime.Now.Month, SystemInfo.deviceName);
-		strBuilder.AppendLine(" ***************************************************************************#1#");
-		strBuilder.AppendLine();
-		strBuilder.AppendLine("using UnityEngine;");
-		strBuilder.AppendLine("using UnityEngine.UI;");
-		strBuilder.AppendLine("using QFramework;");
-		strBuilder.AppendLine();
-		strBuilder.AppendFormat("\tpublic partial class {0}", behaviourName);
-		strBuilder.AppendLine();
-		strBuilder.AppendLine("\t{");
-
-		foreach (var markInfo in elementCodeInfo.BindInfos)
-		{
-			var strUIType = markInfo.BindScript.ComponentName;
-			strBuilder.AppendFormat("\t\t[SerializeField] public {0} {1};\r\n",
-				strUIType, markInfo.Name);
-		}
-
-		strBuilder.AppendLine();
-
-		strBuilder.Append("\t\t").AppendLine("public void Clear()");
-		strBuilder.Append("\t\t").AppendLine("{");
-		foreach (var markInfo in elementCodeInfo.BindInfos)
-		{
-			strBuilder.AppendFormat("\t\t\t{0} = null;\r\n", markInfo.Name);
-		}
-
-		strBuilder.Append("\t\t").AppendLine("}");
-		strBuilder.AppendLine();
-
-		strBuilder.Append("\t\t").AppendLine("public override string ComponentName");
-		strBuilder.Append("\t\t").AppendLine("{");
-		strBuilder.Append("\t\t\t");
-		strBuilder.AppendLine("get { return \"" + elementCodeInfo.BindInfo.BindScript.ComponentName + "\";}");
-		strBuilder.Append("\t\t").AppendLine("}");
-		strBuilder.AppendLine("\t}");
-		sw.Write(strBuilder);
-		sw.Flush();
-		sw.Close();
-
-	}
-	
 	class PanelCodeInfo
 	{
 		public string BehaviourName;
-		public Dictionary<string, UIMark> FieldFullNameToUIMark = new Dictionary<string, UIMark>();
+		public string PanelPath;
+		public Dictionary<string, List<UIMark>> FieldFullPathToUIMark = new Dictionary<string, List<UIMark>>();
 	}
 }
 

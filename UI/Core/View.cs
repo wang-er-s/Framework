@@ -19,18 +19,18 @@ namespace Framework.UI.Core
 
         private CanvasGroup canvasGroup;
 
-        private ViewModel vm;
-        public ViewModel VM
+        private ViewModel viewModel;
+        public ViewModel ViewModel
         {
-            get { return vm; }
+            get { return viewModel; }
             set
             {
-                if (vm == value)
+                if (viewModel == value)
                 {
                     return;
                 }
-                vm = value;
-                if (vm != null)
+                viewModel = value;
+                if (viewModel != null)
                     OnVmChange();
             }
         }
@@ -51,14 +51,14 @@ namespace Framework.UI.Core
         void IView.Destroy()
         {
             OnDestroy();
-            VM.OnDestroy();
+            ViewModel.OnDestroy();
             subViews.ForEach((subView) => subView.OnDestroy());
         }
 
         void IView.Show()
         {
             SetCanvas(true);
-            VM.OnShow();
+            ViewModel.OnShow();
             OnShow();
             subViews.ForEach((subView) => subView.OnShow());
         }
@@ -66,7 +66,7 @@ namespace Framework.UI.Core
         void IView.Hide()
         {
             SetCanvas(false);
-            VM.OnHide();
+            ViewModel.OnHide();
             OnHide();
             subViews.ForEach((subView) => subView.OnHide());
         }

@@ -5,7 +5,7 @@ namespace Framework.UI.Core
 {
     public interface IView
     {
-        ViewModel VM { get; set; }
+        ViewModel ViewModel { get; set; }
         void Create();
         void Destroy();
         void Show();

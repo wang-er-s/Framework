@@ -33,7 +33,7 @@ public class SimpleBind : MonoBehaviour
 		}
 		if (GUI.Button(new Rect(100, 300, 100, 100), "切换vm"))
 		{
-			view.VM = view.VM == vm ? newVm : vm;
+			view.ViewModel = view.ViewModel == vm ? newVm : vm;
 		}
 		if (GUI.Button(new Rect(100, 500, 100, 100), "更改原来的vm"))
 		{
