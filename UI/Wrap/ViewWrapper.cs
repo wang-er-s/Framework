@@ -61,7 +61,7 @@ namespace Framework.UI.Wrap
         
         private void AddItem (int index, ViewModel vm)
         {
-            UIMgr.CreateListItem (item, vm, index + 1);
+            //UIManager.CreateListItem (item, vm, index + 1);
         }
 
         private void RemoveItem (int index)

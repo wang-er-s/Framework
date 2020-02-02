@@ -311,7 +311,7 @@ namespace Plugins.XAsset
 
         internal override void Load()
         {
-            bundle = Bundles.LoadAsync(assetBundleName);
+            bundle = Bundles.Load(assetBundleName);
             loadState = LoadState.LoadAssetBundle;
         }
 
@@ -453,7 +453,7 @@ namespace Plugins.XAsset
         {
             if (!string.IsNullOrEmpty(assetBundleName))
             {
-                bundle = Bundles.LoadAsync(assetBundleName);
+                bundle = Bundles.Load(assetBundleName);
                 loadState = LoadState.LoadAssetBundle;
             }
             else
@@ -472,12 +472,7 @@ namespace Plugins.XAsset
 
     public class WebAsset : Asset
     {
-#if UNITY_2018_3_OR_NEWER
         private UnityWebRequest _www;
-#else
-        private WWW _www;
-#endif
-
         public override bool isDone
         {
             get

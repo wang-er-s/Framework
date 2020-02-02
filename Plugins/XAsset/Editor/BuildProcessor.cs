@@ -34,7 +34,9 @@ using UnityEngine;
 
 namespace Plugins.XAsset.Editor
 {
+#pragma warning disable 618
     public class BuildProcessor : IPreprocessBuild, IPostprocessBuild
+#pragma warning restore 618
     {
         public void OnPostprocessBuild(BuildTarget target, string path)
         {

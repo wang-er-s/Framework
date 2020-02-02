@@ -63,7 +63,7 @@ namespace Plugins.XAsset
 		public static void Initialize (string path, string platform, Action onSuccess, Action<string> onError)
 		{
 			dataPath = path;
-			var request = Load (platform, true, true);
+			var request = Load (platform, true);
 			request.completed += delegate {
 				if (request.error != null && onError != null)
 				{
@@ -82,12 +82,7 @@ namespace Plugins.XAsset
 
 		public static Bundle Load (string assetBundleName)
 		{
-			return Load (assetBundleName, false, false);
-		}
-
-		public static Bundle LoadAsync (string assetBundleName)
-		{
-			return Load (assetBundleName, false, true);
+			return Load (assetBundleName, false);
 		}
 
 		// ReSharper disable once MemberCanBePrivate.Global
@@ -125,14 +120,14 @@ namespace Plugins.XAsset
 			bundle.dependencies.Clear ();
 		}
 
-		private static void LoadDependencies (Bundle bundle, string assetBundleName, bool asyncRequest)
+		private static void LoadDependencies (Bundle bundle, string assetBundleName)
 		{
 			var dependencies = manifest.GetAllDependencies (assetBundleName);
 			if (dependencies.Length <= 0)
 				return;
 			for (var i = 0; i < dependencies.Length; i++) {
 				var item = dependencies [i];
-				bundle.dependencies.Add (Load (item, false, asyncRequest));
+				bundle.dependencies.Add (Load (item, false));
 			}
 		}
 
@@ -142,7 +137,7 @@ namespace Plugins.XAsset
 			Debug.Log ("[Bundles]" + s);
 		}
 
-		private static Bundle Load (string assetBundleName, bool isLoadingAssetBundleManifest, bool asyncMode)
+		private static Bundle Load (string assetBundleName, bool isLoadingAssetBundleManifest)
 		{
 			if (string.IsNullOrEmpty (assetBundleName)) {
 				Debug.LogError ("assetBundleName == null");
@@ -177,17 +172,17 @@ namespace Plugins.XAsset
 					cache = !isLoadingAssetBundleManifest
 				};
 			else
-				bundle = asyncMode ? new BundleAsync () : new Bundle ();
+				bundle = new Bundle ();
 
 			bundle.name = url;
 			_bundles.Add (bundle);
-			if (MAX_LOAD_SIZE_PERFREME > 0 && (bundle is BundleAsync || bundle is WebBundle)) {
+			if (MAX_LOAD_SIZE_PERFREME > 0 && bundle is WebBundle) {
 				_ready2Load.Add (bundle);
 			} else {
 				bundle.Load ();
 			}
 			if (!isLoadingAssetBundleManifest)
-				LoadDependencies (bundle, assetBundleName, asyncMode);
+				LoadDependencies (bundle, assetBundleName);
 			bundle.Retain ();
 			Log ("Load->" + url);
 			return bundle;

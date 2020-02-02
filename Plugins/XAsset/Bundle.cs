@@ -56,66 +56,9 @@ namespace Plugins.XAsset
 		}
 	}
 
-	public class BundleAsync : Bundle
-	{
-		private AssetBundleCreateRequest _request;
-
-		public override bool isDone
-		{
-			get
-			{
-				if (loadState == LoadState.Init)
-					return false;
-
-				if (loadState == LoadState.Loaded)
-					return true;
-
-				if (loadState == LoadState.LoadAssetBundle && _request.isDone)
-				{
-					asset = _request.assetBundle;
-					loadState = LoadState.Loaded;
-				}
-
-				return _request == null || _request.isDone;
-			}
-		}
-
-		public override float progress
-		{
-			get { return _request != null ? _request.progress : 0f; }
-		}
-
-		internal override void Load()
-		{
-			_request = AssetBundle.LoadFromFileAsync(name);
-			if (_request == null)
-			{
-				error = name + " LoadFromFile failed.";
-				return;
-			}
-			loadState = LoadState.LoadAssetBundle;
-		}
-
-		internal override void Unload()
-		{
-			if (_request != null)
-			{
-				_request = null;
-			}
-			loadState = LoadState.Unload;
-			base.Unload();
-		}
-	}
-
 	public class WebBundle : Bundle
 	{
-		#if UNITY_2018_3_OR_NEWER
-        private UnityWebRequest _request;
-
-
-#else
-		private WWW _request;
-		#endif
+		private UnityWebRequest _request;
 		public bool cache;
 		public Hash128 hash;
 

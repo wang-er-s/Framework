@@ -1,16 +1,8 @@
-using Framework.UI.Core;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using Framework.UI.Wrap;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace Framework.UI.Core
 {
-
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class View : MonoBehaviour, IView
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Framework.UI.Core;
+﻿using Framework.UI.Core;
 using Framework.UI.Example;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,14 +12,14 @@ public class SimpleBind : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		UIMgr.Init();
+//		UIManager.Init();
 		vm = new SetupViewModel()
 		{
 			Visible = new BindableProperty<bool>(true),
 			Name =  new BindableProperty<string>("JJ")
 		};
 		newVm = new SetupViewModel();
-		view = UIMgr.Create("SimpleBind", vm: vm);
+//		view = UIManager.Create("SimpleBind", vm: vm);
 	}
 	
 	private void OnGUI()
