@@ -42,7 +42,8 @@ namespace Plugins.XAsset
         public static bool assetBundleMode = true;
         public static LoadDelegate loadDelegate = null;
         public static GetPlatformDelegate getPlatformDelegate = null;
-
+        
+        public static string resRootPath { get; set; }
         public static string dataPath { get; set; }
         public static string downloadURL { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,6 +22,19 @@ namespace Framework.UI.Core
         public BindList (BindableList<TVm> _list, params View[] _view)
         {
             SetValue(_list, _view);
+            InitEvent();
+            InitCpntValue();
+        }
+
+        private void InitCpntValue()
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var vm = list[i];
+                wrappers.ForEach((wrapper) =>
+                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, null, vm, i));
+
+            }
         }
 
         public void SetValue(BindableList<TVm> _list, params View[] _view)
@@ -28,7 +42,6 @@ namespace Framework.UI.Core
             views = _view.ToList ();
             content = views[0].transform.parent;
             list = _list;
-            InitEvent();
         }
 
         private void InitEvent()
@@ -99,7 +112,7 @@ namespace Framework.UI.Core
         {
             for (int i = 0; i < views.Count; i++)
             {
-                views[i].ViewModel = list[i];
+                views[i].SetVM(list[i]);
             }
         }
     }

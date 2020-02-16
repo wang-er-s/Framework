@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using UnityEngine;
 
 namespace Framework.UI.Core
 {
@@ -110,7 +109,7 @@ namespace Framework.UI.Core
             }
         }
 
-        protected void AddItem(T item)
+        private void AddItem(T item)
         {
             lock (locker)
             {
@@ -120,7 +119,7 @@ namespace Framework.UI.Core
             }
         }
 
-        protected void RemoveItem(int index)
+        private void RemoveItem(int index)
         {
             lock (locker)
             {
@@ -148,7 +147,7 @@ namespace Framework.UI.Core
             }
         }
 
-        protected void ClearItems()
+        private void ClearItems()
         {
             lock (locker)
             {

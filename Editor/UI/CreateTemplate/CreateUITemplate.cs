@@ -156,9 +156,10 @@ public static class CreateUITemplate
 
 		strBuilder.AppendLine("\tprotected override void OnVmChange()");
 		strBuilder.AppendLine("\t{");
-		strBuilder.AppendLine($"\t\tvm = ViewModel as {vmName};");
+		strBuilder.AppendLine($"\t\tvm = viewModel as {vmName};");
 		strBuilder.AppendLine("\t\tif (binding == null)");
 		strBuilder.AppendLine($"\t\t\tbinding = new UIBindFactory<{panelCodeInfo.BehaviourName}, {vmName}>(this, vm);");
+		strBuilder.AppendLine($"\t\tbinding.UpdateVm();");
 		strBuilder.AppendLine("\t}");
 		if (!panelCodeInfo.IsElement)
 		{
@@ -254,7 +255,7 @@ public static class CreateUITemplate
 	private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
 	{
 		var path = panelCodeInfo.PanelPath;
-		var rootPath = BuildScript.GetSettings().assetRootPath;
+		var rootPath = BuildScript.GetManifest().resRootPath;
 		if (path.Contains(rootPath))
 		{
 			path = path.RemoveString(rootPath);

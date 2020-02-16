@@ -13,17 +13,17 @@ namespace Framework.UI.Example
         public Button selfBtn;
         public GameObject breakLine;
         public GameObject selected;
-        private ItemViewModel viewModel;
+        private ItemViewModel vm;
 
         protected override void OnVmChange()
         {
-            viewModel = ViewModel as ItemViewModel;
-            UIBindFactory<ItemView, ItemViewModel> binding = new UIBindFactory<ItemView, ItemViewModel>(this, this.viewModel);
-            binding.Bind(itemImg, viewModel.Path);
-            binding.Bind(nameTxt, viewModel.Path);
-            binding.BindData(viewModel.Last, (last) => breakLine.SetActive(!last));
-            binding.BindData(viewModel.Selected, (value) => selected.SetActive(value));
-            binding.Bind(selfBtn, viewModel.OnItemClick);
+            vm = ViewModel as ItemViewModel;
+            UIBindFactory<ItemView, ItemViewModel> binding = new UIBindFactory<ItemView, ItemViewModel>(this, this.vm);
+            binding.Bind(itemImg, vm.Path);
+            binding.Bind(nameTxt, vm.Path);
+            binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
+            binding.BindData(vm.Selected, (value) => selected.SetActive(value));
+            binding.Bind(selfBtn, vm.OnItemClick);
         }
 
     }

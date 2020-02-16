@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Plugins.XAsset;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,8 +21,7 @@ namespace Framework.UI.Wrap
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            //TODO 图片资源加载方式
-            return (value) => image.sprite = string.IsNullOrEmpty(value) ? null : Resources.Load<Sprite>(value);
+            return (value) => image.sprite = Assets.Load<Sprite>(value);
         }
     }
 }

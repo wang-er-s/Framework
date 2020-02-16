@@ -84,6 +84,7 @@ namespace Plugins.XAsset.Editor
 
             serializedObject.UpdateIfRequiredOrScript();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("downloadURL"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("resRootPath"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("activeVariants"), true);
             serializedObject.ApplyModifiedProperties();
             GUILayout.Space(5);

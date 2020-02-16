@@ -235,6 +235,7 @@ namespace Plugins.XAsset.Editor
             EditorUtility.SetDirty(manifest);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            Debug.Log("生成配置成功");
         }
 
         public static void BuildAssetBundles()

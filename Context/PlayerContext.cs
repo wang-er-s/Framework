@@ -4,16 +4,15 @@ namespace Framework.Context
 {
     public class PlayerContext : Context
     {
-        private string username;
-        public string Username { get { return this.username; } }
+        public string Username { get; }
         public PlayerContext(string username) : this(username, null)
         {
-            this.username = username;
+            this.Username = username;
         }
 
-        public PlayerContext(string username, IServiceContainer container) : base(container, GetApplicationContext())
+        public PlayerContext(string username, IServiceContainer container) : base(container, null)
         {
-            this.username = username;
+            this.Username = username;
         }
     }
 }

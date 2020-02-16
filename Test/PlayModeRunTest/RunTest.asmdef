@@ -3,7 +3,8 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "SoUtil"
+        "SoUtil",
+        "SoUtilEditor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

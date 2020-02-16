@@ -63,7 +63,6 @@ namespace Framework.UI.Core
             componentEvent = componentEvent ?? (defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
             fieldChangeCb = fieldChangeCb ?? (defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
             
-          
             Debugger.Assert(field2CpntConvert != null || cpnt2FieldConvert != null);
             if (field2CpntConvert != null)
             {

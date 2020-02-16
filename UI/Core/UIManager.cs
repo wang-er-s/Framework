@@ -44,16 +44,19 @@ namespace Framework.UI.Core
             guideTrans = Canvas.transform.Find("Guide");
         }
 
-        public IView Create(string uiBehaviourName, UILevel canvasLevel = UILevel.Common, ViewModel vm = null)
+        public T Load<T>(string path, UILevel uiLevel = UILevel.Common, ViewModel viewModel = null) where T : IView
         {
-            if (!existUI.TryGetValue(uiBehaviourName, out var panel))
-            {
-                panel = CreateUI(uiBehaviourName, canvasLevel);
-            }
-            panel.ViewModel = vm;
-            panel.Create();
-            return panel;
+            return (T) Load(path, uiLevel, viewModel);
         }
+
+        public IView Load(string path, UILevel uiLevel = UILevel.Common, ViewModel viewModel = null)
+        {
+            IView view = CreateUI(path, uiLevel);
+            view.SetUIManager(this);
+            view.SetVM(viewModel);
+            return view;
+        }
+        
 
         public void ShowUI(string panelName)
         {
@@ -71,7 +74,7 @@ namespace Framework.UI.Core
         {
             foreach (var panel in existUI.Values)
             {
-                panel.Destroy();
+                //Object.Destroy(panel);
             }
 
             existUI.Clear();
@@ -82,25 +85,19 @@ namespace Framework.UI.Core
             existUI.Values.ForEach(panel => panel.Hide());
         }
 
-        public void CloseUI(string panelName)
-        {
-            if (! existUI.TryGetValue(panelName, out var panel)) return;
-            panel.Destroy();
-        }
-
         public void CreateListItem(Transform view , ViewModel vm, int index)
         {
             GameObject go = Object.Instantiate(view.gameObject, view.parent);
-            go.Show();
             go.transform.SetSiblingIndex(index);
             IView v = go.GetComponent<IView>();
-            v.ViewModel = vm;
+            v.SetVM(vm);
+            v.Show();
         }
 
-        private IView CreateUI(string panelName,UILevel canvasLevel )
+        private IView CreateUI(string panelName,UILevel uiLevel )
         {
             Transform par;
-            switch (canvasLevel)
+            switch (uiLevel)
             {
                 case UILevel.Bg:
                     par = bgTrans;
@@ -118,11 +115,17 @@ namespace Framework.UI.Core
                     par = guideTrans;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(canvasLevel), canvasLevel, null);
+                    throw new ArgumentOutOfRangeException(nameof(uiLevel), uiLevel, null);
             }
             var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
-            GameObject go = Object.Instantiate(loadGo, par);
-            return go.GetComponent<IView>();
+            loadGo.transform.SetParent(par, false);
+            return loadGo.GetComponent<IView>();
+        }
+
+        public static Canvas CreateCanvas()
+        {
+            var canvas = Resources.Load<Canvas>("Canvas");
+            return canvas;
         }
     }
 }

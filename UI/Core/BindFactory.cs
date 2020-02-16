@@ -7,7 +7,7 @@ using UnityEngine.Events;
 namespace Framework.UI.Core
 {
 
-    public class BindFactory<TView, TVm>
+    public abstract class BindFactory<TView, TVm>
         where TView : class
         where TVm : ViewModel
     {
@@ -159,6 +159,7 @@ namespace Framework.UI.Core
                 canClearListener.ClearListener();
             }
             index = 0;
+            vm.Reset();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Framework
             EventManager.TriggerEvent(e);
         }
     }
-    
+
     public static class EventManager
     {
         private static Dictionary<Type, List<EventListenerBase>> subscribersList;

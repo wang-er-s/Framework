@@ -14,15 +14,28 @@ namespace Framework.UI.Wrap
     {
         private Transform content;
         private Transform item;
+        private UIManager uiManager;
         private int tag;
         private int index;
 
         public ViewWrapper (View _view, int _index = 0) : base (_view)
         {
+            SetUIManager(_view);
             item = _view.transform;
             content = item.parent;
             tag = 0;
             index = _index;
+        }
+
+        private void SetUIManager(View view)
+        {
+            var views = view.GetComponentsInParent<View>();
+            foreach (var _view in views)
+            {
+                if (_view.UiManager == null) continue;
+                uiManager = _view.UiManager;
+                break;
+            }
         }
 
         public void SetTag (int _tag)
@@ -61,7 +74,7 @@ namespace Framework.UI.Wrap
         
         private void AddItem (int index, ViewModel vm)
         {
-            //UIManager.CreateListItem (item, vm, index + 1);
+            uiManager.CreateListItem (item, vm, index + 1);
         }
 
         private void RemoveItem (int index)

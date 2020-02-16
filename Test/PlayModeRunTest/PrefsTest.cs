@@ -21,12 +21,13 @@ namespace Tests
             
             Preferences.Factory = new PlayerPrefsPreferencesFactory();
             globalPreferences = Preferences.GetGlobalPreferences();
-            Debug.Log(globalPreferences.GetInt("Level"));
+            Assert.AreEqual(globalPreferences.GetInt("Level"), 1);
             
             //创建自己的preference
             var playerPreferences = Preferences.GetPreferences("soso");
             playerPreferences.SetInt("Level", 12);
             playerPreferences.Save();
+            Assert.AreEqual(playerPreferences.GetInt("Level"), 12);
             
             //自定义TypeEncode
             var binFactory = new BinaryFilePreferencesFactory();

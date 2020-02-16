@@ -8,14 +8,12 @@ namespace Framework.UI.Core
     {
 
         private List<View> subViews;
-
         private CanvasGroup canvasGroup;
-
         private ViewModel viewModel;
         public ViewModel ViewModel
         {
-            get { return viewModel; }
-            set
+            get => viewModel;
+            private set
             {
                 if (viewModel == value)
                 {
@@ -26,49 +24,51 @@ namespace Framework.UI.Core
                     OnVmChange();
             }
         }
+        public Transform Transform { get; private set; }
+        public UIManager UiManager { get; private set; }
+
+        public void SetVM(ViewModel vm)
+        {
+            ViewModel = vm;
+        }
+
+        public void SetUIManager(UIManager uiManager)
+        {
+            UiManager = uiManager;
+        }
 
         void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
             subViews = new List<View>();
+            SetCanvas(false);
+            Transform = transform;
         }
 
         #region 界面显示隐藏的调用和回调方法
 
-        void IView.Create()
-        {
-            
-        }
-
-        void IView.Destroy()
-        {
-            OnDestroy();
-            ViewModel.OnDestroy();
-            subViews.ForEach((subView) => subView.OnDestroy());
-        }
-
-        void IView.Show()
+        public void Show()
         {
             SetCanvas(true);
-            ViewModel.OnShow();
+            ViewModel?.OnShow();
             OnShow();
             subViews.ForEach((subView) => subView.OnShow());
         }
 
-        void IView.Hide()
+        public void Hide()
         {
             SetCanvas(false);
-            ViewModel.OnHide();
+            ViewModel?.OnHide();
             OnHide();
             subViews.ForEach((subView) => subView.OnHide());
         }
         
-        protected virtual void OnCreate(){}
-
         protected virtual void OnShow(){}
 
-
-        protected virtual void OnDestroy(){}
+        protected virtual void OnDestroy()
+        {
+            ViewModel?.OnDestroy();
+        }
 
         protected virtual void OnHide(){}
 

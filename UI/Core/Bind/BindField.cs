@@ -21,8 +21,8 @@ namespace Framework.UI.Core
             UnityEvent<TData> _componentEvent, BindType _bindType,
             Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
         {
-            UpdateValue(_component, property, _fieldChangeCb, _componentEvent, _bindType,
-                _property2CpntWrap, _cpnt2PropWrap);
+            SetValue(_component, property, _fieldChangeCb, _componentEvent, _bindType, _property2CpntWrap,
+                _cpnt2PropWrap);
             InitEvent();
             InitCpntValue();
         }
@@ -54,7 +54,15 @@ namespace Framework.UI.Core
         /// </summary>
         private void InitCpntValue()
         {
-            propChangeCb?.Invoke(_property.Value);
+            switch (bindType)
+            {
+                case BindType.OnWay:
+                    propChangeCb(prop2CpntWrap == null ? _property.Value : prop2CpntWrap(_property.Value));
+                    break;
+                case BindType.Revert:
+                    propChangeCb?.Invoke(prop2CpntWrap == null ? _property.Value : prop2CpntWrap(_property.Value));
+                    break;
+            }
         }
 
         private void InitEvent()

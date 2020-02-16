@@ -88,9 +88,7 @@ public class IEnumeratorTool : MonoBehaviour
     {
         isStopAllCoroutine = true;
     }
-
-    #region Tools
-
+    
     /// <summary>
     /// 等待一段时间后执行
     /// </summary>
@@ -110,8 +108,6 @@ public class IEnumeratorTool : MonoBehaviour
         }
         yield break;
     }
-
-    #endregion
 
     /// <summary>
     /// 主循环

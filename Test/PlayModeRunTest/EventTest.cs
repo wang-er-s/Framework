@@ -25,9 +25,8 @@ namespace Tests
         public void 测试注册广播()
         {
             EventListener<AMsg> aModule = new AModule();
-            //aModule.StartListening();
+            aModule.StartListening();
             EventManager.TriggerEvent(new AMsg {Name = "HH"});
-            throw new Exception("aa");
         }
     }
 }

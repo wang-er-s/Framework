@@ -28,5 +28,13 @@ namespace Framework.UI.Core
             
         }
 
+        /// <summary>
+        /// 当不同的view换绑vm的时候的reset方法
+        /// </summary>
+        public virtual void Reset()
+        {
+            
+        }
+
     }
 }

@@ -3,13 +3,13 @@ using Framework.UI.Example;
 
 public class ListPairsBindView : View
 {
-    private ListPairsBindViewModel viewModel;
+    private ListPairsBindViewModel vm;
     protected override void OnVmChange()
     {
-        viewModel = ViewModel as ListPairsBindViewModel;
+        vm = ViewModel as ListPairsBindViewModel;
         UIBindFactory<ListPairsBindView, ListPairsBindViewModel> binding =
-            new UIBindFactory<ListPairsBindView, ListPairsBindViewModel>(this, viewModel);
-        binding.BindIpairs(viewModel.Items, "item[?]");
+            new UIBindFactory<ListPairsBindView, ListPairsBindViewModel>(this, vm);
+        binding.BindIpairs(vm.Items, "item[?]");
     }
 }
 

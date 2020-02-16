@@ -30,6 +30,8 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Debugger = Framework.Debugger;
+using Object = UnityEngine.Object;
 
 namespace Plugins.XAsset
 {
@@ -44,11 +46,6 @@ namespace Plugins.XAsset
         // ReSharper disable once InconsistentNaming
         private static readonly List<Asset> _unusedAssets = new List<Asset>();
 
-        public static Dictionary<string, int> bundleAssets
-        {
-            get { return _bundleAssets; }
-        }
-
         private static string updatePath { get; set; }
 
         public static void Initialize(Action onSuccess, Action<string> onError)
@@ -62,7 +59,7 @@ namespace Plugins.XAsset
 
             if (string.IsNullOrEmpty(Utility.dataPath)) Utility.dataPath = Application.streamingAssetsPath;
 
-            Log(string.Format("Init->assetBundleMode {0} | dataPath {1}", Utility.assetBundleMode, Utility.dataPath));
+            Debugger.Log(string.Format("Init->assetBundleMode {0} | dataPath {1}", Utility.assetBundleMode, Utility.dataPath));
 
             if (Utility.assetBundleMode)
             {
@@ -141,6 +138,16 @@ namespace Plugins.XAsset
             return Load(path, type, false);
         }
 
+        public static T Load<T>(string path) where T : Object
+        {
+            return Load(path, typeof(T)).asset as T;
+        }
+
+        public static GameObject LoadIns(string path)
+        {
+            return Instantiate(Load(path, typeof(GameObject), false).asset) as GameObject;
+        }
+
         public static Asset LoadAsync(string path, Type type)
         {
             return Load(path, type, true);
@@ -199,6 +206,7 @@ namespace Plugins.XAsset
                 return null;
             }
 
+            path = GetAssetPath(path);
             for (int i = 0, max = _assets.Count; i < max; i++)
             {
                 var item = _assets[i];
@@ -232,7 +240,7 @@ namespace Plugins.XAsset
             asset.Load();
             asset.Retain();
 
-            Log(string.Format("Load->{0}|{1}", path, assetBundleName));
+            Log($"Load->{path}|{assetBundleName}");
             return asset;
         }
 
@@ -250,6 +258,13 @@ namespace Plugins.XAsset
                 return false;
             assetBundleName = _bundles[bundle];
             return true;
+        }
+
+        private static string GetAssetPath(string originPath)
+        {
+            if (originPath.Contains(Utility.resRootPath))
+                return originPath;
+            return Path.Combine(Utility.resRootPath, originPath);
         }
 
         private static string Bundles_overrideBaseDownloadingURL(string bundleName)
