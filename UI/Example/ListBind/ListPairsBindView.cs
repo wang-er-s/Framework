@@ -4,6 +4,8 @@ using Framework.UI.Example;
 public class ListPairsBindView : View
 {
     private ListPairsBindViewModel vm;
+    public override UILevel UILevel { get; } = UILevel.Common;
+
     protected override void OnVmChange()
     {
         vm = ViewModel as ListPairsBindViewModel;
@@ -27,5 +29,7 @@ public class ListPairsBindViewModel : ViewModel
             new ItemViewModel(){Path = new BindableProperty<string>("鱼香肉丝")},
         };
     }
+
+    public override string ViewPath { get; } = "";
 }
 

@@ -8,19 +8,26 @@ using UnityEngine;
 
 namespace Framework.UI.Core
 {
-    public abstract class ViewModel 
+    public abstract class ViewModel
     {
-        
-        public bool IsShow { get; private set; }
+        private const string MAIN_SCENE = "main_scene";
+        private static Dictionary<string, UIManager> _uiManagers = new Dictionary<string, UIManager>();
+        protected readonly IBindableProperty<bool> IsShow = new BindableProperty<bool>(false);
+        public abstract string ViewPath { get;}
 
+        public virtual void ShowView(string uiMgrTag = MAIN_SCENE)
+        {
+            IsShow.Value = true;
+            if (_uiManagers.TryGetValue(uiMgrTag, out var uiManager))
+                uiManager.Load(ViewPath, this);
+        }
+        
         public virtual void OnShow()
         {
-            IsShow = true;
         }
 
         public virtual void OnHide()
         {
-            IsShow = false;
         }
 
         public virtual void OnDestroy()
@@ -34,6 +41,16 @@ namespace Framework.UI.Core
         public virtual void Reset()
         {
             
+        }
+
+        public void RegisterUIManager(UIManager uiManager, string tag = MAIN_SCENE)
+        {
+            if (_uiManagers.ContainsKey(tag))
+            {
+                _uiManagers[tag] = uiManager;
+                return;
+            }
+            _uiManagers.Add(tag, uiManager);
         }
 
     }

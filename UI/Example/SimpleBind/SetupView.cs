@@ -44,6 +44,8 @@ namespace Framework.UI.Example
             binding.RevertBind(atkInputField, viewModel.ATK, (string str) => int.Parse(str));*/
         }
 
+        public override UILevel UILevel { get; } = UILevel.Common;
+
         protected override void OnDestroy ()
         {
             base.OnDestroy ();

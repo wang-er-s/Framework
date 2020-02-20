@@ -13,6 +13,8 @@ public class ListBindView : View
     public Button addBtn;
     public Button updateBtn;
 
+    public override UILevel UILevel { get; } = UILevel.Common;
+
     protected override void OnVmChange()
     {
         vm = ViewModel as ListBindViewModel;
@@ -104,6 +106,7 @@ public class ListBindViewModel : ViewModel
             itemViewModel.Last.Value = itemViewModel == lastVm;
         }
     }
-    
+
+    public override string ViewPath { get; } = "";
 }
 

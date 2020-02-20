@@ -11,6 +11,7 @@ namespace Framework.UI.Core
 #endif
     public enum UILevel
     {
+        None = -1, //留给内部Element的空值
         Bg = -1, //背景层UI
         Common = 0, //普通层UI
         Pop = 1, //弹出层UI
@@ -18,7 +19,7 @@ namespace Framework.UI.Core
         Guide = 3, //新手引导层
     }
 
-    public class UIManager
+    public class UIManager 
     {
         
         private Dictionary<string, IView> existUI = new Dictionary<string, IView>();
@@ -44,45 +45,11 @@ namespace Framework.UI.Core
             guideTrans = Canvas.transform.Find("Guide");
         }
 
-        public T Load<T>(string path, UILevel uiLevel = UILevel.Common, ViewModel viewModel = null) where T : IView
+        public void Load(string path, ViewModel viewModel)
         {
-            return (T) Load(path, uiLevel, viewModel);
-        }
-
-        public IView Load(string path, UILevel uiLevel = UILevel.Common, ViewModel viewModel = null)
-        {
-            IView view = CreateUI(path, uiLevel);
+            IView view = CreateUI(path);
             view.SetUIManager(this);
             view.SetVM(viewModel);
-            return view;
-        }
-        
-
-        public void ShowUI(string panelName)
-        {
-            if (!existUI.TryGetValue(panelName, out var panel)) return;
-            panel.Show();
-        }
-
-        public void HideUI(string panelName)
-        {
-            if (!existUI.TryGetValue(panelName, out var panel)) return;
-            panel.Hide();
-        }
-
-        public void CloseAllUI()
-        {
-            foreach (var panel in existUI.Values)
-            {
-                //Object.Destroy(panel);
-            }
-
-            existUI.Clear();
-        }
-
-        public void HideAllUI()
-        {
-            existUI.Values.ForEach(panel => panel.Hide());
         }
 
         public void CreateListItem(Transform view , ViewModel vm, int index)
@@ -94,8 +61,11 @@ namespace Framework.UI.Core
             v.Show();
         }
 
-        private IView CreateUI(string panelName,UILevel uiLevel )
+        private IView CreateUI(string panelName)
         {
+            var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
+            View view = loadGo.GetComponent<View>();
+            UILevel uiLevel = view.UILevel;
             Transform par;
             switch (uiLevel)
             {
@@ -117,9 +87,8 @@ namespace Framework.UI.Core
                 default:
                     throw new ArgumentOutOfRangeException(nameof(uiLevel), uiLevel, null);
             }
-            var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
             loadGo.transform.SetParent(par, false);
-            return loadGo.GetComponent<IView>();
+            return view;
         }
 
         public static Canvas CreateCanvas()

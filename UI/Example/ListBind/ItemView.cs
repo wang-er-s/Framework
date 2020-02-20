@@ -15,6 +15,8 @@ namespace Framework.UI.Example
         public GameObject selected;
         private ItemViewModel vm;
 
+        public override UILevel UILevel { get; } = UILevel.Common;
+
         protected override void OnVmChange()
         {
             vm = ViewModel as ItemViewModel;
@@ -56,6 +58,7 @@ namespace Framework.UI.Example
             Selected.Value = false;
         }
 
+        public override string ViewPath { get; } = "";
     }
 }
 

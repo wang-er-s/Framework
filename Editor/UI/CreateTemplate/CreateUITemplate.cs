@@ -87,7 +87,7 @@ public static class CreateUITemplate
 			if(uiMark.transform == transform) continue;
 			PanelCodeInfo elementPanel = new PanelCodeInfo();
 			FillPanelInfo(uiMark.transform, prefabPath, elementPanel);
-			panelCodeInfo.IsElement = true;
+			elementPanel.IsElement = true;
 			panelCodeInfo.Elements.Add(elementPanel);
 			foreach (var elementMarks in elementPanel.FieldFullPathToUIMark.Values)
 			{
@@ -123,7 +123,9 @@ public static class CreateUITemplate
 
 	private static void GeneratorView(PanelCodeInfo panelCodeInfo)
 	{
-		var generateFilePath = $"{BuildScript.GetSettings().uiScriptPath}{panelCodeInfo.BehaviourName}.cs";
+		var dir = BuildScript.GetSettings().uiScriptPath;
+		Directory.CreateDirectory(dir);
+		var generateFilePath = $"{dir}{panelCodeInfo.BehaviourName}.cs";
 		if (File.Exists(generateFilePath)) File.Delete(generateFilePath);
 		var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
 		var strBuilder = new StringBuilder();
@@ -153,19 +155,19 @@ public static class CreateUITemplate
 				$"\t[SerializeField] private {element.BehaviourName} {element.BehaviourName};\n");
 		}
 		strBuilder.AppendLine();
+		strBuilder.AppendLine(!panelCodeInfo.IsElement
+			? $"\tpublic override UILevel UILevel {{ get; }} = UILevel.Common;"
+			: $"\tpublic override UILevel UILevel {{ get; }} = UILevel.None;");
+		strBuilder.AppendLine();
 
 		strBuilder.AppendLine("\tprotected override void OnVmChange()");
 		strBuilder.AppendLine("\t{");
-		strBuilder.AppendLine($"\t\tvm = viewModel as {vmName};");
+		strBuilder.AppendLine($"\t\tvm = ViewModel as {vmName};");
 		strBuilder.AppendLine("\t\tif (binding == null)");
 		strBuilder.AppendLine($"\t\t\tbinding = new UIBindFactory<{panelCodeInfo.BehaviourName}, {vmName}>(this, vm);");
 		strBuilder.AppendLine($"\t\tbinding.UpdateVm();");
 		strBuilder.AppendLine("\t}");
-		if (!panelCodeInfo.IsElement)
-		{
-			strBuilder.AppendLine();
-			strBuilder.AppendLine($"\tpublic static string Path = \"{GetPanelPath(panelCodeInfo)}\";");
-		}
+		
 		strBuilder.AppendLine("}");
 		sw.Write(strBuilder);
 		sw.Flush();
@@ -187,6 +189,9 @@ public static class CreateUITemplate
 		strBuilder.AppendLine("\t{");
 		strBuilder.AppendLine();
 		strBuilder.AppendLine("\t}");
+		strBuilder.AppendLine();
+		strBuilder.AppendLine($"\tpublic override string ViewPath {{ get; }} = \"{GetPanelPath(panelCodeInfo)}\";");
+		strBuilder.AppendLine();
 		strBuilder.AppendLine("}");
 		sw.Write(strBuilder);
 		sw.Flush();

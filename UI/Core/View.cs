@@ -26,6 +26,7 @@ namespace Framework.UI.Core
         }
         public Transform Transform { get; private set; }
         public UIManager UiManager { get; private set; }
+        public abstract UILevel UILevel { get; }
 
         public void SetVM(ViewModel vm)
         {
