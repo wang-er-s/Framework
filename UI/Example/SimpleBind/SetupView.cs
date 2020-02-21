@@ -45,10 +45,6 @@ namespace Framework.UI.Example
         }
 
         public override UILevel UILevel { get; } = UILevel.Common;
-
-        protected override void OnDestroy ()
-        {
-            base.OnDestroy ();
-        }
+        
     }
 }

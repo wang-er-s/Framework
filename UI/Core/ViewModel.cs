@@ -4,16 +4,29 @@ namespace Framework.UI.Core
 {
     public abstract class ViewModel
     {
-        private const string MAIN_SCENE = "main_scene";
-        private static Dictionary<string, UIManager> _uiManagers = new Dictionary<string, UIManager>();
-        protected readonly IBindableProperty<bool> IsShow = new BindableProperty<bool>(false);
+        public BindableProperty<ViewState> IsShow { get; } = new BindableProperty<ViewState>(ViewState.Hide);
+
+        protected ViewState _isShow
+        {
+            get => IsShow;
+            set => ((IBindableProperty<ViewState>) IsShow).Value = value;
+        } 
+
         public abstract string ViewPath { get;}
 
-        public virtual void ShowView(string uiMgrTag = MAIN_SCENE)
+        public virtual void ShowView()
         {
-            IsShow.Value = true;
-            if (_uiManagers.TryGetValue(uiMgrTag, out var uiManager))
-                uiManager.Load(ViewPath, this);
+            _isShow = ViewState.Show;
+        }
+
+        public virtual void HideView()
+        {
+            _isShow = ViewState.Hide;
+        }
+
+        public virtual void DestroyView()
+        {
+            _isShow = ViewState.Destroy;
         }
         
         public virtual void OnShow()
@@ -37,15 +50,12 @@ namespace Framework.UI.Core
             
         }
 
-        public void RegisterUIManager(UIManager uiManager, string tag = MAIN_SCENE)
-        {
-            if (_uiManagers.ContainsKey(tag))
-            {
-                _uiManagers[tag] = uiManager;
-                return;
-            }
-            _uiManagers.Add(tag, uiManager);
-        }
+    }
 
+    public enum ViewState
+    {
+        Show,
+        Hide,
+        Destroy,
     }
 }

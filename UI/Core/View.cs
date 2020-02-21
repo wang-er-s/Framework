@@ -6,7 +6,6 @@ namespace Framework.UI.Core
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class View : MonoBehaviour, IView
     {
-
         private List<View> _subViews;
         private CanvasGroup _canvasGroup;
         private ViewModel _viewModel;
@@ -27,6 +26,7 @@ namespace Framework.UI.Core
         public Transform Transform { get; private set; }
         public UIManager UiManager { get; private set; }
         public abstract UILevel UILevel { get; }
+        public virtual bool SingleInstance { get; }
 
         public void SetVM(ViewModel vm)
         {
@@ -51,7 +51,6 @@ namespace Framework.UI.Core
         public void Show()
         {
             SetCanvas(true);
-            ViewModel?.OnShow();
             OnShow();
             _subViews.ForEach((subView) => subView.OnShow());
         }
@@ -59,18 +58,12 @@ namespace Framework.UI.Core
         public void Hide()
         {
             SetCanvas(false);
-            ViewModel?.OnHide();
             OnHide();
             _subViews.ForEach((subView) => subView.OnHide());
         }
         
         protected virtual void OnShow(){}
-
-        protected virtual void OnDestroy()
-        {
-            ViewModel?.OnDestroy();
-        }
-
+        
         protected virtual void OnHide(){}
 
         private void SetCanvas(bool visible)

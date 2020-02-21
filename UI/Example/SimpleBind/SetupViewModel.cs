@@ -40,5 +40,6 @@ namespace Framework.UI.Example
         }
 
         public override string ViewPath { get; } = "";
+
     }
 }

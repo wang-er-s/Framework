@@ -45,11 +45,12 @@ namespace Framework.UI.Core
             _guideTrans = Canvas.transform.Find("Guide");
         }
 
-        public void Load(string path, ViewModel viewModel)
+        public View Load(string path, ViewModel viewModel)
         {
-            IView view = CreateUI(path);
+            View view = CreateUI(path);
             view.SetUIManager(this);
             view.SetVM(viewModel);
+            return view;
         }
 
         public void CreateListItem(Transform view , ViewModel vm, int index)
@@ -61,7 +62,7 @@ namespace Framework.UI.Core
             v.Show();
         }
 
-        private IView CreateUI(string panelName)
+        private View CreateUI(string panelName)
         {
             var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
             View view = loadGo.GetComponent<View>();
