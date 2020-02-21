@@ -13,21 +13,21 @@ namespace Framework
     {
         public int CurCount
         {
-            get { return mCacheStack.Count; }
+            get { return _cacheStack.Count; }
         }
 
-        protected IFactory<T> mFactory;
+        protected IFactory<T> _factory;
 
-        protected readonly Stack<T> mCacheStack = new Stack<T>();
+        protected readonly Stack<T> _cacheStack = new Stack<T>();
 
-        protected int mMaxCount = 12;
+        protected int _maxCount = 12;
 
         public abstract bool DeSpawn(T obj);
 
         public virtual T Spawn()
         {
-            return mCacheStack.Count == 0 ?
-                mFactory.Create() : mCacheStack.Pop();
+            return _cacheStack.Count == 0 ?
+                _factory.Create() : _cacheStack.Pop();
         }
     }
 }

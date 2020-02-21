@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace Framework.UI.Wrap
 {
-    public abstract class BaseWrapper<T> : IFieldChangeCb<bool> where T : Component
+    public abstract class BaseWrapper<T> : IFieldChangeCb<bool> where T : class
     {
-        protected T component;
+        protected T _view;
 
-        protected BaseWrapper(T _component)
+        protected BaseWrapper(T view)
         {
-            component = _component;
+            _view = view;
         }
 
         Action<bool> IFieldChangeCb<bool>.GetFieldChangeCb()
         {
-            return(value) => component.gameObject.SetActive(value);
+            if (_view is Component component)
+            {
+                return(value) => component.gameObject.SetActive(value);
+            }
+            return null;
         }
     }
 

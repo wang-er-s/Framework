@@ -24,11 +24,11 @@ namespace Framework.UI.Core
         
         private Dictionary<string, IView> existUI = new Dictionary<string, IView>();
 
-        private Transform bgTrans;
-        private Transform commonTrans;
-        private Transform popTrans;
-        private Transform toastTrans;
-        private Transform guideTrans;
+        private Transform _bgTrans;
+        private Transform _commonTrans;
+        private Transform _popTrans;
+        private Transform _toastTrans;
+        private Transform _guideTrans;
  
         public Camera UICamera { get; private set; }
         public Canvas Canvas { get; private set; }
@@ -38,11 +38,11 @@ namespace Framework.UI.Core
         public UIManager(Canvas canvas = null)
         {
             Canvas = canvas == null ? Object.FindObjectOfType<Canvas>() : canvas;
-            bgTrans = Canvas.transform.Find("Bg");
-            commonTrans = Canvas.transform.Find("Common");
-            popTrans = Canvas.transform.Find("Pop");
-            toastTrans = Canvas.transform.Find("Toast");
-            guideTrans = Canvas.transform.Find("Guide");
+            _bgTrans = Canvas.transform.Find("Bg");
+            _commonTrans = Canvas.transform.Find("Common");
+            _popTrans = Canvas.transform.Find("Pop");
+            _toastTrans = Canvas.transform.Find("Toast");
+            _guideTrans = Canvas.transform.Find("Guide");
         }
 
         public void Load(string path, ViewModel viewModel)
@@ -70,19 +70,19 @@ namespace Framework.UI.Core
             switch (uiLevel)
             {
                 case UILevel.Bg:
-                    par = bgTrans;
+                    par = _bgTrans;
                     break;
                 case UILevel.Common:
-                    par = commonTrans;
+                    par = _commonTrans;
                     break;
                 case UILevel.Pop:
-                    par = popTrans;
+                    par = _popTrans;
                     break;
                 case UILevel.Toast:
-                    par = toastTrans;
+                    par = _toastTrans;
                     break;
                 case UILevel.Guide:
-                    par = guideTrans;
+                    par = _guideTrans;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(uiLevel), uiLevel, null);

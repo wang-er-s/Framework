@@ -6,71 +6,67 @@ namespace Framework.UI.Core
 {
     public class ConvertBindField<TComponent,TData,TResult> where  TComponent : class
     {
-        private TComponent component;
-        private Action<TResult> fieldChangeCb;
-        private UnityEvent<TResult> componentEvent;
-        private Func<TData, TResult> field2CpntConvert;
-        private Func<TResult, TData> cpnt2FieldConvert;
-        private IBindableProperty<TData> property;
-        private object defaultBind;
+        private TComponent _component;
+        private Action<TResult> _fieldChangeCb;
+        private UnityEvent<TResult> _componentEvent;
+        private Func<TData, TResult> _field2CpntConvert;
+        private Func<TResult, TData> _cpnt2FieldConvert;
+        private IBindableProperty<TData> _property;
+        private object _defaultBind;
 
-        public ConvertBindField(TComponent _component, IBindableProperty<TData> _property,
-            Action<TResult> _fieldChangeCb,
-            Func<TData, TResult> _field2CpntConvert,
-            Func<TResult, TData> _cpnt2FieldConvert,
-            UnityEvent<TResult> _componentEvent)
+        public ConvertBindField(TComponent component, IBindableProperty<TData> property,
+            Action<TResult> fieldChangeCb,
+            Func<TData, TResult> field2CpntConvert,
+            Func<TResult, TData> cpnt2FieldConvert,
+            UnityEvent<TResult> componentEvent)
         {
-            SetValue(_component,_property,_fieldChangeCb,_field2CpntConvert,_cpnt2FieldConvert,_componentEvent);
+            SetValue(component,property,fieldChangeCb,field2CpntConvert,cpnt2FieldConvert,componentEvent);
             InitEvent();
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent _component, IBindableProperty<TData> _property,
-            Action<TResult> _fieldChangeCb,
-            Func<TData, TResult> _field2CpntConvert,
-            Func<TResult, TData> _cpnt2FieldConvert,
-            UnityEvent<TResult> _componentEvent)
+        public void UpdateValue(TComponent component, IBindableProperty<TData> property,
+            Action<TResult> fieldChangeCb,
+            Func<TData, TResult> field2CpntConvert,
+            Func<TResult, TData> cpnt2FieldConvert,
+            UnityEvent<TResult> componentEvent)
         {
-            SetValue(_component, _property, _fieldChangeCb, _field2CpntConvert, _cpnt2FieldConvert, _componentEvent);
+            SetValue(component, property, fieldChangeCb, field2CpntConvert, cpnt2FieldConvert, componentEvent);
             InitCpntValue();
         }
         
-        private void SetValue(TComponent _component, IBindableProperty<TData> _property,
-            Action<TResult> _fieldChangeCb,
-            Func<TData, TResult> _field2CpntConvert,
-            Func<TResult, TData> _cpnt2FieldConvert,
-            UnityEvent<TResult> _componentEvent)
+        private void SetValue(TComponent component, IBindableProperty<TData> property,
+            Action<TResult> fieldChangeCb,
+            Func<TData, TResult> field2CpntConvert,
+            Func<TResult, TData> cpnt2FieldConvert,
+            UnityEvent<TResult> componentEvent)
         {
-            component = _component;
-            fieldChangeCb = _fieldChangeCb;
-            componentEvent = _componentEvent;
-            property = _property;
-            field2CpntConvert = _field2CpntConvert;
-            cpnt2FieldConvert = _cpnt2FieldConvert;
+            _component = component;
+            _fieldChangeCb = fieldChangeCb;
+            _componentEvent = componentEvent;
+            _property = property;
+            _field2CpntConvert = field2CpntConvert;
+            _cpnt2FieldConvert = cpnt2FieldConvert;
         }
         
         private void InitCpntValue()
         {
-            if (field2CpntConvert != null)
+            if (_field2CpntConvert != null)
             {
-                fieldChangeCb(field2CpntConvert(property.Value));
+                _fieldChangeCb(_field2CpntConvert(_property.Value));
             }
         }
 
         private void InitEvent()
         {
-            defaultBind = BindTool.GetDefaultBind(component);
-            componentEvent = componentEvent ?? (defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
-            fieldChangeCb = fieldChangeCb ?? (defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
-            
-            Debugger.Assert(field2CpntConvert != null || cpnt2FieldConvert != null);
-            if (field2CpntConvert != null)
-            {
-                property.AddListener((value) => fieldChangeCb(field2CpntConvert(value)));
-                
-            }
-            if (cpnt2FieldConvert != null)
-                componentEvent?.AddListener((val) => property.Value = cpnt2FieldConvert(val));
+            _defaultBind = BindTool.GetDefaultBind(_component);
+            _componentEvent ??= (_defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
+            _fieldChangeCb ??= (_defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            Debugger.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
+            if (_field2CpntConvert != null)
+                _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));
+            if (_cpnt2FieldConvert != null)
+                _componentEvent?.AddListener((val) => _property.Value = _cpnt2FieldConvert(val));
         }
     }
 }

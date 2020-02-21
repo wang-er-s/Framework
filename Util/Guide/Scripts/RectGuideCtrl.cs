@@ -12,27 +12,27 @@ namespace Framework
         /// <summary>
         /// 镂空区域中心
         /// </summary>
-        private Vector4 mCenter;
+        private Vector4 _center;
         /// <summary>
         /// 最终的偏移值X
         /// </summary>
-        private float mTargetOffsetX = 0f;
+        private float _targetOffsetX = 0f;
         /// <summary>
         /// 最终的偏移值Y
         /// </summary>
-        private float mTargetOffsetY = 0f;
+        private float _targetOffsetY = 0f;
         /// <summary>
         /// 当前的偏移值X
         /// </summary>
-        private float mCurrentOffsetX = 0f;
+        private float _currentOffsetX = 0f;
         /// <summary>
         /// 当前的偏移值Y
         /// </summary>
-        private float mCurrentOffsetY = 0f;
+        private float _currentOffsetY = 0f;
 
         protected override void SetMatShader ()
         {
-            mShaderName = "UI/Guide/RectGuide";
+            _shaderName = "UI/Guide/RectGuide";
         }
 
         protected override void InitData ()
@@ -40,20 +40,20 @@ namespace Framework
             //获取高亮区域四个顶点的世界坐标
             Target.rectTransform.GetWorldCorners ( _corners );
             //计算高亮显示区域咋画布中的范围
-            mTargetOffsetX = Vector2.Distance ( World2CanvasPos ( mCanvas, _corners[ 0 ] ),
-                                                World2CanvasPos ( mCanvas, _corners[ 3 ] ) ) / 2f;
-            mTargetOffsetY = Vector2.Distance ( World2CanvasPos ( mCanvas, _corners[ 0 ] ),
-                                                World2CanvasPos ( mCanvas, _corners[ 1 ] ) ) / 2f;
+            _targetOffsetX = Vector2.Distance ( World2CanvasPos ( _canvas, _corners[ 0 ] ),
+                                                World2CanvasPos ( _canvas, _corners[ 3 ] ) ) / 2f;
+            _targetOffsetY = Vector2.Distance ( World2CanvasPos ( _canvas, _corners[ 0 ] ),
+                                                World2CanvasPos ( _canvas, _corners[ 1 ] ) ) / 2f;
             //计算高亮显示区域的中心
             float   x           = _corners[ 0 ].x + ( ( _corners[ 3 ].x - _corners[ 0 ].x ) / 2f );
             float   y           = _corners[ 0 ].y + ( ( _corners[ 1 ].y - _corners[ 0 ].y ) / 2f );
             Vector3 centerWorld = new Vector3 ( x, y, 0 );
-            Vector2 center      = World2CanvasPos ( mCanvas, centerWorld );
+            Vector2 center      = World2CanvasPos ( _canvas, centerWorld );
             //设置遮罩材料中中心变量
             Vector4 centerMat = new Vector4 ( center.x, center.y, 0, 0 );
-            mMaterial.SetVector ( "_Center", centerMat );
+            _material.SetVector ( "_Center", centerMat );
             //计算当前偏移的初始值
-            RectTransform canvasRectTransform = ( mCanvas.transform as RectTransform );
+            RectTransform canvasRectTransform = ( _canvas.transform as RectTransform );
             if ( canvasRectTransform != null )
             {
                 //获取画布区域的四个顶点
@@ -62,21 +62,21 @@ namespace Framework
                 for ( int i = 0; i < _corners.Length; i++ )
                 {
                     if ( i % 2 == 0 )
-                        mCurrentOffsetX =
-                            Mathf.Max ( Vector3.Distance ( World2CanvasPos ( mCanvas, _corners[ i ] ), center ),
-                                        mCurrentOffsetX );
+                        _currentOffsetX =
+                            Mathf.Max ( Vector3.Distance ( World2CanvasPos ( _canvas, _corners[ i ] ), center ),
+                                        _currentOffsetX );
                     else
-                        mCurrentOffsetY =
-                            Mathf.Max ( Vector3.Distance ( World2CanvasPos ( mCanvas, _corners[ i ] ), center ),
-                                        mCurrentOffsetY );
+                        _currentOffsetY =
+                            Mathf.Max ( Vector3.Distance ( World2CanvasPos ( _canvas, _corners[ i ] ), center ),
+                                        _currentOffsetY );
                 }
             }
 
             //设置遮罩材质中当前偏移的变量
-            float initX = ShowAnim ? mCurrentOffsetX : mTargetOffsetX;
-            float initY = ShowAnim ? mCurrentOffsetY : mTargetOffsetY;
-            mMaterial.SetFloat ( "_SliderX", initX );
-            mMaterial.SetFloat ( "_SliderY", initY );
+            float initX = ShowAnim ? _currentOffsetX : _targetOffsetX;
+            float initY = ShowAnim ? _currentOffsetY : _targetOffsetY;
+            _material.SetFloat ( "_SliderX", initX );
+            _material.SetFloat ( "_SliderY", initY );
         }
 
         private float shrinkVelocityX = 0f;
@@ -88,18 +88,18 @@ namespace Framework
             if ( !ShowAnim )
                 return;
             //从当前偏移值到目标偏移值差值显示收缩动画
-            float valueX = Mathf.SmoothDamp ( mCurrentOffsetX, mTargetOffsetX, ref shrinkVelocityX, ShrinkTime );
-            float valueY = Mathf.SmoothDamp ( mCurrentOffsetY, mTargetOffsetY, ref shrinkVelocityY, ShrinkTime );
-            if ( !Mathf.Approximately ( valueX, mCurrentOffsetX ) )
+            float valueX = Mathf.SmoothDamp ( _currentOffsetX, _targetOffsetX, ref shrinkVelocityX, ShrinkTime );
+            float valueY = Mathf.SmoothDamp ( _currentOffsetY, _targetOffsetY, ref shrinkVelocityY, ShrinkTime );
+            if ( !Mathf.Approximately ( valueX, _currentOffsetX ) )
             {
-                mCurrentOffsetX = valueX;
-                mMaterial.SetFloat ( "_SliderX", mCurrentOffsetX );
+                _currentOffsetX = valueX;
+                _material.SetFloat ( "_SliderX", _currentOffsetX );
             }
 
-            if ( !Mathf.Approximately ( valueY, mCurrentOffsetY ) )
+            if ( !Mathf.Approximately ( valueY, _currentOffsetY ) )
             {
-                mCurrentOffsetY = valueY;
-                mMaterial.SetFloat ( "_SliderY", mCurrentOffsetY );
+                _currentOffsetY = valueY;
+                _material.SetFloat ( "_SliderY", _currentOffsetY );
             }
         }
     }

@@ -9,10 +9,10 @@ namespace Framework.Prefs
         private const int IV_SIZE = 16;
         private static readonly byte[] DEFAULT_IV;
         private static readonly byte[] DEFAULT_KEY;
-        private RijndaelManaged cipher;
+        private RijndaelManaged _cipher;
 
-        private byte[] iv = null;
-        private byte[] key = null;
+        private byte[] _iv = null;
+        private byte[] _key = null;
 
         static DefaultEncryptor()
         {
@@ -35,19 +35,19 @@ namespace Framework.Prefs
         public DefaultEncryptor(byte[] key, byte[] iv)
         {
             if (iv == null)
-                this.iv = DEFAULT_IV;
+                this._iv = DEFAULT_IV;
 
             if (key == null)
-                this.key = DEFAULT_KEY;
+                this._key = DEFAULT_KEY;
 
-            CheckIV(this.iv);
-            CheckKey(this.key);
+            CheckIV(this._iv);
+            CheckKey(this._key);
 
 #if NETFX_CORE
             SymmetricKeyAlgorithmProvider provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             cryptographicKey = provider.CreateSymmetricKey(this.key.AsBuffer());
 #else
-            cipher = new RijndaelManaged()
+            _cipher = new RijndaelManaged()
             {
                 Mode = CipherMode.CBC,//use CBC
                 Padding = PaddingMode.PKCS7,//default PKCS7
@@ -78,7 +78,7 @@ namespace Framework.Prefs
             IBuffer bufferEncrypt = CryptographicEngine.Encrypt(cryptographicKey, plainData.AsBuffer(), iv.AsBuffer());
             return bufferEncrypt.ToArray();
 #else
-            ICryptoTransform encryptor = cipher.CreateEncryptor(key, iv);
+            ICryptoTransform encryptor = _cipher.CreateEncryptor(_key, _iv);
             return encryptor.TransformFinalBlock(plainData, 0, plainData.Length);
 #endif
         }
@@ -89,7 +89,7 @@ namespace Framework.Prefs
             IBuffer bufferDecrypt = CryptographicEngine.Decrypt(cryptographicKey, cipherData.AsBuffer(), iv.AsBuffer());
             return bufferDecrypt.ToArray();
 #else
-            ICryptoTransform decryptor = cipher.CreateDecryptor(key, iv);
+            ICryptoTransform decryptor = _cipher.CreateDecryptor(_key, _iv);
             return decryptor.TransformFinalBlock(cipherData, 0, cipherData.Length);
 #endif
         }

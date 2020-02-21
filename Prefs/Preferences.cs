@@ -13,11 +13,11 @@ namespace Framework.Prefs
         /// </summary>
         protected static readonly string GLOBAL_NAME = "_GLOBAL_";
         protected const char ARRAY_SEPARATOR = '|';
-        private static Dictionary<string, Preferences> cache = new Dictionary<string, Preferences>();
+        private static Dictionary<string, Preferences> _cache = new Dictionary<string, Preferences>();
         private static IFactory _defaultFactory;
         public static IFactory Factory { private get; set; }
 
-        private string name;
+        private string _name;
 
         static Preferences()
         {
@@ -52,11 +52,11 @@ namespace Framework.Prefs
         public static Preferences GetPreferences(string name)
         {
             Preferences prefs;
-            if (cache.TryGetValue(name, out prefs))
+            if (_cache.TryGetValue(name, out prefs))
                 return prefs;
 
             prefs = GetFactory().Create(name);
-            cache[name] = prefs;
+            _cache[name] = prefs;
             return prefs;
         }
 
@@ -65,7 +65,7 @@ namespace Framework.Prefs
         /// </summary>
         public static void SaveAll()
         {
-            foreach (Preferences prefs in cache.Values)
+            foreach (Preferences prefs in _cache.Values)
             {
                 prefs.Save();
             }
@@ -76,11 +76,11 @@ namespace Framework.Prefs
         /// </summary>
         public static void DeleteAll()
         {
-            foreach (Preferences prefs in cache.Values)
+            foreach (Preferences prefs in _cache.Values)
             {
                 prefs.Delete();
             }
-            cache.Clear();
+            _cache.Clear();
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace Framework.Prefs
         /// <param name="name"></param>
         public Preferences(string name)
         {
-            this.name = name;
-            if (string.IsNullOrEmpty(this.name))
-                this.name = GLOBAL_NAME;
+            this._name = name;
+            if (string.IsNullOrEmpty(this._name))
+                this._name = GLOBAL_NAME;
         }
 
         /// <summary>
@@ -99,8 +99,8 @@ namespace Framework.Prefs
         /// </summary>
         public string Name
         {
-            get { return this.name; }
-            protected set { this.name = value; }
+            get { return this._name; }
+            protected set { this._name = value; }
         }
 
         /// <summary>

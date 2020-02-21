@@ -9,17 +9,14 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    /// <summary>
-    /// MMGameEvents are used throughout the game for general game events (game started, game ended, life lost, etc.)
-    /// </summary>
-    public struct MMGameEvent
+    public struct GameEvent
     {
         public string EventName;
-        public MMGameEvent(string newName)
+        public GameEvent(string newName)
         {
             EventName = newName;
         }
-        static MMGameEvent e;
+        static GameEvent e;
         public static void Trigger(string newName)
         {
             e.EventName = newName;
@@ -29,29 +26,29 @@ namespace Framework
 
     public static class EventManager
     {
-        private static Dictionary<Type, List<EventListenerBase>> subscribersList;
+        private static Dictionary<Type, List<EventListenerBase>> _subscribersList;
         
         static EventManager()
         {
-            subscribersList = new Dictionary<Type, List<EventListenerBase>>();
+            _subscribersList = new Dictionary<Type, List<EventListenerBase>>();
         }
         
         public static void Register<T>(EventListener<T> listener) where T : struct
         {
             Type eventType = typeof( T );
 
-            if( !subscribersList.ContainsKey( eventType ) )
-                subscribersList[eventType] = new List<EventListenerBase>();
+            if( !_subscribersList.ContainsKey( eventType ) )
+                _subscribersList[eventType] = new List<EventListenerBase>();
 
             if( !SubscriptionExists( eventType, listener ) )
-                subscribersList[eventType].Add( listener );
+                _subscribersList[eventType].Add( listener );
         }
 
         public static void UnRegister<T>(EventListener<T> listener) where T : struct
         {
             Type eventType = typeof( T );
 
-            if( !subscribersList.ContainsKey( eventType ) )
+            if( !_subscribersList.ContainsKey( eventType ) )
             {
 #if EVENTROUTER_THROWEXCEPTIONS
 					throw new ArgumentException( string.Format( "Removing listener \"{0}\", but the event type \"{1}\" isn't registered.", listener, eventType.ToString() ) );
@@ -60,7 +57,7 @@ namespace Framework
 #endif
             }
 
-            List<EventListenerBase> subscriberList = subscribersList[eventType];
+            List<EventListenerBase> subscriberList = _subscribersList[eventType];
             bool listenerFound;
             listenerFound = false;
 
@@ -77,7 +74,7 @@ namespace Framework
                     listenerFound = true;
 
                     if( subscriberList.Count == 0 )
-                        subscribersList.Remove( eventType );
+                        _subscribersList.Remove( eventType );
 
                     return;
                 }
@@ -94,7 +91,7 @@ namespace Framework
         public static void TriggerEvent<T>( T newEvent ) where T : struct
         {
             List<EventListenerBase> list;
-            if( !subscribersList.TryGetValue( typeof( T ), out list ) )
+            if( !_subscribersList.TryGetValue( typeof( T ), out list ) )
 #if EVENTROUTER_REQUIRELISTENER
 			            throw new ArgumentException( string.Format( "Attempting to send event of type \"{0}\", but no listener for this type has been found. Make sure this.Subscribe<{0}>(EventRouter) has been called, or that all listeners to this event haven't been unsubscribed.", typeof( MMEvent ).ToString() ) );
 #else
@@ -109,14 +106,14 @@ namespace Framework
 
         public static void Clear()
         {
-            subscribersList.Clear();
+            _subscribersList.Clear();
         }
         
         private static bool SubscriptionExists( Type type, EventListenerBase receiver )
         {
             List<EventListenerBase> receivers;
 
-            if( !subscribersList.TryGetValue( type, out receivers ) ) return false;
+            if( !_subscribersList.TryGetValue( type, out receivers ) ) return false;
 
             bool exists = false;
 
@@ -134,9 +131,6 @@ namespace Framework
         
     }
     
-    /// <summary>
-    /// Static class that allows any class to start or stop listening to events
-    /// </summary>
     public static class EventRegister
     {
         public delegate void Delegate<T>( T eventType );
@@ -152,14 +146,8 @@ namespace Framework
         }
     }
     
-    /// <summary>
-    /// Event listener basic interface
-    /// </summary>
     public interface EventListenerBase { };
 
-    /// <summary>
-    /// A public interface you'll need to implement for each type of event you want to listen to.
-    /// </summary>
     public interface EventListener<T> : EventListenerBase
     {
         void OnEvent( T _event );

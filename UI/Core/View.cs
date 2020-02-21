@@ -7,20 +7,20 @@ namespace Framework.UI.Core
     public abstract class View : MonoBehaviour, IView
     {
 
-        private List<View> subViews;
-        private CanvasGroup canvasGroup;
-        private ViewModel viewModel;
+        private List<View> _subViews;
+        private CanvasGroup _canvasGroup;
+        private ViewModel _viewModel;
         public ViewModel ViewModel
         {
-            get => viewModel;
+            get => _viewModel;
             private set
             {
-                if (viewModel == value)
+                if (_viewModel == value)
                 {
                     return;
                 }
-                viewModel = value;
-                if (viewModel != null)
+                _viewModel = value;
+                if (_viewModel != null)
                     OnVmChange();
             }
         }
@@ -40,8 +40,8 @@ namespace Framework.UI.Core
 
         void Awake()
         {
-            canvasGroup = GetComponent<CanvasGroup>();
-            subViews = new List<View>();
+            _canvasGroup = GetComponent<CanvasGroup>();
+            _subViews = new List<View>();
             SetCanvas(false);
             Transform = transform;
         }
@@ -53,7 +53,7 @@ namespace Framework.UI.Core
             SetCanvas(true);
             ViewModel?.OnShow();
             OnShow();
-            subViews.ForEach((subView) => subView.OnShow());
+            _subViews.ForEach((subView) => subView.OnShow());
         }
 
         public void Hide()
@@ -61,7 +61,7 @@ namespace Framework.UI.Core
             SetCanvas(false);
             ViewModel?.OnHide();
             OnHide();
-            subViews.ForEach((subView) => subView.OnHide());
+            _subViews.ForEach((subView) => subView.OnHide());
         }
         
         protected virtual void OnShow(){}
@@ -75,17 +75,17 @@ namespace Framework.UI.Core
 
         private void SetCanvas(bool visible)
         {
-            canvasGroup.interactable = visible;
-            canvasGroup.alpha = visible ? 1 : 0;
-            canvasGroup.blocksRaycasts = !visible;
+            _canvasGroup.interactable = visible;
+            _canvasGroup.alpha = visible ? 1 : 0;
+            _canvasGroup.blocksRaycasts = !visible;
         }
 
         #endregion
 
         protected void AddSubView(View view)
         {
-            if (subViews.Contains(view)) return;
-            subViews.Add(view);
+            if (_subViews.Contains(view)) return;
+            _subViews.Add(view);
         }
 
         protected abstract void OnVmChange();

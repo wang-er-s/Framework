@@ -11,19 +11,19 @@ namespace Framework.UI.Core
         where TView : class
         where TVm : ViewModel
     {
-        protected TView view;
-        protected TVm vm;
-        protected Dictionary<int, object> cacheBinder;
-        protected List<IClearListener> canClearListeners;
-        protected int index;
+        protected TView _view;
+        protected TVm _vm;
+        protected Dictionary<int, object> _cacheBinder;
+        protected List<IClearListener> _canClearListeners;
+        protected int _index;
 
-        public BindFactory(TView _view, TVm _vm)
+        public BindFactory(TView view, TVm vm)
         {
-            view = _view;
-            vm = _vm;
-            index = 0;
-            cacheBinder = new Dictionary<int, object>();
-            canClearListeners = new List<IClearListener>();
+            _view = view;
+            _vm = vm;
+            _index = 0;
+            _cacheBinder = new Dictionary<int, object>();
+            _canClearListeners = new List<IClearListener>();
         }
 
         //单向绑定
@@ -31,7 +31,7 @@ namespace Framework.UI.Core
         (TComponent component, IBindableProperty<TData> property, Action<TData> fileChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            canClearListeners.TryAdd(property);
+            _canClearListeners.TryAdd(property);
             return new BindField<TComponent, TData>(component, property, fileChangeCb, null, BindType.OnWay,
                 prop2CpntWrap, null);
         }
@@ -42,8 +42,8 @@ namespace Framework.UI.Core
             UnityEvent<TData> componentEvent = null,
             Func<TData, TData> cpnt2PropWrap = null) where TComponent : class
         {
-            index++;
-            canClearListeners.TryAdd(property);
+            _index++;
+            _canClearListeners.TryAdd(property);
             if (!TryGetBinder<BindField<TComponent, TData>>(out var result,
                 (bind) =>
                 {
@@ -53,7 +53,7 @@ namespace Framework.UI.Core
             {
                 result = new BindField<TComponent, TData>(component, property, null, componentEvent, BindType.Revert,
                     null, cpnt2PropWrap);
-                cacheBinder[index] = result;
+                _cacheBinder[_index] = result;
             }
             return result;
         }
@@ -63,7 +63,7 @@ namespace Framework.UI.Core
             IBindableProperty<TData> property,
             Func<TData, TResult> field2CpntConvert, Action<TResult> _fieldChangeCb = null) where TComponent : class
         {
-            canClearListeners.TryAdd(property);
+            _canClearListeners.TryAdd(property);
             return new ConvertBindField<TComponent, TData, TResult>(component, property, _fieldChangeCb, field2CpntConvert,
                 null, null);
         }
@@ -74,8 +74,8 @@ namespace Framework.UI.Core
             Func<TResult, TData> cpnt2FieldConvert,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
-            index++;
-            canClearListeners.TryAdd(property);
+            _index++;
+            _canClearListeners.TryAdd(property);
             if (!TryGetBinder<ConvertBindField<TComponent, TData, TResult>>(out var result,
                 (bind) =>
                 {
@@ -86,7 +86,7 @@ namespace Framework.UI.Core
                 result = new ConvertBindField<TComponent, TData, TResult>(component, property, null, null,
                     cpnt2FieldConvert,
                     componentEvent);
-                cacheBinder[index] = result;
+                _cacheBinder[_index] = result;
             }
             return result;
         }
@@ -97,15 +97,15 @@ namespace Framework.UI.Core
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
             where TComponent : class
         {
-            canClearListeners.TryAdd(property1);
-            canClearListeners.TryAdd(property2);
+            _canClearListeners.TryAdd(property1);
+            _canClearListeners.TryAdd(property2);
             return new BindField<TComponent, TData1, TData2, TResult>(component, property1, property2, wrapFunc,
                 filedChangeCb);
         }
 
         public void BindData<TData>(IBindableProperty<TData> property, Action<TData> cb)
         {
-            canClearListeners.TryAdd(property);
+            _canClearListeners.TryAdd(property);
             property.AddListener(cb);
         }
 
@@ -114,12 +114,12 @@ namespace Framework.UI.Core
         (TComponent component, Action command, UnityEvent componentEvent = null,
             Func<Action, Action> wrapFunc = null) where TComponent : class
         {
-            index++;
+            _index++;
             if (!TryGetBinder<BindCommand<TComponent>>(out var result,
                 (bind) => { bind.UpdateValue(component, command, componentEvent, wrapFunc); }))
             {
                 result = new BindCommand<TComponent>(component, command, componentEvent, wrapFunc);
-                cacheBinder[index] = result;
+                _cacheBinder[_index] = result;
             }
             return result;
         }
@@ -129,12 +129,12 @@ namespace Framework.UI.Core
         (TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
             Func<Action<TData>, Action<TData>> wrapFunc = null) where TComponent : class
         {
-            index++;
+            _index++;
             if (!TryGetBinder<BindCommandWithPara<TComponent, TData>>( out var result,
                 (bind) => { bind.UpdateValue(component, command, componentEvent, wrapFunc); }))
             {
                 result = new BindCommandWithPara<TComponent, TData>(component, command, componentEvent, wrapFunc);
-                cacheBinder[index] = result;
+                _cacheBinder[_index] = result;
             }
             return result;
         }
@@ -143,7 +143,7 @@ namespace Framework.UI.Core
         protected bool TryGetBinder<T>(out T result, Action<T> updateFunc) where T : class
         {
             result = null;
-            if (!cacheBinder.TryGetValue(index, out var bind))
+            if (!_cacheBinder.TryGetValue(_index, out var bind))
             {
                 return false;
             }
@@ -154,12 +154,18 @@ namespace Framework.UI.Core
         
         public void UpdateVm()
         {
-            foreach (var canClearListener in canClearListeners)
+            foreach (var canClearListener in _canClearListeners)
             {
                 canClearListener.ClearListener();
             }
-            index = 0;
-            vm.Reset();
+            _index = 0;
+            _vm.Reset();
         }
+    }
+    
+    public enum BindType
+    {
+        OnWay,
+        Revert,
     }
 }

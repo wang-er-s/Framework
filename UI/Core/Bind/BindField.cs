@@ -8,45 +8,45 @@ namespace Framework.UI.Core
     public class BindField<TComponent,TData> where  TComponent : class
     {
 
-        private TComponent component;
-        private Action<TData> propChangeCb;
-        private UnityEvent<TData> componentEvent;
-        private Func<TData, TData> prop2CpntWrap;
-        private Func<TData, TData> cpnt2PropWrap;
+        private TComponent _component;
+        private Action<TData> _propChangeCb;
+        private UnityEvent<TData> _componentEvent;
+        private Func<TData, TData> _prop2CpntWrap;
+        private Func<TData, TData> _cpnt2PropWrap;
         private IBindableProperty<TData> _property;
-        private object defaultBind;
-        private BindType bindType;
+        private object _defaultBind;
+        private BindType _bindType;
 
-        public BindField(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
-            UnityEvent<TData> _componentEvent, BindType _bindType,
-            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
+        public BindField(TComponent component, IBindableProperty<TData> property, Action<TData> fieldChangeCb,
+            UnityEvent<TData> componentEvent, BindType bindType,
+            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
-            SetValue(_component, property, _fieldChangeCb, _componentEvent, _bindType, _property2CpntWrap,
-                _cpnt2PropWrap);
+            SetValue(component, property, fieldChangeCb, componentEvent, bindType, property2CpntWrap,
+                cpnt2PropWrap);
             InitEvent();
             InitCpntValue();
         }
         
-        public void UpdateValue(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
-            UnityEvent<TData> _componentEvent, BindType _bindType,
-            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
+        public void UpdateValue(TComponent component, IBindableProperty<TData> property, Action<TData> fieldChangeCb,
+            UnityEvent<TData> componentEvent, BindType bindType,
+            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
-            SetValue(_component, property, _fieldChangeCb, _componentEvent, _bindType, _property2CpntWrap,
-                _cpnt2PropWrap);
+            SetValue(component, property, fieldChangeCb, componentEvent, bindType, property2CpntWrap,
+                cpnt2PropWrap);
             InitCpntValue();
         }
 
-        private void SetValue(TComponent _component, IBindableProperty<TData> property, Action<TData> _fieldChangeCb,
-            UnityEvent<TData> _componentEvent, BindType _bindType,
-            Func<TData, TData> _property2CpntWrap, Func<TData, TData> _cpnt2PropWrap)
+        private void SetValue(TComponent component, IBindableProperty<TData> property, Action<TData> fieldChangeCb,
+            UnityEvent<TData> componentEvent, BindType bindType,
+            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
-            component = _component;
+            _component = component;
             _property = property;
-            bindType = _bindType;
-            prop2CpntWrap = _property2CpntWrap;
-            cpnt2PropWrap = _cpnt2PropWrap;
-            propChangeCb = _fieldChangeCb;
-            componentEvent = _componentEvent;
+            _bindType = bindType;
+            _prop2CpntWrap = property2CpntWrap;
+            _cpnt2PropWrap = cpnt2PropWrap;
+            _propChangeCb = fieldChangeCb;
+            _componentEvent = componentEvent;
         }
 
         /// <summary>
@@ -54,32 +54,33 @@ namespace Framework.UI.Core
         /// </summary>
         private void InitCpntValue()
         {
-            switch (bindType)
+            switch (_bindType)
             {
                 case BindType.OnWay:
-                    propChangeCb(prop2CpntWrap == null ? _property.Value : prop2CpntWrap(_property.Value));
+                    _propChangeCb(_prop2CpntWrap == null ? _property.Value : _prop2CpntWrap(_property.Value));
                     break;
                 case BindType.Revert:
-                    propChangeCb?.Invoke(prop2CpntWrap == null ? _property.Value : prop2CpntWrap(_property.Value));
+                    _propChangeCb?.Invoke(_prop2CpntWrap == null ? _property.Value : _prop2CpntWrap(_property.Value));
                     break;
             }
         }
 
         private void InitEvent()
         {
-            defaultBind = BindTool.GetDefaultBind(component);
-            propChangeCb = propChangeCb ?? (defaultBind as IFieldChangeCb<TData>)?.GetFieldChangeCb();
-            componentEvent =
-                componentEvent ?? (defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
-            switch (bindType)
+            _defaultBind = BindTool.GetDefaultBind(_component);
+            _propChangeCb ??= (_defaultBind as IFieldChangeCb<TData>)?.GetFieldChangeCb();
+            _componentEvent ??= (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
+            switch (_bindType)
             {
                 case BindType.OnWay:
+                    Debugger.Assert(_propChangeCb != null);
                     _property.AddListener((value) =>
-                        propChangeCb(prop2CpntWrap == null ? value : prop2CpntWrap(value)));
+                        _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
                     break;
                 case BindType.Revert:
-                    componentEvent.AddListener((data) =>
-                        _property.Value = cpnt2PropWrap == null ? data : cpnt2PropWrap(data));
+                    Debugger.Assert(_componentEvent != null);
+                    _componentEvent.AddListener((data) =>
+                        _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data));
                     break;
             }
         }

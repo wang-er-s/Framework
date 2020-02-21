@@ -9,22 +9,22 @@ namespace Framework
 {
     public class SimpleObjectPool<T> : Pool<T>
     {
-        private readonly Action<T> mResetMethod;
+        private readonly Action<T> _resetMethod;
 
         public SimpleObjectPool(Func<T> factoryMethod,Action<T> resetMethod = null,int initCount = 0)
         {
-            mFactory = new CustomFactory<T>(factoryMethod);
-            mResetMethod = resetMethod;
+            _factory = new CustomFactory<T>(factoryMethod);
+            _resetMethod = resetMethod;
             for (int i = 0; i < initCount; i++)
             {
-                mCacheStack.Push(mFactory.Create());
+                _cacheStack.Push(_factory.Create());
             }
         }
 
         public override bool DeSpawn(T obj)
         {
-            mResetMethod.InvokeGracefully(obj);
-            mCacheStack.Push(obj);
+            _resetMethod.InvokeGracefully(obj);
+            _cacheStack.Push(obj);
             return true;
         }
     }

@@ -7,12 +7,12 @@ namespace Framework.Context
 {
     public abstract class SceneContext : Context
     {
-        protected ApplicationContext applicationContext;
-        protected abstract string SceneName { get; set; }
+        protected ApplicationContext _applicationContext;
+        protected abstract string _sceneName { get; set; }
 
         protected SceneContext(ApplicationContext applicationContext, IServiceContainer container) : base( container, null)
         {
-            this.applicationContext = applicationContext;
+            this._applicationContext = applicationContext;
             AbstractServiceBundle serviceBundle = new SceneServiceBundle(GetContainer());
             serviceBundle.Start();
         }
@@ -21,7 +21,7 @@ namespace Framework.Context
 
         public void Load()
         {
-            if (SceneManager.GetActiveScene().name == SceneName)
+            if (SceneManager.GetActiveScene().name == _sceneName)
             {
                 OnSceneLoaded();
                 return;
@@ -31,7 +31,7 @@ namespace Framework.Context
 
         IEnumerator load()
         {
-            var operation = SceneManager.LoadSceneAsync(SceneName);
+            var operation = SceneManager.LoadSceneAsync(_sceneName);
             yield return operation;
             OnSceneLoaded();
         }

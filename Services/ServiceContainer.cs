@@ -5,7 +5,7 @@ namespace Framework.Services
 {
     public class ServiceContainer : IServiceContainer, IDisposable
     {
-        private Dictionary<string, IFactory> services = new Dictionary<string, IFactory>();
+        private Dictionary<string, IFactory> _services = new Dictionary<string, IFactory>();
 
         public virtual object Resolve(Type type)
         {
@@ -25,7 +25,7 @@ namespace Framework.Services
         public virtual T Resolve<T>(string name)
         {
             IFactory factory;
-            if (this.services.TryGetValue(name, out factory))
+            if (this._services.TryGetValue(name, out factory))
                 return (T)factory.Create();
             return default(T);
         }
@@ -52,18 +52,18 @@ namespace Framework.Services
 
         public virtual void Register<T>(string name, Func<T> factory)
         {
-            if (this.services.ContainsKey(name))
+            if (this._services.ContainsKey(name))
                 throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
 
-            this.services.Add(name, new GenericFactory<T>(factory));
+            this._services.Add(name, new GenericFactory<T>(factory));
         }
 
         public virtual void Register<T>(string name, T target)
         {
-            if (this.services.ContainsKey(name))
+            if (this._services.ContainsKey(name))
                 throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
 
-            this.services.Add(name, new SingleInstanceFactory(target));
+            this._services.Add(name, new SingleInstanceFactory(target));
         }
 
         public virtual void Unregister(Type type)
@@ -79,10 +79,10 @@ namespace Framework.Services
         public virtual void Unregister(string name)
         {
             IFactory factory;
-            if (this.services.TryGetValue(name, out factory))
+            if (this._services.TryGetValue(name, out factory))
                 factory.Dispose();
 
-            this.services.Remove(name);
+            this._services.Remove(name);
         }
 
         #region IDisposable Support
@@ -94,10 +94,10 @@ namespace Framework.Services
             {
                 if (disposing)
                 {
-                    foreach (var kv in services)
+                    foreach (var kv in _services)
                         kv.Value.Dispose();
 
-                    this.services.Clear();
+                    this._services.Clear();
                     //this.services = null;
                 }
                 disposed = true;

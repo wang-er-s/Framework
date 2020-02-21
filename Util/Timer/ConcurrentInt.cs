@@ -2,8 +2,6 @@
 * Create by Soso
 * Time : 2018-12-11-03 下午
 */
-using UnityEngine;
-using System;
 
 namespace Framework
 {

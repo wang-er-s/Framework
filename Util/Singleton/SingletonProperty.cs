@@ -2,28 +2,28 @@ namespace Framework
 {
 	public static class SingletonProperty<T> where T : class
 	{
-		private static T mInstance;
-		private static readonly object mLock = new object();
+		private static T _instance;
+		private static readonly object _lock = new object();
 
 		public static T Instance
 		{
 			get
 			{
-				lock (mLock)
+				lock (_lock)
 				{
-					if (mInstance == null)
+					if (_instance == null)
 					{
-						mInstance = SingletonCreator.CreateSingleton<T>();
+						_instance = SingletonCreator.CreateSingleton<T>();
 					}
 				}
 
-				return mInstance;
+				return _instance;
 			}
 		}
 
 		public static void Dispose()
 		{
-			mInstance = null;
+			_instance = null;
 		}
 	}
 }

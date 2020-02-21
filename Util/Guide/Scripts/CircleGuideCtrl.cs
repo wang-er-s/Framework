@@ -12,42 +12,42 @@ namespace Framework
 		/// <summary>
 		/// 镂空区域半径
 		/// </summary>
-		private float mRadius;
+		private float _radius;
 		/// <summary>
 		/// 当前高亮区域的半径
 		/// </summary>
-		private float mCurrentRadius = 0f;
+		private float _currentRadius = 0f;
 
 		protected override void SetMatShader ()
 		{
-			mShaderName = "UI/Guide/CircleGuide";
+			_shaderName = "UI/Guide/CircleGuide";
 		}
 
 		protected override void InitData ()
 		{
 			Target.rectTransform.GetWorldCorners ( _corners );
 			//获取最终高亮区域半径
-			mRadius = Vector2.Distance ( World2CanvasPos ( mCanvas, _corners[ 0 ] ),
-			                             World2CanvasPos ( mCanvas, _corners[ 3 ] ) ) / 2f;
+			_radius = Vector2.Distance ( World2CanvasPos ( _canvas, _corners[ 0 ] ),
+			                             World2CanvasPos ( _canvas, _corners[ 3 ] ) ) / 2f;
 			//计算圆心
 			float   x           = _corners[ 0 ].x + ( _corners[ 3 ].x - _corners[ 0 ].x ) / 2f;
 			float   y           = _corners[ 0 ].y + ( _corners[ 1 ].y - _corners[ 0 ].y ) / 2f;
 			Vector3 centerWorld = new Vector3 ( x, y, 0 );
-			Vector2 center      = World2CanvasPos ( mCanvas, centerWorld );
+			Vector2 center      = World2CanvasPos ( _canvas, centerWorld );
 			//Apply 设置数据到shader中
 			Vector4 centerMat = new Vector4 ( center.x, center.y, 0, 0 );
-			mMaterial.SetVector ( "_Center", centerMat );
+			_material.SetVector ( "_Center", centerMat );
 			//计算当前高亮显示区域半径
-			RectTransform canvasRectTransform = mCanvas.transform as RectTransform;
+			RectTransform canvasRectTransform = _canvas.transform as RectTransform;
 			canvasRectTransform.GetWorldCorners ( _corners );
 			foreach ( Vector3 corner in _corners )
 			{
-				mCurrentRadius = Mathf.Max ( Vector3.Distance ( World2CanvasPos ( mCanvas, corner ), corner ),
-				                             mCurrentRadius );
+				_currentRadius = Mathf.Max ( Vector3.Distance ( World2CanvasPos ( _canvas, corner ), corner ),
+				                             _currentRadius );
 			}
 
-			float initRadius = ShowAnim ? mCurrentRadius : mRadius;
-			mMaterial.SetFloat ( "_Slider", initRadius );
+			float initRadius = ShowAnim ? _currentRadius : _radius;
+			_material.SetFloat ( "_Slider", initRadius );
 		}
 
 		private float shrinkVelocity = 0f;
@@ -56,11 +56,11 @@ namespace Framework
 		{
 			if ( !ShowAnim )
 				return;
-			float value = Mathf.SmoothDamp ( mCurrentRadius, mRadius, ref shrinkVelocity, ShrinkTime );
-			if ( !Mathf.Approximately ( value, mCurrentRadius ) )
+			float value = Mathf.SmoothDamp ( _currentRadius, _radius, ref shrinkVelocity, ShrinkTime );
+			if ( !Mathf.Approximately ( value, _currentRadius ) )
 			{
-				mCurrentRadius = value;
-				mMaterial.SetFloat ( "_Slider", mCurrentRadius );
+				_currentRadius = value;
+				_material.SetFloat ( "_Slider", _currentRadius );
 			}
 		}
 	}

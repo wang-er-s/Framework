@@ -4,13 +4,7 @@ namespace Framework.Prefs
 {
     public class PrimitiveTypeEncoder : ITypeEncoder
     {
-        private int priority = 1000;
-
-        public int Priority
-        {
-            get { return this.priority; }
-            set { this.priority = value; }
-        }
+        public int Priority { get; set; } = 1000;
 
         public bool IsSupport(Type type)
         {

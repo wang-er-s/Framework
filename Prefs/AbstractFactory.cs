@@ -5,8 +5,8 @@
     /// </summary>
     public abstract class AbstractFactory : IFactory
     {
-        private IEncryptor encryptor;
-        private ISerializer serializer;
+        private IEncryptor _encryptor;
+        private ISerializer _serializer;
 
         public AbstractFactory() : this(null, null)
         {
@@ -21,26 +21,26 @@
 #if UNITY_IOS
 			Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 #endif
-            this.serializer = serializer;
-            this.encryptor = encryptor;
+            this._serializer = serializer;
+            this._encryptor = encryptor;
 
-            if (this.serializer == null)
-                this.serializer = new DefaultSerializer();
+            if (this._serializer == null)
+                this._serializer = new DefaultSerializer();
 
-            if (this.encryptor == null)
-                this.encryptor = new DefaultEncryptor();
+            if (this._encryptor == null)
+                this._encryptor = new DefaultEncryptor();
         }
         
         public IEncryptor Encryptor
         {
-            get { return this.encryptor; }
-            protected set { this.encryptor = value; }
+            get { return this._encryptor; }
+            protected set { this._encryptor = value; }
         }
         
         public ISerializer Serializer
         {
-            get { return this.serializer; }
-            protected set { this.serializer = value; }
+            get { return this._serializer; }
+            protected set { this._serializer = value; }
         }
         
         public abstract Preferences Create(string name);

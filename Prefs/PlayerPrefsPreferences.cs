@@ -55,16 +55,16 @@ namespace Framework.Prefs
         /// </summary>
         protected static readonly string KEYS = "_KEYS_";
         
-        protected readonly ISerializer serializer;
+        protected readonly ISerializer _serializer;
 
-        protected readonly IEncryptor encryptor;
+        protected readonly IEncryptor _encryptor;
         
-        protected readonly List<string> keys = new List<string>();
+        protected readonly List<string> _keys = new List<string>();
         
         public PlayerPrefsPreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
         {
-            this.serializer = serializer;
-            this.encryptor = encryptor;
+            this._serializer = serializer;
+            this._encryptor = encryptor;
             this.Load();
         }
         
@@ -95,19 +95,19 @@ namespace Framework.Prefs
                 if (string.IsNullOrEmpty(key))
                     continue;
 
-                this.keys.Add(key);
+                this._keys.Add(key);
             }
         }
         
         protected virtual void SaveKeys()
         {
-            if (this.keys == null || this.keys.Count <= 0)
+            if (this._keys == null || this._keys.Count <= 0)
             {
                 PlayerPrefs.DeleteKey(Key(KEYS));
                 return;
             }
 
-            string[] values = keys.ToArray();
+            string[] values = _keys.ToArray();
 
             StringBuilder buf = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
@@ -132,31 +132,31 @@ namespace Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Convert.FromBase64String(str);
-                data = this.encryptor.Decode(data);
+                data = this._encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
             }
 
-            return serializer.Deserialize(str, type);
+            return _serializer.Deserialize(str, type);
         }
 
         public override void SetObject(string key, object value)
         {
-            string str = value == null ? "" : serializer.Serialize(value);
-            if (this.encryptor != null)
+            string str = value == null ? "" : _serializer.Serialize(value);
+            if (this._encryptor != null)
             {
                 byte[] data = Encoding.UTF8.GetBytes(str);
-                data = this.encryptor.Encode(data);
+                data = this._encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
             }
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
+            if (!this._keys.Contains(key))
             {
-                this.keys.Add(key);
+                this._keys.Add(key);
                 this.SaveKeys();
             }
         }
@@ -177,14 +177,14 @@ namespace Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Convert.FromBase64String(str);
-                data = this.encryptor.Decode(data);
+                data = this._encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
             }
 
-            return (T)serializer.Deserialize(str, typeof(T));
+            return (T)_serializer.Deserialize(str, typeof(T));
         }
 
         /// <summary>
@@ -195,19 +195,19 @@ namespace Framework.Prefs
         /// <param name="value"></param>
         public override void SetObject<T>(string key, T value)
         {
-            string str = value == null ? "" : serializer.Serialize(value);
-            if (this.encryptor != null)
+            string str = value == null ? "" : _serializer.Serialize(value);
+            if (this._encryptor != null)
             {
                 byte[] data = Encoding.UTF8.GetBytes(str);
-                data = this.encryptor.Encode(data);
+                data = this._encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
             }
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
+            if (!this._keys.Contains(key))
             {
-                this.keys.Add(key);
+                this._keys.Add(key);
                 this.SaveKeys();
             }
         }
@@ -221,10 +221,10 @@ namespace Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Convert.FromBase64String(str);
-                data = this.encryptor.Decode(data);
+                data = this._encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
             }
 
@@ -237,7 +237,7 @@ namespace Framework.Prefs
                     list.Add(null);
                 else
                 {
-                    list.Add(serializer.Deserialize(items[i], type));
+                    list.Add(_serializer.Deserialize(items[i], type));
                 }
             }
             return list.ToArray();
@@ -251,24 +251,24 @@ namespace Framework.Prefs
                 for (int i = 0; i < values.Length; i++)
                 {
                     var value = values[i];
-                    buf.Append(serializer.Serialize(value));
+                    buf.Append(_serializer.Serialize(value));
                     if (i < values.Length - 1)
                         buf.Append(ARRAY_SEPARATOR);
                 }
             }
             string str = buf.ToString();
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Encoding.UTF8.GetBytes(str);
-                data = this.encryptor.Encode(data);
+                data = this._encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
             }
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
+            if (!this._keys.Contains(key))
             {
-                this.keys.Add(key);
+                this._keys.Add(key);
                 this.SaveKeys();
             }
         }
@@ -282,10 +282,10 @@ namespace Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Convert.FromBase64String(str);
-                data = this.encryptor.Decode(data);
+                data = this._encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
             }
 
@@ -298,7 +298,7 @@ namespace Framework.Prefs
                     list.Add(default(T));
                 else
                 {
-                    list.Add((T)serializer.Deserialize(items[i], typeof(T)));
+                    list.Add((T)_serializer.Deserialize(items[i], typeof(T)));
                 }
             }
             return list.ToArray();
@@ -312,24 +312,24 @@ namespace Framework.Prefs
                 for (int i = 0; i < values.Length; i++)
                 {
                     var value = values[i];
-                    buf.Append(serializer.Serialize(value));
+                    buf.Append(_serializer.Serialize(value));
                     if (i < values.Length - 1)
                         buf.Append(ARRAY_SEPARATOR);
                 }
             }
             string str = buf.ToString();
-            if (this.encryptor != null)
+            if (this._encryptor != null)
             {
                 byte[] data = Encoding.UTF8.GetBytes(str);
-                data = this.encryptor.Encode(data);
+                data = this._encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
             }
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
+            if (!this._keys.Contains(key))
             {
-                this.keys.Add(key);
+                this._keys.Add(key);
                 this.SaveKeys();
             }
         }
@@ -351,9 +351,9 @@ namespace Framework.Prefs
         public override void Remove(string key)
         {
             PlayerPrefs.DeleteKey(Key(key));
-            if (this.keys.Contains(key))
+            if (this._keys.Contains(key))
             {
-                this.keys.Remove(key);
+                this._keys.Remove(key);
                 this.SaveKeys();
             }
         }
@@ -363,12 +363,12 @@ namespace Framework.Prefs
         /// </summary>
         public override void RemoveAll()
         {
-            foreach (string key in keys)
+            foreach (string key in _keys)
             {
                 PlayerPrefs.DeleteKey(Key(key));
             }
             PlayerPrefs.DeleteKey(Key(KEYS));
-            this.keys.Clear();
+            this._keys.Clear();
         }
 
         /// <summary>

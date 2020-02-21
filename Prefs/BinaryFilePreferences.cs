@@ -51,20 +51,20 @@ namespace Framework.Prefs
     /// </summary>
     public class BinaryFilePreferences : Preferences
     {
-        private string root;
+        private string _root;
         /// <summary>
         /// cache.
         /// </summary>
-        protected readonly Dictionary<string, string> dict = new Dictionary<string, string>();
+        protected readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
 
         /// <summary>
         /// serializer
         /// </summary>
-        protected readonly ISerializer serializer;
+        protected readonly ISerializer _serializer;
         /// <summary>
         /// encryptor
         /// </summary>
-        protected readonly IEncryptor encryptor;
+        protected readonly IEncryptor _encryptor;
 
         /// <summary>
         /// 
@@ -74,9 +74,9 @@ namespace Framework.Prefs
         /// <param name="encryptor"></param>
         public BinaryFilePreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
         {
-            this.root = Application.persistentDataPath;
-            this.serializer = serializer;
-            this.encryptor = encryptor;
+            this._root = Application.persistentDataPath;
+            this._serializer = serializer;
+            this._encryptor = encryptor;
             this.Load();
         }
 
@@ -86,7 +86,7 @@ namespace Framework.Prefs
         /// <returns></returns>
         public virtual StringBuilder GetDirectory()
         {
-            StringBuilder buf = new StringBuilder(this.root);
+            StringBuilder buf = new StringBuilder(this._root);
             buf.Append("/").Append(this.Name).Append("/");
             return buf;
         }
@@ -113,9 +113,9 @@ namespace Framework.Prefs
                 byte[] data = File.ReadAllBytes(filename);
                 if (data == null || data.Length <= 0)
                     return;
-                if (this.encryptor != null)
-                    data = encryptor.Decode(data);
-                this.dict.Clear();
+                if (this._encryptor != null)
+                    data = _encryptor.Decode(data);
+                this._dict.Clear();
                 using (MemoryStream stream = new MemoryStream(data))
                 {
                     using (BinaryReader reader = new BinaryReader(stream))
@@ -125,7 +125,7 @@ namespace Framework.Prefs
                         {
                             string key = reader.ReadString();
                             string value = reader.ReadString();
-                            this.dict.Add(key, value);
+                            this._dict.Add(key, value);
                         }
                     }
                 }
@@ -138,49 +138,49 @@ namespace Framework.Prefs
 
         public override object GetObject(string key, Type type, object defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
-            return serializer.Deserialize(str, type);
+            return _serializer.Deserialize(str, type);
         }
 
         public override void SetObject(string key, object value)
         {
             if (value == null)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
-            this.dict[key] = serializer.Serialize(value);
+            this._dict[key] = _serializer.Serialize(value);
         }
 
         public override T GetObject<T>(string key, T defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
-            return (T) serializer.Deserialize(str, typeof(T));
+            return (T) _serializer.Deserialize(str, typeof(T));
         }
 
         public override void SetObject<T>(string key, T value)
         {
             if (value == null)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
-            this.dict[key] = serializer.Serialize(value);
+            this._dict[key] = _serializer.Serialize(value);
         }
 
         public override object[] GetArray(string key, Type type, object[] defaultValue)
         {
-            if (!dict.ContainsKey(key))
+            if (!_dict.ContainsKey(key))
                 return defaultValue;
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
             string[] items = str.Split(ARRAY_SEPARATOR);
@@ -192,7 +192,7 @@ namespace Framework.Prefs
                     list.Add(null);
                 else
                 {
-                    list.Add(serializer.Deserialize(items[i], type));
+                    list.Add(_serializer.Deserialize(items[i], type));
                 }
             }
             return list.ToArray();
@@ -202,25 +202,25 @@ namespace Framework.Prefs
         {
             if (values == null || values.Length == 0)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
             StringBuilder buf = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
                 var value = values[i];
-                buf.Append(serializer.Serialize(value));
+                buf.Append(_serializer.Serialize(value));
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
-            this.dict[key] = buf.ToString();
+            this._dict[key] = buf.ToString();
         }
 
         public override T[] GetArray<T>(string key, T[] defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
             string[] items = str.Split(ARRAY_SEPARATOR);
@@ -232,7 +232,7 @@ namespace Framework.Prefs
                     list.Add(default(T));
                 else
                 {
-                    list.Add((T) serializer.Deserialize(items[i], typeof(T)));
+                    list.Add((T) _serializer.Deserialize(items[i], typeof(T)));
                 }
             }
             return list.ToArray();
@@ -242,18 +242,18 @@ namespace Framework.Prefs
         {
             if (values == null || values.Length == 0)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
             StringBuilder buf = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
                 var value = values[i];
-                buf.Append(serializer.Serialize(value));
+                buf.Append(_serializer.Serialize(value));
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
-            this.dict[key] = buf.ToString();
+            this._dict[key] = buf.ToString();
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace Framework.Prefs
         /// <returns></returns>
         public override bool ContainsKey(string key)
         {
-            return this.dict.ContainsKey(key);
+            return this._dict.ContainsKey(key);
         }
 
         /// <summary>
@@ -272,8 +272,8 @@ namespace Framework.Prefs
         /// <param name="key"></param>
         public override void Remove(string key)
         {
-            if (this.dict.ContainsKey(key))
-                this.dict.Remove(key);
+            if (this._dict.ContainsKey(key))
+                this._dict.Remove(key);
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace Framework.Prefs
         /// </summary>
         public override void RemoveAll()
         {
-            this.dict.Clear();
+            this._dict.Clear();
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Framework.Prefs
         /// </summary>
         public override void Save()
         {
-            if (this.dict.Count <= 0)
+            if (this._dict.Count <= 0)
             {
                 this.Delete();
                 return;
@@ -299,8 +299,8 @@ namespace Framework.Prefs
             {
                 using (BinaryWriter writer = new BinaryWriter(stream))
                 {
-                    writer.Write(this.dict.Count);
-                    foreach (KeyValuePair<string, string> kv in this.dict)
+                    writer.Write(this._dict.Count);
+                    foreach (KeyValuePair<string, string> kv in this._dict)
                     {
                         writer.Write(kv.Key);
                         writer.Write(kv.Value);
@@ -308,8 +308,8 @@ namespace Framework.Prefs
                     writer.Flush();
                 }
                 byte[] data = stream.ToArray();
-                if (this.encryptor != null)
-                    data = encryptor.Encode(data);
+                if (this._encryptor != null)
+                    data = _encryptor.Encode(data);
                 var filename = this.GetFullFileName().ToString();
                 File.WriteAllBytes(filename, data);
             }
@@ -320,7 +320,7 @@ namespace Framework.Prefs
         /// </summary>
         public override void Delete()
         {
-            this.dict.Clear();
+            this._dict.Clear();
             string filename = this.GetFullFileName().ToString();
             if (File.Exists(filename))
                 File.Delete(filename);

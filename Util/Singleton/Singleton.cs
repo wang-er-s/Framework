@@ -10,28 +10,28 @@ namespace Framework
 {
 	public class Singleton<T> where T : class
 	{
-		private static readonly object locker = new object ();
+		private static readonly object _locker = new object ();
 
 		public static readonly Type[] EmptyTypes = new Type[ 0 ];
 
-		private static T instance;
+		private static T _instance;
 
 		public static T Ins
 		{
 			get
 			{
-				lock ( locker )
+				lock ( _locker )
 				{
-					if ( instance == null )
+					if ( _instance == null )
 					{
-						lock ( locker )
+						lock ( _locker )
 						{
-							instance = SingletonCreator.CreateSingleton<T>();
+							_instance = SingletonCreator.CreateSingleton<T>();
 						}
 					}
 				}
 
-				return instance;
+				return _instance;
 			}
 		}
 	}

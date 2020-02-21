@@ -4,13 +4,7 @@ namespace Framework.Prefs
 {
     public class VersionTypeEncoder : ITypeEncoder
     {
-        private int priority = 999;
-
-        public int Priority
-        {
-            get { return this.priority; }
-            set { this.priority = value; }
-        }
+        public int Priority { get; set; } = 999;
 
         public bool IsSupport(Type type)
         {

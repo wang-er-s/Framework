@@ -8,10 +8,10 @@ namespace Framework.Context
 {
     public class Context
     {
-        private bool innerContainer = false;
-        private Context contextBase;
-        private IServiceContainer container;
-        private Dictionary<string, object> attributes;
+        private bool _innerContainer = false;
+        private Context _contextBase;
+        private IServiceContainer _container;
+        private Dictionary<string, object> _attributes;
 
         public Context() : this(null, null)
         {
@@ -19,23 +19,23 @@ namespace Framework.Context
 
         public Context(IServiceContainer container, Context contextBase)
         {
-            this.attributes = new Dictionary<string, object>();
-            this.contextBase = contextBase;
-            this.container = container;
-            if (this.container == null)
+            _attributes = new Dictionary<string, object>();
+            _contextBase = contextBase;
+            _container = container;
+            if (_container == null)
             {
-                this.innerContainer = true;
-                this.container = new ServiceContainer();
+               _innerContainer = true;
+               _container = new ServiceContainer();
             }
         }
         
         public virtual bool Contains(string name, bool cascade = true)
         {
-            if (this.attributes.ContainsKey(name))
+            if (this._attributes.ContainsKey(name))
                 return true;
 
-            if (cascade && this.contextBase != null)
-                return this.contextBase.Contains(name, cascade);
+            if (cascade && this._contextBase != null)
+                return this._contextBase.Contains(name, cascade);
 
             return false;
         }
@@ -48,11 +48,11 @@ namespace Framework.Context
         public virtual T Get<T>(string name, bool cascade = true)
         {
             object v;
-            if (this.attributes.TryGetValue(name, out v))
+            if (this._attributes.TryGetValue(name, out v))
                 return (T)v;
 
-            if (cascade && this.contextBase != null)
-                return this.contextBase.Get<T>(name, cascade);
+            if (cascade && this._contextBase != null)
+                return this._contextBase.Get<T>(name, cascade);
 
             return default(T);
         }
@@ -64,7 +64,7 @@ namespace Framework.Context
 
         public virtual void Set<T>(string name, T value)
         {
-            this.attributes[name] = value;
+            this._attributes[name] = value;
         }
 
         public virtual object Remove(string name)
@@ -74,63 +74,63 @@ namespace Framework.Context
 
         public virtual T Remove<T>(string name)
         {
-            if (!this.attributes.ContainsKey(name))
+            if (!this._attributes.ContainsKey(name))
                 return default(T);
 
-            object v = this.attributes[name];
-            this.attributes.Remove(name);
+            object v = this._attributes[name];
+            this._attributes.Remove(name);
             return (T)v;
         }
 
         public virtual IServiceContainer GetContainer()
         {
-            return container;
+            return _container;
         }
 
         public virtual object GetService(Type type)
         {
-            object result = container.Resolve(type);
+            object result = _container.Resolve(type);
             if (result != null)
                 return result;
 
-            if (this.contextBase != null)
-                return contextBase.GetService(type);
+            if (this._contextBase != null)
+                return _contextBase.GetService(type);
 
             return null;
         }
         
         public virtual object GetService(string name)
         {
-            object result = container.Resolve(name);
+            object result = _container.Resolve(name);
             if (result != null)
                 return result;
 
-            if (contextBase != null)
-                return contextBase.GetService(name);
+            if (_contextBase != null)
+                return _contextBase.GetService(name);
 
             return null;
         }
 
         public virtual T GetService<T>()
         {
-            T result = container.Resolve<T>();
+            T result = _container.Resolve<T>();
             if (result != null)
                 return result;
 
-            if (contextBase != null)
-                return contextBase.GetService<T>();
+            if (_contextBase != null)
+                return _contextBase.GetService<T>();
 
             return default(T);
         }
 
         public virtual T GetService<T>(string name)
         {
-            T result = container.Resolve<T>(name);
+            T result = _container.Resolve<T>(name);
             if (result != null)
                 return result;
 
-            if (contextBase != null)
-                return contextBase.GetService<T>(name);
+            if (_contextBase != null)
+                return _contextBase.GetService<T>(name);
 
             return default(T);
         }
@@ -147,27 +147,27 @@ namespace Framework.Context
 
         public virtual void Register<T>(string name, T target)
         {
-            container.Register(name, target);
+            _container.Register(name, target);
         }
 
         public virtual void Register<T>(string name, Func<T> factory)
         {
-            container.Register(name, factory);
+            _container.Register(name, factory);
         }
 
         public virtual void UnRegister<T>()
         {
-            container.Unregister<T>();
+            _container.Unregister<T>();
         }
 
         public virtual void UnRegister(Type type)
         {
-            container.Unregister(type);
+            _container.Unregister(type);
         }
 
         public virtual void UnRegister(string name)
         {
-            container.Unregister(name);
+            _container.Unregister(name);
         }
 
         #region IDisposable Support
@@ -179,9 +179,9 @@ namespace Framework.Context
             {
                 if (disposing)
                 {
-                    if (this.innerContainer && this.container != null)
+                    if (this._innerContainer && this._container != null)
                     {
-                        IDisposable dis = this.container as IDisposable;
+                        IDisposable dis = this._container as IDisposable;
                         if (dis != null)
                             dis.Dispose();
                     }

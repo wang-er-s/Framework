@@ -7,37 +7,37 @@ namespace Framework.UI.Core
 {
     public class BindableList<T> : IList<T> , IClearListener
     {
-        private event Action<NotifyCollectionChangedAction, T, T, int> collectionChanged;
-        private IList<T> items;
-        private static object locker = new object();
-        private event Action<BindableList<T>> listUpdateChanged;
-        public int Count => items.Count;
-        public bool IsReadOnly => items.IsReadOnly;
+        private event Action<NotifyCollectionChangedAction, T, int> _collectionChanged;
+        private IList<T> _items;
+        private static object _locker = new object();
+        private event Action<BindableList<T>> _listUpdateChanged;
+        public int Count => _items.Count;
+        public bool IsReadOnly => _items.IsReadOnly;
 
         public BindableList()
         {
-            items = new List<T>();
+            _items = new List<T>();
         }
 
         public BindableList(int capacity)
         {
-            items = new List<T>(capacity);
+            _items = new List<T>(capacity);
         }
 
         public BindableList(IList<T> list)
         {
             if (list == null)
                 throw new ArgumentException();
-            items = new List<T>(list.Count);
+            _items = new List<T>(list.Count);
             foreach (T item in list)
             {
-                items.Add(item);
+                _items.Add(item);
             }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return items.GetEnumerator();
+            return _items.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -61,14 +61,14 @@ namespace Framework.UI.Core
 
         public bool Contains(T item)
         {
-            return items.Contains(item);
+            return _items.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
-            items.CopyTo(array, arrayIndex);
+            _items.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)
@@ -81,7 +81,7 @@ namespace Framework.UI.Core
 
         public int IndexOf(T item)
         {
-            return items.IndexOf(item);
+            return _items.IndexOf(item);
         }
 
         public void Insert(int index, T item)
@@ -100,7 +100,7 @@ namespace Framework.UI.Core
 
         public T this[int index]
         {
-            get { return items[index]; }
+            get { return _items[index]; }
             set
             {
                 if (IsReadOnly)
@@ -111,88 +111,84 @@ namespace Framework.UI.Core
 
         private void AddItem(T item)
         {
-            lock (locker)
+            lock (_locker)
             {
-                items.Add(item);
-                OnCollectionChanged(NotifyCollectionChangedAction.Add,
-                    default(T), item, Count - 1);
+                _items.Add(item);
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, item, Count - 1);
             }
         }
 
         private void RemoveItem(int index)
         {
-            lock (locker)
+            lock (_locker)
             {
-                T item = items[index];
-                items.RemoveAt(index);
-                OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, default(T), index);
+                T item = _items[index];
+                _items.RemoveAt(index);
+                OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
             }
         }
 
         private void RemoveItem(T item)
         {
-            lock (locker)
+            lock (_locker)
             {
-                var index = items.IndexOf(item);
+                var index = _items.IndexOf(item);
                 RemoveItem(index);
             }
         }
 
         private void InsertItem( int index ,T item)
         {
-            lock (locker)
+            lock (_locker)
             {
-                items.Insert(index, item);
-                OnCollectionChanged(NotifyCollectionChangedAction.Add, default(T), item, index);
+                _items.Insert(index, item);
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
             }
         }
 
         private void ClearItems()
         {
-            lock (locker)
+            lock (_locker)
             {
-                items.Clear();
-                OnCollectionChanged(NotifyCollectionChangedAction.Reset,
-                    default(T), default(T), -1);
+                _items.Clear();
+                OnCollectionChanged(NotifyCollectionChangedAction.Reset, default(T), -1);
             }
         }
 
         protected void SetItem(int index, T item)
         {
-            lock (locker)
+            lock (_locker)
             {
-                T originItem = this[index];
-                items[index] = item;
-                OnCollectionChanged(NotifyCollectionChangedAction.Replace,
-                    originItem, item, index);
+                _items[index] = item;
+                OnCollectionChanged(NotifyCollectionChangedAction.Replace, item, index);
             }
         }
 
-        public void AddListener(Action<NotifyCollectionChangedAction, T, T, int> listener)
+        public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
-            collectionChanged += listener;
+            _collectionChanged += listener;
         }
 
-        public void RemoveListener(Action<NotifyCollectionChangedAction, T, T, int> listener)
+        public void RemoveListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
-            if (collectionChanged != null) collectionChanged -= listener;
+            if (_collectionChanged != null) _collectionChanged -= listener;
         }
 
         public void AddListUpdateListener(Action<BindableList<T>> listener)
         {
-            listUpdateChanged += listener;
+            _listUpdateChanged += listener;
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction type, T originItem, T item, int index)
+        private void OnCollectionChanged(NotifyCollectionChangedAction type, T item, int index)
         {
-            collectionChanged?.Invoke(type, originItem, item, index);
-            listUpdateChanged?.Invoke(this);
+            _collectionChanged?.Invoke(type, item, index);
+            _listUpdateChanged?.Invoke(this);
         }
 
         public void ClearListener()
         {
-            listUpdateChanged = null;
-            collectionChanged = null;
+            _listUpdateChanged = null;
+            _collectionChanged = null;
         }
     }
 }

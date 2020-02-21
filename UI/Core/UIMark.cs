@@ -19,12 +19,12 @@ public class UIMark : MonoBehaviour
     [ValueDropdown("Components")] 
     public Component CurComponent;
 
-    private List<Component> Components;
+    private List<Component> _components;
 
     private void Start()
     {
-        Components = new List<Component>();
-        gameObject.GetComponents(typeof(Component), Components);
+        _components = new List<Component>();
+        gameObject.GetComponents(typeof(Component), _components);
         if (string.IsNullOrEmpty(FieldName)) FieldName = gameObject.name;
         if (CurComponent == null) CurComponent = DefaultComponent;
     }

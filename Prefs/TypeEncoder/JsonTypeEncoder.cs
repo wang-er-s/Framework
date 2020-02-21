@@ -10,14 +10,7 @@ namespace Framework.Prefs
 {
     public class JsonTypeEncoder : ITypeEncoder
     {
-        private int priority = -1000;
-
-        public int Priority
-        {
-            get { return this.priority; }
-            set { this.priority = value; }
-        }
-
+        public int Priority { get; set; } = -1000;
         public bool IsSupport(Type type)
         {
             if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type))

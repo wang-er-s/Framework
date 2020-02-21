@@ -14,46 +14,46 @@ namespace Framework.UI.Core
 {
     public class BindList<TVm> where TVm : ViewModel
     {
-        private Transform content;
-        private List<View> views;
-        private BindableList<TVm> list;
-        private List<ViewWrapper> wrappers;
+        private Transform _content;
+        private List<View> _views;
+        private BindableList<TVm> _list;
+        private List<ViewWrapper> _wrappers;
 
-        public BindList (BindableList<TVm> _list, params View[] _view)
+        public BindList (BindableList<TVm> list, params View[] view)
         {
-            SetValue(_list, _view);
+            SetValue(list, view);
             InitEvent();
             InitCpntValue();
         }
 
         private void InitCpntValue()
         {
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < _list.Count; i++)
             {
-                var vm = list[i];
-                wrappers.ForEach((wrapper) =>
-                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, null, vm, i));
+                var vm = _list[i];
+                _wrappers.ForEach((wrapper) =>
+                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
 
             }
         }
 
-        public void SetValue(BindableList<TVm> _list, params View[] _view)
+        private void SetValue(BindableList<TVm> list, params View[] view)
         {
-            views = _view.ToList ();
-            content = views[0].transform.parent;
-            list = _list;
+            _views = view.ToList ();
+            _content = _views[0].transform.parent;
+            _list = list;
         }
 
         private void InitEvent()
         {
-            wrappers = new List<ViewWrapper> (views.Count);
-            for ( int i = 0; i < views.Count; i++ )
+            _wrappers = new List<ViewWrapper> (_views.Count);
+            for ( int i = 0; i < _views.Count; i++ )
             {
-                var wrapper = new ViewWrapper(views[i]);
+                var wrapper = new ViewWrapper(_views[i]);
                 wrapper.SetTag(i);
-                list.AddListener(((IBindList<ViewModel>) wrapper).GetBindListFunc());
-                views[i].Hide();
-                wrappers.Add(wrapper);
+                _list.AddListener(((IBindList<ViewModel>) wrapper).GetBindListFunc());
+                _views[i].Hide();
+                _wrappers.Add(wrapper);
             }
         }
     }
@@ -68,7 +68,7 @@ namespace Framework.UI.Core
             SetValue(ref _list, itemName, root);
         }
 
-        public void SetValue(ref BindableList<TVm> _list, string itemName, Transform root)
+        private void SetValue(ref BindableList<TVm> _list, string itemName, Transform root)
         {
             list = _list;
             ParseItems (itemName, root);

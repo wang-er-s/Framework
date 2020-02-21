@@ -4,25 +4,25 @@ namespace Framework
 
     public static class MonoSingletonProperty<T> where T : MonoBehaviour
     {
-        private static T mInstance = null;
+        private static T _instance = null;
 
         public static T Ins
         {
             get
             {
-                if (null == mInstance)
+                if (null == _instance)
                 {
-                    mInstance = MonoSingletonCreator.CreateMonoSingleton<T>();
+                    _instance = MonoSingletonCreator.CreateMonoSingleton<T>();
                 }
 
-                return mInstance;
+                return _instance;
             }
         }
 
         public static void Dispose()
         {
-            Object.Destroy(mInstance.gameObject);
-            mInstance = null;
+            Object.Destroy(_instance.gameObject);
+            _instance = null;
         }
     }
 }

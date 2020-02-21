@@ -8,30 +8,30 @@ namespace Framework
 {
 	public class MonoSingleton<T>  : MonoBehaviour where T : MonoSingleton<T>
 	{
-		private static T mInstance = null;
+		private static T _instance = null;
 		
-		private static readonly object locker = new object ();
+		private static readonly object _locker = new object ();
 
 		public static T Ins
 		{
 			get
 			{
-				lock ( locker )
+				lock ( _locker )
 				{
-					if ( null == mInstance )
+					if ( null == _instance )
 					{
-						mInstance = MonoSingletonCreator.CreateMonoSingleton<T>();
+						_instance = MonoSingletonCreator.CreateMonoSingleton<T>();
 					}
 				}
 
-				return mInstance;
+				return _instance;
 			}
 		}
 
 		public static void Dispose()
 		{
-			Destroy ( mInstance.gameObject );
-			mInstance = null;
+			Destroy ( _instance.gameObject );
+			_instance = null;
 		}
 
 		public virtual void OnSingletonInit()

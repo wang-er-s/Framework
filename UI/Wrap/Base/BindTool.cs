@@ -7,7 +7,6 @@ namespace Framework.UI.Wrap
 {
     public static class BindTool
     {
-
         private static readonly Dictionary<Type,Type> SupportWrapperTypes = new Dictionary<Type, Type>()
         {
             {typeof(Text) , typeof(TextWrapper)},

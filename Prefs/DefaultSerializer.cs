@@ -6,8 +6,8 @@ namespace Framework.Prefs
     public class DefaultSerializer : ISerializer
     {
         private readonly object _lock = new object();
-        private readonly static ComparerImpl<ITypeEncoder> comparer = new ComparerImpl<ITypeEncoder>();
-        private List<ITypeEncoder> encoders = new List<ITypeEncoder>();
+        private static readonly ComparerImpl<ITypeEncoder> _comparer = new ComparerImpl<ITypeEncoder>();
+        private List<ITypeEncoder> _encoders = new List<ITypeEncoder>();
 
         public DefaultSerializer()
         {
@@ -20,11 +20,11 @@ namespace Framework.Prefs
         {
             lock (_lock)
             {
-                if (encoders.Contains(encoder))
+                if (_encoders.Contains(encoder))
                     return;
 
-                encoders.Add(encoder);
-                encoders.Sort(comparer);
+                _encoders.Add(encoder);
+                _encoders.Sort(_comparer);
             }
         }
 
@@ -32,10 +32,10 @@ namespace Framework.Prefs
         {
             lock (_lock)
             {
-                if (!encoders.Contains(encoder))
+                if (!_encoders.Contains(encoder))
                     return;
 
-                encoders.Remove(encoder);
+                _encoders.Remove(encoder);
             }
         }
 
@@ -43,11 +43,11 @@ namespace Framework.Prefs
         {
             lock (_lock)
             {
-                for (int i = 0; i < encoders.Count; i++)
+                for (int i = 0; i < _encoders.Count; i++)
                 {
                     try
                     {
-                        ITypeEncoder encoder = encoders[i];
+                        ITypeEncoder encoder = _encoders[i];
                         if (!encoder.IsSupport(type))
                             continue;
 
@@ -64,11 +64,11 @@ namespace Framework.Prefs
         {
             lock (_lock)
             {
-                for (int i = 0; i < encoders.Count; i++)
+                for (int i = 0; i < _encoders.Count; i++)
                 {
                     try
                     {
-                        ITypeEncoder encoder = encoders[i];
+                        ITypeEncoder encoder = _encoders[i];
                         if (!encoder.IsSupport(value.GetType()))
                             continue;
 

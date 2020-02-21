@@ -6,20 +6,19 @@ namespace Framework.UI.Wrap
 {
     public class DropdownWrapper : BaseWrapper<Dropdown> , IFieldChangeCb<int>, IComponentEvent<int>
     {
-        private Dropdown dropdown;
-        public DropdownWrapper(Dropdown _component) : base(_component)
+        public DropdownWrapper(Dropdown view) : base(view)
         {
-            dropdown = _component;
+            _view = view;
         }
 
         public Action<int> GetFieldChangeCb()
         {
-            return (index) => dropdown.value = index;
+            return (index) => _view.value = index;
         }
 
         public UnityEvent<int> GetComponentEvent()
         {
-            return dropdown.onValueChanged;
+            return _view.onValueChanged;
         }
     }
 }

@@ -19,11 +19,11 @@ namespace Framework
         [Header ( "收缩时间" )]
         public float ShrinkTime = 0.5f;
 
-        protected Canvas mCanvas;
+        protected Canvas _canvas;
 
-        protected Material mMaterial;
+        protected Material _material;
 
-        protected string mShaderName;
+        protected string _shaderName;
 
         /// <summary>
         /// 区域范围缓存
@@ -33,16 +33,16 @@ namespace Framework
         protected virtual void Awake ()
         {
             //获取画布
-            mCanvas = GameObject.FindObjectOfType<Canvas> ();
-            if ( mCanvas == null )
+            _canvas = GameObject.FindObjectOfType<Canvas> ();
+            if ( _canvas == null )
             {
                 Debug.LogError ( "There is not a Canvas!" );
             }
 
             //材质初始化
             SetMatShader ();
-            mMaterial                       = new Material ( Shader.Find ( mShaderName ) );
-            GetComponent<Image> ().material = mMaterial;
+            _material                       = new Material ( Shader.Find ( _shaderName ) );
+            GetComponent<Image> ().material = _material;
             InitData ();
         }
 
@@ -65,7 +65,7 @@ namespace Framework
 
         protected virtual void SetMatShader ()
         {
-            mShaderName = "UI/Default";
+            _shaderName = "UI/Default";
         }
 
         protected virtual void InitData () { }

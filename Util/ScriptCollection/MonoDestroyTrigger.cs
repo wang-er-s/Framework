@@ -5,16 +5,16 @@ namespace Framework
 {
     public class MonoDestroyTrigger : MonoBehaviour
     {
-        private event Action onDestroy;
+        private event Action _onDestroy;
         
         public void AddDisposeOnDestroy(Action action)
         {
-            onDestroy += action;
+            _onDestroy += action;
         }
 
         private void OnDestroy()
         {
-            onDestroy?.Invoke();
+            _onDestroy?.Invoke();
         }
     }
 }

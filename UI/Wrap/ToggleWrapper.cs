@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -10,21 +6,20 @@ namespace Framework.UI.Wrap
 {
     public class ToggleWrapper : BaseWrapper<Toggle>, IFieldChangeCb<bool>, IComponentEvent<bool>
     {
-        private readonly Toggle toggle;
 
-        public ToggleWrapper(Toggle _toggle) : base(_toggle)
+        public ToggleWrapper(Toggle toggle) : base(toggle)
         {
-            toggle = _toggle;
+            _view = toggle;
         }
 
         Action<bool> IFieldChangeCb<bool>.GetFieldChangeCb()
         {
-            return (value) => toggle.isOn = value;
+            return (value) => _view.isOn = value;
         }
 
         UnityEvent<bool> IComponentEvent<bool>.GetComponentEvent()
         {
-            return toggle.onValueChanged;
+            return _view.onValueChanged;
         }
     }
 }

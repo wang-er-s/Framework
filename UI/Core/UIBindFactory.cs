@@ -7,15 +7,15 @@ namespace Framework.UI.Core
         public BindList<TItemVm> BindList<TItemVm>
             (BindableList<TItemVm> list, params View[] views) where TItemVm : ViewModel
         {
-            canClearListeners.Add(list);
+            _canClearListeners.Add(list);
             return new BindList<TItemVm>(list, views);
         }
 
         public BindIpairsView<TItemVm> BindIpairs<TItemVm>
             (BindableList<TItemVm> list, string pattern) where TItemVm : ViewModel
         {
-            canClearListeners.Add(list);
-            return new BindIpairsView<TItemVm>(ref list, pattern, view.transform);
+            _canClearListeners.Add(list);
+            return new BindIpairsView<TItemVm>(ref list, pattern, _view.transform);
         }
 
         public UIBindFactory(TView _view, TVm _vm) : base(_view, _vm)
