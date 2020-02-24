@@ -999,7 +999,7 @@ GameObject:
   - component: {fileID: 2945611585997900394}
   - component: {fileID: 2513138418526712349}
   m_Layer: 5
-  m_Name: ListPairsBand
+  m_Name: ListPairsBind
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1166,8 +1166,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2945611587450014452}
   m_HandleRect: {fileID: 2945611587450014451}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.99994797
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1421,7 +1421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 2945611587339499601}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -1672,7 +1672,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0004789486}
+  m_AnchoredPosition: {x: 0, y: -0.000028540711}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2945611587339499602

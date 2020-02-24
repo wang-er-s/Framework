@@ -32,9 +32,14 @@ public class ListBindView : View
 
 public class ListBindViewModel : ViewModel
 {
-    public BindableList<ItemViewModel> Items { get; private set; }
-    public List<Dropdown.OptionData> DropdownData { get; private set; }
-    public BindableProperty<int> SelectedDropDownIndex { get; private set; }
+    public BindableList<ItemViewModel> Items { get; }
+    public List<Dropdown.OptionData> DropdownData { get; }
+    public BindableProperty<int> SelectedDropDownIndex { get; }
+    private int _selectedDropDownIndex
+    {
+        get => SelectedDropDownIndex;
+        set => ((IBindableProperty<int>) SelectedDropDownIndex).Value = value;
+    }
     private int selectedDropDownIndex
     {
         get { return SelectedDropDownIndex; }
@@ -72,8 +77,7 @@ public class ListBindViewModel : ViewModel
 
     public void UpdateItem()
     {
-        if(selectedItem == null) return;
-        selectedItem.Path.Value = DropdownData[selectedDropDownIndex].text;
+        selectedItem?.SetPath(DropdownData[selectedDropDownIndex].text);
     }
     
     private void AddItem(ItemViewModel itemViewModel)
@@ -83,30 +87,26 @@ public class ListBindViewModel : ViewModel
 
     private ItemViewModel CreateItem()
     {
-        ItemViewModel vm = new ItemViewModel
-        {
-            Last = new BindableProperty<bool>(false),
-            Path = new BindableProperty<string>(DropdownData[selectedDropDownIndex].text),
-        };
-        vm.ItemClickCb = OnItemClick;
+        ItemViewModel vm = new ItemViewModel(false, DropdownData[selectedDropDownIndex].text,OnItemClick);
         return vm;
     }
 
     private void OnItemClick(ItemViewModel viewModel)
     {
         selectedItem?.OnItemDeselected();
-        selectedItem = viewModel;
+        selectedItem = selectedItem == viewModel ? null : viewModel;
     }
 
     private void OnUpdateItem()
     {
+        if (Items.Count <= 0) return;
         var lastVm = Items[Items.Count - 1];
         foreach (var itemViewModel in Items)
         {
-            itemViewModel.Last.Value = itemViewModel == lastVm;
+            itemViewModel.SetLast(itemViewModel == lastVm);
         }
     }
 
-    public override string ViewPath { get; } = "";
+    public override string ViewPath { get; } = "ListBind";
 }
 

@@ -68,8 +68,10 @@ namespace Framework.UI.Core
         private void InitEvent()
         {
             _defaultBind = BindTool.GetDefaultBind(_component);
-            _propChangeCb ??= (_defaultBind as IFieldChangeCb<TData>)?.GetFieldChangeCb();
-            _componentEvent ??= (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
+            if (_propChangeCb == null)
+                _propChangeCb = (_defaultBind as IFieldChangeCb<TData>)?.GetFieldChangeCb();
+            if (_componentEvent == null)
+                _componentEvent = (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
             switch (_bindType)
             {
                 case BindType.OnWay:

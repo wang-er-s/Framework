@@ -64,7 +64,9 @@ namespace Framework.UI.Core
 
         private View CreateUI(string panelName)
         {
-            var loadGo = LoadResFunc == null ? Resources.Load<GameObject>(panelName) : LoadResFunc(panelName);
+            var loadGo = LoadResFunc == null
+                ? Object.Instantiate(Resources.Load<GameObject>(panelName))
+                : LoadResFunc(panelName);
             View view = loadGo.GetComponent<View>();
             UILevel uiLevel = view.UILevel;
             Transform par;

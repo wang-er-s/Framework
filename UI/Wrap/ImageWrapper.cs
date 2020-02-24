@@ -7,7 +7,7 @@ namespace Framework.UI.Wrap
 {
     public class ImageWrapper : BaseWrapper<Image>,IFieldChangeCb<string>
     {
-
+        public static Func<string, Sprite> LoadSpriteFunc;
         public ImageWrapper(Image image) : base(image)
         {
             _view = image;
@@ -15,7 +15,8 @@ namespace Framework.UI.Wrap
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            return (value) => _view.sprite = Assets.Load<Sprite>(value);
+            return (path) =>
+                _view.sprite = LoadSpriteFunc == null ? Resources.Load<Sprite>(path) : LoadSpriteFunc(path);
         }
     }
 }

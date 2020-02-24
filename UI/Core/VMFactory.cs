@@ -8,6 +8,11 @@ namespace Framework.UI.Core
         private UIManager _uiManager;
         private Dictionary<ViewModel, View> _vm2View = new Dictionary<ViewModel, View>();
 
+        public VMFactory(UIManager uiManager)
+        {    
+            SetUIManager(uiManager);
+        }
+        
         public void SetUIManager(UIManager uiManager)
         {
             _uiManager = uiManager;
@@ -42,6 +47,7 @@ namespace Framework.UI.Core
             if (!_vm2View.TryGetValue(viewModel, out var view))
             {
                 view = _uiManager.Load(viewModel.ViewPath, viewModel);
+                _vm2View.Add(viewModel, view);
             }
             view.Show();
             return view;
@@ -63,6 +69,11 @@ namespace Framework.UI.Core
                 UnityEngine.Object.Destroy(view.gameObject);
             }
             Debugger.Warning($"{viewModel.ViewPath} window not show!");
+        }
+
+        public View GetView(ViewModel viewModel)
+        {
+            return _vm2View.TryGetValue(viewModel, out var view) ? view : null;
         }
         
     }

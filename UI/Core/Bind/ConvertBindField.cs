@@ -60,8 +60,10 @@ namespace Framework.UI.Core
         private void InitEvent()
         {
             _defaultBind = BindTool.GetDefaultBind(_component);
-            _componentEvent ??= (_defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
-            _fieldChangeCb ??= (_defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            if (_componentEvent == null)
+                _componentEvent = (_defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
+            if (_fieldChangeCb == null)
+                _fieldChangeCb = (_defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
             Debugger.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
             if (_field2CpntConvert != null)
                 _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));

@@ -1,5 +1,6 @@
 ﻿using System;
 using Framework.UI.Wrap;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Framework.UI.Core
@@ -31,7 +32,8 @@ namespace Framework.UI.Core
 
         private void InitEvent()
         {
-            _componentEvent ??= (_component as IComponentEvent)?.GetComponentEvent();
+            if (_componentEvent == null)
+                _componentEvent = (_component as IComponentEvent)?.GetComponentEvent();
             if (_componentEvent == null)
             {
                 _defaultBind = BindTool.GetDefaultBind(_component);
@@ -75,7 +77,8 @@ namespace Framework.UI.Core
         private void InitEvent()
         {
             _defaultBind = BindTool.GetDefaultBind(_component);
-            _componentEvent ??= (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
+            if (_componentEvent == null)
+                _componentEvent = (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
             Debugger.Assert(_componentEvent != null);
             if (_wrapFunc == null)
             {

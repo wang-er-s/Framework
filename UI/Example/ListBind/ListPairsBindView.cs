@@ -23,13 +23,13 @@ public class ListPairsBindViewModel : ViewModel
     {
         Items = new BindableList<ItemViewModel>()
         {
-            new ItemViewModel(){Path = new BindableProperty<string>("回锅肉")},
-            new ItemViewModel(){Path = new BindableProperty<string>("梅菜扣肉")},
-            new ItemViewModel(){Path = new BindableProperty<string>("水煮鱼")},
-            new ItemViewModel(){Path = new BindableProperty<string>("鱼香肉丝")},
+            new ItemViewModel(false,"回锅肉",null),
+            new ItemViewModel(false,"梅菜扣肉",null),
+            new ItemViewModel(false,"水煮鱼",null),
+            new ItemViewModel(true,"鱼香肉丝",null),
         };
     }
 
-    public override string ViewPath { get; } = "";
+    public override string ViewPath { get; } = "ListPairsBind";
 }
 

@@ -12,33 +12,21 @@ public class SimpleBind : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-//		UIManager.Init();
-		vm = new SetupViewModel()
-		{
-			Visible = new BindableProperty<bool>(true),
-			Name =  new BindableProperty<string>("JJ")
-		};
-		newVm = new SetupViewModel();
-//		view = UIManager.Create("SimpleBind", vm: vm);
+		UIManager uiManager = new UIManager();
+		VMFactory vmFactory = new VMFactory(uiManager);
+		vm = vmFactory.Create<SetupViewModel>();
+		vm.Visible = new BindableProperty<bool>(true);
+		vm.Name = new BindableProperty<string>("JJ");
+		newVm = vmFactory.Create<SetupViewModel>();
+		vm.ShowView();
+		view = vmFactory.GetView(vm);
 	}
 	
 	private void OnGUI()
 	{
-		if (GUI.Button(new Rect(100, 100, 100, 100), "跳转场景"))
-		{
-			SceneManager.LoadScene(1);
-		}
 		if (GUI.Button(new Rect(100, 300, 100, 100), "切换vm"))
 		{
 			view.SetVM(view.ViewModel == vm ? newVm : vm);
-		}
-		if (GUI.Button(new Rect(100, 500, 100, 100), "更改原来的vm"))
-		{
-			((IBindableProperty<bool>) vm.Visible).Value = !((IBindableProperty<bool>) vm.Visible).Value;
-		}
-		if (GUI.Button(new Rect(100, 700, 100, 100), "更改新的vm"))
-		{
-			((IBindableProperty<bool>) newVm.Visible).Value = !((IBindableProperty<bool>) newVm.Visible).Value;
 		}
 	}
 }

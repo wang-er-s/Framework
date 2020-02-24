@@ -42,7 +42,6 @@ namespace Framework.UI.Core
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             _subViews = new List<View>();
-            SetCanvas(false);
             Transform = transform;
         }
 
@@ -70,7 +69,7 @@ namespace Framework.UI.Core
         {
             _canvasGroup.interactable = visible;
             _canvasGroup.alpha = visible ? 1 : 0;
-            _canvasGroup.blocksRaycasts = !visible;
+            _canvasGroup.blocksRaycasts = visible;
         }
 
         #endregion

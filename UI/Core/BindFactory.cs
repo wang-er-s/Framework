@@ -28,7 +28,7 @@ namespace Framework.UI.Core
 
         //单向绑定
         public BindField<TComponent, TData> Bind<TComponent, TData>
-        (TComponent component, IBindableProperty<TData> property, Action<TData> fileChangeCb = null,
+        (TComponent component, BindableProperty<TData> property, Action<TData> fileChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
             _canClearListeners.TryAdd(property);
@@ -38,7 +38,7 @@ namespace Framework.UI.Core
 
         //反向绑定
         public BindField<TComponent, TData> RevertBind<TComponent, TData>
-        (TComponent component, IBindableProperty<TData> property,
+        (TComponent component, BindableProperty<TData> property,
             UnityEvent<TData> componentEvent = null,
             Func<TData, TData> cpnt2PropWrap = null) where TComponent : class
         {
@@ -60,7 +60,7 @@ namespace Framework.UI.Core
 
         //wrap不同类型单向绑定
         public ConvertBindField<TComponent, TData, TResult> Bind<TComponent, TData, TResult>(TComponent component,
-            IBindableProperty<TData> property,
+            BindableProperty<TData> property,
             Func<TData, TResult> field2CpntConvert, Action<TResult> _fieldChangeCb = null) where TComponent : class
         {
             _canClearListeners.TryAdd(property);
@@ -70,7 +70,7 @@ namespace Framework.UI.Core
         
         //wrap不同类型反向绑定
         public ConvertBindField<TComponent, TData, TResult> RevertBind<TComponent, TData, TResult>(TComponent component,
-            IBindableProperty<TData> property,
+            BindableProperty<TData> property,
             Func<TResult, TData> cpnt2FieldConvert,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
@@ -93,7 +93,7 @@ namespace Framework.UI.Core
 
         //绑定两个field
         public BindField<TComponent, TData1, TData2, TResult> Bind<TComponent, TData1, TData2, TResult>
-        (TComponent component, IBindableProperty<TData1> property1, IBindableProperty<TData2> property2,
+        (TComponent component, BindableProperty<TData1> property1, BindableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
             where TComponent : class
         {
@@ -103,9 +103,10 @@ namespace Framework.UI.Core
                 filedChangeCb);
         }
 
-        public void BindData<TData>(IBindableProperty<TData> property, Action<TData> cb)
+        public void BindData<TData>(BindableProperty<TData> property, Action<TData> cb)
         {
             _canClearListeners.TryAdd(property);
+            cb?.Invoke(property);
             property.AddListener(cb);
         }
 
