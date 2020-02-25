@@ -10,7 +10,7 @@ namespace Framework.Services
 
         protected override void OnStart(IServiceContainer container)
         {
-            container.Register(new UIManager());
+            container.Register(new SceneViewLocator());
         }
 
         protected override void OnStop(IServiceContainer container)

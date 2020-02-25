@@ -4,38 +4,24 @@ using UnityEngine;
 namespace Framework.UI.Core
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class View : MonoBehaviour, IView
+    public abstract class View : MonoBehaviour
     {
         private List<View> _subViews;
         private CanvasGroup _canvasGroup;
-        private ViewModel _viewModel;
-        public ViewModel ViewModel
-        {
-            get => _viewModel;
-            private set
-            {
-                if (_viewModel == value)
-                {
-                    return;
-                }
-                _viewModel = value;
-                if (_viewModel != null)
-                    OnVmChange();
-            }
-        }
+        public ViewModel ViewModel { get; private set; }
         public Transform Transform { get; private set; }
-        public UIManager UiManager { get; private set; }
         public abstract UILevel UILevel { get; }
         public virtual bool SingleInstance { get; }
 
-        public void SetVM(ViewModel vm)
+        internal void SetVM(ViewModel vm)
         {
+            if (ViewModel == vm)
+            {
+                return;
+            }
             ViewModel = vm;
-        }
-
-        public void SetUIManager(UIManager uiManager)
-        {
-            UiManager = uiManager;
+            if (ViewModel != null)
+                OnVmChange();
         }
 
         void Awake()

@@ -12,8 +12,8 @@ public class ListBind : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UIManager uiManager = new UIManager();
-        VMFactory vmFactory = new VMFactory(uiManager);
+        SceneViewLocator sceneViewLocator = new SceneViewLocator();
+        VMFactory vmFactory = new VMFactory(sceneViewLocator);
         vm = vmFactory.Create<ListBindViewModel>();
         vm.ShowView();
         pair_vm = vmFactory.Create<ListPairsBindViewModel>();

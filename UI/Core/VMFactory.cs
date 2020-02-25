@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Framework.UI.Core
 {
     public class VMFactory
     {
-        private UIManager _uiManager;
+        private IUIViewLocator _viewLocator;
         private Dictionary<ViewModel, View> _vm2View = new Dictionary<ViewModel, View>();
 
-        public VMFactory(UIManager uiManager)
+        public VMFactory(IUIViewLocator viewLocator)
         {    
-            SetUIManager(uiManager);
+            SetViewLocator(viewLocator);
         }
         
-        public void SetUIManager(UIManager uiManager)
+        public void SetViewLocator(IUIViewLocator viewLocator)
         {
-            _uiManager = uiManager;
+            _viewLocator = viewLocator;
         }
         
         public T Create<T>() where T : ViewModel,new()
@@ -42,11 +43,22 @@ namespace Framework.UI.Core
             return vm;
         }
 
+        public void ChangeVM(ViewModel viewModel, View newView)
+        {
+            if (_vm2View.ContainsKey(viewModel))
+            {
+                _vm2View[viewModel] = newView;
+                return;
+            }
+            _vm2View.Add(viewModel, newView);
+            newView.SetVM(viewModel);
+        }
+
         private View ShowView(ViewModel viewModel)
         {
             if (!_vm2View.TryGetValue(viewModel, out var view))
             {
-                view = _uiManager.Load(viewModel.ViewPath, viewModel);
+                view = _viewLocator.Load(viewModel.ViewPath, viewModel);
                 _vm2View.Add(viewModel, view);
             }
             view.Show();

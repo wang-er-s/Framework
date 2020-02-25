@@ -27,7 +27,6 @@ namespace Framework.UI.Example
             binding.UpdateVm();
             binding.Bind(nameMessageText, vm.Visible);
             binding.Bind(nameMessageText, vm.Process, process => $"进度为:{process}");
-            //binding.Bind(nameMessageText, viewModel.Name,  process => $"进度为:{process}");
             binding.Bind (mulBindText, vm.Name, vm.ATK,
                           (name, atk) => $"name = {name} atk = {atk.ToString ()}",(str)=>mulBindText.text = $"111{str}");
             binding.Bind(joinInButton, vm.OnButtonClick, wrapFunc: click => () =>

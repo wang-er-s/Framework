@@ -8,12 +8,13 @@ public class SimpleBind : MonoBehaviour
 	private SetupViewModel vm;
 	private SetupViewModel newVm;
 	private BindableProperty<int> Age;
-	private IView view;
+	private View view;
+	private VMFactory vmFactory;
 	// Use this for initialization
 	void Start ()
 	{
-		UIManager uiManager = new UIManager();
-		VMFactory vmFactory = new VMFactory(uiManager);
+		SceneViewLocator sceneViewLocator = new SceneViewLocator();
+		vmFactory = new VMFactory(sceneViewLocator);
 		vm = vmFactory.Create<SetupViewModel>();
 		vm.Visible = new BindableProperty<bool>(true);
 		vm.Name = new BindableProperty<string>("JJ");
@@ -26,7 +27,7 @@ public class SimpleBind : MonoBehaviour
 	{
 		if (GUI.Button(new Rect(100, 300, 100, 100), "切换vm"))
 		{
-			view.SetVM(view.ViewModel == vm ? newVm : vm);
+			vmFactory.ChangeVM(view.ViewModel == vm ? newVm : vm, view);
 		}
 	}
 }

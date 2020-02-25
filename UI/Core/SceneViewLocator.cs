@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Plugins.XAsset;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -19,23 +20,22 @@ namespace Framework.UI.Core
         Guide = 3, //新手引导层
     }
 
-    public class UIManager 
+    public class SceneViewLocator : IUIViewLocator
     {
         
-        private Dictionary<string, IView> existUI = new Dictionary<string, IView>();
+        private Dictionary<string, View> existUI = new Dictionary<string, View>();
 
         private Transform _bgTrans;
         private Transform _commonTrans;
         private Transform _popTrans;
         private Transform _toastTrans;
         private Transform _guideTrans;
- 
-        public Camera UICamera { get; private set; }
+        
         public Canvas Canvas { get; private set; }
 
-        public Func<string,GameObject> LoadResFunc { get; set; }
+        public Func<string, GameObject> LoadResFunc { get; set; } = Assets.LoadIns;
 
-        public UIManager(Canvas canvas = null)
+        public SceneViewLocator(Canvas canvas = null)
         {
             Canvas = canvas == null ? Object.FindObjectOfType<Canvas>() : canvas;
             _bgTrans = Canvas.transform.Find("Bg");
@@ -48,18 +48,8 @@ namespace Framework.UI.Core
         public View Load(string path, ViewModel viewModel)
         {
             View view = CreateUI(path);
-            view.SetUIManager(this);
             view.SetVM(viewModel);
             return view;
-        }
-
-        public void CreateListItem(Transform view , ViewModel vm, int index)
-        {
-            GameObject go = Object.Instantiate(view.gameObject, view.parent);
-            go.transform.SetSiblingIndex(index);
-            IView v = go.GetComponent<IView>();
-            v.SetVM(vm);
-            v.Show();
         }
 
         private View CreateUI(string panelName)

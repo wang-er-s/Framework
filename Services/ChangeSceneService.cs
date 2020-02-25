@@ -6,11 +6,11 @@ namespace Framework.Services
 {
     public class ChangeSceneService
     {
-        private UIManager _uiManager;
+        private SceneViewLocator _sceneViewLocator;
         public ChangeSceneService()
         {
-            Canvas canvas = UIManager.CreateCanvas();
-            _uiManager = new UIManager(canvas);
+            Canvas canvas = SceneViewLocator.CreateCanvas();
+            _sceneViewLocator = new SceneViewLocator(canvas);
         }
 
         public void ChangeScene(string sceneName)
