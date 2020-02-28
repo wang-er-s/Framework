@@ -49,7 +49,7 @@ public class InputMgr : MonoBehaviour
     {
         if (_instance._inputStack.Count <= 0)
         {
-            _instance.LogWarning("Input stack is null!");
+            _instance.Warning("Input stack is null!");
             return;
         }
         _instance._inputStack.Pop();

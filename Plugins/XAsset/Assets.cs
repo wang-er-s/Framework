@@ -30,7 +30,6 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-using Debugger = Framework.Debugger;
 using Object = UnityEngine.Object;
 
 namespace Plugins.XAsset
@@ -59,7 +58,7 @@ namespace Plugins.XAsset
 
             if (string.IsNullOrEmpty(Utility.dataPath)) Utility.dataPath = Application.streamingAssetsPath;
 
-            Debugger.Log(string.Format("Init->assetBundleMode {0} | dataPath {1}", Utility.assetBundleMode, Utility.dataPath));
+            Framework.Log.Msg(string.Format("Init->assetBundleMode {0} | dataPath {1}", Utility.assetBundleMode, Utility.dataPath));
 
             if (Utility.assetBundleMode)
             {

@@ -79,7 +79,7 @@ namespace Framework.UI.Core
             _defaultBind = BindTool.GetDefaultBind(_component);
             if (_componentEvent == null)
                 _componentEvent = (_defaultBind as IComponentEvent<TData>)?.GetComponentEvent();
-            Debugger.Assert(_componentEvent != null);
+            Log.Assert(_componentEvent != null);
             if (_wrapFunc == null)
             {
                 _componentEvent.AddListener((value) => _command(value));

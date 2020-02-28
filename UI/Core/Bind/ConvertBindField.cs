@@ -64,7 +64,7 @@ namespace Framework.UI.Core
                 _componentEvent = (_defaultBind as IComponentEvent<TResult>)?.GetComponentEvent();
             if (_fieldChangeCb == null)
                 _fieldChangeCb = (_defaultBind as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
-            Debugger.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
+            Log.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
             if (_field2CpntConvert != null)
                 _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));
             if (_cpnt2FieldConvert != null)

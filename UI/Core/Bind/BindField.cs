@@ -75,12 +75,12 @@ namespace Framework.UI.Core
             switch (_bindType)
             {
                 case BindType.OnWay:
-                    Debugger.Assert(_propChangeCb != null);
+                    Log.Assert(_propChangeCb != null);
                     _property.AddListener((value) =>
                         _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
                     break;
                 case BindType.Revert:
-                    Debugger.Assert(_componentEvent != null);
+                    Log.Assert(_componentEvent != null);
                     _componentEvent.AddListener((data) =>
                         _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data));
                     break;

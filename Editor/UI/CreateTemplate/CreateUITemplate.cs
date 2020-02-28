@@ -37,7 +37,7 @@ public static class CreateUITemplate
 		{
 			Object.DestroyImmediate(mark, true);
 		}
-		Debugger.Log(">> clear uimark success");
+		Log.Msg(">> clear uimark success");
 		PrefabUtility.ApplyPrefabInstance(ins,InteractionMode.AutomatedAction);
 		AssetDatabase.Refresh();
 		Object.DestroyImmediate(ins);
@@ -247,7 +247,7 @@ public static class CreateUITemplate
 
 			if (sObj.FindProperty(propertyName) == null)
 			{
-				Debugger.Log($"sObj is Null:{propertyName} {uiType} {sObj}");
+				Log.Msg($"sObj is Null:{propertyName} {uiType} {sObj}");
 				continue;
 			}
 

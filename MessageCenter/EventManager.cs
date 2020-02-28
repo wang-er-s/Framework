@@ -4,19 +4,18 @@
 */
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Framework
 {
-    public struct GameEvent
+    public class GameEvent
     {
         public string EventName;
         public GameEvent(string newName)
         {
             EventName = newName;
         }
-        static GameEvent e;
+        static readonly GameEvent e = new GameEvent(string.Empty);
         public static void Trigger(string newName)
         {
             e.EventName = newName;
@@ -33,7 +32,7 @@ namespace Framework
             _subscribersList = new Dictionary<Type, List<EventListenerBase>>();
         }
         
-        public static void Register<T>(EventListener<T> listener) where T : struct
+        public static void Register<T>(EventListener<T> listener) where T : class
         {
             Type eventType = typeof( T );
 
@@ -44,7 +43,7 @@ namespace Framework
                 _subscribersList[eventType].Add( listener );
         }
 
-        public static void UnRegister<T>(EventListener<T> listener) where T : struct
+        public static void UnRegister<T>(EventListener<T> listener) where T : class
         {
             Type eventType = typeof( T );
 
@@ -58,13 +57,7 @@ namespace Framework
             }
 
             List<EventListenerBase> subscriberList = _subscribersList[eventType];
-            bool listenerFound;
-            listenerFound = false;
-
-            if (listenerFound)
-            {
-				
-            }
+            bool listenerFound = false;
 
             for (int i = 0; i<subscriberList.Count; i++)
             {
@@ -88,7 +81,7 @@ namespace Framework
 #endif
         }
         
-        public static void TriggerEvent<T>( T newEvent ) where T : struct
+        public static void TriggerEvent<T>( T newEvent ) where T : class
         {
             List<EventListenerBase> list;
             if( !_subscribersList.TryGetValue( typeof( T ), out list ) )
@@ -100,7 +93,7 @@ namespace Framework
 
             for (int i=0; i<list.Count; i++)
             {
-                ( list[i] as EventListener<T> ).OnEvent( newEvent );
+                ( list[i] as EventListener<T> )?.OnEvent( newEvent );
             }
         }
 
@@ -135,12 +128,12 @@ namespace Framework
     {
         public delegate void Delegate<T>( T eventType );
 
-        public static void StartListening<T>( this EventListener<T> caller ) where T : struct
+        public static void StartListening<T>( this EventListener<T> caller ) where T : class
         {
             EventManager.Register( caller );
         }
 
-        public static void StopListening<T>( this EventListener<EventType> caller ) where T : struct
+        public static void StopListening<T>( this EventListener<T> caller ) where T : class
         {
             EventManager.UnRegister( caller );
         }

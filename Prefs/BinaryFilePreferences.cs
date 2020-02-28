@@ -132,7 +132,7 @@ namespace Framework.Prefs
             }
             catch (Exception e)
             {
-                Debugger.Warning($"Load failed >> {e}");
+                Log.Warning($"Load failed >> {e}");
             }
         }
 

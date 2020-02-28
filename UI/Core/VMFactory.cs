@@ -71,7 +71,7 @@ namespace Framework.UI.Core
             {
                 view.Hide();
             }
-            Debugger.Warning($"{viewModel.ViewPath} window not show!");
+            Log.Warning($"{viewModel.ViewPath} window not show!");
         }
 
         private void DestroyView(ViewModel viewModel)
@@ -80,7 +80,7 @@ namespace Framework.UI.Core
             {
                 UnityEngine.Object.Destroy(view.gameObject);
             }
-            Debugger.Warning($"{viewModel.ViewPath} window not show!");
+            Log.Warning($"{viewModel.ViewPath} window not show!");
         }
 
         public View GetView(ViewModel viewModel)
