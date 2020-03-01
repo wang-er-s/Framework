@@ -29,6 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Framework;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -130,7 +131,9 @@ namespace Plugins.XAsset
         private void _Load()
         {
             if (Utility.loadDelegate != null)
+            {
                 asset = Utility.loadDelegate(name, assetType);
+            }
         }
 
         [Conditional("UNITY_EDITOR")]

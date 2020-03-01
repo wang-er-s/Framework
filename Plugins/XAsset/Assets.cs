@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Framework;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
@@ -183,18 +184,12 @@ namespace Plugins.XAsset
             {
                 var item = _unusedAssets[i];
                 item.Unload();
-                Log("Unload->" + item.name);
+                this.Msg("Unload->", item.name);
             }
 
             _unusedAssets.Clear();
 
             Bundles.Update();
-        }
-
-        [Conditional("LOG_ENABLE")]
-        private static void Log(string s)
-        {
-            Debug.Log(string.Format("[Assets]{0}", s));
         }
 
         private static Asset Load(string path, Type type, bool async)
@@ -239,7 +234,7 @@ namespace Plugins.XAsset
             asset.Load();
             asset.Retain();
 
-            Log($"Load->{path}|{assetBundleName}");
+            Log.Msg($"Load->{path}|{assetBundleName}");
             return asset;
         }
 
