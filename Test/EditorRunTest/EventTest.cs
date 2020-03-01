@@ -36,9 +36,12 @@ namespace Tests
                 Debug.Log(_event.Name);
             }
 
-            void MulEventListener<CMsg>.OnEvent(CMsg value)
+            void MulEventListener<CMsg>.OnEvent(CMsg value, string tag)
             {
-                Debug.Log(value.Name);
+                if (tag == TAG)
+                    this.Msg("tag1111", value.Name);
+                else
+                    this.Msg("tag2222", value.Name);
             }
         }
         
@@ -53,25 +56,17 @@ namespace Tests
             BMsg.Trigger("BB");
         }
 
+        private const string TAG = "TAG";
+        private const string TAG2 = "TAG2";
+        
         [Test]
         public void 复用广播()
         {
             MulEventListener<CMsg> aModule = new AModule();
-            aModule.StartListening("TAG");
-            CMsg.Trigger("TAG", "name");
-        }
-    }
-
-    public interface MulEventListener<T>
-    {
-        void OnEvent(T value);
-    }
-
-    public static class MulEventListenerExtension
-    {
-        public static void StartListening<T>(this MulEventListener<T> listener, string tag)
-        {
-            
+            aModule.StartListening(TAG);
+            aModule.StartListening(TAG2);
+            CMsg.Trigger(TAG, "name");
+            CMsg.Trigger(TAG2, "name2");
         }
     }
 
@@ -82,7 +77,8 @@ namespace Tests
 
         public static void Trigger(string tag, string name)
         {
-            
+            _e.Name = name;
+            EventManager.TriggerEvent(_e, tag);
         }
     }
 }

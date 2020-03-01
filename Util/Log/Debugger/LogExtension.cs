@@ -1,6 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Reflection;
-using UnityEngine;
+using System.Runtime.CompilerServices;
+using Object = UnityEngine.Object;
+
 #if FIX_LOG
 namespace Framework
 {
@@ -34,7 +37,7 @@ namespace Framework
         {
             Log.Error(null, GetLogTag(obj), GetLogCallerMethod(), msgs);
         }
-        
+
         public static void Warning(this object obj, params object[] msgs)
         {
             if (!Log.EnableLog) return;
