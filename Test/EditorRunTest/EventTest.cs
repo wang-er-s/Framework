@@ -52,9 +52,8 @@ namespace Tests
         public void 局部事件()
         {
             IEventBroadcaster eventBroadcaster = Substitute.For<IEventBroadcaster>();
-            eventBroadcaster.LocalEventService.Returns(new LocalEventService());
             eventBroadcaster.Register<AMsg>(AMsgCB);
-            eventBroadcaster.LocalEventService.TriggerEvent(new AMsg());
+            eventBroadcaster.TriggerEvent(new AMsg());
             Assert.IsTrue(IsCall);
         }
 

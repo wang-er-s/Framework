@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public class LocalEventService
+    public static class LocalEventService
     {
         interface ICallBackBase
         {
@@ -28,16 +28,21 @@ namespace Framework
             }
         }
         
-        private static Dictionary<Type, List<ICallBackBase>> _subscribersDic = new Dictionary<Type, List<ICallBackBase>>();
+        private static Dictionary<IEventBroadcaster,Dictionary<Type, List<ICallBackBase>>> _subscribersDic = new Dictionary<IEventBroadcaster,Dictionary<Type,List<ICallBackBase>>>();
 
-        internal void Register<T>(string tag, Action<T> cb)
+        internal static void Register<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
-
-            if (!_subscribersDic.TryGetValue(type, out var list))
+            
+            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic))
+            {
+                dic = new Dictionary<Type, List<ICallBackBase>>();
+                _subscribersDic.Add(eventBroadcaster, dic);
+            }
+            if (!dic.TryGetValue(type, out var list))
             {
                 list = new List<ICallBackBase>();
-                _subscribersDic.Add(type, list);
+                dic.Add(type, list);
             }
             if (!CallBackExists(list, tag, cb))
             {
@@ -46,16 +51,16 @@ namespace Framework
             }
             else
             {
-                this.Warning("repeated register....");
+                Log.Warning("repeated register....");
             }
         }
 
-        private bool CallBackExists<T>(List<ICallBackBase> list, string tag, Action<T> cb)
+        private static bool CallBackExists<T>(List<ICallBackBase> list, string tag, Action<T> cb)
         {
             return GetCallBackBase(list, tag, cb) != null;
         }
 
-        private ICallBackBase GetCallBackBase<T>(List<ICallBackBase> list, string tag, Action<T> cb)
+        private static ICallBackBase GetCallBackBase<T>(List<ICallBackBase> list, string tag, Action<T> cb)
         {            
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (MulCallbackContainer<T> callbackContainer in list)
@@ -68,69 +73,84 @@ namespace Framework
             return null;
         }
         
-        internal void UnRegister<T>(string tag, Action<T> cb)
+        internal static void UnRegister<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
-
-            if (!_subscribersDic.TryGetValue(type, out var list))
+            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic))
             {
-                this.Warning("try unRegister empty....");
+                Log.Warning("try unRegister empty....");
+                return;
+            }
+            if (!dic.TryGetValue(type, out var list))
+            {
+                Log.Warning("try unRegister empty....");
                 return;
             }
             var callBackBase = GetCallBackBase(list, tag, cb);
             if (cb == null)
             {
-                this.Warning("try unRegister empty....");
+                Log.Warning("try unRegister empty....");
                 return;
             }
             list.Remove(callBackBase);
         }
 
-        public void TriggerEvent<T>(string tag, T value)
+        public static void TriggerEvent<T>(IEventBroadcaster eventBroadcaster, string tag, T value)
         {
             var type = typeof(T);
 
-            if (!_subscribersDic.TryGetValue(type, out var list)) return;
+            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic)) return;
+            if (!dic.TryGetValue(type, out var list)) return;
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (MulCallbackContainer<T> callbackContainer in list)
             {
                 callbackContainer.Trigger(tag, value);
             }
         }
-        
-        public void TriggerEvent<T>(T value)
+
+        public static void Clear(IEventBroadcaster eventBroadcaster)
         {
-            TriggerEvent(string.Empty ,value);
+            if (_subscribersDic.ContainsKey(eventBroadcaster))
+                _subscribersDic.Remove(eventBroadcaster);
         }
+        
     }
 
 
     public interface IEventBroadcaster
     {
-        LocalEventService LocalEventService { get; }
     }
     
     public static class BroadcasterExtension
     {
         public static void Register<T>(this IEventBroadcaster broadcaster,string tag, Action<T> cb)
         {
-            broadcaster.LocalEventService.Register(tag, cb);
+            LocalEventService.Register(broadcaster, tag, cb);
         }
         
         public static void Register<T>(this IEventBroadcaster broadcaster, Action<T> cb)
         {
-            broadcaster.LocalEventService.Register(string.Empty, cb);
+            broadcaster.Register(string.Empty, cb);
         }
 
         public static void UnRegister<T>(this IEventBroadcaster broadcaster, string tag, Action<T> cb)
         {
-            broadcaster.LocalEventService.UnRegister(tag, cb);
+            LocalEventService.UnRegister(broadcaster, tag, cb);
         }
 
         public static void UnRegister<T>(this IEventBroadcaster broadcaster, Action<T> cb)
         {
             broadcaster.UnRegister(string.Empty, cb);
         }
+
+        public static void TriggerEvent<T>(this IEventBroadcaster broadcaster, string tag, T value)
+        {
+            LocalEventService.TriggerEvent(broadcaster, tag, value);
+        }
         
+        public static void TriggerEvent<T>(this IEventBroadcaster broadcaster,T value)
+        {
+            broadcaster.TriggerEvent(string.Empty, value);
+        }
     }
 }
