@@ -15,7 +15,7 @@ namespace Tests
         {
             IsCall = false;
         }
-        
+
         [Test]
         public void 基本广播()
         {
@@ -24,7 +24,7 @@ namespace Tests
             bMsgEventListener.StartListening();
             BMsg.Trigger("HH");
             bMsgEventListener.Received().OnEvent(Arg.Any<BMsg>());
-            
+
             //实例触发
             var aMsgEventListener = Substitute.For<EventListener<AMsg>>();
             aMsgEventListener.StartListening();
@@ -35,17 +35,19 @@ namespace Tests
 
         private const string TAG = "TAG";
         private const string TAG2 = "TAG2";
-        
+
         [Test]
         public void 复用广播()
         {
-            MulEventListener<CMsg> aModule = Substitute.For<MulEventListener<CMsg>>();
-            aModule.StartListening(TAG);
-            aModule.StartListening(TAG2);
+            MulEventListener<CMsg> listener1 = Substitute.For<MulEventListener<CMsg>>();
+            MulEventListener<CMsg> listener2 = Substitute.For<MulEventListener<CMsg>>();
+            listener1.StartListening(TAG);
+            listener2.StartListening(TAG2);
             CMsg.Trigger(TAG, "name");
-            aModule.Received().OnEvent(Arg.Any<CMsg>(), TAG);
             CMsg.Trigger(TAG2, "name2");
-            aModule.Received().OnEvent(Arg.Any<CMsg>(), TAG2);
+            //检测OnEvent是否调用，并且第一个参数是CMsg，第二个参数是对应的TAG
+            listener1.Received().OnEvent(Arg.Any<CMsg>(), TAG);
+            listener2.Received().OnEvent(Arg.Any<CMsg>(), TAG2);
         }
 
         [Test]
@@ -58,30 +60,30 @@ namespace Tests
         }
 
         private bool IsCall = false;
+
         private void AMsgCB(AMsg obj)
         {
             IsCall = true;
         }
     }
 
-
-
     public class AMsg
     {
         public string Name;
     }
-        
+
     public class BMsg
     {
         public string Name;
         static readonly BMsg e = new BMsg();
+
         public static void Trigger(string newName)
         {
             e.Name = newName;
             EventManager.TriggerEvent(e);
         }
     }
-    
+
     public class CMsg
     {
         public string Name;

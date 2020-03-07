@@ -8,8 +8,7 @@ namespace Framework
         interface ICallBackBase
         {
         }
-        
-        
+
         class MulCallbackContainer<T> : ICallBackBase
         {
             public string Tag;
