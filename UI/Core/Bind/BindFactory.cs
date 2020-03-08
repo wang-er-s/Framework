@@ -111,7 +111,7 @@ namespace Framework.UI.Core
         }
 
         //绑定command
-        public BindCommand<TComponent> Bind<TComponent>
+        public BindCommand<TComponent> BindCommand<TComponent>
         (TComponent component, Action command, UnityEvent componentEvent = null,
             Func<Action, Action> wrapFunc = null) where TComponent : class
         {
@@ -126,7 +126,7 @@ namespace Framework.UI.Core
         }
 
         //绑定带参数的command
-        public BindCommandWithPara<TComponent, TData> Bind<TComponent, TData>
+        public BindCommandWithPara<TComponent, TData> BindCommand<TComponent, TData>
         (TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
             Func<Action<TData>, Action<TData>> wrapFunc = null) where TComponent : class
         {

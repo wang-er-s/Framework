@@ -87,6 +87,7 @@ namespace Framework.UI.Core
         {
             return _vm2View.TryGetValue(viewModel, out var view) ? view : null;
         }
-        
+
+        public const string ServiceName = "SERVICE_VM_FACTORY";
     }
 }

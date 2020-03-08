@@ -23,9 +23,9 @@ public class ListBindView : View
         dropdown.options = vm.DropdownData;
         binding.RevertBind(dropdown, vm.SelectedDropDownIndex);
         binding.BindList(vm.Items, item);
-        binding.Bind(addBtn, vm.AddItem);
-        binding.Bind(deleteBtn, vm.DeleteSelectedItem);
-        binding.Bind(updateBtn, vm.UpdateItem);
+        binding.BindCommand(addBtn, vm.AddItem);
+        binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
+        binding.BindCommand(updateBtn, vm.UpdateItem);
 
     }
 }

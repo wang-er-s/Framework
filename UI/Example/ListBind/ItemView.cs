@@ -26,7 +26,7 @@ namespace Framework.UI.Example
             binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
             //binding.BindData(vm.Selected, (value) => selected.SetActive(value));
             binding.BindData(vm.Selected, CC);
-            binding.Bind(selfBtn, vm.OnItemClick);
+            binding.BindCommand(selfBtn, vm.OnItemClick);
         }
         
         public void CC(bool val)

@@ -16,7 +16,7 @@ public class UIMark : MonoBehaviour
     
     [LabelText("选定组件")]
     [ShowIf("@_MarkType == MarkType.Component")]
-    [ValueDropdown("Components")] 
+    [ValueDropdown("_components")] 
     public Component CurComponent;
 
     private List<Component> _components;

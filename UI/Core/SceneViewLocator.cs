@@ -38,6 +38,7 @@ namespace Framework.UI.Core
         public SceneViewLocator(Canvas canvas = null)
         {
             Canvas = canvas == null ? Object.FindObjectOfType<Canvas>() : canvas;
+            if (Canvas == null) Canvas = CreateCanvas();
             _bgTrans = Canvas.transform.Find("Bg");
             _commonTrans = Canvas.transform.Find("Common");
             _popTrans = Canvas.transform.Find("Pop");

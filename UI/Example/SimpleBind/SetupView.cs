@@ -29,12 +29,12 @@ namespace Framework.UI.Example
             binding.Bind(nameMessageText, vm.Process, process => $"进度为:{process}");
             binding.Bind (mulBindText, vm.Name, vm.ATK,
                           (name, atk) => $"name = {name} atk = {atk.ToString ()}",(str)=>mulBindText.text = $"111{str}");
-            binding.Bind(joinInButton, vm.OnButtonClick, wrapFunc: click => () =>
+            binding.BindCommand(joinInButton, vm.OnButtonClick, wrapFunc: click => () =>
             {
                 click();
                 print("Wrap Button");
             });
-            binding.Bind(joinInButton, () => vm.OnInputChanged("a"));
+            binding.BindCommand(joinInButton, () => vm.OnInputChanged("a"));
             binding.RevertBind(slider, vm.Process);
             
             binding.Bind (img, vm.Path);
