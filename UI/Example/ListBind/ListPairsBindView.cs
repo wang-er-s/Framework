@@ -31,5 +31,11 @@ public class ListPairsBindViewModel : ViewModel
     }
 
     public override string ViewPath { get; } = "ListPairsBind";
+    public static ListPairsBindViewModel Create(VMCreator vmCreator)
+    {
+        ListPairsBindViewModel vm = new ListPairsBindViewModel();
+        vmCreator?.BindView(vm);
+        return vm;
+    }
 }
 

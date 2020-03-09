@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Framework.UI.Core
 {
-    public class VMFactory
+    public class VMCreator
     {
         private IUIViewLocator _viewLocator;
         private Dictionary<ViewModel, View> _vm2View = new Dictionary<ViewModel, View>();
 
-        public VMFactory(IUIViewLocator viewLocator)
+        public VMCreator(IUIViewLocator viewLocator)
         {    
             SetViewLocator(viewLocator);
         }
@@ -18,10 +18,9 @@ namespace Framework.UI.Core
         {
             _viewLocator = viewLocator;
         }
-        
-        public T Create<T>() where T : ViewModel,new()
+
+        public void BindView(ViewModel vm)
         {
-            T vm = new T();
             vm.IsShow.AddListener(show =>
             {
                 switch (show)
@@ -39,8 +38,6 @@ namespace Framework.UI.Core
                         throw new ArgumentOutOfRangeException(nameof(show), show, null);
                 }
             });
-            
-            return vm;
         }
 
         public void ChangeVM(ViewModel viewModel, View newView)

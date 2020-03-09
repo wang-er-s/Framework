@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Framework.UI.Core;
-using Framework.UI.Example;
+﻿using Framework.UI.Core;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ListBind : MonoBehaviour
 {
@@ -13,10 +9,10 @@ public class ListBind : MonoBehaviour
     void Start()
     {
         SceneViewLocator sceneViewLocator = new SceneViewLocator();
-        VMFactory vmFactory = new VMFactory(sceneViewLocator);
-        vm = vmFactory.Create<ListBindViewModel>();
+        VMCreator vmCreator = new VMCreator(sceneViewLocator);
+        vm = ListBindViewModel.Create(vmCreator);
         vm.ShowView();
-        pair_vm = vmFactory.Create<ListPairsBindViewModel>();
+        pair_vm = ListPairsBindViewModel.Create(vmCreator);
         pair_vm.ShowView();
     }
 

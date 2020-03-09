@@ -41,5 +41,12 @@ namespace Framework.UI.Example
 
         public override string ViewPath { get; } = "SimpleBind";
 
+        public static SetupViewModel Create(VMCreator vmCreator)
+        {
+            SetupViewModel vm = new SetupViewModel();
+            vmCreator?.BindView(vm);
+            return vm;
+        }
+
     }
 }

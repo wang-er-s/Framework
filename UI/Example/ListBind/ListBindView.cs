@@ -108,5 +108,12 @@ public class ListBindViewModel : ViewModel
     }
 
     public override string ViewPath { get; } = "ListBind";
+
+    public static ListBindViewModel Create(VMCreator vmCreator)
+    {
+        ListBindViewModel vm = new ListBindViewModel();
+        vmCreator?.BindView(vm);
+        return vm;
+    }
 }
 

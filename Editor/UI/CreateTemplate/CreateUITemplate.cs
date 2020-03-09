@@ -192,6 +192,12 @@ public static class CreateUITemplate
 		strBuilder.AppendLine();
 		strBuilder.AppendLine($"\tpublic override string ViewPath {{ get; }} = \"{GetPanelPath(panelCodeInfo)}\";");
 		strBuilder.AppendLine();
+		strBuilder.AppendLine($"\tpublic static {className} Create(VMCreator vmCreator)");
+		strBuilder.AppendLine("\t{");
+		strBuilder.AppendLine($"\t\t{className} vm = new {className}();");
+		strBuilder.AppendLine("\t\vmCreator?.BindView(vm);");
+		strBuilder.AppendLine("\t\treturn vm");
+		strBuilder.AppendLine("\t}");
 		strBuilder.AppendLine("}");
 		sw.Write(strBuilder);
 		sw.Flush();
