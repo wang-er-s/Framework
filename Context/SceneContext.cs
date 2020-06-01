@@ -26,7 +26,7 @@ namespace Framework.Context
                 OnSceneLoaded();
                 return;
             }
-            IEnumeratorTool.StartCoroutine(load());
+            IEnumeratorUtil.StartCoroutine(load());
         }
 
         IEnumerator load()

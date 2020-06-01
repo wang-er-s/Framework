@@ -6,8 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Framework;
-using Framework.UI.Core;
-using Plugins.XAsset.Editor;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -123,7 +121,8 @@ public static class CreateUITemplate
 
 	private static void GeneratorView(PanelCodeInfo panelCodeInfo)
 	{
-		var dir = BuildScript.GetSettings().uiScriptPath;
+		//var dir = BuildScript.GetSettings().uiScriptPath;
+		var dir = "";
 		Directory.CreateDirectory(dir);
 		var generateFilePath = $"{dir}{panelCodeInfo.BehaviourName}.cs";
 		if (File.Exists(generateFilePath)) File.Delete(generateFilePath);
@@ -177,7 +176,8 @@ public static class CreateUITemplate
 	private static void GeneratorVM(PanelCodeInfo panelCodeInfo)
 	{
 		string className = $"{panelCodeInfo.BehaviourName}VM";
-		var generateFilePath = $"{BuildScript.GetSettings().uiScriptPath}{className}.cs";
+		//var generateFilePath = $"{BuildScript.GetSettings().uiScriptPath}{className}.cs";
+		var generateFilePath =".cs";
 		if (File.Exists(generateFilePath)) File.Delete(generateFilePath);
 		var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
 		var strBuilder = new StringBuilder();
@@ -266,7 +266,8 @@ public static class CreateUITemplate
 	private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
 	{
 		var path = panelCodeInfo.PanelPath;
-		var rootPath = BuildScript.GetManifest().resRootPath;
+		//var rootPath = BuildScript.GetManifest().resRootPath;
+		var rootPath = "";
 		if (path.Contains(rootPath))
 		{
 			path = path.RemoveString(rootPath);

@@ -1,15 +1,11 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using Plugins.XAsset;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core
 {
-#if SLUA_SUPPORT
-	using SLua;
-#endif
     public enum UILevel
     {
         None = -1, //留给内部Element的空值
@@ -33,7 +29,7 @@ namespace Framework.UI.Core
         
         public Canvas Canvas { get; private set; }
 
-        public Func<string, GameObject> LoadResFunc { get; set; } = Assets.LoadIns;
+        public Func<string, GameObject> LoadResFunc { get; set; }
 
         public SceneViewLocator(Canvas canvas = null)
         {

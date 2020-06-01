@@ -1,5 +1,4 @@
 using System;
-using Plugins.XAsset;
 using UnityEngine;
 
 namespace Framework.UI.Core
@@ -12,7 +11,7 @@ namespace Framework.UI.Core
         }
 
         private Transform _content;
-        public Func<string, GameObject> LoadResFunc { get; set; } = Assets.LoadIns;
+        public Func<string, GameObject> LoadResFunc { get; set; } = null;
         
         public View Load(string path, ViewModel viewModel = null)
         {

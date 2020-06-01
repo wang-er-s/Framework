@@ -626,6 +626,14 @@ public static class TransformExtension
         selfComponent.transform.SetParent ( null );
         return selfComponent;
     }
+    
+    public static void SetParentIdentically(this Transform trans, Transform parent)
+    {
+        trans.SetParent(parent,false);
+        trans.localPosition = Vector3.zero;
+        trans.localRotation = Quaternion.identity;
+        trans.localScale = Vector3.one;
+    }
     #endregion
 
     #region CETR002 LocalIdentity
