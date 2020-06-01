@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using Framework.BaseUtil;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Framework
@@ -9,17 +10,15 @@ namespace Framework
     [CreateAssetMenu(menuName = "Game/Framework/EnvSetting",fileName = EnvSetting.ASSET_NAME)]
     public class EnvSetting : ScriptableObject
     {
-        public const string ASSET_NAME = "Assets/Setting/EnvSetting";
+        public const string ASSET_NAME = "Assets/EnvSetting";
         public bool isDev;//开发模式
-        public string luaRootPath;
         public bool useBundleInEditor;
         public string editorResPath;
         public bool useTrdBundlePath;//第三方bundle路径，用于调试，仅编辑器生效
         public string trdBundlePath;//第三方bundle路径，用于调试，仅编辑器生效
         public bool useOriginalData;
-        public string nameEncrypt;
         public bool useStreamingAssetsInEditor;
-        public bool netVerbose;
+        [LabelTextAttribute("Log模式")]
         public bool resVerbose;
 
         public EnvSetting LoadFromJson(string json)

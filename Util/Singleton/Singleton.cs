@@ -26,7 +26,7 @@ namespace Framework
 					{
 						lock ( _locker )
 						{
-							_instance = SingletonCreator.CreateSingleton<T>();
+							_instance = Activator.CreateInstance<T>();
 						}
 					}
 				}

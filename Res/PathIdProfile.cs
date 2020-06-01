@@ -1,7 +1,3 @@
-/**
- * Created by wangliang on 2020/45/04 17:45:06
- */
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +10,10 @@ namespace Framework
 {
     public class PathIdProfile : Singleton<PathIdProfile>
     {
+        public PathIdProfile()
+        {
+        }
+        
         public static readonly string fileName = "pathid.info";
         private bool validated = false;
         private Dictionary<string,string> ids = new Dictionary<string, string>(); //path ->id

@@ -18,19 +18,6 @@ namespace Framework.BaseUtil
 		//热更新的目录，拥有资源加载的更高优先级
 		public static string DirRoot2Path { get; private set; }
 
-		//lua头
-		private static byte[] fileEncryptKeyCode = null;
-		private static byte[] head = {0x81, 0x82, 0x83, 0x84};
-
-		//lua zip密码
-		private static string zipPswd = null; //"p0Qi6+zl64FoQg6=21jeSBbXwF&JDSWHgK7!";
-
-		public static string ZipPswd
-		{
-			get { return zipPswd; }
-			set { zipPswd = value; }
-		}
-
 		public static void Init(string path, string pathSenior, string encrypt, string encryptHead)
 		{
 			DirRoot = path;
@@ -61,8 +48,6 @@ namespace Framework.BaseUtil
 			if (checkInside)
 			{
 				return Path.Combine(DirRoot, filename);
-				//if (!fileFullPath.Contains("://") && File.Exists(fileFullPath))
-				//    return fileFullPath;
 			}
 
 			return null;

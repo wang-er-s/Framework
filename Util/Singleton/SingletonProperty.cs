@@ -1,3 +1,5 @@
+using System;
+
 namespace Framework
 {
 	public static class SingletonProperty<T> where T : class
@@ -13,7 +15,7 @@ namespace Framework
 				{
 					if (_instance == null)
 					{
-						_instance = SingletonCreator.CreateSingleton<T>();
+						_instance = Activator.CreateInstance<T>();
 					}
 				}
 

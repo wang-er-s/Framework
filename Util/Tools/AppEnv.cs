@@ -26,7 +26,6 @@ namespace Framework
 
         public static string LuaRootPath => luaRootPath;
 
-        public static bool NetVerbose => null != setting && setting.netVerbose;
         public static bool ResVerbose => null != setting && setting.resVerbose;
 
 #if UNITY_EDITOR
@@ -73,8 +72,6 @@ namespace Framework
             resPath = UseStreamingAssetsInEditor
                 ? Application.streamingAssetsPath
                 : NormalizePath(EditorResPath, Application.streamingAssetsPath);
-            //lua root path
-            luaRootPath = NormalizePath(setting != null ? setting.luaRootPath : null);
             //run path
             runPath = NormalizePath("../_run");
             if (!Directory.Exists(runPath))
