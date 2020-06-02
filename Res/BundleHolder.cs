@@ -72,6 +72,7 @@ namespace Framework
 		#region Private Method
 		private void StartLoad()
 		{
+			this.Msg("开始加载");
 			if (AppEnv.ResVerbose)
 				this.Msg($"start loading {PathIdProfile.Ins.GetPath(info.path)}");
 			retryTimes = 0;
