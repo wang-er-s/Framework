@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using Framework.BaseUtil;
+using Framework.Util;
 
 namespace Framework
 {
@@ -344,7 +345,7 @@ namespace Framework
 		        string bundlePath = BundleConfig.GetBundlePath(info.path);
 		        if (bundlePath.Contains("://"))
 		        {
-			        bundle = AssetBundle.LoadFromMemory(FileUtility.GetFileBytes(bundlePath));
+			        bundle = AssetBundle.LoadFromMemory(FileUtils.GetFileBytes(bundlePath));
 		        }
 		        else
 			        bundle = AssetBundle.LoadFromFile(bundlePath);

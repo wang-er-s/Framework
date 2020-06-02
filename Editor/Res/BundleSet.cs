@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Framework.BaseUtil;
+using Framework.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,9 +23,6 @@ namespace Framework.Editor
         
         public string ignoreResPattern;
 
-        public string svcExportFolder;//svc导出目录
-        public string svcSplitFolder;//对svc按shader分割的目录
-        
         public bool usePathId = true;
         #region Var
 
@@ -37,9 +35,6 @@ namespace Framework.Editor
         
         private BundleConfig config;
         private BundleBuild bundleBuild;
-        private string svcExportPath => svcExportFolder + "/materials_export.shadervariants";
-        private static readonly string svcMergeFile = "merge.shadervariants";
-        private string svcMergePath => svcExportFolder + "/" + svcMergeFile;
         #endregion
 
         #region Res Scan
@@ -79,7 +74,7 @@ namespace Framework.Editor
         {
             if(dir.ignore)
                 return;
-            List<string> files = FileUtility.GetFiles(dir.path, dir.filePattern);
+            List<string> files = FileUtils.GetFiles(dir.path, dir.filePattern);
             string shaderBundleSingleName = null;
             
             foreach (var file in files)
@@ -129,7 +124,7 @@ namespace Framework.Editor
         {
             if(dir.ignore)
                 return;
-            List<string> files = FileUtility.GetFiles(dir.path, ".prefab");
+            List<string> files = FileUtils.GetFiles(dir.path, ".prefab");
             foreach (var file in files)
             {
                 if(prefabList.ContainsKey(file))
@@ -163,7 +158,7 @@ namespace Framework.Editor
         {
             if(dir.ignore)
                 return;
-            List<string> files = FileUtility.GetFiles(dir.path, ".unity");
+            List<string> files = FileUtils.GetFiles(dir.path, ".unity");
             foreach (var file in files)
             {
                 if(sceneList.ContainsKey(file))
@@ -276,7 +271,6 @@ namespace Framework.Editor
                 }
                 else if(!IsResIgnore(dep,ignorePatterns))
                 {
-                    // wangliang on 2019/43/17 10:43:07: 目前不考虑依赖scene的情况 
                     bool isPrefab = dep.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase);
                     if (isPrefab)
                     {
@@ -505,7 +499,7 @@ namespace Framework.Editor
                 exportPath = outputDir;
             }
             exportPath = Path.GetFullPath(exportPath);
-            FileUtility.CreateDir(exportPath,false);
+            FileUtils.CreateDir(exportPath,false);
         }
 
         private void InitPathIdProfile(BuildTarget target,bool clear)

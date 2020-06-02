@@ -214,10 +214,6 @@ namespace Framework.Editor
             
             EditorGUILayout.Space();
             
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("svcExportFolder"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("svcSplitFolder"));
-            
-            EditorGUILayout.Space();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("usePathId"));
 
             if(EditorGUI.EndChangeCheck())

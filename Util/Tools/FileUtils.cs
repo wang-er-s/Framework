@@ -1,112 +1,108 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using UnityEngine;
 using System.Security.Cryptography;
+using System.Text;
 using UnityEngine.Networking;
 
-namespace Framework.BaseUtil
+namespace Framework.Util
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public static class FileUtility
-	{
-		//默认文件目录根
-		public static string DirRoot { get; private set; }
+    public static class FileUtils
+    {
+        //默认文件目录根
+        public static string DirRoot { get; private set; }
 
-		//热更新的目录，拥有资源加载的更高优先级
-		public static string DirRoot2Path { get; private set; }
+        //热更新的目录，拥有资源加载的更高优先级
+        public static string DirRoot2Path { get; private set; }
+        
+        public static void Init(string path, string pathSenior, string encrypt, string encryptHead)
+        {
+            DirRoot = path;
+            DirRoot2Path = pathSenior;
+        }
+        
+        public static bool IsFileFullPathSenior(string filename)
+        {
+            string fileFullPath = Path.Combine(DirRoot2Path, filename);
+            if (File.Exists(fileFullPath))
+                return true;
+            return false;
+        }
+        
+        public static string GetFileReadPath(string filename, bool senior)
+        {
+            if (senior)
+                return Path.Combine(DirRoot2Path, filename);
+            else
+                return Path.Combine(DirRoot, filename);
+        }
+        
+        public static string CreateDirectory(string relativePath, bool delExist = false)
+        {
+            string fullDirPath = Path.Combine(DirRoot2Path, relativePath);
+            if (Directory.Exists(fullDirPath))
+            {
+                if (delExist)
+                    Directory.Delete(fullDirPath, true);
+                else
+                    return fullDirPath;
+            }
 
-		public static void Init(string path, string pathSenior, string encrypt, string encryptHead)
-		{
-			DirRoot = path;
-			DirRoot2Path = pathSenior;
-		}
+            Directory.CreateDirectory(fullDirPath);
+            return fullDirPath;
+        }
 
-		public static string GetFileReadPath(string filename, bool senior)
-		{
-			if (senior)
-				return Path.Combine(DirRoot2Path, filename);
-			else
-				return Path.Combine(DirRoot, filename);
-		}
+        public static string GetFileWriteFullPath(string filename)
+        {
+            return Path.Combine(DirRoot2Path, filename);
+        }
+        
+        public static string GetFileReadFullPath(string filename, bool checkInside = true)
+        {
+            string fileFullPath = Path.Combine(DirRoot2Path, filename);
+            if (File.Exists(fileFullPath))
+                return fileFullPath;
+            if (checkInside)
+            {
+                return Path.Combine(DirRoot, filename);
+            }
 
-		public static bool IsFileFullPathSenior(string filename)
-		{
-			string fileFullPath = Path.Combine(DirRoot2Path, filename);
-			if (File.Exists(fileFullPath))
-				return true;
-			return false;
-		}
+            return null;
+        }
+        
+        /// <summary>
+        /// 文件打开，对于包内文件只用于非压缩格式的
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static Stream OpenFile(string filePath)
+        {
+            Stream stream = null;
+            if (filePath.Contains("://"))
+            {
+                using (UnityWebRequest www = UnityWebRequest.Get(filePath))
+                {
+                    www.SendWebRequest();
+                    while (!www.isDone) ;
+                    if (null != www.error)
+                    {
+                        Log.Msg($"open file err : {www.error}");
+                        throw new Exception(filePath);
+                    }
+                    else
+                        stream = new MemoryStream(www.downloadHandler.data);
+                }
+            }
+            else
+            {
+                if (File.Exists(filePath))
+                    stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            }
 
-		public static string GetFileReadFullPath(string filename, bool checkInside = true)
-		{
-			string fileFullPath = Path.Combine(DirRoot2Path, filename);
-			if (File.Exists(fileFullPath))
-				return fileFullPath;
-			if (checkInside)
-			{
-				return Path.Combine(DirRoot, filename);
-			}
-
-			return null;
-		}
-
-		public static string CreateDirectory(string relativePath, bool delExist = false)
-		{
-			string fullDirPath = Path.Combine(DirRoot2Path, relativePath);
-			if (Directory.Exists(fullDirPath))
-			{
-				if (delExist)
-					Directory.Delete(fullDirPath, true);
-				else
-					return fullDirPath;
-			}
-
-			Directory.CreateDirectory(fullDirPath);
-			return fullDirPath;
-		}
-
-		public static string GetFileWriteFullPath(string filename)
-		{
-			return Path.Combine(DirRoot2Path, filename);
-		}
-
-		/// <summary>
-		/// 文件打开，对于包内文件只用于非压缩格式的
-		/// </summary>
-		/// <param name="filePath"></param>
-		/// <returns></returns>
-		public static Stream OpenFile(string filePath)
-		{
-			Stream stream = null;
-			if (filePath.Contains("://"))
-			{
-				using (UnityWebRequest www = UnityWebRequest.Get(filePath))
-				{
-					www.SendWebRequest();
-					while (!www.isDone) ;
-					if (null != www.error)
-					{
-						Log.Msg($"open file err : {www.error}");
-						throw new Exception(filePath);
-					}
-					else
-						stream = new MemoryStream(www.downloadHandler.data);
-				}
-			}
-			else
-			{
-				if (File.Exists(filePath))
-					stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-			}
-
-			return stream;
-		}
-
-#if UNITY_ANDROID
+            return stream;
+        }
+        
+        #if UNITY_ANDROID
         private static Lazy<AndroidJavaClass> _AndroidAssetUtilsClass =
 	        new Lazy<AndroidJavaClass>(() => new AndroidJavaClass("com.parallel.android.utils.AssetUtils")
 	        );
@@ -330,7 +326,7 @@ namespace Framework.BaseUtil
 
 		public static string GetStrFromFile(string fileName, bool checkInside = true)
 		{
-			var path = FileUtility.GetFileReadFullPath(fileName, checkInside);
+			var path = FileUtils.GetFileReadFullPath(fileName, checkInside);
 			return GetStrFromPath(path);
 		}
 
@@ -340,7 +336,7 @@ namespace Framework.BaseUtil
 				return null;
 			try
 			{
-				using (var stream = FileUtility.OpenFile(path))
+				using (var stream = FileUtils.OpenFile(path))
 				{
 					if (null != stream)
 					{
@@ -421,5 +417,6 @@ namespace Framework.BaseUtil
 					Directory.CreateDirectory(dirPath);
 			}
 		}
-	}
+
+    }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using System.Text;
 using Framework.BaseUtil;
+using Framework.Util;
 using UnityEngine.U2D;
 #if UNITY_EDITOR
 using UnityEditor;	
@@ -179,12 +180,12 @@ namespace Framework
 	        PathIdProfile.Ins.Load();
 	        if(clear)
             	depMap.Clear();
-            string infoFile = FileUtility.GetFileReadFullPath(RootPath + allDepFile);
+            string infoFile = FileUtils.GetFileReadFullPath(RootPath + allDepFile);
             Import(infoFile);
 #if UNITY_EDITOR
 	        if (null != TrdPath)
 	        {
-		        infoFile = FileUtility.GetFileReadPath(TrdPath + allDepFile, false);
+		        infoFile = FileUtils.GetFileReadPath(TrdPath + allDepFile, false);
 		        if(File.Exists(infoFile))
 			        Import(infoFile);
 	        }
@@ -207,7 +208,7 @@ namespace Framework
 	    {
 	        try
 	        {
-	            using (var stream = FileUtility.OpenFile(infoFile))
+	            using (var stream = FileUtils.OpenFile(infoFile))
 	            {
 	                if (null != stream)
 	                {
@@ -260,12 +261,12 @@ namespace Framework
 #if UNITY_EDITOR
 	        if (null != TrdPath)
 	        {
-		        string bundlePath = FileUtility.GetFileReadPath(TrdPath + path, false);
+		        string bundlePath = FileUtils.GetFileReadPath(TrdPath + path, false);
 		        if (File.Exists(bundlePath))
 			        return bundlePath;
 	        }        
 #endif
-	        return FileUtility.GetFileReadFullPath(string.Format("{0}{1}",RootPath,path));
+	        return FileUtils.GetFileReadFullPath(string.Format("{0}{1}",RootPath,path));
         }
         public BundleInfo GetInfo(string bundlePath, bool isManifest)
         {

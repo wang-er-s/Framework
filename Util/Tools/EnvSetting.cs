@@ -10,7 +10,7 @@ namespace Framework
     [CreateAssetMenu(menuName = "Game/Framework/EnvSetting",fileName = EnvSetting.ASSET_NAME)]
     public class EnvSetting : ScriptableObject
     {
-        public const string ASSET_NAME = "Assets/EnvSetting";
+        public const string ASSET_NAME = "Assets/Setting/EnvSetting";
         public bool isDev;//开发模式
         public bool useBundleInEditor;
         public string editorResPath;

@@ -3,7 +3,7 @@ using System.Collections;
 using Framework.BaseUtil;
 using System.IO;
 using System;
-using SoUtil.Util.Tools;
+using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
 
 namespace Framework
@@ -91,31 +91,8 @@ namespace Framework
 			{
 				StartCoroutine(sceneAsset.DelayRelease());
 			}
-			CheckShader();
 		}
-
-		private void CheckShader()
-		{
-#if UNITY_EDITOR
-			GameObject[] roots = Utils.GetCurSceneRootObjs(); 
-			if(null!=roots)
-			{
-				for(int i=0;i<roots.Length;++i)
-				{
-					ApplyShader.CheckShader(roots[i]);
-					//StaticBatchingUtility.Combine(roots[i]);
-				}
-			}
-			
-			ApplyShader.CheckShader(RenderSettings.skybox);
-			Terrain terrain = Terrain.activeTerrain;
-			if (null != terrain)
-			{
-				Material material = terrain.materialTemplate;
-				ApplyShader.CheckShader(material);
-			}
-#endif
-		}
+		
 		#endregion
 	}
 }

@@ -13,11 +13,6 @@ namespace Framework.Editor
             Selection.activeObject = Utils.LoadScriptableAsset<BundleSet>(BundleSet.ASSET_NAME);
         }
         
-        [MenuItem("Game/Bundle/ShaderCompileExclude",false,2)]
-        private static void SelectBundleShaderCompileExclude()
-        {
-            Selection.activeObject = Utils.LoadScriptableAsset<BundleShaderCompileSet>(BundleShaderCompileSet.ASSET_NAME);
-        }
 
         public static void JenkinsBuildAssetBundle()
         {

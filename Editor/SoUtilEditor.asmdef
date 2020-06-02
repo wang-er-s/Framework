@@ -1,8 +1,8 @@
 {
     "name": "SoUtilEditor",
     "references": [
-        "GUID:50200d1ad86291d41b55af6efef55be6",
-        "GUID:652953e24ea67844ba96c36404310072"
+        "GUID:652953e24ea67844ba96c36404310072",
+        "GUID:50200d1ad86291d41b55af6efef55be6"
     ],
     "includePlatforms": [
         "Editor"

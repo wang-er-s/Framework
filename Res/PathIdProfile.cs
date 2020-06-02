@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Framework.BaseUtil;
+using Framework.Util;
 using UnityEngine;
 
 namespace Framework
@@ -40,12 +41,12 @@ namespace Framework
         public void Load()
         {
             Clear();
-            string filePath = FileUtility.GetFileReadFullPath(BundleConfig.RootPath+ fileName);
+            string filePath = FileUtils.GetFileReadFullPath(BundleConfig.RootPath+ fileName);
             Import(filePath);
 #if UNITY_EDITOR
             if (null != BundleConfig.TrdPath)
             {
-                filePath = FileUtility.GetFileReadPath(BundleConfig.TrdPath + fileName, false);
+                filePath = FileUtils.GetFileReadPath(BundleConfig.TrdPath + fileName, false);
                 Import(filePath);
             }
 #endif
@@ -133,7 +134,7 @@ namespace Framework
         {
             try
             {
-                using (var stream = FileUtility.OpenFile(file))
+                using (var stream = FileUtils.OpenFile(file))
                 {
                     if (null != stream)
                     {

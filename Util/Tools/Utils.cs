@@ -7,6 +7,9 @@ namespace SoUtil.Util.Tools
 {
     public static class Utils
     {
+        
+#if UNITY_EDITOR
+        
         public static GameObject[] GetCurSceneRootObjs()
         {
             Scene curScene = SceneManager.GetActiveScene();
@@ -53,5 +56,6 @@ namespace SoUtil.Util.Tools
             EditorUtility.ClearProgressBar();
             Debug.Log("reimport done");
         }
+#endif
     }
 }

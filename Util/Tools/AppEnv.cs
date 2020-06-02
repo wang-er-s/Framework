@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Framework.BaseUtil;
+using Framework.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
@@ -89,7 +90,7 @@ namespace Framework
             runPath = Application.persistentDataPath;
 #endif
             Log.Msg($"use resPath = {resPath},runPath = {runPath}");
-            FileUtility.Init(resPath,runPath,null,"archeage");
+            FileUtils.Init(resPath,runPath,null,"archeage");
         }
 
         private static void FetchBuildScenes()

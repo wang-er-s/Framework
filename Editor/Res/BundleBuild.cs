@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using Framework.BaseUtil;
+using Framework.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,7 +31,7 @@ namespace Framework.Editor
         private void InitPath(string outputDir, BuildTarget target, bool bClear)
         {
             outputPath = outputDir + "/" + BundleConfig.GetPlatformRootFolder(target);
-            FileUtility.CreateDir(outputPath,bClear);
+            FileUtils.CreateDir(outputPath,bClear);
         }
 
         public void SetBundle(string res, string bundleName)
