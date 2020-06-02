@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -357,6 +358,67 @@ namespace Framework.BaseUtil
 			{
 				Log.Warning($"GetStrFromPath {path} err:{ex.Message}");
 				return null;
+			}
+		}
+		
+		public static List<string> GetFiles(string dirPath, string patterns,bool ignoreSpec = true, bool ignoreMeta = true)
+		{
+			string fullDirPath = Path.GetFullPath(dirPath);
+			string[] pats = null;
+			if (!string.IsNullOrEmpty(patterns))
+				pats = patterns.Split(new char[] {'|'});
+			List<FileInfo> files = GetFiles(dirPath, pats, ignoreSpec, ignoreMeta);
+			List<string> ret = new List<string>();
+			int startIndex = fullDirPath.Length;
+			foreach (var file in files)
+			{
+				string assetFile = dirPath + file.FullName.Substring(startIndex);
+				assetFile = assetFile.Replace('\\', '/');
+				ret.Add(assetFile);
+			}
+			return ret;
+		}
+		
+		public static List<FileInfo> GetFiles(string dirPath,string[] patterns = null,bool ignoreSpec = true, bool ignoreMeta = true)
+		{
+			DirectoryInfo directory = new DirectoryInfo(dirPath);
+			List<FileInfo> ret = new List<FileInfo>();
+			foreach(FileInfo f in directory.EnumerateFiles("*.*",SearchOption.AllDirectories))
+			{
+				if (ignoreSpec)
+				{
+					if (f.FullName.Contains("/_") || f.FullName.Contains("\\_"))
+						continue;
+				}
+
+				if(ignoreMeta && f.Name.EndsWith(".meta",StringComparison.OrdinalIgnoreCase))
+					continue;
+				if(null == patterns)
+					ret.Add(f);
+				else
+				{
+					foreach(string pattern in patterns)
+					{
+						if(f.Name.EndsWith(pattern,StringComparison.OrdinalIgnoreCase))
+							ret.Add(f);
+					}
+				}
+			}
+			return ret;
+		}
+		
+		public static void CreateDir(string dirPath, bool reIfExist)
+		{
+			if (reIfExist)
+			{
+				if (Directory.Exists(dirPath))
+					Directory.Delete(dirPath, true);
+				Directory.CreateDirectory(dirPath);
+			}
+			else
+			{
+				if (!Directory.Exists(dirPath))
+					Directory.CreateDirectory(dirPath);
 			}
 		}
 	}
