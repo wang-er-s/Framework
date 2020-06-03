@@ -177,9 +177,11 @@ namespace Framework
 		#region Bundle信息
         public void Init(bool clear)//依赖信息文件
         {
+	        //TODO PathIdProfile不知道干嘛的 
 	        PathIdProfile.Ins.Load();
 	        if(clear)
             	depMap.Clear();
+	        //解析bundle信息（地址，名字，类型，依赖的地址）
             string infoFile = FileUtils.GetFileReadFullPath(RootPath + allDepFile);
             Import(infoFile);
 #if UNITY_EDITOR
@@ -190,41 +192,27 @@ namespace Framework
 			        Import(infoFile);
 	        }
 #endif
-        }/*
-        public void Init(List<string> deps) //外部导入
-        {
-            depMap.Clear();
-	        if(null == deps)
-		        return;
-            for (int i = 0; i < deps.Count; ++i)
-            {
-                BundleInfo bi = BundleInfo.ParseString(deps[i]);
-                if (null != bi)
-                    depMap[bi.path] = bi;
-            }
         }
-        */
+        
 	    public void Import(string infoFile)
 	    {
 	        try
 	        {
 	            using (var stream = FileUtils.OpenFile(infoFile))
 	            {
-	                if (null != stream)
-	                {
-	                    using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
-	                    {
-	                        while (sr.Peek() > -1)
-	                        {
-	                            string line = sr.ReadLine();
-	                            if (line.Length == 0)
-	                                continue;
-	                            BundleInfo bi = BundleInfo.ParseString(line);
-	                            if (null != bi)
-	                                depMap[bi.path] = bi;
-	                        }
-	                    }
-	                }
+		            if (null == stream) return;
+		            using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
+		            {
+			            while (sr.Peek() > -1)
+			            {
+				            string line = sr.ReadLine();
+				            if (line.Length == 0)
+					            continue;
+				            BundleInfo bi = BundleInfo.ParseString(line);
+				            if (null != bi)
+					            depMap[bi.path] = bi;
+			            }
+		            }
 	            }
 	        }
 	        catch (Exception ex)

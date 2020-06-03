@@ -33,17 +33,8 @@ namespace Framework
         public static string GetRedirectName(string name)
         {
             if (null == name) return null;
-            //var encrypt = GameEnv.Instance.NameEncrypt;
-            //if(string.IsNullOrEmpty(encrypt))
             string pathId = PathIdProfile.Ins.GetPathId(name);
             return pathId ?? name;
-            //return string.Format(encrypt, name[0], name);
-            /*
-            byte[] body = Encoding.UTF8.GetBytes(name);
-            EncryptBytes(body);
-            string ret = Convert.ToBase64String(body);
-            return ret.Replace('/', '-').ToLower();
-            */
         }
     }
 }

@@ -72,7 +72,6 @@ namespace Framework
 		#region Private Method
 		private void StartLoad()
 		{
-			this.Msg("开始加载");
 			if (AppEnv.ResVerbose)
 				this.Msg($"start loading {PathIdProfile.Ins.GetPath(info.path)}");
 			retryTimes = 0;
@@ -337,19 +336,14 @@ namespace Framework
 	        ++count;
 	        if(null!=info.depends)
 	        {
-		        for(int i=0;i<info.depends.Length;++i)
-			        mgr.GetAssetSync(info.depends[i]);
+		        foreach (var depend in info.depends)
+			        mgr.GetAssetSync(depend);
 	        }
 
 	        if (!this.IsLoaded())
 	        {
 		        string bundlePath = BundleConfig.GetBundlePath(info.path);
-		        if (bundlePath.Contains("://"))
-		        {
-			        bundle = AssetBundle.LoadFromMemory(FileUtils.GetFileBytes(bundlePath));
-		        }
-		        else
-			        bundle = AssetBundle.LoadFromFile(bundlePath);
+		        bundle = AssetBundle.LoadFromFile(bundlePath);
 		        LoadAssetSync();
 	        }
 	        if(AppEnv.ResVerbose)

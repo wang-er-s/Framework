@@ -27,21 +27,18 @@ namespace Framework
                 return items[cbId];
             return null;
         }
-        private ulong id;
-        private string path;
         private OnAssetGot cb;
-        public ulong Id { get { return id; } }
-        public string Path { get { return path; } }
+        public ulong Id { get; }
+        public string Path { get; }
         private AssetCallback(OnAssetGot cb,string path)
         {
-            id = ++idLast;
+            Id = ++idLast;
             this.cb = cb;
-            this.path = path;
+            Path = path;
         }
         public void Do(System.Object obj)
         {
-            if (null != cb)
-                cb(obj, id);
+            cb?.Invoke(obj, Id);
         }
     }
 

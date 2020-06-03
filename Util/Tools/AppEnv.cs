@@ -90,7 +90,7 @@ namespace Framework
             runPath = Application.persistentDataPath;
 #endif
             Log.Msg($"use resPath = {resPath},runPath = {runPath}");
-            FileUtils.Init(resPath,runPath,null,"archeage");
+            FileUtils.Init(resPath,runPath);
         }
 
         private static void FetchBuildScenes()

@@ -65,18 +65,11 @@ namespace Framework
 		{
 			if(bundles.ContainsKey(bundlePath))
 				return bundles[bundlePath];
-			else
-			{
-				BundleInfo bi = _config.GetInfo(bundlePath,isManifest);
-				if(null!=bi)
-				{
-                    BundleHolder holder = BundleHolder.Gen(bi, this);
-					bundles.Add(bundlePath,holder);
-					return holder;
-				}
-				else
-					return null;
-			}
+			BundleInfo bi = _config.GetInfo(bundlePath,isManifest);
+			if (null == bi) return null;
+			BundleHolder holder = BundleHolder.Gen(bi, this);
+			bundles.Add(bundlePath,holder);
+			return holder;
 		}
         //通过asset路径获取asset，cb是在获取后的回调，返回值是一个索引，用于取消获取
 		public ulong GetAsset(string assetPath,OnAssetGot cb,bool isManifest = false)
@@ -86,10 +79,7 @@ namespace Framework
             {
                 return holder.RefBy(cb);
             }
-            else
-            {
-	            cb(null, 0);
-            }
+            cb(null, 0);
             return 0;
         }
 		//同步获取asset，记得这样获得的asset需要调用release接口

@@ -15,7 +15,7 @@ namespace Framework.Util
         //热更新的目录，拥有资源加载的更高优先级
         public static string DirRoot2Path { get; private set; }
         
-        public static void Init(string path, string pathSenior, string encrypt, string encryptHead)
+        public static void Init(string path, string pathSenior)
         {
             DirRoot = path;
             DirRoot2Path = pathSenior;
