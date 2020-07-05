@@ -4,6 +4,7 @@ using System.Reflection;
 using Framework.BaseUtil;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Framework
 {
@@ -19,7 +20,7 @@ namespace Framework
         public bool useOriginalData;
         public bool useStreamingAssetsInEditor;
         [LabelTextAttribute("Log模式")]
-        public bool resVerbose;
+        public bool resLog;
 
         public EnvSetting LoadFromJson(string json)
         {

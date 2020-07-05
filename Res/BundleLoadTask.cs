@@ -12,12 +12,12 @@ namespace Framework
 	public class BundleLoadTask
 	{
 		#region Variables
-		private BundleHolder holder = null;
+		private BundleHolder holder;
         private bool assetSync = true;
-		private UnityWebRequest wwwRequest = null;//自www的文件请求
-		private AssetBundleCreateRequest diskRequest = null;//自文件请求
-		private AssetBundleRequest assetRequest = null;//资源load请求
-		private bool isFinished = false;
+		private UnityWebRequest wwwRequest;//自www的文件请求
+		private AssetBundleCreateRequest diskRequest;//自文件请求
+		private AssetBundleRequest assetRequest;//资源load请求
+		private bool isFinished;
 		private IEnumerator loadCouroutine;
 		#endregion
 		#region Properties
@@ -77,7 +77,7 @@ namespace Framework
 				OnBundleLoaded(null);
 				yield break;
 			}
-			if(AppEnv.ResVerbose)
+			if(AppEnv.ResLog)
 				this.Msg($"start load file {PathIdProfile.Ins.GetPath(holder.Info.path)}");
 			if (bundlePath.Contains("://"))
 			{

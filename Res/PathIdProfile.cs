@@ -50,7 +50,7 @@ namespace Framework
                 Import(filePath);
             }
 #endif
-            if (validated&&AppEnv.ResVerbose)
+            if (validated&&AppEnv.ResLog)
             {
                 foreach (var kvp in ids)
                 {

@@ -9,14 +9,6 @@ using UnityEngine;
 
 namespace Framework.Editor
 {
-    public class BundleHelp
-    {
-        //统一处理Shader的
-        public static string GetShaderBundleName(string shaderName)
-        {
-            return shaderName.Replace('/', '_');
-        }
-    }
     public class BundleBuild
     {
         private List<AssetBundleBuild> bundleList = new List<AssetBundleBuild>();

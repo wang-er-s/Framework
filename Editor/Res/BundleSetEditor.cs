@@ -190,10 +190,6 @@ namespace Framework.Editor
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("outputDir"), new GUIContent("输出目录"));
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("seperateShader"), new GUIContent("shader分离"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("shaderUnique"), new GUIContent("shader包合一"));
-            EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
             dirFolderOut = EditorGUILayout.Foldout(dirFolderOut, string.Format("基础资源 ({0})", dirs.count));
             if (dirFolderOut) dirs.DoLayoutList();

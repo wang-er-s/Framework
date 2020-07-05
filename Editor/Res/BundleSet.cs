@@ -13,8 +13,6 @@ namespace Framework.Editor
     {
         public const string ASSET_NAME = "Assets/Setting/BundleSet";
         public string outputDir;
-        public bool seperateShader = true;//打包分离shader，通常为true，与材质分离，节约内存，但需要确认编译哪些shader关键字
-        public bool shaderUnique;
 
         public List<ResDir> resDirs = new List<ResDir>();
         public List<PrefabDir> prefabs = new List<PrefabDir>();
@@ -40,10 +38,6 @@ namespace Framework.Editor
         #region Res Scan
         private void ScanRes()
         {
-            ResDataHelp.seperateShader = seperateShader;
-            ResDataHelp.shaderUnique = shaderUnique;
-            ResDataHelp.shadersAsSingleNames.Clear();
-            
             GetResList();
             GetPrefabList();
             GetSceneList();
@@ -89,19 +83,6 @@ namespace Framework.Editor
                     refCount = 0,
                     depends = null,
                 };
-                if (dir.bundleType == BundleType.Single)
-                {
-                    if (resInfo.IsShaderAsset())
-                    {
-                        string bundleBasicName = resInfo.GetShaderBundleBasicName();
-                        if (null != bundleBasicName)
-                        {
-                            if (null == shaderBundleSingleName)
-                                shaderBundleSingleName = dir.path.Replace('/', '_');
-                            ResDataHelp.shadersAsSingleNames[bundleBasicName] = shaderBundleSingleName;
-                        }
-                    }
-                }
                 resList.Add(file,resInfo);
             }
         }
@@ -253,8 +234,6 @@ namespace Framework.Editor
             if(totals.ContainsKey(oneInfo.res))
                 return;
             totals.Add(oneInfo.res,oneInfo);
-            if(oneInfo.NoNeedCheckDepend())
-                return;
             string[] deps = AssetDatabase.GetDependencies(oneInfo.res,false);
             if(null == deps)
                 return;
@@ -336,8 +315,6 @@ namespace Framework.Editor
                         if (!refRes.bundleExclude && refRes.Type == InfoType.RES)//对于依赖它的值只处理基础资源
                         {
                             ResInfo aRes = refRes as ResInfo;
-                            if(aRes.IsShaderVariants())
-                                continue;
                             ProcessOneExclude(aRes);
                         }
                     }
@@ -423,13 +400,9 @@ namespace Framework.Editor
             sw.WriteLine("===非Shader==============>");
             foreach (var dpair in totalList)
             {
-                OneInfo oneInfo = dpair.Value;
-                if(oneInfo.Type == InfoType.RES&&((ResInfo)oneInfo).IsShaderPart())
-                    shaderInfos.Add(oneInfo);
-                else
-                    sw.WriteLine(dpair.Value.ToString());
+                sw.WriteLine(dpair.Value.ToString());
             }
-            
+
             sw.WriteLine("===所有Shader==============>");
             sw.WriteLine("shader count:{0}",shaderInfos.Count);
             foreach (var oneInfo in shaderInfos)
@@ -534,7 +507,6 @@ namespace Framework.Editor
 
         private void ClearForBundleGen()
         {
-            ResDataHelp.shadersAsSingleNames.Clear();
             PathIdProfile.Ins.FinishUpdating();
             resList = null;
             prefabList = null;

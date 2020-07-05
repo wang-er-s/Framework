@@ -7,13 +7,6 @@ using UnityEngine;
 
 namespace Framework.Editor
 {
-    /*
-     * marked by wangliang 2020/4/8 17:11:25
-     * shader的打包方案：
-     * 1.将所有的shader打包成一个，设置BundleSet的Shader bundle名
-     * 2.各自独立打包，置空BundleSet的Shader bundle名，忽略shadervariantcollect，（这里是个简化的做法，针对mmo的复杂情况）
-     * 预加载shader的地方CommonResManager里设置需要预加载的shader路径名。
-     */
     public enum BundleType
     {
         Single,//资源打包成一个，使用目录名
@@ -42,15 +35,7 @@ namespace Framework.Editor
         private static readonly string sprite_atlas = ".spriteatlas";
         private static readonly string customAsset = ".asset";
         private static readonly string[] obj = {".fbx"};
-        public static bool seperateShader = true;
-        public static bool shaderUnique = false;
-        public static readonly string shaderBundleName = "shader";
-        public static readonly string shaderBundleDir = "shaders"; 
         
-        //当对shader目录制定为Single打包方式时，要求将所有改目录内的shader打成一个bundle，这个与全部打成一个不同
-        //但shader由于需要和svc打在一起，故shader正常的离散打法是按shaderName，而不是目录，所以这里需要统计一下
-        //shaderName -> bundleName
-        public static readonly Dictionary<string,string> shadersAsSingleNames = new Dictionary<string, string>();
         public static AssetType GetAssetType(string ext)
         {
             if (Array.IndexOf(texture, ext) >= 0)
@@ -71,21 +56,6 @@ namespace Framework.Editor
                 return AssetType.SPRITE_ATLAS;
 
             return AssetType.OBJECT;
-        }
-
-        public static bool IsAssetShaderPart(string ext)
-        {
-            return Array.IndexOf(shader_parts, ext) >= 0;
-        }
-
-        public static bool IsAssetShader(string ext)
-        {
-            return Array.IndexOf(shader, ext) >= 0;
-        }
-
-        public static bool IsAssetShaderVariants(string ext)
-        {
-            return ext == shader_parts[3];
         }
 
         public static bool IsCustomAsset(string ext)
@@ -182,6 +152,7 @@ namespace Framework.Editor
         {
             return GetFileName();
         }
+        
         public void AddDepend(OneInfo info)
         {
             if(null == depends)
@@ -201,12 +172,7 @@ namespace Framework.Editor
         {
             return true;
         }
-
-        public virtual bool NoNeedCheckDepend()
-        {
-            return false;
-        }
-
+        
         protected virtual string GetBundleName()
         {
             return res;
@@ -315,13 +281,6 @@ namespace Framework.Editor
         {
             if (null == dir)
             {
-                if (IsShaderPart())
-                {
-                    if(ResDataHelp.seperateShader)
-                        return refCount > 0;
-                    return false;
-                }
-
                 return refCount > 1;
             }
             else
@@ -351,16 +310,6 @@ namespace Framework.Editor
                 return true;
             return false;
         }
-        //不包含
-        public override bool NoNeedCheckDepend()
-        {
-            return IsShaderVariants();
-        }
-
-        public bool IsShaderVariants()
-        {
-            return ResDataHelp.IsAssetShaderVariants(GetExt());
-        }
 
         public bool IsSpriteAtlas()
         {
@@ -377,66 +326,6 @@ namespace Framework.Editor
             return ResDataHelp.IsCustomAsset(GetExt());
         }
 
-        #region Shader Process
-        public bool IsShaderPart()
-        {
-            return ResDataHelp.IsAssetShaderPart(GetExt());
-        }
-
-        public bool IsShaderAsset()
-        {
-            return ResDataHelp.IsAssetShader(GetExt());
-        }
-
-        private string GetShaderBundleSpecName()
-        {
-            if (ResDataHelp.shaderUnique)
-                return ResDataHelp.shaderBundleName;
-            else
-            {
-                string bundleBasicName = GetShaderBundleBasicName();
-                if (null == bundleBasicName)
-                    return null;
-                if (ResDataHelp.shadersAsSingleNames.ContainsKey(bundleBasicName))
-                    return $"{ResDataHelp.shaderBundleDir}/{ResDataHelp.shadersAsSingleNames[bundleBasicName]}";
-                else
-                {
-                    return $"{ResDataHelp.shaderBundleDir}/{bundleBasicName}";
-                }
-            }
-        }
-
-        public string GetShaderBundleBasicName()
-        {
-            if (IsShaderAsset())
-            {
-                Shader shader = GetAsset<Shader>();
-                if (null == shader)
-                    return null;
-                return BundleHelp.GetShaderBundleName(shader.name);
-            }
-            
-            if (IsShaderVariants())
-                return GetFileName();
-            
-            return null;
-        }
-
-        private AssetType GetShaderAssetType()
-        {
-            if (IsShaderPart() || IsShaderVariants())
-                return AssetType.SHADER_COMPOSE;
-            return AssetType.OBJECT;
-        }
-
-        private string GetShaderAssetName()
-        {
-            if (GetAssetType() != AssetType.SHADER_COMPOSE)
-                return base.GetAssetName();
-            return ResDataHelp.shaderBundleName;
-        }
-        #endregion
-
         public bool IsMaterial()
         {
             AssetType assetType = GetAssetType();
@@ -445,12 +334,6 @@ namespace Framework.Editor
 
         protected override string GetBundleName()
         {
-            if (IsShaderPart())
-            {
-                string shaderBundleName = GetShaderBundleSpecName();
-                if (!string.IsNullOrEmpty(shaderBundleName))
-                    return shaderBundleName;
-            }
             if (null == dir)
                 return base.GetBundleName();
             switch (dir.bundleType)
@@ -468,9 +351,7 @@ namespace Framework.Editor
         {
             if (resType == AssetType.UNKNOW)
             {
-                if (IsShaderPart())
-                    resType = GetShaderAssetType();
-                else if (IsCustomAsset())
+                if (IsCustomAsset())
                 {
                     // TODO wangliang on 2019/07/14 17:07:11: 不能简单通过AssetDatabase.LoadAllAssetsAtPath获得数量来判断,
                     // 因为有可能打包的时候加入更多
@@ -490,9 +371,6 @@ namespace Framework.Editor
 
         protected override string GetAssetName()
         {
-            
-            if (IsShaderPart())
-                return GetShaderAssetName();
             if (null != dir && dir.bundleType == BundleType.Single)
                 return BundleName;
             return base.GetAssetName();

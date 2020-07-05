@@ -32,7 +32,7 @@ namespace Framework
 		}
 		#endregion
 		#region Variables
-		private ProgressLoadTask progressTask = null;//唯一的进度任务
+		private ProgressLoadTask progressTask;//唯一的进度任务
 		private float clearDeltaTime = 0;
 		private const float CLEAR_PERIOD = 5f;//无用资源的存在时间超过这个时间的才删除，
 		private const int BUNDLE_TASK_MAX = 10;

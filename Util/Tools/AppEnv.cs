@@ -27,7 +27,7 @@ namespace Framework
 
         public static string LuaRootPath => luaRootPath;
 
-        public static bool ResVerbose => null != setting && setting.resVerbose;
+        public static bool ResLog => null != setting && setting.resLog;
 
 #if UNITY_EDITOR
         public static bool UseTrdBundlePath => EditorPrefs.GetBool("UseTrdBundlePath", false);
