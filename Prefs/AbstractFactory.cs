@@ -1,8 +1,6 @@
 ﻿namespace Framework.Prefs
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     public abstract class AbstractFactory : IFactory
     {
         private IEncryptor _encryptor;

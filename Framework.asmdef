@@ -1,0 +1,17 @@
+{
+    "name": "Framework",
+    "references": [
+        "GUID:652953e24ea67844ba96c36404310072"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "Debugger.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

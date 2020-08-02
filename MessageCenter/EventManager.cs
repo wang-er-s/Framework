@@ -1,13 +1,7 @@
-/*
-* Create by Soso
-* Time : 2019-01-01-03 下午
-*/
-using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace Framework
+namespace Framework.MessageCenter
 {
 
     public static class EventManager

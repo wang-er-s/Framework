@@ -1,11 +1,11 @@
 ﻿using System;
 using Framework.UI.Core;
+using Framework.UI.Core.Bind;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI.Example
 {
-
     public class ItemView : View
     {
         public Image itemImg;
@@ -20,7 +20,7 @@ namespace Framework.UI.Example
         protected override void OnVmChange()
         {
             vm = ViewModel as ItemViewModel;
-            UIBindFactory<ItemView, ItemViewModel> binding = new UIBindFactory<ItemView, ItemViewModel>(this, this.vm);
+            var binding = new UIBindFactory<ItemView, ItemViewModel>(this, vm);
             binding.Bind(itemImg, vm.Path);
             binding.Bind(nameTxt, vm.Path);
             binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
@@ -28,14 +28,13 @@ namespace Framework.UI.Example
             binding.BindData(vm.Selected, CC);
             binding.BindCommand(selfBtn, vm.OnItemClick);
         }
-        
+
         public void CC(bool val)
         {
             selected.SetActive(val);
         }
     }
-    
-   
+
 
     public class ItemViewModel : ViewModel
     {
@@ -43,28 +42,28 @@ namespace Framework.UI.Example
         private string _path
         {
             get => Path;
-            set => ((IBindableProperty<string>) Path).Value = value;
+            set => Path.Value = value;
         }
         //如果是最后一个item，则要隐藏breakline
         public BindableProperty<bool> Last { get; }
         private bool _last
         {
             get => Last;
-            set => ((IBindableProperty<bool>) Last).Value = value;
+            set => Last.Value = value;
         }
         public BindableProperty<int> Index { get; }
         private int _index
         {
             get => Index;
-            set => ((IBindableProperty<int>) Index).Value = value;
+            set => Index.Value = value;
         }
         public BindableProperty<bool> Selected { get; }
         private bool _selected
         {
             get => Selected;
-            set => ((IBindableProperty<bool>) Selected).Value = value;
+            set => Selected.Value = value;
         }
-        private Action<ItemViewModel> _itemClickCb; 
+        private Action<ItemViewModel> _itemClickCb;
 
         public ItemViewModel()
         {
@@ -101,8 +100,7 @@ namespace Framework.UI.Example
         {
             _last = last;
         }
-        
+
         public override string ViewPath { get; } = "";
     }
 }
-

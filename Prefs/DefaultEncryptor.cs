@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Security.Cryptography;
+
 namespace Framework.Prefs
 {
 
@@ -11,8 +12,8 @@ namespace Framework.Prefs
         private static readonly byte[] DEFAULT_KEY;
         private RijndaelManaged _cipher;
 
-        private byte[] _iv = null;
-        private byte[] _key = null;
+        private readonly byte[] _iv;
+        private readonly byte[] _key;
 
         static DefaultEncryptor()
         {
@@ -35,43 +36,44 @@ namespace Framework.Prefs
         public DefaultEncryptor(byte[] key, byte[] iv)
         {
             if (iv == null)
-                this._iv = DEFAULT_IV;
+                _iv = DEFAULT_IV;
 
             if (key == null)
-                this._key = DEFAULT_KEY;
+                _key = DEFAULT_KEY;
 
-            CheckIV(this._iv);
-            CheckKey(this._key);
+            CheckIV(_iv);
+            CheckKey(_key);
 
 #if NETFX_CORE
-            SymmetricKeyAlgorithmProvider provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
+            SymmetricKeyAlgorithmProvider provider =
+ SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             cryptographicKey = provider.CreateSymmetricKey(this.key.AsBuffer());
 #else
             _cipher = new RijndaelManaged()
             {
-                Mode = CipherMode.CBC,//use CBC
-                Padding = PaddingMode.PKCS7,//default PKCS7
-                KeySize = 128,//default 256
-                BlockSize = 128,//default 128
-                FeedbackSize = 128      //default 128
+                Mode = CipherMode.CBC, //use CBC
+                Padding = PaddingMode.PKCS7, //default PKCS7
+                KeySize = 128, //default 256
+                BlockSize = 128, //default 128
+                FeedbackSize = 128 //default 128
             };
 #endif
         }
-        
-        protected bool CheckKey(byte[] bytes)
+
+        protected static bool CheckKey(byte[] bytes)
         {
             if (bytes == null || (bytes.Length != 16 && bytes.Length != 24 && bytes.Length != 32))
                 throw new ArgumentException("The 'Key' must be 16byte 24byte or 32byte!");
             return true;
         }
-        
-        protected bool CheckIV(byte[] bytes)
+
+        protected static bool CheckIV(byte[] bytes)
         {
             if (bytes == null || bytes.Length != IV_SIZE)
                 throw new ArgumentException("The 'IV' must be 16byte!");
             return true;
         }
-        
+
         public byte[] Encode(byte[] plainData)
         {
 #if NETFX_CORE
@@ -82,7 +84,7 @@ namespace Framework.Prefs
             return encryptor.TransformFinalBlock(plainData, 0, plainData.Length);
 #endif
         }
-        
+
         public byte[] Decode(byte[] cipherData)
         {
 #if NETFX_CORE

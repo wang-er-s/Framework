@@ -8,7 +8,7 @@ namespace Framework.Context
 {
     public class Context
     {
-        private bool _innerContainer = false;
+        private bool _innerContainer;
         private Context _contextBase;
         private IServiceContainer _container;
         private Dictionary<string, object> _attributes;

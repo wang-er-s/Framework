@@ -7,7 +7,7 @@
     {
 
         byte[] Encode(byte[] plainData);
-        
+
         byte[] Decode(byte[] cipherData);
     }
 }

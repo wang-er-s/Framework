@@ -1,28 +1,29 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using Framework.Pool.Factory;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework
+namespace Framework.Pool
 {
     public class MonoObjectPool<T> : Pool<T> where T : MonoBehaviour
     {
 
         private readonly Action<T> _onHideMethod;
         private readonly Action<T> _onShowMethod;
-        private readonly Func<Object> _createMehtod;
+        private readonly Func<Object> _createMethod;
         private Object _obj;
 
-        public MonoObjectPool(Func<Object> createMethod,Action<T> onShowMethod = null, Action<T> onHideMethod = null, int initCount = 0)
+        public MonoObjectPool(Func<Object> createMethod, Action<T> onShowMethod = null, Action<T> onHideMethod = null,
+            int initCount = 0, int? maxCount = null)
         {
             _onHideMethod = onHideMethod;
-            _createMehtod = createMethod;
+            _createMethod = createMethod;
             _onShowMethod = onShowMethod;
-            _factory = new CustomFactory<T>(Create);
+            MaxCount = maxCount ?? MaxCount;
+            Factory = new CustomFactory<T>(Create);
             for (int i = 0; i < initCount; i++)
             {
-                _cacheStack.Push(_factory.Create());
+                CacheStack.Push(Factory.Create());
             }
         }
 
@@ -37,7 +38,7 @@ namespace Framework
         private T Create()
         {
             if (_obj == null)
-                _obj = _createMehtod();
+                _obj = _createMethod();
             return (Object.Instantiate(_obj) as GameObject)?.GetComponent<T>();
         }
 
@@ -45,7 +46,7 @@ namespace Framework
         {
             obj.Hide();
             _onHideMethod?.Invoke(obj);
-            _cacheStack.Push(obj);
+            CacheStack.Push(obj);
             return true;
         }
     }

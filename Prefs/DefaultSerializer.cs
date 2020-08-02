@@ -6,7 +6,7 @@ namespace Framework.Prefs
     public class DefaultSerializer : ISerializer
     {
         private readonly object _lock = new object();
-        private static readonly ComparerImpl<ITypeEncoder> _comparer = new ComparerImpl<ITypeEncoder>();
+        private static readonly ComparerImpl<ITypeEncoder> comparer = new ComparerImpl<ITypeEncoder>();
         private List<ITypeEncoder> _encoders = new List<ITypeEncoder>();
 
         public DefaultSerializer()
@@ -24,7 +24,7 @@ namespace Framework.Prefs
                     return;
 
                 _encoders.Add(encoder);
-                _encoders.Sort(_comparer);
+                _encoders.Sort(comparer);
             }
         }
 
@@ -53,11 +53,15 @@ namespace Framework.Prefs
 
                         return encoder.Decode(type, input);
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
             }
-            throw new NotSupportedException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", input, type.Name));
+
+            throw new NotSupportedException($"This value \"{input}\" cannot be converted to the type \"{type.Name}\"");
         }
 
         public virtual string Serialize(object value)
@@ -74,10 +78,14 @@ namespace Framework.Prefs
 
                         return encoder.Encode(value);
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
-            throw new NotSupportedException(string.Format("Unsupported type, this value \"{0}\" cannot be serialized", value));
+
+            throw new NotSupportedException($"Unsupported type, this value \"{value}\" cannot be serialized");
         }
 
         class ComparerImpl<T> : IComparer<T> where T : ITypeEncoder

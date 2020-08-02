@@ -8,9 +8,7 @@ namespace Framework.Prefs
 
         public bool IsSupport(Type type)
         {
-            if (type.Equals(typeof(Version)))
-                return true;
-            return false;
+            return type == typeof(Version);
         }
 
         public object Decode(Type type, string value)
@@ -23,9 +21,7 @@ namespace Framework.Prefs
 
         public string Encode(object value)
         {
-            return ((Version)value).ToString();
+            return ((Version) value).ToString();
         }
-
-
     }
 }

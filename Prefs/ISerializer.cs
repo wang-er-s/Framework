@@ -6,11 +6,11 @@ namespace Framework.Prefs
     {
 
         void AddTypeEncoder(ITypeEncoder encoder);
-        
+
         void RemoveTypeEncoder(ITypeEncoder encoder);
-        
+
         object Deserialize(string input, Type type);
-        
+
         string Serialize(object value);
     }
 }

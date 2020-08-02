@@ -12,16 +12,17 @@ namespace Framework.Prefs
         /// The name of global preferences.
         /// </summary>
         protected static readonly string GLOBAL_NAME = "_GLOBAL_";
+
         protected const char ARRAY_SEPARATOR = '|';
-        private static Dictionary<string, Preferences> _cache = new Dictionary<string, Preferences>();
-        private static IFactory _defaultFactory;
+        private static readonly Dictionary<string, Preferences> cache = new Dictionary<string, Preferences>();
+        private static readonly IFactory defaultFactory;
         public static IFactory Factory { private get; set; }
 
         private string _name;
 
         static Preferences()
         {
-            _defaultFactory = new PlayerPrefsPreferencesFactory();
+            defaultFactory = new PlayerPrefsPreferencesFactory();
         }
 
         /// <summary>
@@ -32,9 +33,9 @@ namespace Framework.Prefs
         {
             if (Factory != null)
                 return Factory;
-            return _defaultFactory;
+            return defaultFactory;
         }
-        
+
         /// <summary>
         /// Retrieve a global preferences.
         /// </summary>
@@ -52,11 +53,11 @@ namespace Framework.Prefs
         public static Preferences GetPreferences(string name)
         {
             Preferences prefs;
-            if (_cache.TryGetValue(name, out prefs))
+            if (cache.TryGetValue(name, out prefs))
                 return prefs;
 
             prefs = GetFactory().Create(name);
-            _cache[name] = prefs;
+            cache[name] = prefs;
             return prefs;
         }
 
@@ -65,7 +66,7 @@ namespace Framework.Prefs
         /// </summary>
         public static void SaveAll()
         {
-            foreach (Preferences prefs in _cache.Values)
+            foreach (Preferences prefs in cache.Values)
             {
                 prefs.Save();
             }
@@ -76,11 +77,12 @@ namespace Framework.Prefs
         /// </summary>
         public static void DeleteAll()
         {
-            foreach (Preferences prefs in _cache.Values)
+            foreach (Preferences prefs in cache.Values)
             {
                 prefs.Delete();
             }
-            _cache.Clear();
+
+            cache.Clear();
         }
 
         /// <summary>
@@ -89,19 +91,15 @@ namespace Framework.Prefs
         /// <param name="name"></param>
         public Preferences(string name)
         {
-            this._name = name;
-            if (string.IsNullOrEmpty(this._name))
-                this._name = GLOBAL_NAME;
+            _name = name;
+            if (string.IsNullOrEmpty(_name))
+                _name = GLOBAL_NAME;
         }
 
         /// <summary>
         /// The name of the preferences
         /// </summary>
-        public string Name
-        {
-            get { return this._name; }
-            protected set { this._name = value; }
-        }
+        public string Name { get; protected set; }
 
         /// <summary>
         /// Load the preferences from the local file system.
@@ -118,7 +116,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a string.</returns>
         public string GetString(string key)
         {
-            return this.GetObject<string>(key, null);
+            return GetObject<string>(key, null);
         }
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a string.</returns>
         public string GetString(string key, string defaultValue)
         {
-            return this.GetObject<string>(key, defaultValue);
+            return GetObject<string>(key, defaultValue);
         }
 
         /// <summary>
@@ -142,7 +140,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetString(string key, string value)
         {
-            this.SetObject<string>(key, value);
+            SetObject<string>(key, value);
         }
 
         /// <summary>
@@ -155,7 +153,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a float.</returns>
         public float GetFloat(string key)
         {
-            return this.GetObject<float>(key, 0f);
+            return GetObject<float>(key, 0f);
         }
 
         /// <summary>
@@ -169,7 +167,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a float.</returns>
         public float GetFloat(string key, float defaultValue)
         {
-            return this.GetObject<float>(key, defaultValue);
+            return GetObject<float>(key, defaultValue);
         }
 
         /// <summary>
@@ -179,7 +177,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetFloat(string key, float value)
         {
-            this.SetObject<float>(key, value);
+            SetObject<float>(key, value);
         }
 
         /// <summary>
@@ -192,7 +190,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a double.</returns>
         public double GetDouble(string key)
         {
-            return this.GetObject<double>(key, 0d);
+            return GetObject<double>(key, 0d);
         }
 
         /// <summary>
@@ -206,7 +204,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a double.</returns>
         public double GetDouble(string key, double defaultValue)
         {
-            return this.GetObject<double>(key, defaultValue);
+            return GetObject<double>(key, defaultValue);
         }
 
         /// <summary>
@@ -216,7 +214,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetDouble(string key, double value)
         {
-            this.SetObject<double>(key, value);
+            SetObject<double>(key, value);
         }
 
         /// <summary>
@@ -229,7 +227,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a bool.</returns>
         public bool GetBool(string key)
         {
-            return this.GetObject<bool>(key, false);
+            return GetObject<bool>(key, false);
         }
 
         /// <summary>
@@ -243,7 +241,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a bool.</returns>
         public bool GetBool(string key, bool defaultValue)
         {
-            return this.GetObject<bool>(key, defaultValue);
+            return GetObject<bool>(key, defaultValue);
         }
 
         /// <summary>
@@ -253,7 +251,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetBool(string key, bool value)
         {
-            this.SetObject<bool>(key, value);
+            SetObject<bool>(key, value);
         }
 
         /// <summary>
@@ -266,7 +264,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a int.</returns>
         public int GetInt(string key)
         {
-            return this.GetObject<int>(key, 0);
+            return GetObject<int>(key, 0);
         }
 
         /// <summary>
@@ -280,7 +278,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a int.</returns>
         public int GetInt(string key, int defaultValue)
         {
-            return this.GetObject<int>(key, defaultValue);
+            return GetObject<int>(key, defaultValue);
         }
 
         /// <summary>
@@ -290,7 +288,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetInt(string key, int value)
         {
-            this.SetObject<int>(key, value);
+            SetObject<int>(key, value);
         }
 
         /// <summary>
@@ -303,7 +301,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a long.</returns>
         public long GetLong(string key)
         {
-            return this.GetObject<long>(key, 0L);
+            return GetObject<long>(key, 0L);
         }
 
         /// <summary>
@@ -317,7 +315,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a long.</returns>
         public long GetLong(string key, long defaultValue)
         {
-            return this.GetObject<long>(key, defaultValue);
+            return GetObject<long>(key, defaultValue);
         }
 
         /// <summary>
@@ -327,7 +325,7 @@ namespace Framework.Prefs
         /// <param name="value">The new value for the preference</param>
         public void SetLong(string key, long value)
         {
-            this.SetObject<long>(key, value);
+            SetObject<long>(key, value);
         }
 
         /// <summary>
@@ -342,7 +340,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not the type.</returns>
         public object GetObject(string key, Type type)
         {
-            return this.GetObject(key, type, null);
+            return GetObject(key, type, null);
         }
 
         /// <summary>
@@ -378,7 +376,7 @@ namespace Framework.Prefs
         /// Exception if there is a preference with this name that is not a T.</returns>
         public T GetObject<T>(string key)
         {
-            return this.GetObject<T>(key, default(T));
+            return GetObject<T>(key, default(T));
         }
 
         /// <summary>

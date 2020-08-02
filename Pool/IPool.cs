@@ -1,11 +1,4 @@
-/*
-* Create by Soso
-* Time : 2018-12-27-10 下午
-*/
-using UnityEngine;
-using System;
-
-namespace Framework
+namespace Framework.Pool
 {
 	public interface IPool<T>
 	{

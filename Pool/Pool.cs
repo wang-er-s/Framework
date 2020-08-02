@@ -1,33 +1,24 @@
-/*
-* Create by Soso
-* Time : 2018-12-27-10 下午
-*/
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using Framework.Pool.Factory;
 
-namespace Framework
+namespace Framework.Pool
 {
     public abstract class Pool<T> : IPool<T>
     {
-        public int CurCount
-        {
-            get { return _cacheStack.Count; }
-        }
+        public int CurCount => CacheStack.Count;
 
-        protected IFactory<T> _factory;
+        protected IFactory<T> Factory;
 
-        protected readonly Stack<T> _cacheStack = new Stack<T>();
+        protected readonly Stack<T> CacheStack = new Stack<T>();
 
-        protected int _maxCount = 12;
+        protected int MaxCount = 12;
 
         public abstract bool DeSpawn(T obj);
 
         public virtual T Spawn()
         {
-            return _cacheStack.Count == 0 ?
-                _factory.Create() : _cacheStack.Pop();
+            return CacheStack.Count == 0 ?
+                Factory.Create() : CacheStack.Pop();
         }
     }
 }

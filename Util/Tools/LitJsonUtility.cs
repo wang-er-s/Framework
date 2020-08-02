@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using Framework.Util;
 
 namespace Framework.BaseUtil
 {
@@ -113,37 +112,6 @@ namespace Framework.BaseUtil
             writer.PrettyPrint = true;
             data.ToJson(writer);
             return sw.ToString ();
-        }
-        public static JsonData GetJsonFromFile(string fileName, bool checkInside = true)
-        {
-            var path = FileUtils.GetFileReadFullPath(fileName, checkInside);
-            if (null == path)
-                return null;
-            try
-            {
-                using (var stream = FileUtils.OpenFile(path))
-                {
-                    if (null != stream)
-                    {
-                        using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
-                        {
-                            return JsonMapper.ToObject<JsonData>(sr);
-                        }
-                    }
-                    else
-                        return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Parse json file {path} err:{ex.Message}");
-                return null;
-            }
-        }
-        
-        public static bool SaveJsonToFile(JsonData data, string fileName)
-        {
-            return FileUtils.SaveStrToFile(data.ToJson(),fileName);
         }
         #endregion
     }

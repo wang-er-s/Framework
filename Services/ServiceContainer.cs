@@ -5,103 +5,100 @@ namespace Framework.Services
 {
     public class ServiceContainer : IServiceContainer, IDisposable
     {
-        private Dictionary<string, IFactory> _services = new Dictionary<string, IFactory>();
+        private readonly Dictionary<string, IFactory> _services = new Dictionary<string, IFactory>();
 
         public virtual object Resolve(Type type)
         {
-            return this.Resolve<object>(type.Name);
+            return Resolve<object>(type.Name);
         }
 
         public virtual T Resolve<T>()
         {
-            return this.Resolve<T>(typeof(T).Name);
+            return Resolve<T>(typeof(T).Name);
         }
 
         public virtual object Resolve(string name)
         {
-            return this.Resolve<object>(name);
+            return Resolve<object>(name);
         }
 
         public virtual T Resolve<T>(string name)
         {
-            IFactory factory;
-            if (this._services.TryGetValue(name, out factory))
-                return (T)factory.Create();
-            return default(T);
+            if (_services.TryGetValue(name, out var factory))
+                return (T) factory.Create();
+            return default;
         }
 
         public virtual void Register<T>(Func<T> factory)
         {
-            this.Register<T>(typeof(T).Name, factory);
+            Register(typeof(T).Name, factory);
         }
 
         public virtual void Register(Type type, object target)
         {
-            this.Register<object>(type.Name, target);
+            Register<object>(type.Name, target);
         }
 
         public virtual void Register(string name, object target)
         {
-            this.Register<object>(name, target);
+            Register<object>(name, target);
         }
 
         public virtual void Register<T>(T target)
         {
-            this.Register<T>(typeof(T).Name, target);
+            Register(typeof(T).Name, target);
         }
 
         public virtual void Register<T>(string name, Func<T> factory)
         {
-            if (this._services.ContainsKey(name))
-                throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
+            if (_services.ContainsKey(name))
+                throw new DuplicateRegisterServiceException($"Duplicate key {name}");
 
-            this._services.Add(name, new GenericFactory<T>(factory));
+            _services.Add(name, new GenericFactory<T>(factory));
         }
 
         public virtual void Register<T>(string name, T target)
         {
-            if (this._services.ContainsKey(name))
-                throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
+            if (_services.ContainsKey(name))
+                throw new DuplicateRegisterServiceException($"Duplicate key {name}");
 
-            this._services.Add(name, new SingleInstanceFactory(target));
+            _services.Add(name, new SingleInstanceFactory(target));
         }
 
         public virtual void Unregister(Type type)
         {
-            this.Unregister(type.Name);
+            Unregister(type.Name);
         }
 
         public virtual void Unregister<T>()
         {
-            this.Unregister(typeof(T).Name);
+            Unregister(typeof(T).Name);
         }
 
         public virtual void Unregister(string name)
         {
-            IFactory factory;
-            if (this._services.TryGetValue(name, out factory))
+            if (_services.TryGetValue(name, out var factory))
                 factory.Dispose();
 
-            this._services.Remove(name);
+            _services.Remove(name);
         }
 
         #region IDisposable Support
-        private bool disposed = false;
+
+        private bool _disposed = false;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (_disposed) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    foreach (var kv in _services)
-                        kv.Value.Dispose();
+                foreach (var kv in _services)
+                    kv.Value.Dispose();
 
-                    this._services.Clear();
-                    //this.services = null;
-                }
-                disposed = true;
+                _services.Clear();
             }
+
+            _disposed = true;
         }
 
         ~ServiceContainer()
@@ -114,6 +111,7 @@ namespace Framework.Services
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
 
         internal interface IFactory : IDisposable
@@ -123,16 +121,16 @@ namespace Framework.Services
 
         internal class GenericFactory<T> : IFactory
         {
-            private Func<T> func;
+            private Func<T> _func;
 
             public GenericFactory(Func<T> func)
             {
-                this.func = func;
+                _func = func;
             }
 
             public virtual object Create()
             {
-                return func();
+                return _func();
             }
 
             public void Dispose()
@@ -142,35 +140,33 @@ namespace Framework.Services
 
         internal class SingleInstanceFactory : IFactory
         {
-            private object target;
+            private object _target;
 
             public SingleInstanceFactory(object target)
             {
-                this.target = target;
+                _target = target;
             }
 
             public virtual object Create()
             {
-                return target;
+                return _target;
             }
 
             #region IDisposable Support
-            private bool disposed = false;
+
+            private bool _disposed;
 
             protected virtual void Dispose(bool disposing)
             {
-                if (!disposed)
+                if (_disposed) return;
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        var disposable = target as IDisposable;
-                        if (disposable != null)
-                            disposable.Dispose();
-                        this.target = null;
-                    }
-
-                    disposed = true;
+                    var disposable = _target as IDisposable;
+                    disposable?.Dispose();
+                    _target = null;
                 }
+
+                _disposed = true;
             }
 
             ~SingleInstanceFactory()
@@ -183,6 +179,7 @@ namespace Framework.Services
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
+
             #endregion
         }
     }

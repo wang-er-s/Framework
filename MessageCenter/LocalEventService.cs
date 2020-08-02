@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Framework
+namespace Framework.MessageCenter
 {
     public static class LocalEventService
     {
@@ -22,27 +22,30 @@ namespace Framework
 
             public void Trigger(string tag, T value)
             {
-                if(tag != Tag ) return;
+                if (tag != Tag) return;
                 Action(value);
             }
         }
-        
-        private static Dictionary<IEventBroadcaster,Dictionary<Type, List<ICallBackBase>>> _subscribersDic = new Dictionary<IEventBroadcaster,Dictionary<Type,List<ICallBackBase>>>();
+
+        private static Dictionary<IEventBroadcaster, Dictionary<Type, List<ICallBackBase>>> _subscribersDic =
+            new Dictionary<IEventBroadcaster, Dictionary<Type, List<ICallBackBase>>>();
 
         internal static void Register<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
-            
+
             if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic))
             {
                 dic = new Dictionary<Type, List<ICallBackBase>>();
                 _subscribersDic.Add(eventBroadcaster, dic);
             }
+
             if (!dic.TryGetValue(type, out var list))
             {
                 list = new List<ICallBackBase>();
                 dic.Add(type, list);
             }
+
             if (!CallBackExists(list, tag, cb))
             {
                 ICallBackBase callBackBase = new MulCallbackContainer<T>(tag, cb);
@@ -60,7 +63,7 @@ namespace Framework
         }
 
         private static ICallBackBase GetCallBackBase<T>(List<ICallBackBase> list, string tag, Action<T> cb)
-        {            
+        {
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (MulCallbackContainer<T> callbackContainer in list)
             {
@@ -69,9 +72,10 @@ namespace Framework
                     return callbackContainer;
                 }
             }
+
             return null;
         }
-        
+
         internal static void UnRegister<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
@@ -80,17 +84,20 @@ namespace Framework
                 Log.Warning("try unRegister empty....");
                 return;
             }
+
             if (!dic.TryGetValue(type, out var list))
             {
                 Log.Warning("try unRegister empty....");
                 return;
             }
+
             var callBackBase = GetCallBackBase(list, tag, cb);
             if (cb == null)
             {
                 Log.Warning("try unRegister empty....");
                 return;
             }
+
             list.Remove(callBackBase);
         }
 
@@ -112,21 +119,20 @@ namespace Framework
             if (_subscribersDic.ContainsKey(eventBroadcaster))
                 _subscribersDic.Remove(eventBroadcaster);
         }
-        
     }
 
 
     public interface IEventBroadcaster
     {
     }
-    
+
     public static class BroadcasterExtension
     {
-        public static void Register<T>(this IEventBroadcaster broadcaster,string tag, Action<T> cb)
+        public static void Register<T>(this IEventBroadcaster broadcaster, string tag, Action<T> cb)
         {
             LocalEventService.Register(broadcaster, tag, cb);
         }
-        
+
         public static void Register<T>(this IEventBroadcaster broadcaster, Action<T> cb)
         {
             broadcaster.Register(string.Empty, cb);
@@ -146,8 +152,8 @@ namespace Framework
         {
             LocalEventService.TriggerEvent(broadcaster, tag, value);
         }
-        
-        public static void TriggerEvent<T>(this IEventBroadcaster broadcaster,T value)
+
+        public static void TriggerEvent<T>(this IEventBroadcaster broadcaster, T value)
         {
             broadcaster.TriggerEvent(string.Empty, value);
         }
