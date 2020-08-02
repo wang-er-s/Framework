@@ -1,8 +1,6 @@
 # SoUtil
 a unity mvvm framework, building...
 
-有bug可以qq我，1282695408~~
-
 ```c#
 vm = ViewModel as SetupViewModel;
 if(binding == null)
