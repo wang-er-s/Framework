@@ -1,4 +1,5 @@
 using System.Collections;
+using Framework.CommonHelper;
 using Framework.Services;
 using Framework.UI.Core;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,7 @@ namespace Framework.Context
                 OnSceneLoaded();
                 return;
             }
-            IEnumeratorUtil.StartCoroutine(load());
+            CoroutineHelper.StartCoroutine(load());
         }
 
         IEnumerator load()

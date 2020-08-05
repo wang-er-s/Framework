@@ -6,29 +6,29 @@ namespace Framework.MessageCenter
 
     public static class EventManager
     {
-        private static Dictionary<Type, List<EventListenerBase>> _subscribersDic;
+        private static Dictionary<Type, List<IEventListenerBase>> _subscribersDic;
         private static Dictionary<Type, List<MulEventListenerContainer>> _mulSubscribersDic;
 
         static EventManager()
         {
-            _subscribersDic = new Dictionary<Type, List<EventListenerBase>>();
+            _subscribersDic = new Dictionary<Type, List<IEventListenerBase>>();
             _mulSubscribersDic = new Dictionary<Type, List<MulEventListenerContainer>>();
         }
 
         #region EventListener
 
-        public static void Register<T>(EventListener<T> listener) where T : class
+        public static void Register<T>(IEventListener<T> listener) where T : class
         {
             Type eventType = typeof(T);
 
             if (!_subscribersDic.ContainsKey(eventType))
-                _subscribersDic[eventType] = new List<EventListenerBase>();
+                _subscribersDic[eventType] = new List<IEventListenerBase>();
 
             if (!SubscriptionExists(eventType, listener))
                 _subscribersDic[eventType].Add(listener);
         }
 
-        public static void UnRegister<T>(EventListener<T> listener) where T : class
+        public static void UnRegister<T>(IEventListener<T> listener) where T : class
         {
             Type eventType = typeof(T);
 
@@ -41,7 +41,7 @@ namespace Framework.MessageCenter
 #endif
             }
 
-            List<EventListenerBase> subscriberList = _subscribersDic[eventType];
+            List<IEventListenerBase> subscriberList = _subscribersDic[eventType];
 #pragma warning disable 219
             bool listenerFound = false;
 #pragma warning restore 219
@@ -70,7 +70,7 @@ namespace Framework.MessageCenter
 
         public static void TriggerEvent<T>(T newEvent) where T : class
         {
-            List<EventListenerBase> list;
+            List<IEventListenerBase> list;
             if (!_subscribersDic.TryGetValue(typeof(T), out list))
 #if EVENTROUTER_REQUIRELISTENER
 			            throw new ArgumentException( string.Format( "Attempting to send event of type \"{0}\", but no listener for this type has been found. Make sure this.Subscribe<{0}>(EventRouter) has been called, or that all listeners to this event haven't been unsubscribed.", typeof( MMEvent ).ToString() ) );
@@ -80,13 +80,13 @@ namespace Framework.MessageCenter
 
             for (int i = 0; i < list.Count; i++)
             {
-                (list[i] as EventListener<T>)?.OnEvent(newEvent);
+                (list[i] as IEventListener<T>)?.OnEvent(newEvent);
             }
         }
 
-        private static bool SubscriptionExists(Type type, EventListenerBase receiver)
+        private static bool SubscriptionExists(Type type, IEventListenerBase receiver)
         {
-            List<EventListenerBase> receivers;
+            List<IEventListenerBase> receivers;
 
             if (!_subscribersDic.TryGetValue(type, out receivers)) return false;
 
@@ -108,7 +108,7 @@ namespace Framework.MessageCenter
 
         #region MulEventListener
 
-        public static void Register<T>(MulEventListener<T> listener, string tag) where T : class
+        public static void Register<T>(IMulEventListener<T> listener, string tag) where T : class
         {
             Type eventType = typeof(T);
 
@@ -121,7 +121,7 @@ namespace Framework.MessageCenter
 
 
 
-        public static void UnRegister<T>(MulEventListener<T> listener, string tag) where T : class
+        public static void UnRegister<T>(IMulEventListener<T> listener, string tag) where T : class
         {
             Type eventType = typeof(T);
 
@@ -172,11 +172,11 @@ namespace Framework.MessageCenter
             for (int i = 0; i < list.Count; i++)
             {
                 if (!list[i].Tag.Equals(tag)) continue;
-                (list[i].MulEventListener as MulEventListener<T>)?.OnEvent(newEvent, tag);
+                (list[i].MulEventListener as IMulEventListener<T>)?.OnEvent(newEvent, tag);
             }
         }
 
-        private static bool MulSubscriptionExists(Type type, EventListenerBase receiver, string tag)
+        private static bool MulSubscriptionExists(Type type, IEventListenerBase receiver, string tag)
         {
             List<MulEventListenerContainer> receivers;
 
@@ -210,50 +210,50 @@ namespace Framework.MessageCenter
     {
         public delegate void Delegate<T>(T eventType);
 
-        public static void StartListening<T>(this EventListener<T> caller) where T : class
+        public static void StartListening<T>(this IEventListener<T> caller) where T : class
         {
             EventManager.Register(caller);
         }
 
-        public static void StopListening<T>(this EventListener<T> caller) where T : class
+        public static void StopListening<T>(this IEventListener<T> caller) where T : class
         {
             EventManager.UnRegister(caller);
         }
 
-        public static void StartListening<T>(this MulEventListener<T> caller, string tag) where T : class
+        public static void StartListening<T>(this IMulEventListener<T> caller, string tag) where T : class
         {
             EventManager.Register(caller, tag);
         }
 
-        public static void StopListening<T>(this MulEventListener<T> caller, string tag) where T : class
+        public static void StopListening<T>(this IMulEventListener<T> caller, string tag) where T : class
         {
             EventManager.UnRegister(caller, tag);
         }
     }
 
-    public interface EventListenerBase
+    public interface IEventListenerBase
     {
     }
 
-    public interface EventListener<T> : EventListenerBase
+    public interface IEventListener<T> : IEventListenerBase
     {
-        void OnEvent(T _event);
+        void OnEvent(T @event);
     }
 
     public class MulEventListenerContainer
     {
-        public string Tag;
-        public EventListenerBase MulEventListener;
+        public readonly string Tag;
+        public readonly IEventListenerBase MulEventListener;
 
-        public MulEventListenerContainer(string tag, EventListenerBase eventListenerBase)
+        public MulEventListenerContainer(string tag, IEventListenerBase eventListenerBase)
         {
             Tag = tag;
             MulEventListener = eventListenerBase;
         }
     }
 
-    public interface MulEventListener<T> : EventListenerBase
+    public interface IMulEventListener<T> : IEventListenerBase
     {
-        void OnEvent(T _event, string tag);
+        void OnEvent(T @event, string tag);
     }
 }

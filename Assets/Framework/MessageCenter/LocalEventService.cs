@@ -11,8 +11,8 @@ namespace Framework.MessageCenter
 
         class MulCallbackContainer<T> : ICallBackBase
         {
-            public string Tag;
-            public Action<T> Action;
+            public readonly string Tag;
+            public readonly Action<T> Action;
 
             public MulCallbackContainer(string tag, Action<T> action)
             {
@@ -27,17 +27,17 @@ namespace Framework.MessageCenter
             }
         }
 
-        private static Dictionary<IEventBroadcaster, Dictionary<Type, List<ICallBackBase>>> _subscribersDic =
+        private static readonly Dictionary<IEventBroadcaster, Dictionary<Type, List<ICallBackBase>>> subscribersDic =
             new Dictionary<IEventBroadcaster, Dictionary<Type, List<ICallBackBase>>>();
 
         internal static void Register<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
 
-            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic))
+            if (!subscribersDic.TryGetValue(eventBroadcaster, out var dic))
             {
                 dic = new Dictionary<Type, List<ICallBackBase>>();
-                _subscribersDic.Add(eventBroadcaster, dic);
+                subscribersDic.Add(eventBroadcaster, dic);
             }
 
             if (!dic.TryGetValue(type, out var list))
@@ -79,7 +79,7 @@ namespace Framework.MessageCenter
         internal static void UnRegister<T>(IEventBroadcaster eventBroadcaster, string tag, Action<T> cb)
         {
             var type = typeof(T);
-            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic))
+            if (!subscribersDic.TryGetValue(eventBroadcaster, out var dic))
             {
                 Log.Warning("try unRegister empty....");
                 return;
@@ -105,19 +105,19 @@ namespace Framework.MessageCenter
         {
             var type = typeof(T);
 
-            if (!_subscribersDic.TryGetValue(eventBroadcaster, out var dic)) return;
+            if (!subscribersDic.TryGetValue(eventBroadcaster, out var dic)) return;
             if (!dic.TryGetValue(type, out var list)) return;
-            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
-            foreach (MulCallbackContainer<T> callbackContainer in list)
+            foreach (var callBackBase in list)
             {
+                var callbackContainer = (MulCallbackContainer<T>) callBackBase;
                 callbackContainer.Trigger(tag, value);
             }
         }
 
         public static void Clear(IEventBroadcaster eventBroadcaster)
         {
-            if (_subscribersDic.ContainsKey(eventBroadcaster))
-                _subscribersDic.Remove(eventBroadcaster);
+            if (subscribersDic.ContainsKey(eventBroadcaster))
+                subscribersDic.Remove(eventBroadcaster);
         }
     }
 
@@ -157,5 +157,7 @@ namespace Framework.MessageCenter
         {
             broadcaster.TriggerEvent(string.Empty, value);
         }
+        
+        
     }
 }
