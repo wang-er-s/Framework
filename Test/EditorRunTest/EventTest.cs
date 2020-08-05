@@ -21,13 +21,13 @@ namespace Tests
         public void 基本广播()
         {
             //两种触发方式 --静态触发
-            var bMsgEventListener = Substitute.For<EventListener<BMsg>>();
+            var bMsgEventListener = Substitute.For<IEventListener<BMsg>>();
             bMsgEventListener.StartListening();
             BMsg.Trigger("HH");
             bMsgEventListener.Received().OnEvent(Arg.Any<BMsg>());
 
             //实例触发
-            var aMsgEventListener = Substitute.For<EventListener<AMsg>>();
+            var aMsgEventListener = Substitute.For<IEventListener<AMsg>>();
             aMsgEventListener.StartListening();
             var aMsg = new AMsg();
             EventManager.TriggerEvent(aMsg);
@@ -40,8 +40,8 @@ namespace Tests
         [Test]
         public void 复用广播()
         {
-            MulEventListener<CMsg> listener1 = Substitute.For<MulEventListener<CMsg>>();
-            MulEventListener<CMsg> listener2 = Substitute.For<MulEventListener<CMsg>>();
+            IMulEventListener<CMsg> listener1 = Substitute.For<IMulEventListener<CMsg>>();
+            IMulEventListener<CMsg> listener2 = Substitute.For<IMulEventListener<CMsg>>();
             listener1.StartListening(TAG);
             listener2.StartListening(TAG2);
             CMsg.Trigger(TAG, "name");
