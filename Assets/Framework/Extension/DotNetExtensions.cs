@@ -1338,6 +1338,36 @@ public static class TypeEx
     {
         return targetType.IsValueType ? Activator.CreateInstance(targetType) : null;
     }
+    
+    /// <summary>
+    /// GenericTypeDefinition means  List<>  or SomeClass<>
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="genericTypeDefinition">genericTypeDefinition</param>
+    /// <returns></returns>
+    public static bool IsSubclassOfGenericTypeDefinition(this Type type, Type genericTypeDefinition)
+    {
+        if (!genericTypeDefinition.IsGenericTypeDefinition)
+            return false;
+
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == genericTypeDefinition)
+            return true;
+
+        Type baseType = type.BaseType;
+        if (baseType != null && baseType != typeof(object))
+        {
+            if (IsSubclassOfGenericTypeDefinition(baseType, genericTypeDefinition))
+                return true;
+        }
+
+        foreach (Type t in type.GetInterfaces())
+        {
+            if (IsSubclassOfGenericTypeDefinition(t, genericTypeDefinition))
+                return true;
+        }
+
+        return false;
+    }
 }
 
 /// <summary>
