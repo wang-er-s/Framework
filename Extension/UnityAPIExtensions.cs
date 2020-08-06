@@ -474,12 +474,6 @@ public static class ObjectExtension
     {
         return selfObj as T;
     }
-
-    public static T LogInfo<T>(this T selfObj, string msgContent, params object[] args) where T : Object
-    {
-        Debug.Log(msgContent + args);
-        return selfObj;
-    }
 }
 
 public static class RectTransformExtension

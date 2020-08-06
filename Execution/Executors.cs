@@ -118,6 +118,7 @@ namespace Framework.Execution
 
             if (IsMainThread)
             {
+                Debug.Log(111111111);
                 action();
                 return;
             }
@@ -653,6 +654,7 @@ namespace Framework.Execution
                         object task = _runningQueue[i];
                         if (task is Action action)
                         {
+                            Debug.Log(2222);
                             action();
                             continue;
                         }
