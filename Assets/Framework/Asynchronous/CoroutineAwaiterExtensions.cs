@@ -71,7 +71,7 @@ namespace Framework.Asynchronous
         public static IAwaiter GetAwaiter(this WaitForBackgroundThread instruction)
         {
             CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            Executors.RunAsyncNoReturn(() => { awaiter.SetResult(null); });
+            Executors.RunAsync(() => { awaiter.SetResult(null); });
             return awaiter;
         }
 

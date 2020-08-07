@@ -14,35 +14,11 @@ namespace Framework.Execution
         private static readonly object syncLock = new object();
         private static bool disposed = false;
         private static MainThreadExecutor executor;
-#if NETFX_CORE || !NET_LEGACY
         private static int mainThreadId;
-#else
-        private static Thread mainThread;
-#endif
 
-#if UNITY_EDITOR
-        private static readonly Dictionary<int, Thread> threads = new Dictionary<int, Thread>();
-#endif
         static void Destroy()
         {
             disposed = true;
-#if UNITY_EDITOR
-            lock (threads)
-            {
-                foreach (Thread thread in threads.Values)
-                {
-                    try
-                    {
-                        thread.Abort();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                threads.Clear();
-            }
-#endif
         }
 
         static Executors()
@@ -61,19 +37,7 @@ namespace Framework.Execution
             if (disposed)
                 throw new ObjectDisposedException("Executors");
         }
-
-        private static MainThreadExecutor CreateMainThreadExecutor(bool dontDestroy, bool useFixedUpdate)
-        {
-            GameObject go = new GameObject("MainThreadExecutor");
-            var createMainThreadExecutor = go.AddComponent<MainThreadExecutor>();
-            go.hideFlags = HideFlags.HideAndDontSave;
-            if (dontDestroy)
-                Object.DontDestroyOnLoad(go);
-
-            createMainThreadExecutor.useFixedUpdate = useFixedUpdate;
-            return createMainThreadExecutor;
-        }
-
+        
         public static void Create(bool dontDestroy = true, bool useFixedUpdate = true)
         {
             lock (syncLock)
@@ -84,15 +48,25 @@ namespace Framework.Execution
                         return;
                     mainThreadId = Environment.CurrentManagedThreadId;
                     executor = CreateMainThreadExecutor(dontDestroy, useFixedUpdate);
-
-                    if (SynchronizationContext.Current == null)
-                        SynchronizationContext.SetSynchronizationContext(new UnitySynchronizationContext());
+                    
                 }
                 catch (Exception e)
                 {
                     Log.Error($"Start Executors failure.Exception:{e}");
                 }
             }
+        }
+        
+        private static MainThreadExecutor CreateMainThreadExecutor(bool dontDestroy, bool useFixedUpdate)
+        {
+            GameObject go = new GameObject("MainThreadExecutor");
+            var createMainThreadExecutor = go.AddComponent<MainThreadExecutor>();
+            go.hideFlags = HideFlags.HideAndDontSave;
+            if (dontDestroy)
+                Object.DontDestroyOnLoad(go);
+
+            createMainThreadExecutor.useFixedUpdate = useFixedUpdate;
+            return createMainThreadExecutor;
         }
 
         public static bool UseFixedUpdate
@@ -118,7 +92,6 @@ namespace Framework.Execution
 
             if (IsMainThread)
             {
-                Debug.Log(111111111);
                 action();
                 return;
             }
@@ -388,42 +361,7 @@ namespace Framework.Execution
 
         private static void DoRunAsync(Action action)
         {
-#if UNITY_WEBGL
-            throw new NotSupportedException("Multithreading is not supported on the WebGL platform.");
-#elif UNITY_EDITOR
-            ThreadPool.QueueUserWorkItem((state) =>
-            {
-                var thread = Thread.CurrentThread;
-                try
-                {
-                    lock (threads)
-                    {
-                        threads[thread.ManagedThreadId] = thread;
-                    }
-
-                    action();
-                }
-                finally
-                {
-                    lock (threads)
-                    {
-                        threads.Remove(thread.ManagedThreadId);
-                    }
-                }
-            });
-#else
             ThreadPool.QueueUserWorkItem((state) => { action(); });
-#endif
-        }
-
-        public static void RunAsyncNoReturn(Action action)
-        {
-            DoRunAsync(action);
-        }
-
-        public static void RunAsyncNoReturn<T>(Action<T> action, T t)
-        {
-            DoRunAsync(() => { action(t); });
         }
 
         public static Asynchronous.IAsyncResult RunAsync(Action action)
@@ -474,7 +412,7 @@ namespace Framework.Execution
                     CheckDisposed();
                     action(result);
                     if (!result.IsDone)
-                        result.SetResult(null);
+                        result.SetResult();
                 }
                 catch (Exception e)
                 {
@@ -613,15 +551,15 @@ namespace Framework.Execution
                     try
                     {
                         object task = _stopingTempQueue[i];
-                        if (task is IEnumerator)
+                        if (task is IEnumerator enumerator)
                         {
-                            this.StopCoroutine((IEnumerator) task);
+                            this.StopCoroutine(enumerator);
                             continue;
                         }
 
-                        if (task is Coroutine)
+                        if (task is Coroutine coroutine)
                         {
-                            this.StopCoroutine((Coroutine) task);
+                            this.StopCoroutine(coroutine);
                             continue;
                         }
                     }
@@ -654,7 +592,6 @@ namespace Framework.Execution
                         object task = _runningQueue[i];
                         if (task is Action action)
                         {
-                            Debug.Log(2222);
                             action();
                             continue;
                         }
@@ -739,29 +676,5 @@ namespace Framework.Execution
                 }
             }
         }
-
-#if !UNITY_WEBGL
-        sealed class UnitySynchronizationContext : SynchronizationContext
-        {
-            public UnitySynchronizationContext()
-            {
-            }
-
-            public override void Send(SendOrPostCallback callback, object state)
-            {
-                RunOnMainThread(() => { callback(state); }, true);
-            }
-
-            public override void Post(SendOrPostCallback callback, object state)
-            {
-                RunOnMainThread(() => { callback(state); }, false);
-            }
-
-            public override SynchronizationContext CreateCopy()
-            {
-                return this;
-            }
-        }
-#endif
     }
 }

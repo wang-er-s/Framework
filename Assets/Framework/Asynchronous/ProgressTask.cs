@@ -259,7 +259,7 @@ namespace Framework.Asynchronous
             if (delay <= 0)
                 return this.Start();
 
-            Executors.RunAsyncNoReturn(() =>
+            Executors.RunAsync(() =>
             {
 #if NETFX_CORE
                 Task.Delay(delay).Wait();
@@ -579,7 +579,7 @@ namespace Framework.Asynchronous
             if (delay <= 0)
                 return this.Start();
 
-            Executors.RunAsyncNoReturn(() =>
+            Executors.RunAsync(() =>
             {
 #if NETFX_CORE
                 Task.Delay(delay).Wait();

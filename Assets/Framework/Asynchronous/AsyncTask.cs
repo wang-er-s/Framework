@@ -12,12 +12,14 @@ namespace Framework.Asynchronous
         private Action _preCallbackOnMainThread;
         private Action _preCallbackOnWorkerThread;
 
+        //no exception call
         private Action _postCallbackOnMainThread;
         private Action _postCallbackOnWorkerThread;
 
         private Action<Exception> _errorCallbackOnMainThread;
         private Action<Exception> _errorCallbackOnWorkerThread;
 
+        //always call
         private Action _finishCallbackOnMainThread;
         private Action _finishCallbackOnWorkerThread;
 
@@ -56,7 +58,7 @@ namespace Framework.Asynchronous
         public AsyncTask(Action<IPromise> task, bool runOnMainThread = false, bool cancelable = false)
         {
             if (task == null)
-                throw new ArgumentNullException("task");
+                throw new ArgumentNullException(nameof(task));
 
             this._result = new AsyncResult(!runOnMainThread && cancelable);
             if (runOnMainThread)
@@ -232,13 +234,9 @@ namespace Framework.Asynchronous
             if (delay <= 0)
                 return this.Start();
 
-            Executors.RunAsyncNoReturn(() =>
+            Executors.RunAsync(() =>
             {
-#if NETFX_CORE
-                Task.Delay(delay).Wait();
-#else
                 Thread.Sleep(delay);
-#endif
                 if (this.IsDone || this._running == 1)
                     return;
 
@@ -255,7 +253,7 @@ namespace Framework.Asynchronous
                 return this;
             }
 
-            if (Interlocked.CompareExchange(ref this._running, 1, 0) == 1)
+            if (_running == 1)
             {
                 Log.Warning("The task is running!");
                 return this;
@@ -280,22 +278,22 @@ namespace Framework.Asynchronous
     public class AsyncTask<TResult> : IAsyncTask<TResult>
     {
 
-        private Action action;
+        private readonly Action _action;
 
-        private Action preCallbackOnMainThread;
-        private Action preCallbackOnWorkerThread;
+        private Action _preCallbackOnMainThread;
+        private Action _preCallbackOnWorkerThread;
 
-        private Action<TResult> postCallbackOnMainThread;
-        private Action<TResult> postCallbackOnWorkerThread;
+        private Action<TResult> _postCallbackOnMainThread;
+        private Action<TResult> _postCallbackOnWorkerThread;
 
-        private Action<Exception> errorCallbackOnMainThread;
-        private Action<Exception> errorCallbackOnWorkerThread;
+        private Action<Exception> _errorCallbackOnMainThread;
+        private Action<Exception> _errorCallbackOnWorkerThread;
 
-        private Action finishCallbackOnMainThread;
-        private Action finishCallbackOnWorkerThread;
+        private Action _finishCallbackOnMainThread;
+        private Action _finishCallbackOnWorkerThread;
 
-        private int running = 0;
-        private AsyncResult<TResult> result;
+        private int _running = 0;
+        private readonly AsyncResult<TResult> _result;
 
         /// <summary>
         /// 
@@ -307,15 +305,15 @@ namespace Framework.Asynchronous
             if (task == null)
                 throw new ArgumentNullException();
 
-            this.result = new AsyncResult<TResult>();
+            this._result = new AsyncResult<TResult>();
 
             if (runOnMainThread)
             {
-                this.action = WrapAction(() => Executors.RunOnMainThread(task));
+                this._action = WrapAction(() => Executors.RunOnMainThread(task));
             }
             else
             {
-                this.action = WrapAction(task);
+                this._action = WrapAction(task);
             }
         }
 
@@ -329,22 +327,22 @@ namespace Framework.Asynchronous
             if (task == null)
                 throw new ArgumentNullException();
 
-            this.result = new AsyncResult<TResult>(!runOnMainThread && cancelable);
+            this._result = new AsyncResult<TResult>(!runOnMainThread && cancelable);
 
             if (runOnMainThread)
             {
-                this.action = WrapAction(() =>
+                this._action = WrapAction(() =>
                 {
-                    Executors.RunOnMainThread(() => task(this.result));
-                    return this.result.Synchronized().WaitForResult();
+                    Executors.RunOnMainThread(() => task(this._result));
+                    return this._result.Synchronized().WaitForResult();
                 });
             }
             else
             {
-                this.action = WrapAction(() =>
+                this._action = WrapAction(() =>
                 {
-                    task(this.result);
-                    return this.result.Synchronized().WaitForResult();
+                    task(this._result);
+                    return this._result.Synchronized().WaitForResult();
                 });
             }
         }
@@ -354,23 +352,23 @@ namespace Framework.Asynchronous
             if (task == null)
                 throw new ArgumentNullException();
 
-            this.result = new AsyncResult<TResult>(cancelable);
-            this.action = WrapAction(() =>
+            this._result = new AsyncResult<TResult>(cancelable);
+            this._action = WrapAction(() =>
             {
-                Executors.RunOnCoroutine(task(this.result), this.result);
-                return this.result.Synchronized().WaitForResult();
+                Executors.RunOnCoroutine(task(this._result), this._result);
+                return this._result.Synchronized().WaitForResult();
             });
         }
 
-        public virtual TResult Result => this.result.Result;
+        public virtual TResult Result => this._result.Result;
 
-        object Asynchronous.IAsyncResult.Result => this.result.Result;
+        object Asynchronous.IAsyncResult.Result => this._result.Result;
 
-        public virtual Exception Exception => this.result.Exception;
+        public virtual Exception Exception => this._result.Exception;
 
-        public virtual bool IsDone => this.result.IsDone && this.running == 0;
+        public virtual bool IsDone => this._result.IsDone && this._running == 0;
 
-        public virtual bool IsCancelled => this.result.IsCancelled;
+        public virtual bool IsCancelled => this._result.IsCancelled;
 
         protected virtual Action WrapAction(Func<TResult> action)
         {
@@ -380,25 +378,25 @@ namespace Framework.Asynchronous
                 {
                     try
                     {
-                        if (this.preCallbackOnWorkerThread != null) this.preCallbackOnWorkerThread();
+                        _preCallbackOnWorkerThread?.Invoke();
                     }
                     catch (Exception e)
                     {
                         Log.Warning(e);
                     }
 
-                    if (this.result.IsCancellationRequested)
+                    if (this._result.IsCancellationRequested)
                     {
-                        this.result.SetCancelled();
+                        this._result.SetCancelled();
                         return;
                     }
 
                     TResult obj = action();
-                    this.result.SetResult(obj);
+                    this._result.SetResult(obj);
                 }
                 catch (Exception e)
                 {
-                    this.result.SetException(e);
+                    this._result.SetException(e);
                 }
                 finally
                 {
@@ -406,17 +404,17 @@ namespace Framework.Asynchronous
                     {
                         if (this.Exception != null)
                         {
-                            if (this.errorCallbackOnMainThread != null)
-                                Executors.RunOnMainThread(() => this.errorCallbackOnMainThread(this.Exception), true);
+                            if (this._errorCallbackOnMainThread != null)
+                                Executors.RunOnMainThread(() => this._errorCallbackOnMainThread(this.Exception), true);
 
-                            errorCallbackOnWorkerThread?.Invoke(this.Exception);
+                            _errorCallbackOnWorkerThread?.Invoke(this.Exception);
                         }
                         else
                         {
-                            if (this.postCallbackOnMainThread != null)
-                                Executors.RunOnMainThread(() => this.postCallbackOnMainThread(this.Result), true);
+                            if (this._postCallbackOnMainThread != null)
+                                Executors.RunOnMainThread(() => this._postCallbackOnMainThread(this.Result), true);
 
-                            postCallbackOnWorkerThread?.Invoke(this.Result);
+                            _postCallbackOnWorkerThread?.Invoke(this.Result);
                         }
                     }
                     catch (Exception e)
@@ -426,17 +424,17 @@ namespace Framework.Asynchronous
 
                     try
                     {
-                        if (this.finishCallbackOnMainThread != null)
-                            Executors.RunOnMainThread(this.finishCallbackOnMainThread, true);
+                        if (this._finishCallbackOnMainThread != null)
+                            Executors.RunOnMainThread(this._finishCallbackOnMainThread, true);
 
-                        finishCallbackOnWorkerThread?.Invoke();
+                        _finishCallbackOnWorkerThread?.Invoke();
                     }
                     catch (Exception e)
                     {
                         Log.Warning(e);
                     }
 
-                    Interlocked.Exchange(ref this.running, 0);
+                    Interlocked.Exchange(ref this._running, 0);
                 }
             }
 
@@ -445,27 +443,27 @@ namespace Framework.Asynchronous
 
         public virtual bool Cancel()
         {
-            return this.result.Cancel();
+            return this._result.Cancel();
         }
 
         public virtual ICallbackable<TResult> Callbackable()
         {
-            return result.Callbackable();
+            return _result.Callbackable();
         }
 
         public virtual ISynchronizable<TResult> Synchronized()
         {
-            return result.Synchronized();
+            return _result.Synchronized();
         }
 
         ICallbackable IAsyncResult.Callbackable()
         {
-            return (result as IAsyncResult).Callbackable();
+            return (_result as IAsyncResult).Callbackable();
         }
 
         ISynchronizable IAsyncResult.Synchronized()
         {
-            return (result as IAsyncResult).Synchronized();
+            return (_result as IAsyncResult).Synchronized();
         }
 
         public virtual object WaitForDone()
@@ -476,36 +474,36 @@ namespace Framework.Asynchronous
         public IAsyncTask<TResult> OnPreExecute(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
-                this.preCallbackOnMainThread += callback;
+                this._preCallbackOnMainThread += callback;
             else
-                this.preCallbackOnWorkerThread += callback;
+                this._preCallbackOnWorkerThread += callback;
             return this;
         }
 
         public IAsyncTask<TResult> OnPostExecute(Action<TResult> callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
-                this.postCallbackOnMainThread += callback;
+                this._postCallbackOnMainThread += callback;
             else
-                this.postCallbackOnWorkerThread += callback;
+                this._postCallbackOnWorkerThread += callback;
             return this;
         }
 
         public IAsyncTask<TResult> OnError(Action<Exception> callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
-                this.errorCallbackOnMainThread += callback;
+                this._errorCallbackOnMainThread += callback;
             else
-                this.errorCallbackOnWorkerThread += callback;
+                this._errorCallbackOnWorkerThread += callback;
             return this;
         }
 
         public IAsyncTask<TResult> OnFinish(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
-                this.finishCallbackOnMainThread += callback;
+                this._finishCallbackOnMainThread += callback;
             else
-                this.finishCallbackOnWorkerThread += callback;
+                this._finishCallbackOnWorkerThread += callback;
             return this;
         }
 
@@ -513,11 +511,10 @@ namespace Framework.Asynchronous
         {
             if (delay <= 0)
                 return this.Start();
-
-            Executors.RunAsyncNoReturn(() =>
+            Thread.Sleep(delay);
+            Executors.RunAsync(() =>
             {
-                Thread.Sleep(delay);
-                if (this.IsDone || this.running == 1)
+                if (this.IsDone || this._running == 1)
                     return;
 
                 this.Start();
@@ -534,7 +531,8 @@ namespace Framework.Asynchronous
                 return this;
             }
 
-            if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1)
+
+            if (_running == 1)
             {
                 Log.Warning("The task is running!");
                 return this;
@@ -542,15 +540,15 @@ namespace Framework.Asynchronous
 
             try
             {
-                if (this.preCallbackOnMainThread != null)
-                    Executors.RunOnMainThread(this.preCallbackOnMainThread, true);
+                if (this._preCallbackOnMainThread != null)
+                    Executors.RunOnMainThread(this._preCallbackOnMainThread, true);
             }
             catch (Exception e)
             {
                 Log.Warning(e);
             }
 
-            Executors.RunAsync(this.action);
+            Executors.RunAsync(this._action);
 
             return this;
         }
