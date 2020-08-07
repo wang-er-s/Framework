@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Framework.Asynchronous
 {
-    public class CoroutineAwaiter : IAwaiter, ICriticalNotifyCompletion
+    public class CoroutineAwaiter : IAwaiter
     {
         protected readonly object Lock = new object();
         protected bool Done = false;
@@ -39,7 +39,9 @@ namespace Framework.Asynchronous
                 {
                     Continuation?.Invoke();
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                }
                 finally
                 {
                     this.Continuation = null;
@@ -49,10 +51,10 @@ namespace Framework.Asynchronous
 
         public void OnCompleted(Action continuation)
         {
-            UnsafeOnCompleted(continuation);
+            ((ICriticalNotifyCompletion) this).UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
             if (continuation == null)
                 throw new ArgumentNullException(nameof(continuation));
@@ -71,9 +73,9 @@ namespace Framework.Asynchronous
         }
     }
 
-    public class CoroutineAwaiter<T> : CoroutineAwaiter, IAwaiter<T>, ICriticalNotifyCompletion
+    public class CoroutineAwaiter<T> : CoroutineAwaiter, IAwaiter<T>
     {
-        protected T result;
+        protected T Result;
 
         public CoroutineAwaiter()
         {
@@ -90,7 +92,7 @@ namespace Framework.Asynchronous
             if (Exception != null)
                 ExceptionDispatchInfo.Capture(Exception).Throw();
 
-            return result;
+            return Result;
         }
 
         public void SetResult(T result, Exception exception)
@@ -100,15 +102,16 @@ namespace Framework.Asynchronous
                 if (Done)
                     return;
 
-                this.result = result;
+                this.Result = result;
                 this.Exception = exception;
                 this.Done = true;
                 try
                 {
-                    if (this.Continuation != null)
-                        this.Continuation();
+                    Continuation?.Invoke();
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                }
                 finally
                 {
                     this.Continuation = null;
@@ -117,7 +120,7 @@ namespace Framework.Asynchronous
         }
     }
 
-    public struct AsyncOperationAwaiter : IAwaiter, ICriticalNotifyCompletion
+    public struct AsyncOperationAwaiter : IAwaiter
     {
         private readonly AsyncOperation _asyncOperation;
         private Action<AsyncOperation> _continuationAction;
@@ -142,10 +145,10 @@ namespace Framework.Asynchronous
 
         public void OnCompleted(Action continuation)
         {
-            UnsafeOnCompleted(continuation);
+            ((ICriticalNotifyCompletion) this).UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
             if (continuation == null)
                 throw new ArgumentNullException(nameof(continuation));
@@ -162,7 +165,8 @@ namespace Framework.Asynchronous
         }
     }
 
-    public struct AsyncOperationAwaiter<T, TResult> : IAwaiter<TResult>, ICriticalNotifyCompletion where T : AsyncOperation
+    public struct AsyncOperationAwaiter<T, TResult> : IAwaiter<TResult>
+        where T : AsyncOperation
     {
         private readonly T _asyncOperation;
         private readonly Func<T, TResult> _getter;
@@ -187,15 +191,16 @@ namespace Framework.Asynchronous
                 _asyncOperation.completed -= _continuationAction;
                 _continuationAction = null;
             }
+
             return _getter(_asyncOperation);
         }
 
         public void OnCompleted(Action continuation)
         {
-            UnsafeOnCompleted(continuation);
+            ((ICriticalNotifyCompletion) this).UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
             if (continuation == null)
                 throw new ArgumentNullException(nameof(continuation));
@@ -212,7 +217,7 @@ namespace Framework.Asynchronous
         }
     }
 
-    public struct AsyncResultAwaiter<T> : IAwaiter, ICriticalNotifyCompletion where T : IAsyncResult
+    public struct AsyncResultAwaiter<T> : IAwaiter where T : IAsyncResult
     {
         private T _asyncResult;
 
@@ -236,10 +241,10 @@ namespace Framework.Asynchronous
 
         public void OnCompleted(Action continuation)
         {
-            UnsafeOnCompleted(continuation);
+            ((ICriticalNotifyCompletion) this).UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
             if (continuation == null)
                 throw new ArgumentNullException(nameof(continuation));
@@ -247,7 +252,8 @@ namespace Framework.Asynchronous
         }
     }
 
-    public struct AsyncResultAwaiter<T, TResult> : IAwaiter<TResult>, ICriticalNotifyCompletion where T : IAsyncResult<TResult>
+    public struct AsyncResultAwaiter<T, TResult> : IAwaiter<TResult>
+        where T : IAsyncResult<TResult>
     {
         private T _asyncResult;
 
@@ -273,10 +279,10 @@ namespace Framework.Asynchronous
 
         public void OnCompleted(Action continuation)
         {
-            UnsafeOnCompleted(continuation);
+            ((ICriticalNotifyCompletion) this).UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
             if (continuation == null)
                 throw new ArgumentNullException(nameof(continuation));

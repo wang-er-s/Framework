@@ -96,18 +96,6 @@ namespace Framework.Asynchronous
         }
 
         /// <summary>
-        /// Create a task to execute on the main thread.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="function">The work to execute on the main thread.</param>
-        /// <param name="state">The parameter of the work.</param>
-        /// <returns>A Task that represents the work queued to execute on the main thread.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<object, TResult> function, object state)
-        {
-            return new CoroutineTask<TResult>(function, state);
-        }
-
-        /// <summary>
         /// Create a task to execute on the Unity3d's coroutine.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
@@ -116,19 +104,6 @@ namespace Framework.Asynchronous
         public static CoroutineTask<TResult> Run<TResult>(Func<IPromise<TResult>, IEnumerator> function)
         {
             return new CoroutineTask<TResult>(function);
-        }
-
-        /// <summary>
-        /// Create a task to execute on the Unity3d's coroutine.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="function">The work to execute on the Unity3d's coroutine.</param>
-        /// <param name="state">The parameter of the work.</param>
-        /// <returns>A Task that represents the work queued to execute on the Unity3d's coroutine.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<object, IPromise<TResult>, IEnumerator> function,
-            object state)
-        {
-            return new CoroutineTask<TResult>(function, state);
         }
 
         /// <summary>
@@ -507,51 +482,7 @@ namespace Framework.Asynchronous
             });
             return new CoroutineTask(result);
         }
-
-        /// <summary>
-        /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
-        /// </summary>
-        /// <param name="continuationAction">
-        /// An action to run when the <see cref="CoroutineTask"/> completes. When run, the delegate will be
-        /// passed the completed task as an argument.
-        /// </param>
-        /// <param name="state">The parameter of the action.</param>
-        /// <param name="continuationOptions">
-        /// Options for when the continuation is scheduled and how it behaves. This includes criteria, such
-        /// as <see cref="CoroutineTaskContinuationOptions.OnCanceled">OnCanceled</see>
-        /// , as well as execution options, such as 
-        /// <see cref="CoroutineTaskContinuationOptions.OnCompleted">OnCompleted</see>.
-        /// </param>
-        /// <returns>A new continuation <see cref="CoroutineTask"/>.</returns>
-        /// <remarks>
-        /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
-        /// completed.
-        /// </remarks>
-        public CoroutineTask ContinueWith(Action<CoroutineTask, object> continuationAction, object state,
-            CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
-            AsyncResult result = new AsyncResult(true);
-            this._asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
-                    bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
-                        result.SetCancelled();
-                        return;
-                    }
-
-                    continuationAction(this, state);
-                    result.SetResult();
-                }
-                catch (Exception e)
-                {
-                    result.SetException(e);
-                }
-            });
-            return new CoroutineTask(result);
-        }
+        
 
         /// <summary>
         /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
@@ -638,51 +569,6 @@ namespace Framework.Asynchronous
             return new CoroutineTask(result);
         }
 
-
-        /// <summary>
-        /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
-        /// </summary>
-        /// <param name="continuationFunction">
-        /// An action to run when the <see cref="CoroutineTask"/> completes. When run, the delegate will be
-        /// passed the completed task as an argument.
-        /// </param>
-        /// <param name="state">The parameter of the action.</param>
-        /// <param name="continuationOptions">
-        /// Options for when the continuation is scheduled and how it behaves. This includes criteria, such
-        /// as <see cref="CoroutineTaskContinuationOptions.OnCanceled">OnCanceled</see>
-        /// , as well as execution options, such as 
-        /// <see cref="CoroutineTaskContinuationOptions.OnCompleted">OnCompleted</see>.
-        /// </param>
-        /// <returns>A new continuation <see cref="CoroutineTask"/>.</returns>
-        /// <remarks>
-        /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
-        /// completed.
-        /// </remarks>
-        public CoroutineTask ContinueWith(Func<CoroutineTask, object, IEnumerator> continuationFunction, object state,
-            CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
-            AsyncResult result = new AsyncResult(true);
-            this._asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
-                    bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
-                        result.SetCancelled();
-                        return;
-                    }
-
-                    Executors.RunOnCoroutine(continuationFunction(this, state), result);
-                }
-                catch (Exception e)
-                {
-                    result.SetException(e);
-                }
-            });
-            return new CoroutineTask(result);
-        }
-
         /// <summary>
         /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
         /// </summary>
@@ -717,51 +603,6 @@ namespace Framework.Asynchronous
                     }
 
                     TResult value = continuationFunction(this);
-                    result.SetResult(value);
-                }
-                catch (Exception e)
-                {
-                    result.SetException(e);
-                }
-            });
-            return new CoroutineTask<TResult>(result);
-        }
-
-        /// <summary>
-        /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
-        /// </summary>
-        /// <param name="continuationFunction">
-        /// An action to run when the <see cref="CoroutineTask"/> completes. When run, the delegate will be
-        /// passed the completed task as an argument.
-        /// </param>
-        /// <param name="state">The parameter of the action.</param>
-        /// <param name="continuationOptions">
-        /// Options for when the continuation is scheduled and how it behaves. This includes criteria, such
-        /// as <see cref="CoroutineTaskContinuationOptions.OnCanceled">OnCanceled</see>
-        /// , as well as execution options, such as 
-        /// <see cref="CoroutineTaskContinuationOptions.OnCompleted">OnCompleted</see>.
-        /// </param>
-        /// <returns>A new continuation <see cref="CoroutineTask"/>.</returns>
-        /// <remarks>
-        /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
-        /// completed.
-        /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, object, TResult> continuationFunction,
-            object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
-            AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this._asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
-                    bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
-                        result.SetCancelled();
-                        return;
-                    }
-
-                    TResult value = continuationFunction(this, state);
                     result.SetResult(value);
                 }
                 catch (Exception e)
@@ -815,52 +656,6 @@ namespace Framework.Asynchronous
             });
             return new CoroutineTask<TResult>(result);
         }
-
-        /// <summary>
-        /// Creates a continuation that executes when the target <see cref="CoroutineTask"/> completes.
-        /// </summary>
-        /// <param name="continuationFunction">
-        /// An action to run when the <see cref="CoroutineTask"/> completes. When run, the delegate will be
-        /// passed the completed task as an argument.
-        /// </param>
-        /// <param name="state">The parameter of the action.</param>
-        /// <param name="continuationOptions">
-        /// Options for when the continuation is scheduled and how it behaves. This includes criteria, such
-        /// as <see cref="CoroutineTaskContinuationOptions.OnCanceled">OnCanceled</see>
-        /// , as well as execution options, such as 
-        /// <see cref="CoroutineTaskContinuationOptions.OnCompleted">OnCompleted</see>.
-        /// </param>
-        /// <returns>A new continuation <see cref="CoroutineTask"/>.</returns>
-        /// <remarks>
-        /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
-        /// completed.
-        /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(
-            Func<CoroutineTask, object, IPromise<TResult>, IEnumerator> continuationFunction, object state,
-            CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
-            AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this._asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
-                    bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
-                        result.SetCancelled();
-                        return;
-                    }
-
-                    Executors.RunOnCoroutine(continuationFunction(this, state, result), result);
-                }
-                catch (Exception e)
-                {
-                    result.SetException(e);
-                }
-            });
-            return new CoroutineTask<TResult>(result);
-        }
-
     }
 
     public class CoroutineTask<TResult> : CoroutineTask
@@ -890,40 +685,11 @@ namespace Framework.Asynchronous
             });
         }
 
-        public CoroutineTask(Func<object, TResult> function, object state) : this(new AsyncResult<TResult>())
-        {
-            Executors.RunOnMainThread(() =>
-            {
-                try
-                {
-                    TResult value = function(state);
-                    this._asyncResult.SetResult(value);
-                }
-                catch (Exception e)
-                {
-                    this._asyncResult.SetException(e);
-                }
-            });
-        }
-
         public CoroutineTask(Func<IPromise<TResult>, IEnumerator> function) : this(new AsyncResult<TResult>(true))
         {
             try
             {
                 Executors.RunOnCoroutine(function(this._asyncResult), this._asyncResult);
-            }
-            catch (Exception e)
-            {
-                this._asyncResult.SetException(e);
-            }
-        }
-
-        public CoroutineTask(Func<object, IPromise<TResult>, IEnumerator> function, object state) : this(
-            new AsyncResult<TResult>(true))
-        {
-            try
-            {
-                Executors.RunOnCoroutine(function(state, this._asyncResult), this._asyncResult);
             }
             catch (Exception e)
             {
