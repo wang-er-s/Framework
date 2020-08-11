@@ -10,14 +10,10 @@ namespace Framework.Net
     public class UnityWebRequestFileDownloader : FileDownloaderBase
     {
 
-        public UnityWebRequestFileDownloader() : base()
+        public UnityWebRequestFileDownloader(Uri baseUri) : base(baseUri)
         {
         }
-
-        public UnityWebRequestFileDownloader(Uri baseUri, int maxTaskCount) : base(baseUri, maxTaskCount)
-        {
-        }
-
+        
         public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, FileInfo fileInfo)
         {
             return Execution.Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) =>
@@ -177,5 +173,7 @@ namespace Framework.Net
 
             promise.SetResult(infos);
         }
+
+        
     }
 }

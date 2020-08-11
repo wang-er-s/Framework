@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class SimpleBind : MonoBehaviour
 {
     private SetupViewModel vm;
-    private BindableProperty<int> Age;
+    private ObservableProperty<int> Age;
     private View view;
     private VMCreator _vmCreator;
 
@@ -17,8 +17,8 @@ public class SimpleBind : MonoBehaviour
         var sceneViewLocator = new SceneViewLocator();
         _vmCreator = new VMCreator(sceneViewLocator);
         vm = SetupViewModel.Create(_vmCreator);
-        vm.Visible = new BindableProperty<bool>(true);
-        vm.Name = new BindableProperty<string>("JJ");
+        vm.Visible = new ObservableProperty<bool>(true);
+        vm.Name = new ObservableProperty<string>("JJ");
         vm.ShowView();
         view = _vmCreator.GetView(vm);
     }

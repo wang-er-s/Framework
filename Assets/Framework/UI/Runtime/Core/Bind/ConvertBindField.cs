@@ -11,10 +11,10 @@ namespace Framework.UI.Core.Bind
         private UnityEvent<TResult> componentEvent;
         private Func<TData, TResult> field2CpntConvert;
         private Func<TResult, TData> cpnt2FieldConvert;
-        private BindableProperty<TData> property;
+        private ObservableProperty<TData> property;
         private object defaultWrapper;
 
-        public ConvertBindField(TComponent component, BindableProperty<TData> property,
+        public ConvertBindField(TComponent component, ObservableProperty<TData> property,
             Action<TResult> fieldChangeCb,
             Func<TData, TResult> field2CpntConvert,
             Func<TResult, TData> cpnt2FieldConvert,
@@ -25,7 +25,7 @@ namespace Framework.UI.Core.Bind
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent component, BindableProperty<TData> property,
+        public void UpdateValue(TComponent component, ObservableProperty<TData> property,
             Action<TResult> fieldChangeCb,
             Func<TData, TResult> field2CpntConvert,
             Func<TResult, TData> cpnt2FieldConvert,
@@ -35,7 +35,7 @@ namespace Framework.UI.Core.Bind
             InitCpntValue();
         }
 
-        private void SetValue(TComponent component, BindableProperty<TData> property,
+        private void SetValue(TComponent component, ObservableProperty<TData> property,
             Action<TResult> fieldChangeCb,
             Func<TData, TResult> field2CpntConvert,
             Func<TResult, TData> cpnt2FieldConvert,

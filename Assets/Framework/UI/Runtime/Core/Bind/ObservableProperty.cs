@@ -4,20 +4,20 @@ using System.Runtime.CompilerServices;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindableProperty<T> : IClearListener
+    public class ObservableProperty<T> : IClearListener
     {
-        private Dictionary<object, List<Action<T>>> caller2Action = new Dictionary<object, List<Action<T>>>();
+        private readonly Dictionary<object, List<Action<T>>> _caller2Action = new Dictionary<object, List<Action<T>>>();
         
-        public BindableProperty(T value)
+        public ObservableProperty(T value)
         {
             this.value = value;
         }
 
-        public BindableProperty()
+        public ObservableProperty()
         {
         }
 
-        private event Action<T> onValueChanged;
+        private event Action<T> OnValueChanged;
 
         private T value;
         public T Value
@@ -33,38 +33,38 @@ namespace Framework.UI.Core.Bind
 
         private void ValueChanged(T newValue)
         {
-            onValueChanged?.Invoke(newValue);
+            OnValueChanged?.Invoke(newValue);
         }
 
         public void AddListener(Action<T> changeAction, object caller = null)
         {
-            onValueChanged += changeAction;
+            OnValueChanged += changeAction;
             if (caller == null) return;
-            if (!caller2Action.TryGetValue(caller, out var actions))
+            if (!_caller2Action.TryGetValue(caller, out var actions))
             {
                 actions = new List<Action<T>>();
-                caller2Action.Add(caller, actions);
+                _caller2Action.Add(caller, actions);
             }
             actions.Add(changeAction);
         }
 
         public void RemoveListener(Action<T> changeAction)
         {
-            if (onValueChanged == null) return;
-            onValueChanged -= changeAction;
+            if (OnValueChanged == null) return;
+            OnValueChanged -= changeAction;
         }
 
         public void ClearListener(object caller)
         {
             if (caller == null)
             {
-                onValueChanged = null;
+                OnValueChanged = null;
                 return;
             }
-            if(!caller2Action.TryGetValue(caller, out var actions)) return;
+            if(!_caller2Action.TryGetValue(caller, out var actions)) return;
             foreach (var action in actions)
             {
-                onValueChanged -= action;
+                OnValueChanged -= action;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Framework.UI.Core.Bind
             return value != null ? value.ToString() : "null";
         }
 
-        public static implicit operator T(BindableProperty<T> property)
+        public static implicit operator T(ObservableProperty<T> property)
         {
             return property.value;
         }

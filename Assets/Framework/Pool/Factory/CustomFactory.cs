@@ -4,7 +4,6 @@ namespace Framework.Pool.Factory
 {
     public class CustomFactory<T> : IFactory<T>
     {
-
         public CustomFactory(Func<T> func)
         {
             AllocMethod = func;

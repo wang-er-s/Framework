@@ -2,9 +2,9 @@ namespace Framework.Pool
 {
 	public interface IPool<T>
 	{
-        T Spawn();
+        T Allocate();
 
-        bool DeSpawn(T obj);
+        void Free(T obj);
 
 	}
 }

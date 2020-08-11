@@ -7,13 +7,13 @@ namespace Framework.UI.Core.Bind
 {
     public class BindableList<T> : IList<T>, IClearListener
     {
-        private Dictionary<object, List<object>> caller2Action =
+        private readonly Dictionary<object, List<object>> _caller2Action =
             new Dictionary<object, List<object>>();
-        private event Action<NotifyCollectionChangedAction, T, int> collectionChanged;
+        private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
         private IList<T> items;
         private object locker = new object();
-        private event Action<BindableList<T>> listUpdateChanged;
+        private event Action<BindableList<T>> ListUpdateChanged;
         public int Count => items.Count;
         public bool IsReadOnly => items.IsReadOnly;
 
@@ -166,56 +166,56 @@ namespace Framework.UI.Core.Bind
 
         public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener, object caller = null)
         {
-            collectionChanged += listener;
+            CollectionChanged += listener;
             AddListener(caller, listener);
         }
 
         public void RemoveListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
-            if (collectionChanged != null) collectionChanged -= listener;
+            if (CollectionChanged != null) CollectionChanged -= listener;
         }
 
         public void AddListener(Action<BindableList<T>> listener, object caller = null)
         {
-            listUpdateChanged += listener;
+            ListUpdateChanged += listener;
             AddListener(caller, listener);
         }
 
         private void AddListener(object caller, object action)
         {
             if (caller == null) return;
-            if (!caller2Action.TryGetValue(caller, out var actions))
+            if (!_caller2Action.TryGetValue(caller, out var actions))
             {
                 actions = new List<object>();
-                caller2Action.Add(caller, actions);
+                _caller2Action.Add(caller, actions);
             }
             actions.Add(action);
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction type, T item, int index)
         {
-            collectionChanged?.Invoke(type, item, index);
-            listUpdateChanged?.Invoke(this);
+            CollectionChanged?.Invoke(type, item, index);
+            ListUpdateChanged?.Invoke(this);
         }
 
         public void ClearListener(object caller)
         {
             if (caller == null)
             {
-                listUpdateChanged = null;
-                collectionChanged = null;
+                ListUpdateChanged = null;
+                CollectionChanged = null;
                 return;
             }
-            if(!caller2Action.TryGetValue(caller, out var actions)) return;
+            if(!_caller2Action.TryGetValue(caller, out var actions)) return;
             foreach (var action in actions)
             {
                 switch (action)
                 {
                     case Action<BindableList<T>> ac:
-                        listUpdateChanged -= ac;
+                        ListUpdateChanged -= ac;
                         continue;
                     case Action<NotifyCollectionChangedAction, T, int> ac2:
-                        collectionChanged -= ac2;
+                        CollectionChanged -= ac2;
                         break;
                 }
             }

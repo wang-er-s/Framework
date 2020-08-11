@@ -11,11 +11,11 @@ namespace Framework.UI.Core.Bind
         private UnityEvent<TData> componentEvent;
         private Func<TData, TData> prop2CpntWrap;
         private Func<TData, TData> cpnt2PropWrap;
-        private BindableProperty<TData> property;
+        private ObservableProperty<TData> property;
         private object defaultWrapper;
         private BindType bindType;
 
-        public BindField(TComponent component, BindableProperty<TData> property, Action<TData> fieldChangeCb,
+        public BindField(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
             Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
@@ -25,7 +25,7 @@ namespace Framework.UI.Core.Bind
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent component, BindableProperty<TData> property, Action<TData> fieldChangeCb,
+        public void UpdateValue(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
             Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
@@ -34,7 +34,7 @@ namespace Framework.UI.Core.Bind
             InitCpntValue();
         }
 
-        private void SetValue(TComponent component, BindableProperty<TData> property, Action<TData> fieldChangeCb,
+        private void SetValue(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
             Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
@@ -85,12 +85,12 @@ namespace Framework.UI.Core.Bind
     {
         private TComponent component;
         private Action<TResult> filedChangeCb;
-        private BindableProperty<TData1> property1;
-        private BindableProperty<TData2> property2;
+        private ObservableProperty<TData1> property1;
+        private ObservableProperty<TData2> property2;
         private Func<TData1, TData2, TResult> wrapFunc;
         private object defaultWrapper;
 
-        public BindField(TComponent component, BindableProperty<TData1> property1, BindableProperty<TData2> property2,
+        public BindField(TComponent component, ObservableProperty<TData1> property1, ObservableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
         {
             SetValue(component, property1, property2, wrapFunc, filedChangeCb);
@@ -98,16 +98,16 @@ namespace Framework.UI.Core.Bind
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent component, BindableProperty<TData1> property1,
-            BindableProperty<TData2> property2,
+        public void UpdateValue(TComponent component, ObservableProperty<TData1> property1,
+            ObservableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb)
         {
             SetValue(component, property1, property2, wrapFunc, filedChangeCb);
             InitCpntValue();
         }
 
-        private void SetValue(TComponent component, BindableProperty<TData1> property1,
-            BindableProperty<TData2> property2,
+        private void SetValue(TComponent component, ObservableProperty<TData1> property1,
+            ObservableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb)
         {
             this.component = component;

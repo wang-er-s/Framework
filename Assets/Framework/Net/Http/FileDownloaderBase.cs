@@ -9,15 +9,11 @@ namespace Framework.Net
     {
         private Uri _baseUri;
         private int _maxTaskCount;
-
-        public FileDownloaderBase() : this(null, SystemInfo.processorCount * 2)
-        {
-        }
-
-        public FileDownloaderBase(Uri baseUri, int maxTaskCount)
+        
+        public FileDownloaderBase(Uri baseUri, int? maxTaskCount = null)
         {
             this.BaseUri = baseUri;
-            this.MaxTaskCount = maxTaskCount;
+            this.MaxTaskCount = maxTaskCount ?? SystemInfo.processorCount * 2;
         }
 
         public virtual Uri BaseUri

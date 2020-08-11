@@ -38,26 +38,26 @@ namespace Framework.UI.Example
 
     public class ItemViewModel : ViewModel
     {
-        public BindableProperty<string> Path { get; }
+        public ObservableProperty<string> Path { get; }
         private string _path
         {
             get => Path;
             set => Path.Value = value;
         }
         //如果是最后一个item，则要隐藏breakline
-        public BindableProperty<bool> Last { get; }
+        public ObservableProperty<bool> Last { get; }
         private bool _last
         {
             get => Last;
             set => Last.Value = value;
         }
-        public BindableProperty<int> Index { get; }
+        public ObservableProperty<int> Index { get; }
         private int _index
         {
             get => Index;
             set => Index.Value = value;
         }
-        public BindableProperty<bool> Selected { get; }
+        public ObservableProperty<bool> Selected { get; }
         private bool _selected
         {
             get => Selected;
@@ -67,10 +67,10 @@ namespace Framework.UI.Example
 
         public ItemViewModel()
         {
-            Path = new BindableProperty<string>();
-            Last = new BindableProperty<bool>();
-            Index = new BindableProperty<int>();
-            Selected = new BindableProperty<bool>();
+            Path = new ObservableProperty<string>();
+            Last = new ObservableProperty<bool>();
+            Index = new ObservableProperty<int>();
+            Selected = new ObservableProperty<bool>();
         }
 
         public ItemViewModel(bool last, string path, Action<ItemViewModel> clickCb) : this()

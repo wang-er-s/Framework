@@ -31,7 +31,7 @@ namespace Framework.UI.Core.Bind
 
         //单向绑定
         public void Bind<TComponent, TData>
-        (TComponent component, BindableProperty<TData> property, Action<TData> fileChangeCb = null,
+        (TComponent component, ObservableProperty<TData> property, Action<TData> fileChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
             canClearListeners.TryAdd(property);
@@ -41,7 +41,7 @@ namespace Framework.UI.Core.Bind
 
         //反向绑定
         public void RevertBind<TComponent, TData>
-        (TComponent component, BindableProperty<TData> property,
+        (TComponent component, ObservableProperty<TData> property,
             UnityEvent<TData> componentEvent = null,
             Func<TData, TData> cpnt2PropWrap = null) where TComponent : class
         {
@@ -62,7 +62,7 @@ namespace Framework.UI.Core.Bind
         
         //同类型双向绑定
         public void TwoWayBind<TComponent, TData>
-        (TComponent component, BindableProperty<TData> property,
+        (TComponent component, ObservableProperty<TData> property,
             UnityEvent<TData> componentEvent = null,
             Action<TData> fileChangeCb = null,
             Func<TData, TData> cpnt2PropWrap = null,
@@ -74,7 +74,7 @@ namespace Framework.UI.Core.Bind
 
         //wrap不同类型单向绑定
         public void Bind<TComponent, TData, TResult>(TComponent component,
-            BindableProperty<TData> property, Func<TData, TResult> field2CpntConvert, 
+            ObservableProperty<TData> property, Func<TData, TResult> field2CpntConvert, 
             Action<TResult> _fieldChangeCb = null) where TComponent : class
         {
             canClearListeners.TryAdd(property);
@@ -84,7 +84,7 @@ namespace Framework.UI.Core.Bind
 
         //wrap不同类型反向绑定
         public void RevertBind<TComponent, TData, TResult>(TComponent component,
-            BindableProperty<TData> property,
+            ObservableProperty<TData> property,
             Func<TResult, TData> cpnt2FieldConvert,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
@@ -106,7 +106,7 @@ namespace Framework.UI.Core.Bind
         
         //不同类型双向绑定
         public void TwoWayBind<TComponent, TData, TViewEvent>
-        (TComponent component, BindableProperty<TData> property,
+        (TComponent component, ObservableProperty<TData> property,
             Func<TViewEvent, TData> cpnt2FieldConvert, Func<TData, TViewEvent> field2CpntConvert,
             UnityEvent<TViewEvent> componentEvent = null, Action<TViewEvent> fileChangeCb = null) where TComponent : class
         {
@@ -116,7 +116,7 @@ namespace Framework.UI.Core.Bind
 
         //绑定两个field
         public void Bind<TComponent, TData1, TData2, TResult>
-        (TComponent component, BindableProperty<TData1> property1, BindableProperty<TData2> property2,
+        (TComponent component, ObservableProperty<TData1> property1, ObservableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
             where TComponent : class
         {
@@ -126,7 +126,7 @@ namespace Framework.UI.Core.Bind
                 filedChangeCb);
         }
 
-        public void BindData<TData>(BindableProperty<TData> property, Action<TData> cb)
+        public void BindData<TData>(ObservableProperty<TData> property, Action<TData> cb)
         {
             canClearListeners.TryAdd(property);
             cb?.Invoke(property);
