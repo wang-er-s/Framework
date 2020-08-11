@@ -3,26 +3,24 @@ using Framework.Pool.Factory;
 
 namespace Framework.Pool
 {
-    public class SimpleObjectPool<T> : Pool<T>
+    public class ObjectPool<T> : Pool<T>
     {
         private readonly Action<T> _resetMethod;
 
-        public SimpleObjectPool(Func<T> factoryMethod, Action<T> resetMethod = null, int initCount = 0, int? maxCount = null)
+        public ObjectPool(IFactory<T> factory, Action<T> resetMethod = null, int initCount = 0)
         {
-            Factory = new CustomFactory<T>(factoryMethod);
+            Factory = factory;
             _resetMethod = resetMethod;
-            MaxCount = maxCount ?? MaxCount;
             for (int i = 0; i < initCount; i++)
             {
                 CacheStack.Push(Factory.Create());
             }
         }
 
-        public override bool DeSpawn(T obj)
+        public override void Free(T obj)
         {
             _resetMethod.InvokeGracefully(obj);
             CacheStack.Push(obj);
-            return true;
         }
     }
 }

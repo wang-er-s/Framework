@@ -7,26 +7,26 @@ namespace Framework.UI.Example
 {
     public class SetupViewModel : ViewModel
     {
-        public BindableProperty<string> Name;
-        public BindableProperty<string> Job;
-        public BindableProperty<int> ATK;
-        public BindableProperty<float> SuccessRage;
-        public BindableProperty<bool> Visible;
-        public BindableProperty<string> Path;
-        public BindableProperty<float> Process;
+        public ObservableProperty<string> Name;
+        public ObservableProperty<string> Job;
+        public ObservableProperty<int> ATK;
+        public ObservableProperty<float> SuccessRage;
+        public ObservableProperty<bool> Visible;
+        public ObservableProperty<string> Path;
+        public ObservableProperty<float> Process;
         public BindableList<Dropdown.OptionData> Datas;
-        public BindableProperty<int> SelectedIndex;
+        public ObservableProperty<int> SelectedIndex;
 
         public SetupViewModel()
         {
-            Name = new BindableProperty<string>();
-            Job = new BindableProperty<string>();
-            ATK = new BindableProperty<int>();
-            SuccessRage = new BindableProperty<float>();
-            Visible = new BindableProperty<bool>(false);
-            Path = new BindableProperty<string>("梅菜扣肉");
-            Process = new BindableProperty<float>(0.5f);
-            SelectedIndex = new BindableProperty<int>(1);
+            Name = new ObservableProperty<string>();
+            Job = new ObservableProperty<string>();
+            ATK = new ObservableProperty<int>();
+            SuccessRage = new ObservableProperty<float>();
+            Visible = new ObservableProperty<bool>(false);
+            Path = new ObservableProperty<string>("梅菜扣肉");
+            Process = new ObservableProperty<float>(0.5f);
+            SelectedIndex = new ObservableProperty<int>(1);
             Datas = new BindableList<Dropdown.OptionData>()
             {
                 new Dropdown.OptionData("First"),

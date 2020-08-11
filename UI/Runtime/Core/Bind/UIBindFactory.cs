@@ -20,7 +20,7 @@ namespace Framework.UI.Core.Bind
             var bindIpairsView = new BindIpairsView<TItemVm>(list, pattern, root);
         }
 
-        public void BindDropDown(Dropdown dropdown, BindableProperty<int> property,
+        public void BindDropDown(Dropdown dropdown, ObservableProperty<int> property,
             BindableList<Dropdown.OptionData> listProperty = null)
         {
             TwoWayBind(dropdown,property);

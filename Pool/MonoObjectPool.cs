@@ -14,12 +14,11 @@ namespace Framework.Pool
         private Object _obj;
 
         public MonoObjectPool(Func<Object> createMethod, Action<T> onShowMethod = null, Action<T> onHideMethod = null,
-            int initCount = 0, int? maxCount = null)
+            int initCount = 0)
         {
             _onHideMethod = onHideMethod;
             _createMethod = createMethod;
             _onShowMethod = onShowMethod;
-            MaxCount = maxCount ?? MaxCount;
             Factory = new CustomFactory<T>(Create);
             for (int i = 0; i < initCount; i++)
             {
@@ -27,9 +26,9 @@ namespace Framework.Pool
             }
         }
 
-        public override T Spawn()
+        public override T Allocate()
         {
-            var result = base.Spawn();
+            var result = base.Allocate();
             _onShowMethod?.Invoke(result);
             result.Show();
             return result;
@@ -42,12 +41,11 @@ namespace Framework.Pool
             return (Object.Instantiate(_obj) as GameObject)?.GetComponent<T>();
         }
 
-        public override bool DeSpawn(T obj)
+        public override void Free(T obj)
         {
             obj.Hide();
             _onHideMethod?.Invoke(obj);
             CacheStack.Push(obj);
-            return true;
         }
     }
 }

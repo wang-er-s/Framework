@@ -4,12 +4,12 @@ namespace Framework.UI.Core
 {
     public abstract class ViewModel
     {
-        public BindableProperty<ViewState> IsShow { get; } = new BindableProperty<ViewState>(ViewState.Hide);
+        public ObservableProperty<ViewState> IsShow { get; } = new ObservableProperty<ViewState>(ViewState.Hide);
 
         protected ViewState isShow
         {
             get => IsShow;
-            set => ((BindableProperty<ViewState>) IsShow).Value = value;
+            set => ((ObservableProperty<ViewState>) IsShow).Value = value;
         }
 
         public abstract string ViewPath { get; }

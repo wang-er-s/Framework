@@ -34,14 +34,14 @@ public class ListBindViewModel : ViewModel
 {
     public BindableList<ItemViewModel> Items { get; }
     public List<Dropdown.OptionData> DropdownData { get; }
-    public BindableProperty<int> SelectedDropDownIndex { get; }
+    public ObservableProperty<int> SelectedDropDownIndex { get; }
 
     private ItemViewModel selectedItem;
 
     public ListBindViewModel()
     {
         Items = new BindableList<ItemViewModel>();
-        SelectedDropDownIndex = new BindableProperty<int>(0);
+        SelectedDropDownIndex = new ObservableProperty<int>(0);
         DropdownData = new List<Dropdown.OptionData>()
         {
             new Dropdown.OptionData("回锅肉"),

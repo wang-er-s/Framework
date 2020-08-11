@@ -11,11 +11,9 @@ namespace Framework.Pool
 
         protected readonly Stack<T> CacheStack = new Stack<T>();
 
-        protected int MaxCount = 12;
+        public abstract void Free(T obj);
 
-        public abstract bool DeSpawn(T obj);
-
-        public virtual T Spawn()
+        public virtual T Allocate()
         {
             return CacheStack.Count == 0 ?
                 Factory.Create() : CacheStack.Pop();

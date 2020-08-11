@@ -361,7 +361,11 @@ namespace Framework.Execution
 
         private static void DoRunAsync(Action action)
         {
+#if UNITY_WEBGL
+            throw new NotSupportedException("Multithreading is not supported on the WebGL platform.");
+#else
             ThreadPool.QueueUserWorkItem((state) => { action(); });
+#endif
         }
 
         public static Asynchronous.IAsyncResult RunAsync(Action action)
