@@ -1,31 +1,34 @@
 ﻿using System;
 using System.IO;
+using Framework.Execution;
 using Framework.Net;
 using UnityEngine;
 using UnityEngine.UI;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
 namespace Framework.CommonHelper
 {
     public class UIHelper
     {
-        public static void TextTyperEffect(Text textCommponent, string content, float delta, Action onComplete)
+        public static void TextTyperEffect(Text textComponent, string content, long delta, Action onComplete)
         {
-            if (null != textCommponent && !string.IsNullOrEmpty(content))
+            if (null != textComponent && !string.IsNullOrEmpty(content))
             {
-                textCommponent.text = "";
+                textComponent.text = "";
                 int length = 1;
-                Timer timer = null;
-                timer = Timer.RunBySeconds(delta, () =>
+                IScheduledExecutor scheduledExecutor = new CoroutineScheduledExecutor();
+                IAsyncResult asyncResult = null;
+                asyncResult = scheduledExecutor.ScheduleAtFixedRate(deltaTime =>
                 {
                     var subContent = content.Substring(0, length);
-                    textCommponent.text = subContent;
+                    textComponent.text = subContent;
                     length++;
                     if (length > content.Length)
                     {
-                        timer.Stop();
                         onComplete?.Invoke();
+                        asyncResult.Cancel();
                     }
-                }, null);
+                }, period: delta);
             }
         }
         
