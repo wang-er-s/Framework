@@ -1,7 +1,5 @@
-using System;
-using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
-using System.Collections;
 
 // Script created by Custom Inspector Generator
 [CustomEditor(typeof(UIMark))]
@@ -36,6 +34,6 @@ public class UIMarkEditor : Editor
 		serializedTargetScript.ApplyModifiedProperties();
 	}
 }
-
+#endif
 
 
