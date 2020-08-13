@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Framework.CommonHelper;
+using Framework.Helper;
 
 namespace Framework.Configuration
 {

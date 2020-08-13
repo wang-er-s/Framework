@@ -8,11 +8,7 @@ namespace Framework.Prefs
 
         public bool IsSupport(Type type)
         {
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
             TypeCode typeCode = Type.GetTypeCode(type);
-#endif
 
             switch (typeCode)
             {
@@ -65,11 +61,7 @@ namespace Framework.Prefs
 
         public object Decode(Type type, string input)
         {
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
             TypeCode typeCode = Type.GetTypeCode(type);
-#endif
 
             switch (typeCode)
             {

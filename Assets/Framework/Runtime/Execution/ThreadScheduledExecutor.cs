@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
 using Framework.Asynchronous;
 using JetBrains.Annotations;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
@@ -145,7 +144,6 @@ namespace Framework.Execution
         {
             return this.ScheduleAtFixedRate(fixedUpdateCommand, endCommand, GetTimeSpan(initialDelay),
                 GetTimeSpan(period), GetTimeSpan(duration));
-            return new AsyncResult();
         }
 
         public IAsyncResult ScheduleAtFixedRate(Action<long> fixedUpdateCommand, [CanBeNull] Action endCommand = null, TimeSpan? initialDelay = null, TimeSpan? period = null,

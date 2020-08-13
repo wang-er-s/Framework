@@ -1338,7 +1338,7 @@ public static class TypeEx
     {
         return targetType.IsValueType ? Activator.CreateInstance(targetType) : null;
     }
-    
+
     /// <summary>
     /// GenericTypeDefinition means  List<>  or SomeClass<>
     /// </summary>

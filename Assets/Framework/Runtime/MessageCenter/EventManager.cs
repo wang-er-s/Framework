@@ -6,13 +6,13 @@ namespace Framework.MessageCenter
 
     public static class EventManager
     {
-        private static Dictionary<Type, List<IEventListenerBase>> _subscribersDic;
-        private static Dictionary<Type, List<MulEventListenerContainer>> _mulSubscribersDic;
+        private static readonly Dictionary<Type, List<IEventListenerBase>> subscribersDic;
+        private static readonly Dictionary<Type, List<MulEventListenerContainer>> mulSubscribersDic;
 
         static EventManager()
         {
-            _subscribersDic = new Dictionary<Type, List<IEventListenerBase>>();
-            _mulSubscribersDic = new Dictionary<Type, List<MulEventListenerContainer>>();
+            subscribersDic = new Dictionary<Type, List<IEventListenerBase>>();
+            mulSubscribersDic = new Dictionary<Type, List<MulEventListenerContainer>>();
         }
 
         #region EventListener
@@ -21,18 +21,18 @@ namespace Framework.MessageCenter
         {
             Type eventType = typeof(T);
 
-            if (!_subscribersDic.ContainsKey(eventType))
-                _subscribersDic[eventType] = new List<IEventListenerBase>();
+            if (!subscribersDic.ContainsKey(eventType))
+                subscribersDic[eventType] = new List<IEventListenerBase>();
 
             if (!SubscriptionExists(eventType, listener))
-                _subscribersDic[eventType].Add(listener);
+                subscribersDic[eventType].Add(listener);
         }
 
         public static void UnRegister<T>(IEventListener<T> listener) where T : class
         {
             Type eventType = typeof(T);
 
-            if (!_subscribersDic.ContainsKey(eventType))
+            if (!subscribersDic.ContainsKey(eventType))
             {
 #if EVENTROUTER_THROWEXCEPTIONS
 					throw new ArgumentException( string.Format( "Removing listener \"{0}\", but the event type \"{1}\" isn't registered.", listener, eventType.ToString() ) );
@@ -41,7 +41,7 @@ namespace Framework.MessageCenter
 #endif
             }
 
-            List<IEventListenerBase> subscriberList = _subscribersDic[eventType];
+            List<IEventListenerBase> subscriberList = subscribersDic[eventType];
 #pragma warning disable 219
             bool listenerFound = false;
 #pragma warning restore 219
@@ -54,7 +54,7 @@ namespace Framework.MessageCenter
                     listenerFound = true;
 
                     if (subscriberList.Count == 0)
-                        _subscribersDic.Remove(eventType);
+                        subscribersDic.Remove(eventType);
 
                     return;
                 }
@@ -71,7 +71,7 @@ namespace Framework.MessageCenter
         public static void TriggerEvent<T>(T newEvent) where T : class
         {
             List<IEventListenerBase> list;
-            if (!_subscribersDic.TryGetValue(typeof(T), out list))
+            if (!subscribersDic.TryGetValue(typeof(T), out list))
 #if EVENTROUTER_REQUIRELISTENER
 			            throw new ArgumentException( string.Format( "Attempting to send event of type \"{0}\", but no listener for this type has been found. Make sure this.Subscribe<{0}>(EventRouter) has been called, or that all listeners to this event haven't been unsubscribed.", typeof( MMEvent ).ToString() ) );
 #else
@@ -88,7 +88,7 @@ namespace Framework.MessageCenter
         {
             List<IEventListenerBase> receivers;
 
-            if (!_subscribersDic.TryGetValue(type, out receivers)) return false;
+            if (!subscribersDic.TryGetValue(type, out receivers)) return false;
 
             bool exists = false;
 
@@ -112,11 +112,11 @@ namespace Framework.MessageCenter
         {
             Type eventType = typeof(T);
 
-            if (!_mulSubscribersDic.ContainsKey(eventType))
-                _mulSubscribersDic[eventType] = new List<MulEventListenerContainer>();
+            if (!mulSubscribersDic.ContainsKey(eventType))
+                mulSubscribersDic[eventType] = new List<MulEventListenerContainer>();
 
             if (!MulSubscriptionExists(eventType, listener, tag))
-                _mulSubscribersDic[eventType].Add(new MulEventListenerContainer(tag, listener));
+                mulSubscribersDic[eventType].Add(new MulEventListenerContainer(tag, listener));
         }
 
 
@@ -125,7 +125,7 @@ namespace Framework.MessageCenter
         {
             Type eventType = typeof(T);
 
-            if (!_mulSubscribersDic.ContainsKey(eventType))
+            if (!mulSubscribersDic.ContainsKey(eventType))
             {
 #if EVENTROUTER_THROWEXCEPTIONS
 					throw new ArgumentException( string.Format( "Removing listener \"{0}\", but the event type \"{1}\" isn't registered.", listener, eventType.ToString() ) );
@@ -134,7 +134,7 @@ namespace Framework.MessageCenter
 #endif
             }
 
-            List<MulEventListenerContainer> mulSubscriberList = _mulSubscribersDic[eventType];
+            List<MulEventListenerContainer> mulSubscriberList = mulSubscribersDic[eventType];
 #pragma warning disable 219
             bool listenerFound = false;
 #pragma warning restore 219
@@ -146,7 +146,7 @@ namespace Framework.MessageCenter
                 listenerFound = true;
 
                 if (mulSubscriberList.Count == 0)
-                    _subscribersDic.Remove(eventType);
+                    subscribersDic.Remove(eventType);
 
                 return;
             }
@@ -162,7 +162,7 @@ namespace Framework.MessageCenter
         public static void TriggerEvent<T>(T newEvent, string tag) where T : class
         {
             List<MulEventListenerContainer> list;
-            if (!_mulSubscribersDic.TryGetValue(typeof(T), out list))
+            if (!mulSubscribersDic.TryGetValue(typeof(T), out list))
 #if EVENTROUTER_REQUIRELISTENER
 			            throw new ArgumentException( string.Format( "Attempting to send event of type \"{0}\", but no listener for this type has been found. Make sure this.Subscribe<{0}>(EventRouter) has been called, or that all listeners to this event haven't been unsubscribed.", typeof( MMEvent ).ToString() ) );
 #else
@@ -180,7 +180,7 @@ namespace Framework.MessageCenter
         {
             List<MulEventListenerContainer> receivers;
 
-            if (!_mulSubscribersDic.TryGetValue(type, out receivers)) return false;
+            if (!mulSubscribersDic.TryGetValue(type, out receivers)) return false;
 
             bool exists = false;
 
@@ -200,8 +200,8 @@ namespace Framework.MessageCenter
 
         public static void Clear()
         {
-            _subscribersDic.Clear();
-            _mulSubscribersDic.Clear();
+            subscribersDic.Clear();
+            mulSubscribersDic.Clear();
         }
 
     }

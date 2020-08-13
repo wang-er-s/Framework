@@ -157,7 +157,5 @@ namespace Framework.MessageCenter
         {
             broadcaster.TriggerEvent(string.Empty, value);
         }
-        
-        
     }
 }

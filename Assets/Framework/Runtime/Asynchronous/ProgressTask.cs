@@ -581,11 +581,7 @@ namespace Framework.Asynchronous
 
             Executors.RunAsync(() =>
             {
-#if NETFX_CORE
-                Task.Delay(delay).Wait();
-#else
                 Thread.Sleep(delay);
-#endif
                 if (this.IsDone || this._running == 1)
                     return;
 

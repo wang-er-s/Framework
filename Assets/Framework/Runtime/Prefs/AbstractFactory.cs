@@ -31,14 +31,14 @@
         
         public IEncryptor Encryptor
         {
-            get { return this._encryptor; }
-            protected set { this._encryptor = value; }
+            get => this._encryptor;
+            protected set => this._encryptor = value;
         }
         
         public ISerializer Serializer
         {
-            get { return this._serializer; }
-            protected set { this._serializer = value; }
+            get => this._serializer;
+            protected set => this._serializer = value;
         }
         
         public abstract Preferences Create(string name);

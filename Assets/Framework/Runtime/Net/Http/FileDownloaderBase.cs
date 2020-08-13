@@ -9,7 +9,7 @@ namespace Framework.Net
     {
         private Uri _baseUri;
         private int _maxTaskCount;
-        
+
         public FileDownloaderBase(Uri baseUri, int? maxTaskCount = null)
         {
             this.BaseUri = baseUri;
