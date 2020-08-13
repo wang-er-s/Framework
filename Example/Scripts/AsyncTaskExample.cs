@@ -24,7 +24,7 @@ namespace Framework.Example
             {
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
-
+            
             //		/* Cancel the task in three seconds
             this.StartCoroutine(DoCancel(task));
 

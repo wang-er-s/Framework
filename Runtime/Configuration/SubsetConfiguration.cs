@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.CommonHelper;
+using Framework.Helper;
 
 namespace Framework.Configuration
 {
@@ -43,7 +43,7 @@ namespace Framework.Configuration
 
         public override IEnumerator<string> GetKeys()
         {
-            return new TransformEnumerator<string, string>(_parent.GetKeys(_prefix), GetChildKey);
+            return new ConvertEnumerator<string, string>(_parent.GetKeys(_prefix), GetChildKey);
         }
 
         public override object GetProperty(string key)

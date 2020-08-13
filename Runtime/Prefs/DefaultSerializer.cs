@@ -55,7 +55,6 @@ namespace Framework.Prefs
                     }
                     catch (Exception)
                     {
-                        // ignored
                     }
                 }
 
@@ -80,7 +79,6 @@ namespace Framework.Prefs
                     }
                     catch (Exception)
                     {
-                        // ignored
                     }
                 }
             }

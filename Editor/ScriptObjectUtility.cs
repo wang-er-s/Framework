@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
 
@@ -30,4 +29,3 @@ public static class ScriptObjectUtility
         Selection.activeObject = asset;
     }
 }
-#endif

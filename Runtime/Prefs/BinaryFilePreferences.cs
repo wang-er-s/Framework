@@ -14,7 +14,8 @@ namespace Framework.Prefs
         {
         }
 
-        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor = null) : base(serializer, encryptor)
+        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor = null) : base(serializer,
+            encryptor)
         {
         }
 
@@ -33,6 +34,7 @@ namespace Framework.Prefs
     public class BinaryFilePreferences : Preferences
     {
         private string _root;
+
         /// <summary>
         /// cache.
         /// </summary>
@@ -42,11 +44,12 @@ namespace Framework.Prefs
         /// serializer
         /// </summary>
         protected readonly ISerializer Serializer;
+
         /// <summary>
         /// encryptor
         /// </summary>
         protected readonly IEncryptor Encryptor;
-        
+
         public BinaryFilePreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
         {
             _root = Application.persistentDataPath;
@@ -54,7 +57,7 @@ namespace Framework.Prefs
             Encryptor = encryptor;
             Load();
         }
-        
+
         public virtual StringBuilder GetDirectory()
         {
             StringBuilder buf = new StringBuilder(this._root);
@@ -82,7 +85,7 @@ namespace Framework.Prefs
                 if (!File.Exists(filename))
                     return;
                 byte[] data = File.ReadAllBytes(filename);
-                if (data == null || data.Length <= 0)
+                if (data.Length <= 0)
                     return;
                 if (this.Encryptor != null)
                     data = Encryptor.Decode(data);
@@ -124,6 +127,7 @@ namespace Framework.Prefs
                 this.Dict.Remove(key);
                 return;
             }
+
             this.Dict[key] = Serializer.Serialize(value);
         }
 
@@ -144,6 +148,7 @@ namespace Framework.Prefs
                 this.Dict.Remove(key);
                 return;
             }
+
             this.Dict[key] = Serializer.Serialize(value);
         }
 
@@ -166,6 +171,7 @@ namespace Framework.Prefs
                     list.Add(Serializer.Deserialize(items[i], type));
                 }
             }
+
             return list.ToArray();
         }
 
@@ -176,6 +182,7 @@ namespace Framework.Prefs
                 this.Dict.Remove(key);
                 return;
             }
+
             StringBuilder buf = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
@@ -184,6 +191,7 @@ namespace Framework.Prefs
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
+
             this.Dict[key] = buf.ToString();
         }
 
@@ -206,6 +214,7 @@ namespace Framework.Prefs
                     list.Add((T) Serializer.Deserialize(items[i], typeof(T)));
                 }
             }
+
             return list.ToArray();
         }
 
@@ -216,6 +225,7 @@ namespace Framework.Prefs
                 this.Dict.Remove(key);
                 return;
             }
+
             StringBuilder buf = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
@@ -224,6 +234,7 @@ namespace Framework.Prefs
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
+
             this.Dict[key] = buf.ToString();
         }
 
@@ -265,6 +276,7 @@ namespace Framework.Prefs
                 this.Delete();
                 return;
             }
+
             Directory.CreateDirectory(this.GetDirectory().ToString());
             using (MemoryStream stream = new MemoryStream())
             {
@@ -276,8 +288,10 @@ namespace Framework.Prefs
                         writer.Write(kv.Key);
                         writer.Write(kv.Value);
                     }
+
                     writer.Flush();
                 }
+
                 byte[] data = stream.ToArray();
                 if (this.Encryptor != null)
                     data = Encryptor.Encode(data);

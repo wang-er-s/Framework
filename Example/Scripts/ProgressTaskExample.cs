@@ -9,15 +9,15 @@ namespace Framework.Example
     {
         protected IEnumerator Start()
         {
-            ProgressTask<float, string> task = new ProgressTask<float, string>(new System.Func<IProgressPromise<float, string>, IEnumerator>(DoTask), true);
+            ProgressTask<float> task = new ProgressTask<float>(DoTask, true);
 
             /* Start the task */
             task.OnPreExecute(() =>
             {
                 Debug.Log("The task has started.");
-            }).OnPostExecute((result) =>
+            }).OnPostExecute(() =>
             {
-                Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
+                Debug.LogFormat("The task has completed.");/* only execute successfully */
             }).OnProgressUpdate((progress) =>
             {
                 Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
@@ -43,7 +43,7 @@ namespace Framework.Example
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask(IProgressPromise<float, string> promise)
+        protected IEnumerator DoTask(IProgressPromise<float> promise)
         {
             int n = 50;
             float progress = 0f;
