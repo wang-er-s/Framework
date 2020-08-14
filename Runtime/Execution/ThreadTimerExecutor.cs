@@ -7,14 +7,14 @@ using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
 namespace Framework.Execution
 {
-    public class ThreadScheduledExecutor : AbstractExecutor, IScheduledExecutor
+    public class ThreadTimerExecutor : AbstractExecutor, ITimerExecutor
     {
         private readonly IComparer<IDelayTask> _comparer = new ComparerImpl<IDelayTask>();
         private readonly List<IDelayTask> _queue = new List<IDelayTask>();
         private readonly object _lock = new object();
         private bool _running;
 
-        public ThreadScheduledExecutor()
+        public ThreadTimerExecutor()
         {
         }
 
@@ -105,48 +105,48 @@ namespace Framework.Execution
                 throw new Exception("The ScheduledExecutor isn't started.");
         }
 
-        public virtual Asynchronous.IAsyncResult Schedule(Action command, long delay)
+        public virtual Asynchronous.IAsyncResult Delay(Action command, long delay)
         {
-            return Schedule(command, GetTimeSpan(delay).Value);
+            return Delay(command, GetTimeSpan(delay).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult Schedule(Action command, TimeSpan delay)
+        public virtual Asynchronous.IAsyncResult Delay(Action command, TimeSpan delay)
         {
             this.Check();
             return new OneTimeDelayTask(this, command, delay);
         }
 
-        public virtual IAsyncResult<TResult> Schedule<TResult>(Func<TResult> command, long delay)
+        public virtual IAsyncResult<TResult> Delay<TResult>(Func<TResult> command, long delay)
         {
-            return Schedule(command, GetTimeSpan(delay).Value);
+            return Delay(command, GetTimeSpan(delay).Value);
         }
 
-        public virtual IAsyncResult<TResult> Schedule<TResult>(Func<TResult> command, TimeSpan delay)
+        public virtual IAsyncResult<TResult> Delay<TResult>(Func<TResult> command, TimeSpan delay)
         {
             this.Check();
             return new OneTimeDelayTask<TResult>(this, command, delay);
         }
 
-        public virtual Asynchronous.IAsyncResult ScheduleAtFixedRate(Action command, long initialDelay, long period)
+        public virtual Asynchronous.IAsyncResult FixedRate(Action command, long initialDelay, long period)
         {
-            return ScheduleAtFixedRate(command, GetTimeSpan(initialDelay).Value, GetTimeSpan(period).Value);
+            return FixedRate(command, GetTimeSpan(initialDelay).Value, GetTimeSpan(period).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult ScheduleAtFixedRate(Action command, TimeSpan initialDelay,
+        public virtual Asynchronous.IAsyncResult FixedRate(Action command, TimeSpan initialDelay,
             TimeSpan period)
         {
             this.Check();
             return new FixedRateDelayTask(this, command, initialDelay, period);
         }
 
-        public IAsyncResult ScheduleAtFixedRate(Action<long> fixedUpdateCommand, [CanBeNull] Action endCommand = null, long? initialDelay = null, long? period = null,
+        public IAsyncResult FixedRateAtDuration(Action<long> fixedUpdateCommand, [CanBeNull] Action endCommand = null, long? initialDelay = null, long? period = null,
             long? duration = null)
         {
-            return this.ScheduleAtFixedRate(fixedUpdateCommand, endCommand, GetTimeSpan(initialDelay),
+            return this.FixedRateAtDuration(fixedUpdateCommand, endCommand, GetTimeSpan(initialDelay),
                 GetTimeSpan(period), GetTimeSpan(duration));
         }
 
-        public IAsyncResult ScheduleAtFixedRate(Action<long> fixedUpdateCommand, [CanBeNull] Action endCommand = null, TimeSpan? initialDelay = null, TimeSpan? period = null,
+        public IAsyncResult FixedRateAtDuration(Action<long> fixedUpdateCommand, [CanBeNull] Action endCommand = null, TimeSpan? initialDelay = null, TimeSpan? period = null,
             TimeSpan? duration = null)
         {
             Check();
@@ -176,9 +176,9 @@ namespace Framework.Execution
             private readonly long _startTime;
             private TimeSpan _delay;
             private readonly Action _wrappedAction;
-            private readonly ThreadScheduledExecutor _executor;
+            private readonly ThreadTimerExecutor _executor;
 
-            public OneTimeDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan delay) : base(true)
+            public OneTimeDelayTask(ThreadTimerExecutor executor, Action command, TimeSpan delay) : base(true)
             {
                 this._startTime = DateTime.Now.Ticks;
                 this._delay = delay;
@@ -242,9 +242,9 @@ namespace Framework.Execution
             private readonly long _startTime;
             private TimeSpan _delay;
             private readonly Action _wrappedAction;
-            private readonly ThreadScheduledExecutor _executor;
+            private readonly ThreadTimerExecutor _executor;
 
-            public OneTimeDelayTask(ThreadScheduledExecutor executor, Func<TResult> command, TimeSpan delay)
+            public OneTimeDelayTask(ThreadTimerExecutor executor, Func<TResult> command, TimeSpan delay)
             {
                 this._startTime = DateTime.Now.Ticks;
                 this._delay = delay;
@@ -307,11 +307,11 @@ namespace Framework.Execution
             private readonly long _startTime;
             private TimeSpan _initialDelay;
             private TimeSpan _period;
-            private readonly ThreadScheduledExecutor _executor;
+            private readonly ThreadTimerExecutor _executor;
             private readonly Action _wrappedAction;
             private int _count = 0;
 
-            public FixedRateDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan initialDelay,
+            public FixedRateDelayTask(ThreadTimerExecutor executor, Action command, TimeSpan initialDelay,
                 TimeSpan period) : base()
             {
                 this._startTime = DateTime.Now.Ticks;
@@ -375,12 +375,12 @@ namespace Framework.Execution
             private TimeSpan _initialDelay;
             private TimeSpan _period;
             private TimeSpan _timer;
-            private readonly ThreadScheduledExecutor _executor;
+            private readonly ThreadTimerExecutor _executor;
             private int _count;
             private readonly Action _wrappedAction;
             private readonly Action _endCommand;
 
-            public DurationFixedRateTask(ThreadScheduledExecutor executor, Action<long> fixedUpdateCommand,
+            public DurationFixedRateTask(ThreadTimerExecutor executor, Action<long> fixedUpdateCommand,
                 Action endCommand, TimeSpan? initialDelay, TimeSpan? period, TimeSpan? duration) : base()
             {
                 this._startTime = DateTime.Now.Ticks;

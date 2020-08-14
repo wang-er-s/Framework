@@ -14,9 +14,9 @@ namespace Framework.Helper
             {
                 textComponent.text = "";
                 int length = 1;
-                IScheduledExecutor scheduledExecutor = new CoroutineScheduledExecutor();
+                ITimerExecutor timerExecutor = new CoroutineTimerExecutor();
                 IAsyncResult asyncResult = null;
-                asyncResult = scheduledExecutor.ScheduleAtFixedRate(deltaTime =>
+                asyncResult = timerExecutor.FixedRateAtDuration(deltaTime =>
                 {
                     var subContent = content.Substring(0, length);
                     textComponent.text = subContent;
