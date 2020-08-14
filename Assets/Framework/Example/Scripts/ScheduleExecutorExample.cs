@@ -10,10 +10,10 @@ namespace Framework.Example
     {
         private void Start()
         {
-            IScheduledExecutor scheduledExecutor = new ThreadScheduledExecutor();
-            scheduledExecutor.Start();
+            ITimerExecutor timerExecutor = new ThreadTimerExecutor();
+            timerExecutor.Start();
             IAsyncResult asyncResult1 = null;
-            asyncResult1 = scheduledExecutor.ScheduleAtFixedRate(time =>
+            asyncResult1 = timerExecutor.FixedRateAtDuration(time =>
             {
                 print($"time={time}  thread id ={Thread.CurrentThread.ManagedThreadId}");
                 if (time >= 5000)
@@ -21,10 +21,10 @@ namespace Framework.Example
             }, () => print($"结束"), 1000, 500, 5000);
             
             
-            scheduledExecutor = new CoroutineScheduledExecutor();
-            scheduledExecutor.Start();
+            timerExecutor = new CoroutineTimerExecutor();
+            timerExecutor.Start();
             IAsyncResult asyncResult2 = null;
-            asyncResult2 = scheduledExecutor.ScheduleAtFixedRate(time =>
+            asyncResult2 = timerExecutor.FixedRateAtDuration(time =>
             {
                 print($"time={time}  thread id ={Thread.CurrentThread.ManagedThreadId}");
                 if (time >= 5000)
