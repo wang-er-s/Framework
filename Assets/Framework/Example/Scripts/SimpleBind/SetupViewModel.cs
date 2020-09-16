@@ -1,3 +1,4 @@
+using System;
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using UnityEngine;
@@ -17,8 +18,11 @@ namespace Framework.UI.Example
         public BindableList<Dropdown.OptionData> Datas;
         public ObservableProperty<int> SelectedIndex;
 
+        public Action OnClick;
+
         public SetupViewModel()
         {
+            OnClick += () => Debug.Log(111);
             Name = new ObservableProperty<string>();
             Job = new ObservableProperty<string>();
             ATK = new ObservableProperty<int>();

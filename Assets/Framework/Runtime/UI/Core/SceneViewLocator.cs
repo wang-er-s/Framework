@@ -50,6 +50,7 @@ namespace Framework.UI.Core
         private View CreateUI(string panelName)
         {
             var loadGo = UIEnv.LoadPrefabFunc(panelName);
+            loadGo = Object.Instantiate(loadGo);
             var view = loadGo.GetComponent<View>();
             var uiLevel = view.UILevel;
             Transform par;

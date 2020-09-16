@@ -24,7 +24,7 @@ namespace Framework.UI.Core.Bind
             Func<Action, Action> wrapFunc)
         {
             this._component = component;
-            this._command = command;
+            this._command = ()=> command?.Invoke();
             this._componentEvent = componentEvent;
             this._wrapFunc = wrapFunc;
         }
@@ -70,7 +70,7 @@ namespace Framework.UI.Core.Bind
             Func<Action<TData>, Action<TData>> wrapFunc)
         {
             this._component = component;
-            this._command = command;
+            this._command = data=> command?.Invoke(data);
             this._componentEvent = componentEvent;
             this._wrapFunc = wrapFunc;
         }
