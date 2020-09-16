@@ -6,19 +6,19 @@ using Framework.UI.Core.Bind;
 
 public class #ClassName : View
 {
-	private UIBindFactory<#ClassName, #VMName> binding;
-	private #VMName vm;
+    private UIBindFactory<#ClassName, #VMName> binding;
+    private #VMName vm;
 	
-	//#Components
-	//#Components
+    #region Components
+    #endregion
 
-	public override UILevel UILevel { get; } = UILevel.Common;
+    public override UILevel UILevel { get; } = UILevel.Common;
 
-	protected override void OnVmChange()
-	{
-		vm = ViewModel as #VMName;
-		if (binding == null)
-			binding = new UIBindFactory<#ClassName, #VMName>(this, vm);
-		binding.UpdateVm(vm);
-	}
+    protected override void OnVmChange()
+    {
+        vm = ViewModel as #VMName;
+        if (binding == null)
+            binding = new UIBindFactory<#ClassName, #VMName>(this, vm);
+        binding.UpdateVm(vm);
+    }
 }

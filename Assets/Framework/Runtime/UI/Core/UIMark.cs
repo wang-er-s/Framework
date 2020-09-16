@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Framework.UI.Core;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
@@ -9,31 +10,45 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class UIMark : MonoBehaviour
 {
-    public MarkType _MarkType = MarkType.Component;
-    
     public string FieldName;
 
-    public Component CurComponent => Components[SelectedComponent];
+    [Dropdown("Components")]
+    public Component CurComponent;
 
-    public int SelectedComponent;
+    private List<Component> Components;
 
-    public List<Component> Components;
+    public bool IgnoreSelf;
+
+    public bool IgnoreSelfAndChild;
 
     private void Awake()
     {
         Components = new List<Component>();
         gameObject.GetComponents(typeof(Component), Components);
         if (string.IsNullOrEmpty(FieldName)) FieldName = gameObject.name;
-        for (int i = 0; i < Components.Count; i++)
+        foreach (var component in Components)
         {
-            if (Components[i] == DefaultComponent)
+            if (component == DefaultComponent)
             {
-                SelectedComponent = i;
-                
+                CurComponent = component;
+                break;
             }
         }
     }
 
+    private void Update()
+    {
+        gameObject.GetComponents(typeof(Component), Components);
+        foreach (var component in Components)
+        {
+            if (component == DefaultComponent)
+            {
+                CurComponent = component;
+                break;
+            }
+        }
+    }
+    
     private Component DefaultComponent
     {
         get
@@ -73,11 +88,5 @@ public class UIMark : MonoBehaviour
             if (GetComponent<SpriteRenderer>()) return GetComponent<SpriteRenderer>();
             return null;
         }
-    }
-
-    public enum MarkType
-    {
-        Element,
-        Component
     }
 }

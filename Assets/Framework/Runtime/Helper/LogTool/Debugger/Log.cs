@@ -107,9 +107,11 @@ namespace Framework
             Warning(null, null, null, msgs);
         }
 
-        public static void Assert(bool condition)
+        public static void Assert(bool condition, string message = "", Object context = null)
         {
-            UnityEngine.Debug.Assert(condition);
+            if (!condition)
+                LogToFile("[A]" + message);
+            UnityEngine.Debug.Assert(condition, message, context);
         }
         
         //----------------------------------------------------------------------

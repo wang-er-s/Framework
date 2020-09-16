@@ -12,8 +12,12 @@ namespace Framework
 
         public static void Msg(this Object obj, params object[] msgs)
         {
-            if (!Log.EnableLog) return;
             Log.Msg(obj, GetLogTag(obj), GetLogCallerMethod(), msgs);
+        }
+
+        public static void Assert(this Object obj, bool condition, string message = "")
+        {
+            Log.Assert(condition, message, obj);
         }
 
         public static void Error(this Object obj, params object[] msgs)
@@ -23,13 +27,11 @@ namespace Framework
         
         public static void Warning(this Object obj, params object[] msgs)
         {
-            if (!Log.EnableLog) return;
             Log.Warning(obj, GetLogTag(obj), GetLogCallerMethod(), msgs);
         }
         
         public static void Msg(this object obj, params object[] msgs)
         {
-            if (!Log.EnableLog) return;
             Log.Msg(null, GetLogTag(obj), GetLogCallerMethod(), msgs);
         }
 
@@ -40,7 +42,6 @@ namespace Framework
 
         public static void Warning(this object obj, params object[] msgs)
         {
-            if (!Log.EnableLog) return;
             Log.Warning(null, GetLogTag(obj), GetLogCallerMethod(), msgs);
         }
 
