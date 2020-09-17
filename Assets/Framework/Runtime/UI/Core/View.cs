@@ -12,7 +12,7 @@ namespace Framework.UI.Core
         public Transform Transform { get; private set; }
         public abstract UILevel UILevel { get; }
 
-        internal void SetVm(ViewModel vm)
+        public void SetVm(ViewModel vm)
         {
             if (ViewModel == vm) return;
             ViewModel = vm;
