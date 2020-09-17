@@ -20,7 +20,7 @@ namespace Framework.UI.Core
                 OnVmChange();
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             _subViews = new List<View>();
