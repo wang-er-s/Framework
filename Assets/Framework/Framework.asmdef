@@ -2,7 +2,7 @@
     "name": "Framework",
     "references": [
         "GUID:652953e24ea67844ba96c36404310072",
-        "GUID:776d03a35f1b52c4a9aed9f56d7b4229"
+        "GUID:86b2be6c15f96d9439041c03021bd0eb"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
