@@ -10,10 +10,9 @@ public class ListBind : MonoBehaviour
     private void Start()
     {
         var sceneViewLocator = new SceneViewLocator();
-        var vmCreator = new VMCreator(sceneViewLocator);
-        vm = ListBindViewModel.Create(vmCreator);
+        vm = new ListBindViewModel();
         vm.ShowView();
-        pair_vm = ListPairsBindViewModel.Create(vmCreator);
+        pair_vm = new ListPairsBindViewModel();
         pair_vm.ShowView();
     }
 }

@@ -21,11 +21,11 @@ public class ListPairsBindView : View
 
 public class ListPairsBindViewModel : ViewModel
 {
-    public BindableList<ItemViewModel> Items { get; private set; }
+    public ObservableList<ItemViewModel> Items { get; private set; }
 
     public ListPairsBindViewModel()
     {
-        Items = new BindableList<ItemViewModel>()
+        Items = new ObservableList<ItemViewModel>()
         {
             new ItemViewModel(false, "回锅肉", null),
             new ItemViewModel(false, "梅菜扣肉", null),
@@ -35,11 +35,4 @@ public class ListPairsBindViewModel : ViewModel
     }
 
     public override string ViewPath { get; } = "ListPairsBind";
-
-    public static ListPairsBindViewModel Create(VMCreator vmCreator)
-    {
-        var vm = new ListPairsBindViewModel();
-        vmCreator?.BindView(vm);
-        return vm;
-    }
 }

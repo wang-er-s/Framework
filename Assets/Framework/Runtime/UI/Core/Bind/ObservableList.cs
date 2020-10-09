@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindableList<T> : IList<T>, IClearListener
+    public class ObservableList<T> : IList<T>, IClearListener
     {
         private readonly Dictionary<object, List<object>> _caller2Action =
             new Dictionary<object, List<object>>();
@@ -13,21 +13,21 @@ namespace Framework.UI.Core.Bind
         
         private IList<T> _items;
         private readonly object _locker = new object();
-        private event Action<BindableList<T>> ListUpdateChanged;
+        private event Action<ObservableList<T>> ListUpdateChanged;
         public int Count => _items.Count;
         public bool IsReadOnly => _items.IsReadOnly;
 
-        public BindableList()
+        public ObservableList()
         {
             _items = new List<T>();
         }
 
-        public BindableList(int capacity)
+        public ObservableList(int capacity)
         {
             _items = new List<T>(capacity);
         }
 
-        public BindableList(IList<T> list)
+        public ObservableList(IList<T> list)
         {
             if (list == null)
                 throw new ArgumentException();
@@ -175,7 +175,7 @@ namespace Framework.UI.Core.Bind
             if (CollectionChanged != null) CollectionChanged -= listener;
         }
 
-        public void AddListener(Action<BindableList<T>> listener, object caller = null)
+        public void AddListener(Action<ObservableList<T>> listener, object caller = null)
         {
             ListUpdateChanged += listener;
             AddListener(caller, listener);
@@ -211,7 +211,7 @@ namespace Framework.UI.Core.Bind
             {
                 switch (action)
                 {
-                    case Action<BindableList<T>> ac:
+                    case Action<ObservableList<T>> ac:
                         ListUpdateChanged -= ac;
                         continue;
                     case Action<NotifyCollectionChangedAction, T, int> ac2:

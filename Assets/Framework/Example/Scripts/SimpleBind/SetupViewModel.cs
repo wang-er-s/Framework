@@ -15,7 +15,7 @@ namespace Framework.UI.Example
         public ObservableProperty<bool> Visible;
         public ObservableProperty<string> Path;
         public ObservableProperty<float> Process;
-        public BindableList<Dropdown.OptionData> Datas;
+        public ObservableList<Dropdown.OptionData> Datas;
         public ObservableProperty<int> SelectedIndex;
 
         public Action OnClick;
@@ -31,7 +31,7 @@ namespace Framework.UI.Example
             Path = new ObservableProperty<string>("梅菜扣肉");
             Process = new ObservableProperty<float>(0.5f);
             SelectedIndex = new ObservableProperty<int>(1);
-            Datas = new BindableList<Dropdown.OptionData>()
+            Datas = new ObservableList<Dropdown.OptionData>()
             {
                 new Dropdown.OptionData("First"),
                 new Dropdown.OptionData("Second"),
@@ -61,12 +61,5 @@ namespace Framework.UI.Example
         }
 
         public override string ViewPath { get; } = "SimpleBind";
-
-        public static SetupViewModel Create(VMCreator vmCreator)
-        {
-            var vm = new SetupViewModel();
-            vmCreator?.BindView(vm);
-            return vm;
-        }
     }
 }

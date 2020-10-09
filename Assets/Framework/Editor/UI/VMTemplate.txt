@@ -8,11 +8,4 @@ public class #ClassName : ViewModel
     }
 
     public override string ViewPath { get; } = "#PrefabPath";
-
-    public static #ClassName Create(VMCreator vmCreator)
-    {
-        #ClassName vm = new #ClassName();
-        vmCreator?.BindView(vm);
-        return vm;
-    }
 }

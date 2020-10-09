@@ -32,7 +32,7 @@ public class ListBindView : View
 
 public class ListBindViewModel : ViewModel
 {
-    public BindableList<ItemViewModel> Items { get; }
+    public ObservableList<ItemViewModel> Items { get; }
     public List<Dropdown.OptionData> DropdownData { get; }
     public ObservableProperty<int> SelectedDropDownIndex { get; }
 
@@ -40,7 +40,7 @@ public class ListBindViewModel : ViewModel
 
     public ListBindViewModel()
     {
-        Items = new BindableList<ItemViewModel>();
+        Items = new ObservableList<ItemViewModel>();
         SelectedDropDownIndex = new ObservableProperty<int>(0);
         DropdownData = new List<Dropdown.OptionData>()
         {
@@ -96,11 +96,4 @@ public class ListBindViewModel : ViewModel
     }
 
     public override string ViewPath { get; } = "ListBind";
-
-    public static ListBindViewModel Create(VMCreator vmCreator)
-    {
-        var vm = new ListBindViewModel();
-        vmCreator?.BindView(vm);
-        return vm;
-    }
 }

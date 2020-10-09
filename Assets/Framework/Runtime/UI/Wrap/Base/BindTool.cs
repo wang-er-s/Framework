@@ -14,7 +14,6 @@ namespace Framework.UI.Wrap.Base
             {typeof(InputField), typeof(InputFieldWrapper)},
             {typeof(Slider), typeof(SliderWrapper)},
             {typeof(Button), typeof(ButtonWrapper)},
-            {typeof(View), typeof(ViewWrapper)},
             {typeof(Image), typeof(ImageWrapper)},
             {typeof(Dropdown), typeof(DropdownWrapper)}
         };
@@ -29,7 +28,7 @@ namespace Framework.UI.Wrap.Base
                     args[0] = component;
                     return Activator.CreateInstance(type.Value, args);
                 }
-            return component;
+            return null;
         }
     }
 }

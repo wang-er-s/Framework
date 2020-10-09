@@ -161,7 +161,7 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public void BindList<TComponent, TData>(TComponent component, BindableList<TData> property)
+        public void BindList<TComponent, TData>(TComponent component, ObservableList<TData> property)
         {
             var bindList = new BindList<TComponent,TData>(component, property);
         }

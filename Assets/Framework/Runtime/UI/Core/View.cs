@@ -31,14 +31,14 @@ namespace Framework.UI.Core
 
         public void Show()
         {
-            SetCanvas(true);
+            gameObject.SetActive(true);
             OnShow();
             _subViews.ForEach((subView) => subView.OnShow());
         }
 
         public void Hide()
         {
-            SetCanvas(false);
+            gameObject.SetActive(false);
             OnHide();
             _subViews.ForEach((subView) => subView.OnHide());
         }

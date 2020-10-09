@@ -15,6 +15,7 @@ namespace Framework.UI.Core.Bind
 
         public ObservableProperty()
         {
+            _value = default;
         }
 
         private event Action<T> OnValueChanged;

@@ -12,10 +12,10 @@ namespace Framework.UI.Core.Bind
     {
         private Transform _content;
         private readonly List<View> _views;
-        private readonly BindableList<TVm> _list;
+        private readonly ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
 
-        public BindViewList(BindableList<TVm> list, params View[] view)
+        public BindViewList(ObservableList<TVm> list, params View[] view)
         {
             _views = view.ToList();
             _content = _views[0].transform.parent;
@@ -50,15 +50,15 @@ namespace Framework.UI.Core.Bind
 
     public class BindIpairsView<TVm> where TVm : ViewModel
     {
-        private BindableList<TVm> _list;
+        private ObservableList<TVm> _list;
         private List<View> _views;
 
-        public BindIpairsView(BindableList<TVm> list, string itemName, Transform root)
+        public BindIpairsView(ObservableList<TVm> list, string itemName, Transform root)
         {
             SetValue(list, itemName, root);
         }
 
-        private void SetValue(BindableList<TVm> list, string itemName, Transform root)
+        private void SetValue(ObservableList<TVm> list, string itemName, Transform root)
         {
             this._list = list;
             ParseItems(itemName, root);
@@ -76,11 +76,15 @@ namespace Framework.UI.Core.Bind
             }
 
             int childCount = root.childCount;
-            for (var i = 0; i < childCount; i++)
+            for (var i = 1; i <= childCount; i++)
             {
                 var item = regex.Replace(itemName, i.ToString());
                 View view = root.FindInAllChild(item)?.GetComponent<View>();
-                if (view == null) break;
+                if (view == null)
+                {
+                    Debug.LogError($"{item} do not have view component");
+                    break;
+                }
                 _views.Add(view);
             }
         }

@@ -30,7 +30,7 @@ namespace Framework.Pool
         {
             var result = base.Allocate();
             _onShowMethod?.Invoke(result);
-            result.Show();
+            result.ActiveShow();
             return result;
         }
 
@@ -43,7 +43,7 @@ namespace Framework.Pool
 
         public override void Free(T obj)
         {
-            obj.Hide();
+            obj.ActiveHide();
             _onHideMethod?.Invoke(obj);
             CacheStack.Push(obj);
         }

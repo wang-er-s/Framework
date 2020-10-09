@@ -1,4 +1,5 @@
 ﻿/*
+/*
  * MIT License
  *
  * Copyright (c) 2018 Clark Yang
@@ -20,7 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE.
- */
+ #1#
 
 using System;
 using System.IO;
@@ -201,3 +202,4 @@ namespace Framework.Net
         
     }
 }
+*/

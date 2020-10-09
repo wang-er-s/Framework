@@ -10,7 +10,7 @@ namespace Framework.UI.Core
         public static string UIPanelScriptFolder = "Assets/Scripts/UI/Panel";
         public static string UIPrefabRootPath = "Resources";
 #endif
-        public static Func<string, Sprite> LoadSpriteFunc;
-        public static Func<string, GameObject> LoadPrefabFunc;
+        public static Func<string, Sprite> LoadSpriteFunc = Resources.Load<Sprite>;
+        public static Func<string, GameObject> LoadPrefabFunc = Resources.Load<GameObject>;
     }
 }

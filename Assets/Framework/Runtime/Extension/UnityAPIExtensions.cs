@@ -96,15 +96,15 @@ public static class GameObjectExtension
         var selfScript = gameObject.AddComponent<MonoBehaviour>();
         var boxCollider = gameObject.AddComponent<BoxCollider>();
 
-        gameObject.Show(); // gameObject.SetActive(true)
-        selfScript.Show(); // this.gameObject.SetActive(true)
-        boxCollider.Show(); // boxCollider.gameObject.SetActive(true)
-        gameObject.transform.Show(); // transform.gameObject.SetActive(true)
+        gameObject.ActiveShow(); // gameObject.SetActive(true)
+        selfScript.ActiveShow(); // this.gameObject.SetActive(true)
+        boxCollider.ActiveShow(); // boxCollider.gameObject.SetActive(true)
+        gameObject.transform.ActiveShow(); // transform.gameObject.SetActive(true)
 
-        gameObject.Hide(); // gameObject.SetActive(false)
-        selfScript.Hide(); // this.gameObject.SetActive(false)
-        boxCollider.Hide(); // boxCollider.gameObject.SetActive(false)
-        transform.Hide(); // transform.gameObject.SetActive(false)
+        gameObject.ActiveHide(); // gameObject.SetActive(false)
+        selfScript.ActiveHide(); // this.gameObject.SetActive(false)
+        boxCollider.ActiveHide(); // boxCollider.gameObject.SetActive(false)
+        transform.ActiveHide(); // transform.gameObject.SetActive(false)
 
         selfScript.DestroyGameObj();
         boxCollider.DestroyGameObj();
@@ -135,7 +135,7 @@ public static class GameObjectExtension
 
     #region CEGO001 Show
 
-    public static GameObject Show(this GameObject selfObj)
+    public static GameObject ActiveShow(this GameObject selfObj)
     {
         selfObj.SetActive(true);
         return selfObj;
@@ -147,9 +147,9 @@ public static class GameObjectExtension
         return selfObj;
     }
 
-    public static T Show<T>(this T selfComponent) where T : Component
+    public static T ActiveShow<T>(this T selfComponent) where T : Component
     {
-        selfComponent.gameObject.Show();
+        selfComponent.gameObject.ActiveShow();
         return selfComponent;
     }
 
@@ -163,7 +163,7 @@ public static class GameObjectExtension
 
     #region CEGO002 Hide
 
-    public static GameObject Hide(this GameObject selfObj)
+    public static GameObject ActiveHide(this GameObject selfObj)
     {
         selfObj.SetActive(false);
         return selfObj;
@@ -175,9 +175,9 @@ public static class GameObjectExtension
         return selfObj;
     }
 
-    public static T Hide<T>(this T selfComponent) where T : Component
+    public static T ActiveHide<T>(this T selfComponent) where T : Component
     {
-        selfComponent.gameObject.Hide();
+        selfComponent.gameObject.ActiveHide();
         return selfComponent;
     }
 
@@ -1038,13 +1038,13 @@ public static class TransformExtension
 
     public static T ShowChildTransByPath<T>(this T selfComponent, string tranformPath) where T : Component
     {
-        selfComponent.transform.Find(tranformPath).gameObject.Show();
+        selfComponent.transform.Find(tranformPath).gameObject.ActiveShow();
         return selfComponent;
     }
 
     public static T HideChildTransByPath<T>(this T selfComponent, string tranformPath) where T : Component
     {
-        selfComponent.transform.Find(tranformPath).Hide();
+        selfComponent.transform.Find(tranformPath).ActiveHide();
         return selfComponent;
     }
 

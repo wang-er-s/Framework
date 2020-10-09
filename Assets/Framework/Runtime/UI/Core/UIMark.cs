@@ -19,13 +19,14 @@ public class UIMark : MonoBehaviour
 
     public bool IgnoreSelf;
 
-    public bool IgnoreSelfAndChild;
+    public bool IgnoreChild;
 
     private void Awake()
     {
         Components = new List<Component>();
         gameObject.GetComponents(typeof(Component), Components);
-        if (string.IsNullOrEmpty(FieldName)) FieldName = gameObject.name;
+        if (!string.IsNullOrEmpty(FieldName)) return;
+        FieldName = gameObject.name;
         foreach (var component in Components)
         {
             if (component == DefaultComponent)
@@ -39,14 +40,6 @@ public class UIMark : MonoBehaviour
     private void Update()
     {
         gameObject.GetComponents(typeof(Component), Components);
-        foreach (var component in Components)
-        {
-            if (component == DefaultComponent)
-            {
-                CurComponent = component;
-                break;
-            }
-        }
     }
     
     private Component DefaultComponent

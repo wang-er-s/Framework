@@ -106,14 +106,19 @@ namespace Framework.UI.Editor
 		private static void CollectMark(Transform trans, ref List<_uiMark> uiMarks)
 		{
 			UIMark uiMark = trans.GetComponent<UIMark>();
-			if (uiMark != null && uiMark.IgnoreSelfAndChild)
+			if (uiMark != null && uiMark.IgnoreChild && uiMark.IgnoreSelf)
 			{
 				return;
 			}
-			for (int i = 0; i < trans.childCount; i++)
+
+			if (uiMark == null || (uiMark != null && !uiMark.IgnoreChild))
 			{
-				CollectMark(trans.GetChild(i), ref uiMarks);
+				for (int i = 0; i < trans.childCount; i++)
+				{
+					CollectMark(trans.GetChild(i), ref uiMarks);
+				}
 			}
+
 			if (uiMark != null && uiMark.IgnoreSelf)
 			{
 				return;
@@ -170,7 +175,7 @@ namespace Framework.UI.Editor
 			{
 				markStr = markStr.Substring(0, markStr.Length - 1);
 			}
-			template = Regex.Replace(template, @"(#region Components\n)([\s\S]*?)(\s*?#endregion)",
+			template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(\s*?#endregion)",
 				$"$1{markStr}$3");
 			File.WriteAllText(generateFilePath, template);
 		}

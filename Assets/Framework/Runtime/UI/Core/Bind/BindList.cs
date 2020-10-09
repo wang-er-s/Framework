@@ -11,10 +11,10 @@ namespace Framework.UI.Core.Bind
     public class BindList<TComponent,TVm>
     {
         private readonly TComponent _component;
-        private readonly BindableList<TVm> _list;
+        private readonly ObservableList<TVm> _list;
         private IBindList<TVm> _bindList;
 
-        public BindList(TComponent view, BindableList<TVm> list)
+        public BindList(TComponent view, ObservableList<TVm> list)
         {
             _component = view;
             this._list = list;

@@ -58,22 +58,26 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
-            if (_propChangeCb == null)
-                _propChangeCb = (_defaultWrapper as IFieldChangeCb<TData>)?.GetFieldChangeCb();
-            if (_componentEvent == null)
-                _componentEvent = (_defaultWrapper as IComponentEvent<TData>)?.GetComponentEvent();
+
+            if (_propChangeCb == null || _componentEvent == null)
+            {
+                _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            }
+
             switch (_bindType)
             {
                 case BindType.OnWay:
+                    if (_propChangeCb == null)
+                        _propChangeCb = (_defaultWrapper as IFieldChangeCb<TData>)?.GetFieldChangeCb();
                     Log.Assert(_propChangeCb != null);
-                    if(_propChangeCb == null) return;
                     _property.AddListener((value) =>
                         _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
                     break;
                 case BindType.Revert:
+                    
+                    if (_componentEvent == null)
+                        _componentEvent = (_defaultWrapper as IComponentEvent<TData>)?.GetComponentEvent();
                     Log.Assert(_componentEvent != null);
-                    if(_componentEvent == null) return;
                     _componentEvent.AddListener((data) =>
                         _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data));
                     break;
@@ -124,7 +128,8 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            if (_filedChangeCb == null)
+                _defaultWrapper = BindTool.GetDefaultWrapper(_component);
             _filedChangeCb = _filedChangeCb ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
             _property1.AddListener((data1) => _filedChangeCb(_wrapFunc(data1, _property2.Value)));
             _property2.AddListener((data2) => _filedChangeCb(_wrapFunc(_property1.Value, data2)));
