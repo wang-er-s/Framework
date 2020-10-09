@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class ListBindView : View
 {
-    private UIBindFactory<ListBindView, ListBindViewModel> binding;
     private ListBindViewModel vm;
     public ItemView item;
     public Dropdown dropdown;
@@ -19,14 +18,12 @@ public class ListBindView : View
     protected override void OnVmChange()
     {
         vm = ViewModel as ListBindViewModel;
-        if (binding == null)
-            binding = new UIBindFactory<ListBindView, ListBindViewModel>(this, vm);
         dropdown.options = vm.DropdownData;
-        binding.RevertBind(dropdown, vm.SelectedDropDownIndex);
-        binding.BindViewList(vm.Items, item);
-        binding.BindCommand(addBtn, vm.AddItem);
-        binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
-        binding.BindCommand(updateBtn, vm.UpdateItem);
+        Binding.RevertBind(dropdown, vm.SelectedDropDownIndex);
+        Binding.BindViewList(vm.Items, item);
+        Binding.BindCommand(addBtn, vm.AddItem);
+        Binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
+        Binding.BindCommand(updateBtn, vm.UpdateItem);
     }
 }
 

@@ -5,10 +5,8 @@ using System.Collections.Specialized;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableList<T> : IList<T>, IClearListener
+    public class ObservableList<T> : IList<T>
     {
-        private readonly Dictionary<object, List<object>> _caller2Action =
-            new Dictionary<object, List<object>>();
         private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
         private IList<T> _items;
@@ -167,7 +165,6 @@ namespace Framework.UI.Core.Bind
         public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener, object caller = null)
         {
             CollectionChanged += listener;
-            AddListener(caller, listener);
         }
 
         public void RemoveListener(Action<NotifyCollectionChangedAction, T, int> listener)
@@ -178,18 +175,6 @@ namespace Framework.UI.Core.Bind
         public void AddListener(Action<ObservableList<T>> listener, object caller = null)
         {
             ListUpdateChanged += listener;
-            AddListener(caller, listener);
-        }
-
-        private void AddListener(object caller, object action)
-        {
-            if (caller == null) return;
-            if (!_caller2Action.TryGetValue(caller, out var actions))
-            {
-                actions = new List<object>();
-                _caller2Action.Add(caller, actions);
-            }
-            actions.Add(action);
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction type, T item, int index)
@@ -198,28 +183,11 @@ namespace Framework.UI.Core.Bind
             ListUpdateChanged?.Invoke(this);
         }
 
-        public void ClearListener(object caller)
+        public void ClearListener()
         {
-            if (caller == null)
-            {
-                ListUpdateChanged = null;
-                CollectionChanged = null;
-                return;
-            }
-            if(!_caller2Action.TryGetValue(caller, out var actions)) return;
-            foreach (var action in actions)
-            {
-                switch (action)
-                {
-                    case Action<ObservableList<T>> ac:
-                        ListUpdateChanged -= ac;
-                        continue;
-                    case Action<NotifyCollectionChangedAction, T, int> ac2:
-                        CollectionChanged -= ac2;
-                        break;
-                }
-            }
-            
+            ListUpdateChanged = null;
+            CollectionChanged = null;
+
         }
     }
 }

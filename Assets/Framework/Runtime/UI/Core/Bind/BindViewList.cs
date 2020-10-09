@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindViewList<TVm> where TVm : ViewModel
+    public class BindViewList<TVm> : BaseBind where TVm : ViewModel
     {
         private Transform _content;
         private readonly List<View> _views;
@@ -46,9 +46,14 @@ namespace Framework.UI.Core.Bind
                 _wrappers.Add(wrapper);
             }
         }
+
+        public override void ClearBind()
+        {
+            _list.ClearListener();
+        }
     }
 
-    public class BindIpairsView<TVm> where TVm : ViewModel
+    public class BindIpairsView<TVm> : BaseBind where TVm : ViewModel
     {
         private ObservableList<TVm> _list;
         private List<View> _views;
@@ -92,6 +97,11 @@ namespace Framework.UI.Core.Bind
         private void InitEvent()
         {
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
+        }
+
+        public override void ClearBind()
+        {
+            _list.ClearListener();
         }
     }
 }

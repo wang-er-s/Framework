@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ConvertBindField<TComponent, TData, TResult> where TComponent : class
+    public class ConvertBindField<TComponent, TData, TResult> : BaseBind where TComponent : class
     {
         private TComponent _component;
         private Action<TResult> _fieldChangeCb;
@@ -66,6 +66,12 @@ namespace Framework.UI.Core.Bind
                 _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));
             if (_cpnt2FieldConvert != null)
                 _componentEvent?.AddListener((val) => _property.Value = _cpnt2FieldConvert(val));
+        }
+
+        public override void ClearBind()
+        {
+            _componentEvent.RemoveAllListeners();
+            _property.ClearListener();
         }
     }
 }

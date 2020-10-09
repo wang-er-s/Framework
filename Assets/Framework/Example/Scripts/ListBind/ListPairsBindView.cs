@@ -13,9 +13,7 @@ public class ListPairsBindView : View
     protected override void OnVmChange()
     {
         vm = ViewModel as ListPairsBindViewModel;
-        var binding =
-            new UIBindFactory<ListPairsBindView, ListPairsBindViewModel>(this, vm);
-        binding.BindIpairs(vm.Items, ItemRoot, "item[?]");
+        Binding.BindIpairs(vm.Items, ItemRoot, "item[?]");
     }
 }
 

@@ -4,10 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableProperty<T> : IClearListener
+    public class ObservableProperty<T>
     {
-        private readonly Dictionary<object, List<Action<T>>> _caller2Action = new Dictionary<object, List<Action<T>>>();
-        
         public ObservableProperty(T value)
         {
             this._value = value;
@@ -37,16 +35,9 @@ namespace Framework.UI.Core.Bind
             OnValueChanged?.Invoke(newValue);
         }
 
-        public void AddListener(Action<T> changeAction, object caller = null)
+        public void AddListener(Action<T> changeAction)
         {
             OnValueChanged += changeAction;
-            if (caller == null) return;
-            if (!_caller2Action.TryGetValue(caller, out var actions))
-            {
-                actions = new List<Action<T>>();
-                _caller2Action.Add(caller, actions);
-            }
-            actions.Add(changeAction);
         }
 
         public void RemoveListener(Action<T> changeAction)
@@ -55,18 +46,9 @@ namespace Framework.UI.Core.Bind
             OnValueChanged -= changeAction;
         }
 
-        public void ClearListener(object caller)
+        public void ClearListener()
         {
-            if (caller == null)
-            {
-                OnValueChanged = null;
-                return;
-            }
-            if(!_caller2Action.TryGetValue(caller, out var actions)) return;
-            foreach (var action in actions)
-            {
-                OnValueChanged -= action;
-            }
+            OnValueChanged = null;
         }
 
         public override string ToString()
@@ -78,15 +60,5 @@ namespace Framework.UI.Core.Bind
         {
             return property._value;
         }
-    }
-
-    public interface IClearListener
-    {
-        /// <summary>
-        /// 更换vm时清空原vm绑定的view
-        /// 加call预防多个view绑定同一vm的情况
-        /// </summary>
-        /// <param name="caller"></param>
-        void ClearListener(object caller);
     }
 }

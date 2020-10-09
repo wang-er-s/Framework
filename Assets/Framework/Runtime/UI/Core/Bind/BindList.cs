@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindList<TComponent,TVm>
+    public class BindList<TComponent,TVm> : BaseBind
     {
         private readonly TComponent _component;
         private readonly ObservableList<TVm> _list;
@@ -45,6 +45,11 @@ namespace Framework.UI.Core.Bind
             Log.Assert(_bindList != null);
             if(_bindList == null) return;
             _list.AddListener(_bindList.GetBindListFunc());
+        }
+
+        public override void ClearBind()
+        {
+            _list.ClearListener();
         }
     }
 }

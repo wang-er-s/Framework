@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableDictionary<TKey,TValue>  : IClearListener , IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged
+    public class ObservableDictionary<TKey,TValue>  : IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged
     {
         
         private readonly object _collectionChangedLock = new object();
@@ -19,6 +19,11 @@ namespace Framework.UI.Core.Bind
         {
             add { lock (_collectionChangedLock) { this._collectionChanged += value; } }
             remove { lock (_collectionChangedLock) { this._collectionChanged -= value; } }
+        }
+
+        public void ClearListener()
+        {
+            _collectionChanged = null;
         }
 
         public ObservableDictionary()
@@ -249,10 +254,5 @@ namespace Framework.UI.Core.Bind
         object ICollection.SyncRoot => ((IDictionary)this.Dictionary).SyncRoot;
 
         bool ICollection.IsSynchronized => ((IDictionary)this.Dictionary).IsSynchronized;
-
-        public void ClearListener(object caller)
-        {
-            
-        }
     }
 }

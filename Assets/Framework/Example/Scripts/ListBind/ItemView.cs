@@ -20,13 +20,12 @@ namespace Framework.UI.Example
         protected override void OnVmChange()
         {
             vm = ViewModel as ItemViewModel;
-            var binding = new UIBindFactory<ItemView, ItemViewModel>(this, vm);
-            binding.Bind(itemImg, vm.Path);
-            binding.Bind(nameTxt, vm.Path);
-            binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
-            //binding.BindData(vm.Selected, (value) => selected.SetActive(value));
-            binding.BindData(vm.Selected, CC);
-            binding.BindCommand(selfBtn, vm.OnItemClick);
+            Binding.Bind(itemImg, vm.Path);
+            Binding.Bind(nameTxt, vm.Path);
+            Binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
+            //Binding.BindData(vm.Selected, (value) => selected.SetActive(value));
+            Binding.BindData(vm.Selected, CC);
+            Binding.BindCommand(selfBtn, vm.OnItemClick);
         }
 
         public void CC(bool val)

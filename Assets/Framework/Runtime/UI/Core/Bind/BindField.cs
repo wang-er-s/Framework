@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindField<TComponent, TData>
+    public class BindField<TComponent, TData> : BaseBind
     {
         private TComponent _component;
         private Action<TData> _propChangeCb;
@@ -58,7 +58,6 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-
             if (_propChangeCb == null || _componentEvent == null)
             {
                 _defaultWrapper = BindTool.GetDefaultWrapper(_component);
@@ -83,9 +82,15 @@ namespace Framework.UI.Core.Bind
                     break;
             }
         }
+
+        public override void ClearBind()
+        {
+            _property.ClearListener();
+            _componentEvent?.RemoveAllListeners();
+        }
     }
 
-    public class BindField<TComponent, TData1, TData2, TResult> where TComponent : class
+    public class BindField<TComponent, TData1, TData2, TResult> : BaseBind where TComponent : class 
     {
         private TComponent _component;
         private Action<TResult> _filedChangeCb;
@@ -134,6 +139,12 @@ namespace Framework.UI.Core.Bind
             _property1.AddListener((data1) => _filedChangeCb(_wrapFunc(data1, _property2.Value)));
             _property2.AddListener((data2) => _filedChangeCb(_wrapFunc(_property1.Value, data2)));
             _filedChangeCb(_wrapFunc(_property1.Value, _property2.Value));
+        }
+
+        public override void ClearBind()
+        {
+            _property1.ClearListener();
+            _property2.ClearListener();
         }
     }
 }

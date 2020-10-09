@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindCommand<TComponent>
+    public class BindCommand<TComponent> : BaseBind
     {
         private TComponent _component;
         private Action _command;
@@ -49,9 +49,14 @@ namespace Framework.UI.Core.Bind
             else
                 _componentEvent.AddListener(() => _wrapFunc(_command)());
         }
+
+        public override void ClearBind()
+        {
+            _componentEvent.RemoveAllListeners();
+        }
     }
 
-    public class BindCommandWithPara<TComponent, TData>
+    public class BindCommandWithPara<TComponent, TData> : BaseBind
     {
         private TComponent _component;
         private Action<TData> _command;
@@ -89,6 +94,11 @@ namespace Framework.UI.Core.Bind
                 _componentEvent.AddListener((value) => _command(value));
             else
                 _componentEvent.AddListener((value) => _wrapFunc(_command)(value));
+        }
+
+        public override void ClearBind()
+        {
+            _componentEvent.RemoveAllListeners();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.UI.Core.Bind;
 using UnityEngine;
 
 namespace Framework.UI.Core
@@ -10,14 +11,18 @@ namespace Framework.UI.Core
         private CanvasGroup _canvasGroup;
         public ViewModel ViewModel { get; private set; }
         public Transform Transform { get; private set; }
+        protected UIBindFactory Binding;
         public abstract UILevel UILevel { get; }
 
         public void SetVm(ViewModel vm)
         {
             if (ViewModel == vm) return;
             ViewModel = vm;
+            Binding.Reset();
             if (ViewModel != null)
+            {
                 OnVmChange();
+            }
         }
 
         protected virtual void Awake()
@@ -25,6 +30,7 @@ namespace Framework.UI.Core
             _canvasGroup = GetComponent<CanvasGroup>();
             _subViews = new List<View>();
             Transform = transform;
+            Binding = new UIBindFactory();
         }
 
         #region 界面显示隐藏的调用和回调方法

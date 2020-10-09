@@ -46,7 +46,7 @@ namespace Tests
             IComponentEvent view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
             bool isTrigger = false;
-            BindFactory<IComponentEvent, ViewModel> factory = new BindFactory<IComponentEvent, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
 
             void Func()
             {
@@ -64,8 +64,7 @@ namespace Tests
             IComponentEvent<int> view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
             int result = -1;
-            BindFactory<IComponentEvent<int>, ViewModel> factory =
-                new BindFactory<IComponentEvent<int>, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
 
             void Func(int a)
             {
@@ -82,7 +81,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<string> property = Substitute.For<ObservableProperty<string>>("哈哈");
             factory.Bind(view, property);
             Assert.IsTrue(view.Name == "哈哈");
@@ -95,7 +94,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<int> property = Substitute.For<ObservableProperty<int>>(1);
             factory.Bind(view, property, (field) => field + "wrap");
             Assert.IsTrue(view.Name == "1wrap");
@@ -108,7 +107,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<string> property1 = Substitute.For<ObservableProperty<string>>("p1");
             ObservableProperty<string> property2 = Substitute.For<ObservableProperty<string>>("p2");
             //factory.Bind(view, property, (field) => field + "wrap");
@@ -125,7 +124,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<int> property1 = Substitute.For<ObservableProperty<int>>(1);
             ObservableProperty<int> property2 = Substitute.For<ObservableProperty<int>>(2);
             //factory.Bind(view, property, (field) => field + "wrap");
@@ -142,7 +141,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<int> property = Substitute.For<ObservableProperty<int>>(1);
             factory.RevertBind(view, property);
             ((IComponentEvent<int>) view).GetComponentEvent().Invoke(2);
@@ -154,7 +153,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<int> property = Substitute.For<ObservableProperty<int>>(1);
             factory.TwoWayBind(view, property);
             Assert.IsTrue(view.Age == 1);
@@ -169,7 +168,7 @@ namespace Tests
         {
             TestView view = new TestView();
             ViewModel vm = Substitute.For<ViewModel>();
-            BindFactory<TestView, ViewModel> factory = new BindFactory<TestView, ViewModel>(view, vm);
+            BindFactory factory = new BindFactory();
             ObservableProperty<string> property = Substitute.For<ObservableProperty<string>>("1");
             factory.TwoWayBind<TestView, string, int>(view, property, (i) => i.ToString(), int.Parse);
             Assert.IsTrue(view.Age == 1);

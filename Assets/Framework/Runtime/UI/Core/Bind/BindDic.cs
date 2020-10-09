@@ -3,7 +3,7 @@ using Framework.UI.Wrap.Base;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindDic<TComponent,TKey, TValue>
+    public class BindDic<TComponent,TKey, TValue> : BaseBind
     {
         private readonly TComponent _component;
         private readonly ObservableDictionary<TKey, TValue> _dictionary;
@@ -40,6 +40,11 @@ namespace Framework.UI.Core.Bind
             Log.Assert(_bindDic != null);
             if(_bindDic == null) return;
             _dictionary.CollectionChanged += _bindDic.GetBindDicFunc();
+        }
+
+        public override void ClearBind()
+        {
+            _dictionary.ClearListener();
         }
     }
 }
