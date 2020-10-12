@@ -162,6 +162,7 @@ namespace Framework.UI.Editor
 			string vmName = $"{panelCodeInfo.BehaviourName}VM";
 			template = template.Replace("#ClassName", panelCodeInfo.BehaviourName);
 			template = template.Replace("#VMName", vmName);
+			template = template.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
 			foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark.Values)
 			{
 				foreach (var uiMark in uiMarks)
@@ -189,7 +190,6 @@ namespace Framework.UI.Editor
 			var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
 			var template = File.ReadAllText($"{templatePath}/VMTemplate.txt");
 			template = template.Replace("#ClassName", className);
-			template = template.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
 			sw.Write(template);
 			sw.Flush();
 			sw.Close();

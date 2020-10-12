@@ -133,9 +133,9 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            if (_filedChangeCb == null)
-                _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
             _filedChangeCb = _filedChangeCb ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            Log.Assert(_filedChangeCb != null, "_filedChangeCb != null");
             _property1.AddListener((data1) => _filedChangeCb(_wrapFunc(data1, _property2.Value)));
             _property2.AddListener((data2) => _filedChangeCb(_wrapFunc(_property1.Value, data2)));
             _filedChangeCb(_wrapFunc(_property1.Value, _property2.Value));

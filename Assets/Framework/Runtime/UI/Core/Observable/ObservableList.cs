@@ -103,7 +103,7 @@ namespace Framework.UI.Core.Bind
             {
                 if (IsReadOnly)
                     throw new NotSupportedException("ReadOnlyCollection");
-                Insert(index, value);
+                SetItem(index, value);
             }
         }
 
@@ -162,7 +162,7 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener, object caller = null)
+        public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
             CollectionChanged += listener;
         }
@@ -172,7 +172,7 @@ namespace Framework.UI.Core.Bind
             if (CollectionChanged != null) CollectionChanged -= listener;
         }
 
-        public void AddListener(Action<ObservableList<T>> listener, object caller = null)
+        public void AddListener(Action<ObservableList<T>> listener)
         {
             ListUpdateChanged += listener;
         }
@@ -187,7 +187,6 @@ namespace Framework.UI.Core.Bind
         {
             ListUpdateChanged = null;
             CollectionChanged = null;
-
         }
     }
 }

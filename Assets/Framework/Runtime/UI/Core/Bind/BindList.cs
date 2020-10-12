@@ -33,17 +33,9 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            if (_bindList == null)
-            {
-                _bindList = _component as IBindList<TVm>;
-            }
-            if (_bindList == null)
-            {
-                var bind = BindTool.GetDefaultWrapper(_component);
-                _bindList = bind as IBindList<TVm>;
-            }
-            Log.Assert(_bindList != null);
-            if(_bindList == null) return;
+            var bind = BindTool.GetDefaultWrapper(_component);
+            _bindList = _bindList ?? _component as IBindList<TVm> ?? bind as IBindList<TVm>;
+            Log.Assert(_bindList != null, $"can not find IBindList of {_component}");
             _list.AddListener(_bindList.GetBindListFunc());
         }
 

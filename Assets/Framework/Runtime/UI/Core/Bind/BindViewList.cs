@@ -26,11 +26,20 @@ namespace Framework.UI.Core.Bind
 
         private void InitCpntValue()
         {
+            int childCount = _content.childCount;
             for (var i = 0; i < _list.Count; i++)
             {
                 var vm = _list[i];
-                _wrappers.ForEach((wrapper) =>
-                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
+                if(i + 1 < childCount)
+                {
+                    var view = _content.GetChild(i + 1).GetComponent<View>();
+                    view.SetVm(vm);
+                }
+                else
+                {
+                    _wrappers.ForEach((wrapper) =>
+                        ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
+                }
             }
         }
 
@@ -53,12 +62,12 @@ namespace Framework.UI.Core.Bind
         }
     }
 
-    public class BindIpairsView<TVm> : BaseBind where TVm : ViewModel
+    public class BindIpairsViewList<TVm> : BaseBind where TVm : ViewModel
     {
         private ObservableList<TVm> _list;
         private List<View> _views;
 
-        public BindIpairsView(ObservableList<TVm> list, string itemName, Transform root)
+        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root)
         {
             SetValue(list, itemName, root);
         }
@@ -74,22 +83,11 @@ namespace Framework.UI.Core.Bind
         {
             _views = new List<View>();
             var regex = new Regex(@"[/w ]*?(?<=\[)[?](?=\])");
-            if (!regex.IsMatch(itemName))
+            Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
+            foreach (Transform child in root)
             {
-                Debug.LogError($"{itemName} not match (skill[?]) pattern.");
-                return;
-            }
-
-            int childCount = root.childCount;
-            for (var i = 1; i <= childCount; i++)
-            {
-                var item = regex.Replace(itemName, i.ToString());
-                View view = root.FindInAllChild(item)?.GetComponent<View>();
-                if (view == null)
-                {
-                    Debug.LogError($"{item} do not have view component");
-                    break;
-                }
+                var view = child.GetComponent<View>();
+                Log.Assert(view != null, $"{child.name} must have view component", child);
                 _views.Add(view);
             }
         }

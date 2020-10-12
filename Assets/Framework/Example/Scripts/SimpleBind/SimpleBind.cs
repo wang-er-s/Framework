@@ -17,6 +17,5 @@ public class SimpleBind : MonoBehaviour
         vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");
-        vm.ShowView();
     }
 }

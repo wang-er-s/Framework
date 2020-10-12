@@ -59,7 +59,5 @@ namespace Framework.UI.Example
         {
             Debug.Log($"按钮点击了{GetHashCode()}");
         }
-
-        public override string ViewPath { get; } = "SimpleBind";
     }
 }

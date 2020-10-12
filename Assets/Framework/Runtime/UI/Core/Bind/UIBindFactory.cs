@@ -16,7 +16,7 @@ namespace Framework.UI.Core.Bind
         public void BindIpairs<TItemVm>
             (ObservableList<TItemVm> list, Transform root, string pattern) where TItemVm : ViewModel
         {
-            var bind = new BindIpairsView<TItemVm>(list, pattern, root);
+            var bind = new BindIpairsViewList<TItemVm>(list, pattern, root);
             Binds.Add(bind);
         }
 

@@ -11,8 +11,6 @@ public class ListBind : MonoBehaviour
     {
         var sceneViewLocator = new SceneViewLocator();
         vm = new ListBindViewModel();
-        vm.ShowView();
         pair_vm = new ListPairsBindViewModel();
-        pair_vm.ShowView();
     }
 }

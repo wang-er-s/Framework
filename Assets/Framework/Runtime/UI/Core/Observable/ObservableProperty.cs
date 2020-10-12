@@ -42,7 +42,6 @@ namespace Framework.UI.Core.Bind
 
         public void RemoveListener(Action<T> changeAction)
         {
-            if (OnValueChanged == null) return;
             OnValueChanged -= changeAction;
         }
 

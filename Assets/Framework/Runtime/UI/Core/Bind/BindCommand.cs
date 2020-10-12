@@ -31,19 +31,10 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            if (_componentEvent == null)
-            {
-                _componentEvent = (_component as IComponentEvent)?.GetComponentEvent();
-            }
-
-            if (_componentEvent == null)
-            {
-                _defaultWrapper = BindTool.GetDefaultWrapper(_component);
-                _componentEvent = (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
-            }
-
-            Log.Assert(_componentEvent != null);
-            if (_componentEvent == null) return;
+            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            _componentEvent = _componentEvent ?? (_component as IComponentEvent)?.GetComponentEvent() ??
+                (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
+            Log.Assert(_componentEvent != null, "componentEvent can not be null");
             if (_wrapFunc == null)
                 _componentEvent.AddListener(() => _command());
             else
@@ -83,13 +74,8 @@ namespace Framework.UI.Core.Bind
         private void InitEvent()
         {
             _defaultWrapper = BindTool.GetDefaultWrapper(_component);
-            if (_componentEvent == null)
-            {
-                _componentEvent = (_defaultWrapper as IComponentEvent<TData>)?.GetComponentEvent();
-            }
-
+            _componentEvent = _componentEvent ??  (_defaultWrapper as IComponentEvent<TData>)?.GetComponentEvent();
             Log.Assert(_componentEvent != null);
-            if (_componentEvent == null) return;
             if (_wrapFunc == null)
                 _componentEvent.AddListener((value) => _command(value));
             else

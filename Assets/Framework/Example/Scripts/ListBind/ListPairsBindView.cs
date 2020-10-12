@@ -31,6 +31,4 @@ public class ListPairsBindViewModel : ViewModel
             new ItemViewModel(true, "鱼香肉丝", null)
         };
     }
-
-    public override string ViewPath { get; } = "ListPairsBind";
 }

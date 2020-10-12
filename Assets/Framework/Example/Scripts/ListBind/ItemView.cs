@@ -99,7 +99,5 @@ namespace Framework.UI.Example
         {
             _last = last;
         }
-
-        public override string ViewPath { get; } = "";
     }
 }

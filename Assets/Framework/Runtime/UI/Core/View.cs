@@ -11,7 +11,7 @@ namespace Framework.UI.Core
         private CanvasGroup _canvasGroup;
         public ViewModel ViewModel { get; private set; }
         public Transform Transform { get; private set; }
-        protected UIBindFactory Binding;
+        protected UIBindFactory Binding = new UIBindFactory();
         public abstract UILevel UILevel { get; }
 
         public void SetVm(ViewModel vm)
@@ -30,7 +30,6 @@ namespace Framework.UI.Core
             _canvasGroup = GetComponent<CanvasGroup>();
             _subViews = new List<View>();
             Transform = transform;
-            Binding = new UIBindFactory();
         }
 
         #region 界面显示隐藏的调用和回调方法

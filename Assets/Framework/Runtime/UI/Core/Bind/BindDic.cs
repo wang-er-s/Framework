@@ -28,17 +28,9 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            if (_bindDic == null)
-            {
-                _bindDic = _component as IBindDic;
-            }
-            if (_bindDic == null)
-            {
-                var bind = BindTool.GetDefaultWrapper(_component);
-                _bindDic = bind as IBindDic;
-            }
+            var bind = BindTool.GetDefaultWrapper(_component);
+            _bindDic = _bindDic ?? _component as IBindDic ?? bind as IBindDic;
             Log.Assert(_bindDic != null);
-            if(_bindDic == null) return;
             _dictionary.CollectionChanged += _bindDic.GetBindDicFunc();
         }
 

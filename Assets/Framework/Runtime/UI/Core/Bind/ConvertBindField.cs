@@ -57,15 +57,13 @@ namespace Framework.UI.Core.Bind
         private void InitEvent()
         {
             _defaultWrapper = BindTool.GetDefaultWrapper(_component);
-            if (_componentEvent == null)
-                _componentEvent = (_defaultWrapper as IComponentEvent<TResult>)?.GetComponentEvent();
-            if (_fieldChangeCb == null)
-                _fieldChangeCb = (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            _componentEvent = _componentEvent ?? (_component as IComponentEvent<TResult>)?.GetComponentEvent() ?? (_defaultWrapper as IComponentEvent<TResult>)?.GetComponentEvent();
+            _fieldChangeCb = _fieldChangeCb ?? (_component as IFieldChangeCb<TResult>)?.GetFieldChangeCb() ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
             Log.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
             if (_field2CpntConvert != null)
                 _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));
             if (_cpnt2FieldConvert != null)
-                _componentEvent?.AddListener((val) => _property.Value = _cpnt2FieldConvert(val));
+                _componentEvent.AddListener((val) => _property.Value = _cpnt2FieldConvert(val));
         }
 
         public override void ClearBind()

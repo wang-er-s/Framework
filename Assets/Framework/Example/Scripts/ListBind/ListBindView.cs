@@ -91,6 +91,4 @@ public class ListBindViewModel : ViewModel
         var lastVm = Items[Items.Count - 1];
         foreach (var itemViewModel in Items) itemViewModel.SetLast(itemViewModel == lastVm);
     }
-
-    public override string ViewPath { get; } = "ListBind";
 }
