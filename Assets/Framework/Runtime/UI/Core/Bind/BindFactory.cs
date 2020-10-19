@@ -120,6 +120,7 @@ namespace Framework.UI.Core.Bind
             {
                 bind.ClearBind();
             }
+            Binds.Clear();
         }
     }
 
