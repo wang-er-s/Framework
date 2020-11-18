@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Framework.UI.Core;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
@@ -12,7 +9,7 @@ public class UIMark : MonoBehaviour
 {
     public string FieldName;
 
-    [Dropdown("Components")]
+    [ValueDropdown("Components")]
     public Component CurComponent;
 
     private List<Component> Components;
