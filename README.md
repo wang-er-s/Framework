@@ -1,5 +1,5 @@
 a unity mvvm framework, building...
-
+项目里使用了Odin插件，如有需要自行购买
 ```c#
 vm = ViewModel as SetupViewModel;
 if(binding == null)
