@@ -3,18 +3,21 @@ using Framework.Asynchronous;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
-public class SceneLoader
+namespace Framework.Assets
 {
-    public static async void LoadScene(string scene, IProgressPromise<float> progressPromise = null,
-        LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+    public class SceneLoader
     {
-        var loader = Addressables.LoadSceneAsync(scene, loadSceneMode);
-        while (!loader.IsDone)
+        public static async void LoadScene(string scene, IProgressPromise<float> progressPromise = null,
+            LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            await Task.Yield();
-            progressPromise?.UpdateProgress(loader.PercentComplete);
-        }
+            var loader = Addressables.LoadSceneAsync(scene, loadSceneMode);
+            while (!loader.IsDone)
+            {
+                await Task.Yield();
+                progressPromise?.UpdateProgress(loader.PercentComplete);
+            }
 
-        progressPromise?.SetResult();
+            progressPromise?.SetResult();
+        }
     }
 }
