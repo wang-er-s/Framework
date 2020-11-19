@@ -5,6 +5,6 @@ namespace Framework.UI.Core
 {
     public interface IUIViewLocator
     {
-        View Load(string path, ViewModel viewModel = null);
+        T Load<T>(string path, ViewModel viewModel = null) where T : View;
     }
 }

@@ -36,20 +36,24 @@ namespace Framework.UI.Core
 
         public IAnimation ExitAnimation;
 
+        public bool Visible => _canvasGroup.alpha == 1;
+
         #region 界面显示隐藏的调用和回调方法
 
-        public void Show()
+        public void Show(bool ignoreAnimation = false)
         {
-            gameObject.SetActive(true);
-            EnterAnimation?.Play();
+            SetCanvas(true);
+            if (!ignoreAnimation)
+                EnterAnimation?.Play();
             OnShow();
             _subViews.ForEach((subView) => subView.OnShow());
         }
 
-        public void Hide()
+        public void Hide(bool ignoreAnimation = false)
         {
-            gameObject.SetActive(false);
-            ExitAnimation?.Play();
+            SetCanvas(false);
+            if (!ignoreAnimation)
+                ExitAnimation?.Play();
             OnHide();
             _subViews.ForEach((subView) => subView.OnHide());
         }
@@ -62,6 +66,11 @@ namespace Framework.UI.Core
         {
         }
 
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
+
         private void SetCanvas(bool visible)
         {
             _canvasGroup.interactable = visible;
@@ -71,7 +80,7 @@ namespace Framework.UI.Core
 
         #endregion
 
-        protected void AddSubView(View view)
+        public void AddSubView(View view)
         {
             if (_subViews.Contains(view)) return;
             _subViews.Add(view);

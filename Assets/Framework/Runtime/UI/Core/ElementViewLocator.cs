@@ -12,13 +12,12 @@ namespace Framework.UI.Core
         }
 
         private Transform content;
-
-        public View Load(string path, ViewModel viewModel = null)
+        
+        public T Load<T>(string path, ViewModel viewModel = null) where T : View
         {
             var trans = UIEnv.LoadPrefabFunc(path);
-            trans = Object.Instantiate(trans);
-            trans.transform.SetParent(content, false);
-            var view = trans.GetComponent<View>();
+            trans = Object.Instantiate(trans, content, false);
+            var view = trans.GetComponent<T>();
             view.SetVm(viewModel);
             return view;
         }

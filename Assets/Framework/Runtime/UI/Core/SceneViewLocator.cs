@@ -40,9 +40,9 @@ namespace Framework.UI.Core
             _guideTrans = Canvas.transform.Find("Guide");
         }
 
-        public View Load(string path, ViewModel viewModel)
+        public T Load<T>(string path, ViewModel viewModel) where T : View
         {
-            var view = CreateUI(path);
+            var view = CreateUI(path) as T;
             view.SetVm(viewModel);
             return view;
         }
