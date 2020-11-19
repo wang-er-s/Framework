@@ -90,8 +90,15 @@ namespace Framework.Assets
         {
             foreach (var spriteAsset in _spriteAssets.Values)
             {
-                Addressables.Release(spriteAsset.Handle);
+                try
+                {
+                    Addressables.Release(spriteAsset.Handle);
+                }
+                catch (Exception)
+                {
+                }
             }
+            _spriteAssets.Clear();
         }
 
         private bool TryGetAsset(string path, out SpriteAsset asset)

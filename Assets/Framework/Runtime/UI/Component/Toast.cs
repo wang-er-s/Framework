@@ -19,10 +19,10 @@ namespace Framework.Runtime.UI.Component
             set { viewName = value; }
         }
 
-        private static IUIViewLocator GetUIViewLocator()
+        private static IViewLocator GetUIViewLocator()
         {
             ApplicationContext context = new ApplicationContext();
-            IUIViewLocator locator = context.GetService<IUIViewLocator>();
+            IViewLocator locator = context.GetService<IViewLocator>();
             return locator;
         }
 
@@ -31,8 +31,8 @@ namespace Framework.Runtime.UI.Component
             if (string.IsNullOrEmpty(viewName))
                 viewName = ViewName;
 
-            IUIViewLocator locator = GetUIViewLocator();
-            ToastView view = locator.Load<ToastView>(viewName);
+            IViewLocator locator = GetUIViewLocator();
+            ToastView view = locator.LoadView<ToastView>(viewName);
             if (view == null)
                 throw new FileNotFoundException("Not found the \"ToastView\".");
 

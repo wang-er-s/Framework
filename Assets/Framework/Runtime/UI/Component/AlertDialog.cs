@@ -24,10 +24,10 @@ namespace Framework.Runtime.UI.Component
             set { viewName = value; }
         }
 
-        private static IUIViewLocator GetUIViewLocator()
+        private static IViewLocator GetUIViewLocator()
         {
             ApplicationContext context = new ApplicationContext();
-            IUIViewLocator locator = context.GetService<IUIViewLocator>();
+            IViewLocator locator = context.GetService<IViewLocator>();
             return locator;
         }
 
@@ -148,8 +148,8 @@ namespace Framework.Runtime.UI.Component
             viewModel.CanceledOnTouchOutside.Value = canceledOnTouchOutside;
             viewModel.Click = afterHideCallback;
             
-            IUIViewLocator locator = GetUIViewLocator();
-            AlertDialogView window = locator.Load<AlertDialogView>(ViewName);
+            IViewLocator locator = GetUIViewLocator();
+            AlertDialogView window = locator.LoadView<AlertDialogView>(ViewName);
             if (window == null)
             {
                 Log.Warning($"Not found the dialog window named \"{viewModel}\".");
@@ -187,8 +187,8 @@ namespace Framework.Runtime.UI.Component
                 if (string.IsNullOrEmpty(viewName))
                     viewName = ViewName;
 
-                IUIViewLocator locator = GetUIViewLocator();
-                view = locator.Load<AlertDialogView>(viewName);
+                IViewLocator locator = GetUIViewLocator();
+                view = locator.LoadView<AlertDialogView>(viewName);
                 if (view == null)
                 {
                     Log.Warning($"Not found the dialog window named \"{viewName}\".");

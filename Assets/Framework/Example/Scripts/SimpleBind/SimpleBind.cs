@@ -13,7 +13,6 @@ public class SimpleBind : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        var sceneViewLocator = new SceneViewLocator();
         vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");
