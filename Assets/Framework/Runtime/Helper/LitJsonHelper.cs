@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -124,6 +125,59 @@ namespace Framework.Helper
             writer.PrettyPrint = true;
             data.ToJson(writer);
             return sw.ToString();
+        }
+        
+        public static object ParseJsonValue(Type type, JsonData data)
+        {
+            if (type == typeof(String))
+            {
+                return data.ToString();
+            }
+            else if (type == typeof(int))
+            {
+                return int.Parse(data.ToString());
+            }
+            else if (type == typeof(long))
+            {
+                return long.Parse(data.ToString());
+            }
+            else if (type == typeof(float))
+            {
+                return float.Parse(data.ToString());
+            }
+            else if (type == typeof(double))
+            {
+                return double.Parse(data.ToString());
+            }
+            else if (type == typeof(List<int>))
+            {
+                if (data.ToString() == "0")
+                {
+                    return new List<int>();
+                }
+                string[] list = data.ToString().Split('|');
+                List<int> l = new List<int>();
+                foreach (string s in list)
+                {
+                    l.Add(Convert.ToInt32(s));
+                }
+                return l;
+            }
+            else if (type == typeof(List<string>))
+            {
+                if (data.ToString() == "0")
+                {
+                    return new List<string>();
+                }
+                string[] list = data.ToString().Split('|');
+                List<string> l = new List<string>();
+                foreach (string s in list)
+                {
+                    l.Add(s);
+                }
+                return l;
+            }
+            return null;
         }
 
         #endregion

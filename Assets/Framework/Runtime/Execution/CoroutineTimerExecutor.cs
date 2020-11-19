@@ -155,10 +155,16 @@ namespace Framework.Execution
             return new DurationFixedRateTask(this, fixedUpdateCommand, endCommand, initialDelay, period, duration);
         }
 
-
         public virtual void Dispose()
         {
             this.Stop();
+        }
+
+        public static IAsyncResult Once(long millisecond, Action action)
+        {
+            var timer = new CoroutineTimerExecutor();
+            timer.Start();
+            return timer.Delay(action, millisecond);
         }
 
         interface IDelayTask : Asynchronous.IAsyncResult
@@ -217,8 +223,8 @@ namespace Framework.Execution
                         this.SetCancelled();
                     }
                     else {
-                        _command();
                         this.SetResult();
+                        _command();
                     }
                 }
                 catch (Exception e)

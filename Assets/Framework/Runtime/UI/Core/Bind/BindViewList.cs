@@ -30,9 +30,10 @@ namespace Framework.UI.Core.Bind
             for (var i = 0; i < _list.Count; i++)
             {
                 var vm = _list[i];
-                if(i + 1 < childCount)
+                if(i < childCount)
                 {
-                    var view = _content.GetChild(i + 1).GetComponent<View>();
+                    var view = _content.GetChild(i).GetComponent<View>();
+                    if (view == null || _views.Contains(view)) continue;
                     view.SetVm(vm);
                 }
                 else

@@ -32,11 +32,16 @@ namespace Framework.UI.Core
             Transform = transform;
         }
 
+        public IAnimation EnterAnimation;
+
+        public IAnimation ExitAnimation;
+
         #region 界面显示隐藏的调用和回调方法
 
         public void Show()
         {
             gameObject.SetActive(true);
+            EnterAnimation?.Play();
             OnShow();
             _subViews.ForEach((subView) => subView.OnShow());
         }
@@ -44,6 +49,7 @@ namespace Framework.UI.Core
         public void Hide()
         {
             gameObject.SetActive(false);
+            ExitAnimation?.Play();
             OnHide();
             _subViews.ForEach((subView) => subView.OnHide());
         }
