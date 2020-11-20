@@ -20,31 +20,43 @@ MonoBehaviour:
   - m_GUID: 0f5d95177c135ae40929aaf4ba6b5175
     m_Address: s2.unity
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - dynamic
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 29ccab8c494f640e8b40fa5587fddcd1
     m_Address: tex
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - dynamic
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 374d69a2f7f3e1c40bfcad88bed74da6
     m_Address: single
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - dynamic
     m_MainAsset: {fileID: 2800000, guid: 374d69a2f7f3e1c40bfcad88bed74da6, type: 3}
     m_TargetAsset: {fileID: 2800000, guid: 374d69a2f7f3e1c40bfcad88bed74da6, type: 3}
+  - m_GUID: 434b2fedf70af4fe7a2ff804d419a0ef
+    m_Address: "\u6885\u83DC\u6263\u8089"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dynamic
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 49a921fbeaa5cb143874fffcff136e19
     m_Address: cube
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - dynamic
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: c67eadee46760384c942b17c3992944f
     m_Address: sheet
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - dynamic
     m_MainAsset: {fileID: 2800000, guid: c67eadee46760384c942b17c3992944f, type: 3}
     m_TargetAsset: {fileID: 2800000, guid: c67eadee46760384c942b17c3992944f, type: 3}
   m_ReadOnly: 0
