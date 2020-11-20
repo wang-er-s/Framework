@@ -26,20 +26,16 @@ public class Test : MonoBehaviour
     [Button]
     private async void CheckDownload()
     {
-        var size = await Addressables.GetDownloadSizeAsync("dynamic");
-        _text.text = $"{size / 1024}kb";
+        _text.text = await Res.CheckDownloadSize();
     }
 
     [Button]
     private async void Download()
     {
-        var operation = Addressables.DownloadDependenciesAsync("dynamic");
-        while (!operation.IsDone)
+        Res.DownloadNewAssets((progress) =>
         {
-            _slider.value = operation.PercentComplete;
-            await Task.Yield();
-        }
-        _slider.value = 1;
+            _slider.value = progress;
+        }, null);
     }
 
     [Button]

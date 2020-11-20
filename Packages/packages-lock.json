@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ourpalm.ilruntime": {
+      "version": "1.6.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.cn"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -7,11 +14,11 @@
       "dependencies": {}
     },
     "com.unity.addressables": {
-      "version": "1.8.5",
+      "version": "1.16.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.scriptablebuildpipeline": "1.7.3",
+        "com.unity.scriptablebuildpipeline": "1.14.0",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
@@ -42,14 +49,14 @@
       "url": "https://packages.unity.cn"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.2",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.cn"
     },
     "com.unity.render-pipelines.core": {
-      "version": "7.1.8",
+      "version": "7.3.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -58,7 +65,7 @@
       "url": "https://packages.unity.cn"
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.7.3",
+      "version": "1.14.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
