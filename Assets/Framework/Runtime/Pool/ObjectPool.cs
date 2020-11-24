@@ -19,7 +19,7 @@ namespace Framework.Pool
 
         public override void Free(T obj)
         {
-            _resetMethod.InvokeGracefully(obj);
+            _resetMethod?.Invoke(obj);
             CacheStack.Push(obj);
         }
     }

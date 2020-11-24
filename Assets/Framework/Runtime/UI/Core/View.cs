@@ -7,10 +7,18 @@ namespace Framework.UI.Core
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class View : MonoBehaviour
     {
-        private List<View> _subViews;
+        private List<View> _subViews = new List<View>();
+        private CanvasGroup CanvasGroup
+        {
+            get
+            {
+                if (_canvasGroup == null)
+                    _canvasGroup = GetComponent<CanvasGroup>();
+                return _canvasGroup;
+            }
+        }
         private CanvasGroup _canvasGroup;
         public ViewModel ViewModel { get; private set; }
-        public Transform Transform { get; private set; }
         protected UIBindFactory Binding = new UIBindFactory();
         public abstract UILevel UILevel { get; }
 
@@ -25,18 +33,11 @@ namespace Framework.UI.Core
             }
         }
 
-        protected virtual void Awake()
-        {
-            _canvasGroup = GetComponent<CanvasGroup>();
-            _subViews = new List<View>();
-            Transform = transform;
-        }
-
         public IAnimation EnterAnimation;
 
         public IAnimation ExitAnimation;
 
-        public bool Visible => _canvasGroup.alpha == 1;
+        public bool Visible => CanvasGroup.alpha == 1;
 
         #region 界面显示隐藏的调用和回调方法
 
@@ -73,9 +74,9 @@ namespace Framework.UI.Core
 
         private void SetCanvas(bool visible)
         {
-            _canvasGroup.interactable = visible;
-            _canvasGroup.alpha = visible ? 1 : 0;
-            _canvasGroup.blocksRaycasts = visible;
+            CanvasGroup.interactable = visible;
+            CanvasGroup.alpha = visible ? 1 : 0;
+            CanvasGroup.blocksRaycasts = visible;
         }
 
         #endregion
@@ -87,5 +88,7 @@ namespace Framework.UI.Core
         }
 
         protected abstract void OnVmChange();
+        
+        public abstract string ViewPath { get; }
     }
 }

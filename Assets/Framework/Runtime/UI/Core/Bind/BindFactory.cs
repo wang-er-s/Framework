@@ -6,7 +6,7 @@ namespace Framework.UI.Core.Bind
 {
     public class BindFactory
     {
-        protected List<BaseBind> Binds;
+        protected List<BaseBind> Binds = new List<BaseBind>();
 
         //单向绑定
         public void Bind<TComponent, TData>

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
 using UnityEngine;
@@ -25,6 +27,8 @@ namespace Framework.UI.Core
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
         
         private Dictionary<string, WeakReference> templates = new Dictionary<string, WeakReference>();
+
+        private Res _res;
         
         public Canvas Canvas { get; private set; }
         
@@ -36,8 +40,10 @@ namespace Framework.UI.Core
             {
                 _sortViews[level] = new List<View>();
             }
+            _res = new Res();
         }
 
+        [Obsolete("use LoadViewAsync replace", true)]
         public View LoadView(string path, ViewModel viewModel = null, bool autoShow = true)
         {
             var view = CreateUI(path);
@@ -47,6 +53,7 @@ namespace Framework.UI.Core
             return view;
         }
 
+        [Obsolete("use LoadViewAsync replace", true)]
         public T LoadView<T>(string path, ViewModel viewModel = null, bool autoShow = true) where T : View
         {
             return LoadView(path, viewModel, autoShow) as T;
@@ -75,9 +82,6 @@ namespace Framework.UI.Core
                 if (this.templates.TryGetValue(path, out var weakRef) && weakRef.IsAlive)
                 {
                     viewTemplateGo = (GameObject)weakRef.Target;
-
-                    //Check if the object is valid because it may have been destroyed.
-                    //Unmanaged objects,the weak caches do not accurately track the validity of objects.
                 }
             }
             catch (Exception)
@@ -87,17 +91,16 @@ namespace Framework.UI.Core
             
             if (viewTemplateGo == null)
             {
-                var request = Addressables.LoadAssetAsync<GameObject>(path);
+                var request = _res.LoadAssetAsync<GameObject>(path);
                 while (!request.IsDone)
                 {
-                    promise.UpdateProgress(request.PercentComplete);
+                    promise.UpdateProgress(request.Progress);
                     yield return null;
                 }
 
                 viewTemplateGo = request.Result;
                 if (viewTemplateGo != null)
                 {
-                    viewTemplateGo.SetActive(false);
                     this.templates[path] = new WeakReference(viewTemplateGo);
                 }
             }
@@ -119,6 +122,7 @@ namespace Framework.UI.Core
             }
             else
             {
+                SortView(view);
                 promise.UpdateProgress(1f);
                 promise.SetResult(view);
             }
@@ -128,15 +132,15 @@ namespace Framework.UI.Core
                 view.Show();
         }
 
+        [Obsolete("仅做展示，暂时不实用同步加载", true)]
         private View CreateUI(string panelName)
         {
-            var loadGo = UIEnv.LoadPrefabFunc(panelName);
-            loadGo = Object.Instantiate(loadGo, Canvas.transform, false);
+            var loadGo = _res.LoadAsset<GameObject>(panelName);
             var view = loadGo.GetComponent<View>();
             SortView(view);
             return view;
         }
-
+        
         private void SortView(View view)
         {
             int index = 0;
@@ -156,6 +160,7 @@ namespace Framework.UI.Core
                     break;
                 }
             }
+            view.transform.SetParent(Canvas.transform, false);
             view.transform.SetSiblingIndex(index);
         }
 

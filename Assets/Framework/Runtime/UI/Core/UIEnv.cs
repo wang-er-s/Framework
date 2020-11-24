@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Framework.UI.Core
@@ -7,10 +8,8 @@ namespace Framework.UI.Core
     {
 #if UNITY_EDITOR
         // relative to "Assets/"
-        public static string UIPanelScriptFolder = "Assets/Scripts/UI/Panel";
-        public static string UIPrefabRootPath = "Resources";
+        public static string UIPanelScriptFolder = "Assets/_Scripts/UI/Panel";
+        public static string UIPrefabRootPath = "Assets/_StaticAssets/UI/";
 #endif
-        public static Func<string, Sprite> LoadSpriteFunc = Resources.Load<Sprite>;
-        public static Func<string, GameObject> LoadPrefabFunc = Resources.Load<GameObject>;
     }
 }

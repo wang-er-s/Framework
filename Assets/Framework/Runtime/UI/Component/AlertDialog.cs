@@ -1,8 +1,11 @@
 using System;
 using System.IO;
-using Framework.Context;
+using System.Threading.Tasks;
+using Framework.Asynchronous;
+using Framework.Contexts;
 using Framework.Execution;
 using Framework.UI.Core;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Framework.Runtime.UI.Component
@@ -15,18 +18,18 @@ namespace Framework.Runtime.UI.Component
         public const int BUTTON_NEUTRAL = -3;
 
         private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "UI/AlertDialog";
+        private const string DEFAULT_VIEW_NAME = "AlertDialog";
 
         private static string viewName;
         public static string ViewName
         {
-            get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
-            set { viewName = value; }
+            get => string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName;
+            set => viewName = value;
         }
 
         private static IViewLocator GetUIViewLocator()
         {
-            ApplicationContext context = new ApplicationContext();
+            ApplicationContext context = Context.GetApplicationContext();
             IViewLocator locator = context.GetService<IViewLocator>();
             return locator;
         }
@@ -41,13 +44,13 @@ namespace Framework.Runtime.UI.Component
         /// <param name="afterHideCallback">A callback that should be executed after
         /// the dialog box is closed by the user.</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(
+        public static async Task<AlertDialog> ShowMessage(
             string message,
             string title,
             string buttonText,
             Action<int> afterHideCallback)
         {
-            return ShowMessage(message, title, buttonText, null, null, false, afterHideCallback);
+            return await ShowMessage(message, title, buttonText, null, null, false, afterHideCallback);
         }
 
         /// <summary>
@@ -64,14 +67,14 @@ namespace Framework.Runtime.UI.Component
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(
+        public static async Task<AlertDialog> ShowMessage(
             string message,
             string title,
             string confirmButtonText,
             string cancelButtonText,
             Action<int> afterHideCallback)
         {
-            return ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, afterHideCallback);
+            return await ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, afterHideCallback);
         }
 
         /// <summary>
@@ -92,7 +95,8 @@ namespace Framework.Runtime.UI.Component
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(
+        [ItemCanBeNull]
+        public static async Task<AlertDialog> ShowMessage(
             string message,
             string title,
             string confirmButtonText = null,
@@ -110,7 +114,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.CanceledOnTouchOutside.Value = canceledOnTouchOutside;
             viewModel.Click = afterHideCallback;
 
-            return ShowMessage(ViewName, viewModel);
+            return await ShowMessage(ViewName, viewModel);
         }
 
         /// <summary>
@@ -131,7 +135,7 @@ namespace Framework.Runtime.UI.Component
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(
+        public static async Task<AlertDialogView> ShowMessage(
             View contentView,
             string title,
             string confirmButtonText,
@@ -149,7 +153,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.Click = afterHideCallback;
             
             IViewLocator locator = GetUIViewLocator();
-            AlertDialogView window = locator.LoadView<AlertDialogView>(ViewName);
+            AlertDialogView window = await locator.LoadViewAsync<AlertDialogView>(ViewName);
             if (window == null)
             {
                 Log.Warning($"Not found the dialog window named \"{viewModel}\".");
@@ -159,7 +163,7 @@ namespace Framework.Runtime.UI.Component
 
             AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
             dialog.Show();
-            return dialog;
+            return window;
         }
 
         /// <summary>
@@ -167,9 +171,9 @@ namespace Framework.Runtime.UI.Component
         /// </summary>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(AlertDialogVM viewModel)
+        public static async Task<AlertDialog> ShowMessage(AlertDialogVM viewModel)
         {
-            return ShowMessage(ViewName, viewModel);
+            return await ShowMessage(ViewName, viewModel);
         }
 
         /// <summary>
@@ -179,7 +183,7 @@ namespace Framework.Runtime.UI.Component
         /// <param name="contentViewName">The custom content view name to be shown to the user.</param>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(string viewName, AlertDialogVM viewModel)
+        public static async Task<AlertDialog> ShowMessage(string viewName, AlertDialogVM viewModel)
         {
             AlertDialogView view = null;
             try
@@ -188,7 +192,7 @@ namespace Framework.Runtime.UI.Component
                     viewName = ViewName;
 
                 IViewLocator locator = GetUIViewLocator();
-                view = locator.LoadView<AlertDialogView>(viewName);
+                view = await locator.LoadViewAsync<AlertDialogView>(viewName);
                 if (view == null)
                 {
                     Log.Warning($"Not found the dialog window named \"{viewName}\".");
@@ -200,10 +204,11 @@ namespace Framework.Runtime.UI.Component
                 dialog.Show();
                 return dialog;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 if (view != null)
                     view.Destroy();
+                Log.Error(e);
                 throw;
             }
         }

@@ -15,6 +15,8 @@ public class ListPairsBindView : View
         vm = ViewModel as ListPairsBindViewModel;
         Binding.BindIpairs(vm.Items, ItemRoot, "item[?]");
     }
+
+    public override string ViewPath { get; }
 }
 
 public class ListPairsBindViewModel : ViewModel

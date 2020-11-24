@@ -25,6 +25,8 @@ public class ListBindView : View
         Binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
         Binding.BindCommand(updateBtn, vm.UpdateItem);
     }
+
+    public override string ViewPath { get; }
 }
 
 public class ListBindViewModel : ViewModel

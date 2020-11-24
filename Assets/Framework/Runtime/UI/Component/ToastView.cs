@@ -7,9 +7,12 @@ namespace Framework.Runtime.UI.Component
     {
         public Text Text;
         public override UILevel UILevel { get; }
+        
         protected override void OnVmChange()
         {
-            
+             
         }
+
+        public override string ViewPath { get; }
     }
 }

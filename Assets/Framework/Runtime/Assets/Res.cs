@@ -79,28 +79,42 @@ namespace Framework.Assets
 
         private async void loadAssetAsync<T>(object key, IProgressPromise<float, T> promise)
         {
-            var operation = Addressables.LoadAssetAsync<T>(key);
-            while (!operation.IsDone)
+            if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
             {
-                promise.UpdateProgress(operation.PercentComplete);
-                await Task.Yield();
+                var operation = Addressables.LoadAssetAsync<GameObject>(key);
+                while (!operation.IsDone)
+                {
+                    promise.UpdateProgress(operation.PercentComplete);
+                    await Task.Yield();
+                }
+                promise.UpdateProgress(1);
+                promise.SetResult(operation.Result.GetComponent(typeof(T)));
             }
-            promise.UpdateProgress(1);
-            promise.SetResult(operation.Result);
+            else
+            {
+                var operation = Addressables.LoadAssetAsync<T>(key);
+                while (!operation.IsDone)
+                {
+                    promise.UpdateProgress(operation.PercentComplete);
+                    await Task.Yield();
+                }
+                promise.UpdateProgress(1);
+                promise.SetResult(operation.Result);
+            }
         }
 
-        public IProgressResult<float, GameObject> InstantiateAsync(object key, Transform parent = null,
+        public IProgressResult<float, T> InstantiateAsync<T>(object key, Transform parent = null,
             bool instantiateInWorldSpace = false, bool trackHandle = true)
         {
-            ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
+            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
             instantiateAsync(getOperation(key, parent, instantiateInWorldSpace, trackHandle), progressResult);
             return progressResult;
         }
 
-        public IProgressResult<float, GameObject> InstantiateAsync(object key, Vector3 position, Quaternion rotation,
-            Transform parent = null, bool trackHandle = true)
+        public IProgressResult<float, T> InstantiateAsync<T>(object key, Vector3 position, Quaternion rotation,
+            Transform parent = null, bool trackHandle = true) where T : MonoBehaviour
         {
-            ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
+            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
             instantiateAsync(getOperation(key, position, rotation, parent, trackHandle), progressResult);
             return progressResult;
         }
@@ -117,8 +131,8 @@ namespace Framework.Assets
             return Addressables.InstantiateAsync(key, position, rotation, parent);
         }
 
-        private async void instantiateAsync(AsyncOperationHandle<GameObject> operation,
-            IProgressPromise<float, GameObject> promise)
+        private async void instantiateAsync<T>(AsyncOperationHandle<GameObject> operation,
+            IProgressPromise<float, T> promise)
         {
             while (!operation.IsDone)
             {
@@ -126,7 +140,10 @@ namespace Framework.Assets
                 await Task.Yield();
             }
             promise.UpdateProgress(1);
-            promise.SetResult(operation.Result);
+            if (typeof(T) == typeof(GameObject))
+                promise.SetResult(operation.Result);
+            else
+                promise.SetResult(operation.Result.GetComponent<T>());
         }
 
         public void Release()

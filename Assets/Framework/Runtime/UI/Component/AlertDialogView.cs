@@ -25,7 +25,7 @@ namespace Framework.Runtime.UI.Component
 
         private View contentView;
 
-        private AlertDialogVM viewModel;
+        private AlertDialogVM vm;
 
         public override UILevel UILevel { get; }
 
@@ -34,7 +34,7 @@ namespace Framework.Runtime.UI.Component
         {
             try
             {
-                this.viewModel.OnClick(which);
+                this.vm.OnClick(which);
             }
             catch (Exception) { }
             finally
@@ -50,12 +50,13 @@ namespace Framework.Runtime.UI.Component
 
         protected override void OnVmChange()
         {
+            vm = ViewModel as AlertDialogVM;
             if (this.Message != null)
             {
-                if (!string.IsNullOrEmpty(this.viewModel.Message))
+                if (!string.IsNullOrEmpty(vm.Message))
                 {
                     this.Message.gameObject.SetActive(true);
-                    this.Message.text = this.viewModel.Message;
+                    this.Message.text = this.vm.Message;
                 }
                 else
                     this.Message.gameObject.SetActive(false);
@@ -63,10 +64,10 @@ namespace Framework.Runtime.UI.Component
 
             if (this.Title != null)
             {
-                if (!string.IsNullOrEmpty(this.viewModel.Title))
+                if (!string.IsNullOrEmpty(vm.Title))
                 {
                     this.Title.gameObject.SetActive(true);
-                    this.Title.text = this.viewModel.Title;
+                    this.Title.text = this.vm.Title;
                 }
                 else
                     this.Title.gameObject.SetActive(false);
@@ -74,13 +75,13 @@ namespace Framework.Runtime.UI.Component
 
             if (this.ConfirmButton != null)
             {
-                if (!string.IsNullOrEmpty(this.viewModel.ConfirmButtonText))
+                if (!string.IsNullOrEmpty(vm.ConfirmButtonText))
                 {
                     this.ConfirmButton.gameObject.SetActive(true);
                     this.ConfirmButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_POSITIVE); });
                     Text text = this.ConfirmButton.GetComponentInChildren<Text>();
                     if (text != null)
-                        text.text = this.viewModel.ConfirmButtonText;
+                        text.text = this.vm.ConfirmButtonText;
                 }
                 else
                 {
@@ -90,13 +91,13 @@ namespace Framework.Runtime.UI.Component
 
             if (this.CancelButton != null)
             {
-                if (!string.IsNullOrEmpty(this.viewModel.CancelButtonText))
+                if (!string.IsNullOrEmpty(this.vm.CancelButtonText))
                 {
                     this.CancelButton.gameObject.SetActive(true);
                     this.CancelButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEGATIVE); });
                     Text text = this.CancelButton.GetComponentInChildren<Text>();
                     if (text != null)
-                        text.text = this.viewModel.CancelButtonText;
+                        text.text = this.vm.CancelButtonText;
                 }
                 else
                 {
@@ -106,13 +107,13 @@ namespace Framework.Runtime.UI.Component
 
             if (this.NeutralButton != null)
             {
-                if (!string.IsNullOrEmpty(this.viewModel.NeutralButtonText))
+                if (!string.IsNullOrEmpty(this.vm.NeutralButtonText))
                 {
                     this.NeutralButton.gameObject.SetActive(true);
                     this.NeutralButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEUTRAL); });
                     Text text = this.NeutralButton.GetComponentInChildren<Text>();
                     if (text != null)
-                        text.text = this.viewModel.NeutralButtonText;
+                        text.text = this.vm.NeutralButtonText;
                 }
                 else
                 {
@@ -120,7 +121,7 @@ namespace Framework.Runtime.UI.Component
                 }
             }
 
-            this.CanceledOnTouchOutside = this.viewModel.CanceledOnTouchOutside;
+            this.CanceledOnTouchOutside = this.vm.CanceledOnTouchOutside;
             if (this.OutsideButton != null && this.CanceledOnTouchOutside)
             {
                 this.OutsideButton.gameObject.SetActive(true);
@@ -128,5 +129,7 @@ namespace Framework.Runtime.UI.Component
                 this.OutsideButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEGATIVE); });
             }
         }
+
+        public override string ViewPath { get; }
     }
 }

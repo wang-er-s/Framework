@@ -24,7 +24,7 @@
 
 using Framework.Prefs;
 
-namespace Framework.Context
+namespace Framework.Contexts
 {
     public class ApplicationContext : Context
     {

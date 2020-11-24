@@ -40,6 +40,8 @@ namespace Framework.UI.Example
             Debug.Log(vm.OnClick.GetHashCode());
         }
 
+        public override string ViewPath { get; }
+
         public override UILevel UILevel { get; } = UILevel.Common;
     }
 }

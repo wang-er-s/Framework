@@ -16,7 +16,7 @@ namespace Framework.UI.Wrap
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            return path => View.sprite = UIEnv.LoadSpriteFunc(path);
+            return path => View.sprite = Resources.Load<Sprite>(path);
         }
     }
 }

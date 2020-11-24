@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.IO;
-using Framework.Context;
+using System.Threading.Tasks;
+using Framework.Asynchronous;
+using Framework.Contexts;
 using Framework.UI.Core;
 using UnityEngine;
 
@@ -10,7 +12,7 @@ namespace Framework.Runtime.UI.Component
     public class Toast
     {
         private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "UI/Toast";
+        private const string DEFAULT_VIEW_NAME = "Toast";
 
         private static string viewName;
         public static string ViewName
@@ -21,18 +23,18 @@ namespace Framework.Runtime.UI.Component
 
         private static IViewLocator GetUIViewLocator()
         {
-            ApplicationContext context = new ApplicationContext();
+            ApplicationContext context = Context.GetApplicationContext();
             IViewLocator locator = context.GetService<IViewLocator>();
             return locator;
         }
 
-        public static Toast Show(string text, float duration = 3f, Action callback = null)
+        public static async Task<Toast> Show(string text, float duration = 3f, Action callback = null)
         {
             if (string.IsNullOrEmpty(viewName))
                 viewName = ViewName;
 
             IViewLocator locator = GetUIViewLocator();
-            ToastView view = locator.LoadView<ToastView>(viewName);
+            ToastView view = await locator.LoadViewAsync<ToastView>(viewName);
             if (view == null)
                 throw new FileNotFoundException("Not found the \"ToastView\".");
 
@@ -97,9 +99,6 @@ namespace Framework.Runtime.UI.Component
 
         public void Show()
         {
-            if (this.view.Visible)
-                return;
-
             this.view.Show();
             this.view.Text.text = this.text;
             view.EnterAnimation?.Play();

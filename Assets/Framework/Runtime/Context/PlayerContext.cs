@@ -24,7 +24,7 @@
 
 using Framework.Services;
 
-namespace Framework.Context
+namespace Framework.Contexts
 {
     public class PlayerContext : Context
     {

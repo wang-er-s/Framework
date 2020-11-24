@@ -26,10 +26,44 @@ using System;
 using System.Collections.Generic;
 using Framework.Services;
 
-namespace Framework.Context
+namespace Framework.Contexts
 {
     public class Context
     {
+        private static ApplicationContext context = new ApplicationContext();
+        private static Dictionary<string, Context> contexts = new Dictionary<string, Context>();
+        public static ApplicationContext GetApplicationContext()
+        {
+            return Context.context;
+        }
+
+        public static void SetApplicationContext(ApplicationContext context)
+        {
+            Context.context = context;
+        }
+        
+        public static Context GetContext(string key)
+        {
+            Context context = null;
+            contexts.TryGetValue(key, out context);
+            return context;
+        }
+
+        public static T GetContext<T>(string key) where T : Context
+        {
+            return (T)GetContext(key);
+        }
+
+        public static void AddContext(string key, Context context)
+        {
+            contexts.Add(key, context);
+        }
+
+        public static void RemoveContext(string key)
+        {
+            contexts.Remove(key);
+        }
+        
         private bool _innerContainer;
         private Context _contextBase;
         private IServiceContainer _container;

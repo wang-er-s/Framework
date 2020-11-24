@@ -28,6 +28,8 @@ namespace Framework.UI.Example
             Binding.BindCommand(selfBtn, vm.OnItemClick);
         }
 
+        public override string ViewPath { get; }
+
         public void CC(bool val)
         {
             selected.SetActive(val);
