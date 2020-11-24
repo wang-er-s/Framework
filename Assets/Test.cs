@@ -53,7 +53,7 @@ public class Test : MonoBehaviour
     private async void LoadSingle()
     {
         Single = new SpriteLoader();
-        var sp = await Single.LoadSprite("single");
+        var sp = await Single.LoadSpriteAsync("single");
         print(sp);
         _text.text = sp.name;
     }
@@ -64,7 +64,7 @@ public class Test : MonoBehaviour
     public async void LoadMul()
     {
         MulSprite = new SpriteLoader();
-        var sp = await MulSprite.LoadSprite("sheet/sprite_sheet_0");
+        var sp = await MulSprite.LoadSpriteAsync("sheet/sprite_sheet_0");
         print(sp);
         _text.text = sp.name;
     }
@@ -76,6 +76,7 @@ public class Test : MonoBehaviour
         AddButton(nameof(LoadCube), LoadCube);
         AddButton(nameof(CheckDownload), CheckDownload);
         AddButton(nameof(Download), Download);
+        
     }
 
     private void AddButton(string text, Action action)

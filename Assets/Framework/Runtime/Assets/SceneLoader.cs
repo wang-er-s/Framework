@@ -5,19 +5,27 @@ using UnityEngine.SceneManagement;
 
 namespace Framework.Assets
 {
-    public class SceneLoader
+    public static class SceneLoader
     {
-        public static async void LoadScene(string scene, IProgressPromise<float> progressPromise = null,
-            LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public static IProgressResult<float,Scene> LoadScene(string scene, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            ProgressResult<float,Scene> progressResult = new ProgressResult<float, Scene>();
+            loadScene(scene, loadSceneMode, progressResult);
+            return progressResult;
+        }
+
+        private static async void loadScene(string scene, LoadSceneMode loadSceneMode,
+            IProgressPromise<float, Scene> promise)
         {
             var loader = Addressables.LoadSceneAsync(scene, loadSceneMode);
             while (!loader.IsDone)
             {
                 await Task.Yield();
-                progressPromise?.UpdateProgress(loader.PercentComplete);
+                promise.UpdateProgress(loader.PercentComplete);
             }
-
-            progressPromise?.SetResult();
+            promise.UpdateProgress(1);
+            promise.SetResult(loader.Result.Scene);
         }
+        
     }
 }

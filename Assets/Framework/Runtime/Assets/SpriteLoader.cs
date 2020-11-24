@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Framework;
 using Framework.Asynchronous;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -12,107 +10,76 @@ namespace Framework.Assets
 {
     public class SpriteLoader
     {
-        private readonly Dictionary<string, SpriteAsset> _spriteAssets = new Dictionary<string, SpriteAsset>();
+        private readonly List<AsyncOperationHandle> _spriteAssets = new List<AsyncOperationHandle>();
+        private Res _res;
 
-        public async Task<Sprite> LoadSprite(string path)
+        private async void LoadSpriteAsync(string path, IProgressPromise<float, Sprite> promise)
         {
-            if (TryGetAsset(path, out var asset))
-            {
-                return asset.Sprite;
-            }
-
+            var tuple = ParsePath(path);
+            string _path = tuple.Item1;
+            string spriteName = tuple.Item2;
             Sprite sprite = null;
-            if (string.IsNullOrEmpty(asset.SpriteName))
+            if (string.IsNullOrEmpty(_path))
             {
-                var operation = Addressables.LoadAssetAsync<Sprite>(asset.Path);
-                await operation;
-                asset.Handle = operation;
+                var operation = Addressables.LoadAssetAsync<Sprite>(_path);
+                while (!operation.IsDone)
+                {
+                    promise.UpdateProgress(operation.PercentComplete);
+                    await Task.Yield();
+                }
+                _spriteAssets.Add(operation);
                 sprite = operation.Result;
             }
             else
             {
-                var operation = Addressables.LoadAssetAsync<IList<Sprite>>(asset.Path);
-                await operation;
-                asset.Handle = operation;
+                var operation = Addressables.LoadAssetAsync<IList<Sprite>>(_path);
+                while (!operation.IsDone)
+                {
+                    promise.UpdateProgress(operation.PercentComplete);
+                    await Task.Yield();
+                }
+                _spriteAssets.Add(operation);
                 foreach (var sp in operation.Result)
                 {
-                    if (sp.name == asset.SpriteName)
-                    {
-                        sprite = sp;
-                        break;
-                    }
+                    if (sp.name != spriteName) continue;
+                    sprite = sp;
+                    break;
                 }
             }
-
-            asset.Sprite = sprite;
-            _spriteAssets[path] = asset;
-            return sprite;
+            promise.SetResult(sprite);
         }
 
-        public void LoadSprite(string path, Action<Sprite> callback)
+        public IProgressResult<float,Sprite> LoadSpriteAsync(string path)
         {
-            if (TryGetAsset(path, out var asset))
-            {
-                callback(asset.Sprite);
-            }
+            ProgressResult<float, Sprite> promise = new ProgressResult<float, Sprite>();
+            LoadSpriteAsync(path, promise);
+            return promise;
+        }
 
-            if (string.IsNullOrEmpty(asset.SpriteName))
-            {
-                Addressables.LoadAssetAsync<Sprite>(asset.Path).Completed += operation =>
-                {
-                    asset.Handle = operation;
-                    callback(operation.Result);
-                    asset.Sprite = operation.Result;
-                    _spriteAssets[path] = asset;
-                };
-            }
-            else
-            {
-                Addressables.LoadAssetAsync<IList<Sprite>>(asset.Path).Completed += operation =>
-                {
-                    asset.Handle = operation;
-                    foreach (var sp in operation.Result)
-                    {
-                        if (sp.name == asset.SpriteName)
-                        {
-                            callback(sp);
-                            asset.Sprite = sp;
-                            break;
-                        }
-                    }
-
-                    _spriteAssets[path] = asset;
-                };
-            }
+        [Obsolete("仅做展示，暂时不实用同步加载",true)]
+        public Sprite LoadSprite(string path)
+        {
+            var tuple = ParsePath(path);
+            string _path = tuple.Item1;
+            string spriteName = tuple.Item2;
+            return null;
         }
 
         public void Release()
         {
-            foreach (var spriteAsset in _spriteAssets.Values)
+            for (int i = 0; i < _spriteAssets.Count; i++)
             {
                 try
                 {
-                    Addressables.Release(spriteAsset.Handle);
+                    Addressables.Release(_spriteAssets[i]);
+                    _spriteAssets.RemoveAt(i);
+                    i--;
                 }
                 catch (Exception)
                 {
                 }
             }
             _spriteAssets.Clear();
-        }
-
-        private bool TryGetAsset(string path, out SpriteAsset asset)
-        {
-            if (_spriteAssets.TryGetValue(path, out asset))
-            {
-                return true;
-            }
-
-            asset = new SpriteAsset();
-            var tuplePath = ParsePath(path);
-            asset.Path = tuplePath.Item1;
-            asset.SpriteName = tuplePath.Item2;
-            return false;
         }
 
         private Tuple<string, string> ParsePath(string path)
@@ -132,13 +99,6 @@ namespace Framework.Assets
 
             return new Tuple<string, string>(_path, spriteName);
         }
-
-        private class SpriteAsset
-        {
-            public string Path;
-            public string SpriteName;
-            public AsyncOperationHandle Handle;
-            public Sprite Sprite;
-        }
+        
     }
 }
