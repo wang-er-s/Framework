@@ -14,7 +14,7 @@ namespace Framework.Assets
     {
         #region static
 
-        private const string DYNAMIC_TAG = "dynamic";
+        private const string DYNAMIC_TAG = "lab_dynamic";
         private static bool initialized = false;
         public static bool Ready => initialized;
 
@@ -48,6 +48,7 @@ namespace Framework.Assets
         public static async Task<string> CheckDownloadSize()
         {
             var size = await Addressables.GetDownloadSizeAsync(DYNAMIC_TAG);
+            if(size <= 0) return String.Empty;
             var kb = size / 1024;
             if (kb < 1024)
                 return $"{kb}kb";

@@ -204,6 +204,7 @@ namespace UnityIO.Classes
         /// </summary>
         public void Rename(string newName)
         {
+#if UNITY_EDITOR
             if (!UnityEditorInternal.InternalEditorUtility.IsValidFileName(newName))
             {
                 throw new InvalidNameException("The name '" + newName + "' contains invalid characters");
@@ -224,6 +225,7 @@ namespace UnityIO.Classes
             }
 
             AssetDatabase.RenameAsset(tempPath, newName);
+#endif
         }
 
         /// <summary>

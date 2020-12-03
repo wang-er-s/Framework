@@ -3,7 +3,8 @@
     "references": [
         "Unity.ResourceManager",
         "Debugger1",
-        "Unity.Addressables"
+        "Unity.Addressables",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

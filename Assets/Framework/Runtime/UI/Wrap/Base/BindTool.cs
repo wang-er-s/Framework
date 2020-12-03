@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Framework.UI.Core;
+using TMPro;
 using UnityEngine.UI;
 
 namespace Framework.UI.Wrap.Base
@@ -15,7 +16,8 @@ namespace Framework.UI.Wrap.Base
             {typeof(Slider), typeof(SliderWrapper)},
             {typeof(Button), typeof(ButtonWrapper)},
             {typeof(Image), typeof(ImageWrapper)},
-            {typeof(Dropdown), typeof(DropdownWrapper)}
+            {typeof(Dropdown), typeof(DropdownWrapper)},
+            {typeof(TextMeshProUGUI), typeof(TmpWrapper)}
         };
 
         private static readonly object[] args = new object[1];

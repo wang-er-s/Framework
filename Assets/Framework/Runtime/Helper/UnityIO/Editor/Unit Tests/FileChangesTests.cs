@@ -47,9 +47,10 @@ public class FileChangesTests
         // Creating our working Directory
         m_WorkingDirectroy = IO.Root.CreateDirectory(GetType().Name);
         // Create a prefab to work with.
-        PrefabUtility.CreatePrefab(m_WorkingDirectroy.path + "/Cube.prefab", GameObject.CreatePrimitive(PrimitiveType.Cube));
-        PrefabUtility.CreatePrefab(m_WorkingDirectroy.path + "/Cylinder.prefab", GameObject.CreatePrimitive(PrimitiveType.Cylinder));
-        PrefabUtility.CreatePrefab(m_WorkingDirectroy.path + "/Plane.prefab", GameObject.CreatePrimitive(PrimitiveType.Plane));
+        PrefabUtility.SaveAsPrefabAsset( GameObject.CreatePrimitive(PrimitiveType.Cube),m_WorkingDirectroy.path + "/Cube.prefab");
+        PrefabUtility.SaveAsPrefabAsset(GameObject.CreatePrimitive(PrimitiveType.Cylinder),m_WorkingDirectroy.path + "/Cylinder.prefab");
+        PrefabUtility.SaveAsPrefabAsset(GameObject.CreatePrimitive(PrimitiveType.Plane),
+            m_WorkingDirectroy.path + "/Plane.prefab");
     }
 
     [Test]

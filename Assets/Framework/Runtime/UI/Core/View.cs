@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Framework.UI.Core.Bind;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Framework.UI.Core
 {
@@ -69,7 +70,10 @@ namespace Framework.UI.Core
 
         public void Destroy()
         {
-            Destroy(gameObject);
+            if (!Addressables.ReleaseInstance(gameObject))
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void SetCanvas(bool visible)

@@ -22,7 +22,7 @@ namespace Framework.UI.Core
         Guide = 3 //新手引导层
     }
 
-    public class DefaultViewLocator : IViewLocator
+    public class DefaultViewLocator : Singleton<DefaultViewLocator>, IViewLocator
     {
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
         
@@ -34,13 +34,17 @@ namespace Framework.UI.Core
         
         public DefaultViewLocator(Canvas canvas = null)
         {
-            Canvas = canvas == null ? Object.FindObjectOfType<Canvas>() : canvas;
             if (Canvas == null) Canvas = CreateCanvas();
+            Object.DontDestroyOnLoad(Canvas);
             foreach (UILevel level in (UILevel[]) Enum.GetValues(typeof(UILevel)))
             {
                 _sortViews[level] = new List<View>();
             }
             _res = new Res();
+        }
+
+        public DefaultViewLocator() : this(null)
+        {
         }
 
         [Obsolete("use LoadViewAsync replace", true)]
@@ -71,6 +75,27 @@ namespace Framework.UI.Core
             ProgressResult<float, T> result = new ProgressResult<float, T>();
             Executors.RunOnCoroutineNoReturn(LoadView(result, path, viewModel, autoShow));
             return result;
+        }
+
+        public T GetView<T>(string path = null) where T : View
+        {
+            foreach (var views in _sortViews.Values)
+            {
+                foreach (var view in views)
+                {
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        if (view.GetType() == typeof(T))
+                            return view as T;
+                    }
+                    else
+                    {
+                        if (view.ViewPath == path)
+                            return view as T;
+                    }
+                }
+            }
+            return null;
         }
 
         private IEnumerator LoadView<T>(IProgressPromise<float, T> promise, string path, ViewModel viewModel = null,
@@ -162,11 +187,12 @@ namespace Framework.UI.Core
             }
             view.transform.SetParent(Canvas.transform, false);
             view.transform.SetSiblingIndex(index);
+            _sortViews[view.UILevel].Add(view);
         }
 
         public static Canvas CreateCanvas()
         {
-            var canvas = Resources.Load<Canvas>("Canvas");
+            var canvas = Object.Instantiate(Resources.Load<Canvas>("Canvas"));
             return canvas;
         }
     }

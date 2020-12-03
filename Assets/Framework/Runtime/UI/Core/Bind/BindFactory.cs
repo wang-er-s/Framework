@@ -10,10 +10,10 @@ namespace Framework.UI.Core.Bind
 
         //单向绑定
         public void Bind<TComponent, TData>
-        (TComponent component, ObservableProperty<TData> property, Action<TData> fileChangeCb = null,
+        (TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(component, property, fileChangeCb, null, BindType.OnWay,
+            var bind = new BindField<TComponent, TData>(component, property, fieldChangeCb, null, BindType.OnWay,
                 prop2CpntWrap, null);
             Binds.Add(bind);
         }
@@ -33,11 +33,11 @@ namespace Framework.UI.Core.Bind
         public void TwoWayBind<TComponent, TData>
         (TComponent component, ObservableProperty<TData> property,
             UnityEvent<TData> componentEvent = null,
-            Action<TData> fileChangeCb = null,
+            Action<TData> fieldChangeCb = null,
             Func<TData, TData> cpnt2PropWrap = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            Bind(component, property, fileChangeCb, prop2CpntWrap);
+            Bind(component, property, fieldChangeCb, prop2CpntWrap);
             RevertBind(component, property, componentEvent, cpnt2PropWrap);
         }
 
@@ -66,10 +66,10 @@ namespace Framework.UI.Core.Bind
         public void TwoWayBind<TComponent, TData, TViewEvent>
         (TComponent component, ObservableProperty<TData> property,
             Func<TViewEvent, TData> cpnt2FieldConvert, Func<TData, TViewEvent> field2CpntConvert,
-            UnityEvent<TViewEvent> componentEvent = null, Action<TViewEvent> fileChangeCb = null)
+            UnityEvent<TViewEvent> componentEvent = null, Action<TViewEvent> fieldChangeCb = null)
             where TComponent : class
         {
-            Bind(component, property, field2CpntConvert, fileChangeCb);
+            Bind(component, property, field2CpntConvert, fieldChangeCb);
             RevertBind(component, property, cpnt2FieldConvert, componentEvent);
         }
 

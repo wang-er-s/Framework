@@ -12,7 +12,7 @@ namespace Framework.Runtime.UI.Component
     public class Toast
     {
         private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "Toast";
+        private const string DEFAULT_VIEW_NAME = "UI_Toast";
 
         private static string viewName;
         public static string ViewName

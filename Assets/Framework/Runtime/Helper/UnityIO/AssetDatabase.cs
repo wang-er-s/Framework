@@ -1,6 +1,4 @@
-﻿#if !UNITY_EDITOR
-#define RELEASE_BUILD
-#else
+﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditorInternal;
 using uAssetDatabase = UnityEditor.AssetDatabase;
@@ -24,7 +22,7 @@ namespace UnityIO.AssetDatabaseWrapper
         {
             get
             {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
                 return Application.dataPath;
 #else
                 return Application.persistentDataPath;
@@ -52,7 +50,7 @@ namespace UnityIO.AssetDatabaseWrapper
 
             if(IsRelativePath(assetPath))
             {
-                #if !RELEASE_BUILD
+                #if UNITY_EDITOR
                 return uAssetDatabase.LoadAssetAtPath<T>(assetPath);
                 #endif
             }
@@ -67,7 +65,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns>The loaded object</returns>
         public static Object LoadAssetAtPath(string assetPath, Type type)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.LoadAssetAtPath(assetPath, type);
 #else
              return null;
@@ -80,7 +78,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// </summary>
         public static bool DeleteAsset(string assetPath)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.DeleteAsset(assetPath);
 #else
             // Convert to system path
@@ -131,7 +129,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns>Returns true if the copy was successful.</returns>
         public static bool CopyAsset(string path, string newPath)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.CopyAsset(path, newPath);
 #else
              // Convert our path to a system path 
@@ -141,7 +139,7 @@ namespace UnityIO.AssetDatabaseWrapper
             // Copy the file. 
             File.Copy(sourceFilePath, destSystemPath, false);
             // Return our result
-            return true.
+            return true;
 #endif
         }
 
@@ -170,7 +168,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// </summary>
         public static bool IsValidFolder(string assetPath)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.IsValidFolder(assetPath);
 #else
             // Convert our path to a system path 
@@ -188,7 +186,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns>An empty string if the asset can be moved, otherwise an error message.</returns>
         public static string ValidateMoveAsset(string oldPath, string newPath)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.ValidateMoveAsset(oldPath, newPath);
 
 
@@ -218,12 +216,13 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns></returns>
         public static string MoveAsset(string oldPath, string newPath)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.MoveAsset(oldPath, newPath);
 #else
             oldPath = IO.AssetPathToSystemPath(oldPath);
             newPath = IO.AssetPathToSystemPath(newPath);
             File.Move(oldPath, newPath);
+            return null;
 #endif
         }
 
@@ -235,10 +234,10 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns></returns>
         public static string RenameAsset(string pathName, string newName)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.RenameAsset(pathName, newName);
 #endif
-            
+            return String.Empty;
         }
 
         /// <summary>
@@ -249,9 +248,10 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns>The GUID of the newly created folder.</returns>
         public static string CreateFolder(string parentFolder, string newFolderName)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.CreateFolder(parentFolder, newFolderName);
 #endif
+            return String.Empty;
         }
 
         /// <summary>
@@ -262,9 +262,10 @@ namespace UnityIO.AssetDatabaseWrapper
         /// <returns>Array of matching asset. Note that GUIDs will be returned.</returns>
         public static string[] FindAssets(string filter, string[] searchInFolders)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.FindAssets(filter, searchInFolders);
 #endif
+            return null;
         }
 
         /// <summary>
@@ -272,9 +273,10 @@ namespace UnityIO.AssetDatabaseWrapper
         /// </summary>
         public static string[] GetSubFolders(string path)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return uAssetDatabase.GetSubFolders(path);
 #endif
+            return null;
         }
 
         /// <summary>
@@ -282,9 +284,10 @@ namespace UnityIO.AssetDatabaseWrapper
         /// </summary>
         public static string GetProjectRelativePath(string path)
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             return FileUtil.GetProjectRelativePath(path);
 #endif
+            return string.Empty;
         }
 
         /// <summary>
@@ -295,7 +298,7 @@ namespace UnityIO.AssetDatabaseWrapper
         /// </summary>
         public static void CreateAsset<T>(T asset, string path) where T : Object
         {
-#if !RELEASE_BUILD
+#if UNITY_EDITOR
             uAssetDatabase.CreateAsset(asset, path);
 #endif
         }

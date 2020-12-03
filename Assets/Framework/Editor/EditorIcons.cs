@@ -229,11 +229,9 @@ namespace Framework.Editor
         }
 
         static GUIContent iconSelected;
-        static GUIStyle iconBtnStyle = null;
         static List<GUIContent> iconContentListAll;
         static List<GUIContent> iconContentListSmall;
         static List<GUIContent> iconContentListBig;
-        static List<string> iconMissingNames;
         static GUIStyle iconButtonStyle = null;
         static GUIStyle iconPreviewBlack = null;
         static GUIStyle iconPreviewWhite = null;
@@ -269,7 +267,6 @@ namespace Framework.Editor
             iconPreviewWhite = new GUIStyle(iconButtonStyle);
             AllTheTEXTURES(ref iconPreviewWhite, Texture2DPixel(new Color(0.85f, 0.85f, 0.85f)));
 
-            iconMissingNames = new List<string>();
             iconContentListSmall = new List<GUIContent>();
             iconContentListBig = new List<GUIContent>();
             iconContentListAll = new List<GUIContent>();
@@ -280,7 +277,6 @@ namespace Framework.Editor
 
                 if (ico == null)
                 {
-                    iconMissingNames.Add(ico_list[i]);
                     continue;
                 }
 

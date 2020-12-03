@@ -12,5 +12,6 @@ namespace Framework.UI.Core
         T LoadView<T>(string path, ViewModel viewModel = null, bool autoShow = true) where T : View;
         IProgressResult<float, View> LoadViewAsync(string path, ViewModel viewModel = null, bool autoShow = true);
         IProgressResult<float, T> LoadViewAsync<T>(string path, ViewModel viewModel = null, bool autoShow = true) where T : View;
+        T GetView<T>(string path) where T : View;
     }
 }

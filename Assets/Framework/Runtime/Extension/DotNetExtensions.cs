@@ -346,7 +346,12 @@ public static class IEnumerableExtension
     /// <returns></returns>
     public static T GetRandomItem<T>(this List<T> list)
     {
-        return list[UnityEngine.Random.Range(0, list.Count)];
+        return list[list.GetRandomIndex()];
+    }
+
+    public static int GetRandomIndex(this ICollection list)
+    {
+        return UnityEngine.Random.Range(0, list.Count);
     }
 
     /// <summary>

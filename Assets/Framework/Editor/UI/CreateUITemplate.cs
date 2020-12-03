@@ -172,10 +172,6 @@ namespace Framework.UI.Editor
 				}
 			}
 			var markStr = strBuilder.ToString();
-			if (markStr.EndsWith("\n"))
-			{
-				markStr = markStr.Substring(0, markStr.Length - 1);
-			}
 			template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(\s*?#endregion)",
 				$"$1{markStr}$3");
 			File.WriteAllText(generateFilePath, template);
@@ -250,12 +246,7 @@ namespace Framework.UI.Editor
 
 		private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
 		{
-			var path = panelCodeInfo.PanelPath;
-			//var rootPath = BuildScript.GetManifest().resRootPath;
-			if (path.Contains(UIEnv.UIPrefabRootPath))
-			{
-				path = path.RemoveString(UIEnv.UIPrefabRootPath);
-			}
+			var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath).ToLower();
 			return path;
 		}
 	

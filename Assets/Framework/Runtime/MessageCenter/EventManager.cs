@@ -17,7 +17,7 @@ namespace Framework.MessageCenter
 
         #region EventListener
 
-        public static void Register<T>(IEventListener<T> listener) where T : class
+        public static void Register<T>(IEventListener<T> listener) 
         {
             Type eventType = typeof(T);
 
@@ -28,7 +28,7 @@ namespace Framework.MessageCenter
                 subscribersDic[eventType].Add(listener);
         }
 
-        public static void UnRegister<T>(IEventListener<T> listener) where T : class
+        public static void UnRegister<T>(IEventListener<T> listener) 
         {
             Type eventType = typeof(T);
 
@@ -68,7 +68,7 @@ namespace Framework.MessageCenter
 #endif
         }
 
-        public static void TriggerEvent<T>(T newEvent) where T : class
+        public static void TriggerEvent<T>(T newEvent)
         {
             List<IEventListenerBase> list;
             if (!subscribersDic.TryGetValue(typeof(T), out list))
@@ -108,7 +108,7 @@ namespace Framework.MessageCenter
 
         #region MulEventListener
 
-        public static void Register<T>(IMulEventListener<T> listener, string tag) where T : class
+        public static void Register<T>(IMulEventListener<T> listener, string tag)
         {
             Type eventType = typeof(T);
 
@@ -121,7 +121,7 @@ namespace Framework.MessageCenter
 
 
 
-        public static void UnRegister<T>(IMulEventListener<T> listener, string tag) where T : class
+        public static void UnRegister<T>(IMulEventListener<T> listener, string tag)
         {
             Type eventType = typeof(T);
 
@@ -159,7 +159,7 @@ namespace Framework.MessageCenter
 #endif
         }
 
-        public static void TriggerEvent<T>(T newEvent, string tag) where T : class
+        public static void TriggerEvent<T>(T newEvent, string tag) 
         {
             List<MulEventListenerContainer> list;
             if (!mulSubscribersDic.TryGetValue(typeof(T), out list))
@@ -210,22 +210,22 @@ namespace Framework.MessageCenter
     {
         public delegate void Delegate<T>(T eventType);
 
-        public static void StartListening<T>(this IEventListener<T> caller) where T : class
+        public static void StartListening<T>(this IEventListener<T> caller) 
         {
             EventManager.Register(caller);
         }
 
-        public static void StopListening<T>(this IEventListener<T> caller) where T : class
+        public static void StopListening<T>(this IEventListener<T> caller) 
         {
             EventManager.UnRegister(caller);
         }
 
-        public static void StartListening<T>(this IMulEventListener<T> caller, string tag) where T : class
+        public static void StartListening<T>(this IMulEventListener<T> caller, string tag) 
         {
             EventManager.Register(caller, tag);
         }
 
-        public static void StopListening<T>(this IMulEventListener<T> caller, string tag) where T : class
+        public static void StopListening<T>(this IMulEventListener<T> caller, string tag) 
         {
             EventManager.UnRegister(caller, tag);
         }

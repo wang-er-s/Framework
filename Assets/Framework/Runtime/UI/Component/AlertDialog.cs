@@ -18,7 +18,7 @@ namespace Framework.Runtime.UI.Component
         public const int BUTTON_NEUTRAL = -3;
 
         private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "AlertDialog";
+        private const string DEFAULT_VIEW_NAME = "UI_AlertDialog";
 
         private static string viewName;
         public static string ViewName
