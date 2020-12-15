@@ -18,7 +18,7 @@ namespace Framework
             appdomain = new ILRuntime.Runtime.Enviorment.AppDomain();
             
 #if UNITY_ANDROID
-        WWW www = new WWW(Application.streamingAssetsPath + "/HotFix_Project.dll");
+        UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + "/HotFix_Project.dll");
 #else
             UnityWebRequest www = UnityWebRequest.Get("file:///" + Application.streamingAssetsPath + "/HotFix_Project.dll");
 #endif
@@ -31,7 +31,7 @@ namespace Framework
 
             //PDB文件是调试数据库，如需要在日志中显示报错的行号，则必须提供PDB文件，不过由于会额外耗用内存，正式发布时请将PDB去掉，下面LoadAssembly的时候pdb传null即可
 #if UNITY_ANDROID
-        www = new WWW(Application.streamingAssetsPath + "/HotFix_Project.pdb");
+        www = UnityWebRequest.Get(Application.streamingAssetsPath + "/HotFix_Project.pdb");
 #else
             www = UnityWebRequest.Get("file:///" + Application.streamingAssetsPath + "/HotFix_Project.pdb");
 #endif
@@ -69,6 +69,16 @@ namespace Framework
             ILRuntimeDelegateHelper.RegisterDelegate(appdomain);
             ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(appdomain);
             ILRuntimeRedirectHelper.RegisterMethodRedirection(appdomain);
+            ILRuntimeValueTypeBinderHelper.Register(appdomain);
+            
+            //初始化CLR绑定请放在初始化的最后一步！！
+            //初始化CLR绑定请放在初始化的最后一步！！
+            //初始化CLR绑定请放在初始化的最后一步！！
+
+            //请在生成了绑定代码后解除下面这行的注释
+            //请在生成了绑定代码后解除下面这行的注释
+            //请在生成了绑定代码后解除下面这行的注释
+            //ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain);
         }
         
         public static void Dispose()

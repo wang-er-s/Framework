@@ -17,7 +17,7 @@ namespace Framework
 
         public override Type AdaptorType
         {
-            get { return typeof(IAsyncStateMachineAdaptor); }
+            get { return typeof(Adapter); }
         }
 
         public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain,
