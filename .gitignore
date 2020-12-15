@@ -309,3 +309,4 @@ Build/
 AssetBundles/
 ColaCache/
 /Assets/Plugins
+.DS_Store

@@ -1,0 +1,21 @@
+{
+    "name": "Framework",
+    "references": [
+        "Unity.ResourceManager",
+        "Debugger1",
+        "Unity.Addressables",
+        "Unity.TextMeshPro",
+        "ILRuntime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "Debugger.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
