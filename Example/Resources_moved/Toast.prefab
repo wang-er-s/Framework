@@ -92,7 +92,6 @@ GameObject:
   - component: {fileID: 114000013029152872}
   - component: {fileID: 114000010812782698}
   - component: {fileID: 225000014267302610}
-  - component: {fileID: 7055698834814915398}
   m_Layer: 5
   m_Name: Toast
   m_TagString: Untagged
@@ -208,16 +207,3 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &7055698834814915398
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000013916099996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29bc8f4b67d0448aa1bf196ac892281e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Text: {fileID: 114000012502551928}

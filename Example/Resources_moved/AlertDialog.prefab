@@ -247,7 +247,6 @@ GameObject:
   - component: {fileID: 223658579981984508}
   - component: {fileID: 114590046987810496}
   - component: {fileID: 225000013339720158}
-  - component: {fileID: 3314594062956755265}
   m_Layer: 5
   m_Name: AlertDialog
   m_TagString: Untagged
@@ -334,25 +333,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3314594062956755265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000011620492588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f1a12d4acb54e05b37c27b79f30d505, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Title: {fileID: 114000010795470336}
-  Message: {fileID: 114000011101670006}
-  Content: {fileID: 1000014269051906}
-  ConfirmButton: {fileID: 114000012273313172}
-  NeutralButton: {fileID: 114000014030120996}
-  CancelButton: {fileID: 114000013834351690}
-  OutsideButton: {fileID: 114000014134204316}
 --- !u!1 &1000012145482840
 GameObject:
   m_ObjectHideFlags: 0
