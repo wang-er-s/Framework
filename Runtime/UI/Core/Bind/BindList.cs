@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,17 +9,17 @@ using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindList<TComponent,TVm> : BaseBind
+    public class BindList<TComponent,TVm> : BaseBind where TComponent : UnityEngine.Object
     {
         private readonly TComponent _component;
         private readonly ObservableList<TVm> _list;
         private IBindList<TVm> _bindList;
 
-        public BindList(TComponent view, ObservableList<TVm> list)
+        public BindList(TComponent view, ObservableList<TVm> list, Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide)
         {
             _component = view;
             this._list = list;
-            InitEvent();
+            InitEvent(onShow, onHide);
             InitCpntValue();
         }
 
@@ -31,10 +32,10 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        private void InitEvent()
+        private void InitEvent(Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide)
         {
-            var bind = BindTool.GetDefaultWrapper(_component);
-            _bindList = _bindList ?? _component as IBindList<TVm> ?? bind as IBindList<TVm>;
+            _bindList = _bindList ?? _component as IBindList<TVm> ??
+                new DefaultBindList<TComponent, TVm>(_component, onShow, onHide);
             Log.Assert(_bindList != null, $"can not find IBindList of {_component}");
             _list.AddListener(_bindList.GetBindListFunc());
         }
