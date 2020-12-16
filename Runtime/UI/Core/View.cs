@@ -40,9 +40,9 @@ namespace Framework.UI.Core
                 return com as T;
             }
 
-            var tCom = Go.transform.Find(name).GetComponent<T>();
-            _cacheComponent[name] = tCom;
-            return tCom;
+            var result = Go.transform.Find(name).GetComponent<T>();
+            _cacheComponent[name] = result;
+            return result;
         }
 
         public void SetGameObject(GameObject obj)
@@ -109,7 +109,7 @@ namespace Framework.UI.Core
         }
 
         protected abstract void OnVmChange();
-        public abstract UILevel UILevel { get; }
+        public virtual UILevel UILevel { get; } = UILevel.Common;
         public abstract string Path { get; }
         public virtual bool IsSingle { get; } = true;
     }

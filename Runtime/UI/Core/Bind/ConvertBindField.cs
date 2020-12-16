@@ -7,63 +7,53 @@ namespace Framework.UI.Core.Bind
     public class ConvertBindField<TComponent, TData, TResult> : BaseBind where TComponent : class
     {
         private TComponent _component;
-        private Action<TResult> _fieldChangeCb;
+        private Action<TResult> _propChangeCb;
         private UnityEvent<TResult> _componentEvent;
-        private Func<TData, TResult> _field2CpntConvert;
-        private Func<TResult, TData> _cpnt2FieldConvert;
+        private Func<TData, TResult> _prop2CpntWrap;
+        private Func<TResult, TData> _cpnt2PropWrap;
         private ObservableProperty<TData> _property;
         private object _defaultWrapper;
 
         public ConvertBindField(TComponent component, ObservableProperty<TData> property,
-            Action<TResult> fieldChangeCb,
-            Func<TData, TResult> field2CpntConvert,
-            Func<TResult, TData> cpnt2FieldConvert,
+            Action<TResult> propChangeCb,
+            Func<TData, TResult> prop2CpntWrap,
+            Func<TResult, TData> cpnt2PropWrap,
             UnityEvent<TResult> componentEvent)
         {
-            SetValue(component, property, fieldChangeCb, field2CpntConvert, cpnt2FieldConvert, componentEvent);
+            SetValue(component, property, propChangeCb, prop2CpntWrap, cpnt2PropWrap, componentEvent);
             InitEvent();
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent component, ObservableProperty<TData> property,
-            Action<TResult> fieldChangeCb,
-            Func<TData, TResult> field2CpntConvert,
-            Func<TResult, TData> cpnt2FieldConvert,
-            UnityEvent<TResult> componentEvent)
-        {
-            SetValue(component, property, fieldChangeCb, field2CpntConvert, cpnt2FieldConvert, componentEvent);
-            InitCpntValue();
-        }
-
         private void SetValue(TComponent component, ObservableProperty<TData> property,
-            Action<TResult> fieldChangeCb,
-            Func<TData, TResult> field2CpntConvert,
-            Func<TResult, TData> cpnt2FieldConvert,
+            Action<TResult> propChangeCb,
+            Func<TData, TResult> prop2CpntWrap,
+            Func<TResult, TData> cpnt2PropWrap,
             UnityEvent<TResult> componentEvent)
         {
             this._component = component;
-            this._fieldChangeCb = fieldChangeCb;
+            this._propChangeCb = propChangeCb;
             this._componentEvent = componentEvent;
             this._property = property;
-            this._field2CpntConvert = field2CpntConvert;
-            this._cpnt2FieldConvert = cpnt2FieldConvert;
+            this._prop2CpntWrap = prop2CpntWrap;
+            this._cpnt2PropWrap = cpnt2PropWrap;
         }
 
         private void InitCpntValue()
         {
-            if (_field2CpntConvert != null) _fieldChangeCb(_field2CpntConvert(_property.Value));
+            if (_prop2CpntWrap != null) _propChangeCb(_prop2CpntWrap(_property.Value));
         }
 
         private void InitEvent()
         {
             _defaultWrapper = BindTool.GetDefaultWrapper(_component);
             _componentEvent = _componentEvent ?? (_component as IComponentEvent<TResult>)?.GetComponentEvent() ?? (_defaultWrapper as IComponentEvent<TResult>)?.GetComponentEvent();
-            _fieldChangeCb = _fieldChangeCb ?? (_component as IFieldChangeCb<TResult>)?.GetFieldChangeCb() ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
-            Log.Assert(_field2CpntConvert != null || _cpnt2FieldConvert != null);
-            if (_field2CpntConvert != null)
-                _property.AddListener((value) => _fieldChangeCb(_field2CpntConvert(value)));
-            if (_cpnt2FieldConvert != null)
-                _componentEvent.AddListener((val) => _property.Value = _cpnt2FieldConvert(val));
+            _propChangeCb = _propChangeCb ?? (_component as IFieldChangeCb<TResult>)?.GetFieldChangeCb() ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
+            Log.Assert(_prop2CpntWrap != null || _cpnt2PropWrap != null);
+            if (_prop2CpntWrap != null)
+                _property.AddListener((value) => _propChangeCb(_prop2CpntWrap(value)));
+            if (_cpnt2PropWrap != null)
+                _componentEvent.AddListener((val) => _property.Value = _cpnt2PropWrap(val));
         }
 
         public override void ClearBind()

@@ -12,7 +12,7 @@ namespace Framework.UI.Core
 {
     public class UIManager : Singleton<UIManager>
     {
-        private Res _res;
+        private IRes _res;
         private const string ILRuntimeDllName = "ILRuntime";
         public Canvas Canvas { get; private set; }
 
@@ -24,7 +24,7 @@ namespace Framework.UI.Core
             {
                 _sortViews[level] = new List<View>();
             }
-            _res = new Res();
+            _res = new ResourcesRes();
             Timer.RegisterUpdate(Update);
         }
 
@@ -121,6 +121,20 @@ namespace Framework.UI.Core
         internal void Close<T>()
         {
             Close(typeof(T));
+        }
+
+        internal T Get<T>() where T : View
+        {
+            var view = Get(typeof(T));
+            return view as T;
+        }
+
+        public View Get(Type type)
+        {
+            var path = type.Name;
+            if (_openedViews.TryGetValue(path, out var view))
+                return view;
+            return null;
         }
 
         public void Close(Type type)

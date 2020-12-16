@@ -15,26 +15,17 @@ namespace Framework.UI.Core.Bind
         private object _defaultWrapper;
         private BindType _bindType;
 
-        public BindField(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
+        public BindField(TComponent component, ObservableProperty<TData> property, Action<TData> propChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
             Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
-            SetValue(component, property, fieldChangeCb, componentEvent, bindType, property2CpntWrap,
+            SetValue(component, property, propChangeCb, componentEvent, bindType, property2CpntWrap,
                 cpnt2PropWrap);
             InitEvent();
             InitCpntValue();
         }
 
-        public void UpdateValue(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
-            UnityEvent<TData> componentEvent, BindType bindType,
-            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
-        {
-            SetValue(component, property, fieldChangeCb, componentEvent, bindType, property2CpntWrap,
-                cpnt2PropWrap);
-            InitCpntValue();
-        }
-
-        private void SetValue(TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb,
+        private void SetValue(TComponent component, ObservableProperty<TData> property, Action<TData> propChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
             Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
@@ -43,7 +34,7 @@ namespace Framework.UI.Core.Bind
             this._bindType = bindType;
             _prop2CpntWrap = property2CpntWrap;
             this._cpnt2PropWrap = cpnt2PropWrap;
-            _propChangeCb = fieldChangeCb;
+            _propChangeCb = propChangeCb;
             this._componentEvent = componentEvent;
         }
 
@@ -106,15 +97,7 @@ namespace Framework.UI.Core.Bind
             InitEvent();
             InitCpntValue();
         }
-
-        public void UpdateValue(TComponent component, ObservableProperty<TData1> property1,
-            ObservableProperty<TData2> property2,
-            Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb)
-        {
-            SetValue(component, property1, property2, wrapFunc, filedChangeCb);
-            InitCpntValue();
-        }
-
+        
         private void SetValue(TComponent component, ObservableProperty<TData1> property1,
             ObservableProperty<TData2> property2,
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb)

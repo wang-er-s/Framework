@@ -16,11 +16,11 @@ namespace Framework.UI.Core.Bind
         public BindCommand(TComponent component, Action command, UnityEvent componentEvent = null,
             Func<Action, Action> wrapFunc = null)
         {
-            UpdateValue(component, command, componentEvent, wrapFunc);
+            SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
         }
 
-        public void UpdateValue(TComponent component, Action command, UnityEvent componentEvent,
+        private void SetValue(TComponent component, Action command, UnityEvent componentEvent,
             Func<Action, Action> wrapFunc)
         {
             this._component = component;
@@ -58,11 +58,11 @@ namespace Framework.UI.Core.Bind
         public BindCommandWithPara(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
             Func<Action<TData>, Action<TData>> wrapFunc = null)
         {
-            UpdateValue(component, command, componentEvent, wrapFunc);
+            SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
         }
 
-        public void UpdateValue(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent,
+        private void SetValue(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent,
             Func<Action<TData>, Action<TData>> wrapFunc)
         {
             this._component = component;

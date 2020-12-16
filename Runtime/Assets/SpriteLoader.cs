@@ -11,7 +11,7 @@ namespace Framework.Assets
     public class SpriteLoader
     {
         private readonly List<AsyncOperationHandle> _spriteAssets = new List<AsyncOperationHandle>();
-        private Res _res;
+        private AddressableRes addressableRes;
 
         private async void LoadSpriteAsync(string path, IProgressPromise<float, Sprite> promise)
         {

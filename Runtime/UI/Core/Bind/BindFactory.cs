@@ -10,10 +10,10 @@ namespace Framework.UI.Core.Bind
 
         //单向绑定
         public void Bind<TComponent, TData>
-        (TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb = null,
+        (TComponent component, ObservableProperty<TData> property, Action<TData> propChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(component, property, fieldChangeCb, null, BindType.OnWay,
+            var bind = new BindField<TComponent, TData>(component, property, propChangeCb, null, BindType.OnWay,
                 prop2CpntWrap, null);
             Binds.Add(bind);
         }
@@ -33,44 +33,44 @@ namespace Framework.UI.Core.Bind
         public void TwoWayBind<TComponent, TData>
         (TComponent component, ObservableProperty<TData> property,
             UnityEvent<TData> componentEvent = null,
-            Action<TData> fieldChangeCb = null,
+            Action<TData> propChangeCb = null,
             Func<TData, TData> cpnt2PropWrap = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            Bind(component, property, fieldChangeCb, prop2CpntWrap);
+            Bind(component, property, propChangeCb, prop2CpntWrap);
             RevertBind(component, property, componentEvent, cpnt2PropWrap);
         }
 
         //wrap不同类型单向绑定
         public void Bind<TComponent, TData, TResult>(TComponent component,
-            ObservableProperty<TData> property, Func<TData, TResult> field2CpntConvert,
-            Action<TResult> fieldChangeCb = null) where TComponent : class
+            ObservableProperty<TData> property, Func<TData, TResult> prop2CpntWrap,
+            Action<TResult> propChangeCb = null) where TComponent : class
         {
-            var bind = new ConvertBindField<TComponent, TData, TResult>(component, property, fieldChangeCb,
-                field2CpntConvert, null, null);
+            var bind = new ConvertBindField<TComponent, TData, TResult>(component, property, propChangeCb,
+                prop2CpntWrap, null, null);
             Binds.Add(bind);
         }
 
         //wrap不同类型反向绑定
         public void RevertBind<TComponent, TData, TResult>(TComponent component,
             ObservableProperty<TData> property,
-            Func<TResult, TData> cpnt2FieldConvert,
+            Func<TResult, TData> cpnt2PropWrap,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
             var bind = new ConvertBindField<TComponent, TData, TResult>(component, property, null, null,
-                cpnt2FieldConvert, componentEvent);
+                cpnt2PropWrap, componentEvent);
             Binds.Add(bind);
         }
 
         //不同类型双向绑定
         public void TwoWayBind<TComponent, TData, TViewEvent>
         (TComponent component, ObservableProperty<TData> property,
-            Func<TViewEvent, TData> cpnt2FieldConvert, Func<TData, TViewEvent> field2CpntConvert,
-            UnityEvent<TViewEvent> componentEvent = null, Action<TViewEvent> fieldChangeCb = null)
+            Func<TViewEvent, TData> cpnt2PropWrap, Func<TData, TViewEvent> prop2CpntWrap,
+            UnityEvent<TViewEvent> componentEvent = null, Action<TViewEvent> propChangeCb = null)
             where TComponent : class
         {
-            Bind(component, property, field2CpntConvert, fieldChangeCb);
-            RevertBind(component, property, cpnt2FieldConvert, componentEvent);
+            Bind(component, property, prop2CpntWrap, propChangeCb);
+            RevertBind(component, property, cpnt2PropWrap, componentEvent);
         }
 
         //绑定两个field
