@@ -13,10 +13,11 @@ namespace Framework.UI.Core.Bind
             Binds.Add(bind);
         }
 
-        public void BindIpairs<TItemVm>
+        public void BindIpairs<TItemVm, TItemView>
             (ObservableList<TItemVm> list, Transform root, string pattern) where TItemVm : ViewModel
+        where TItemView : View
         {
-            var bind = new BindIpairsViewList<TItemVm>(list, pattern, root);
+            var bind = new BindIpairsViewList<TItemVm, TItemView>(list, pattern, root);
             Binds.Add(bind);
         }
 

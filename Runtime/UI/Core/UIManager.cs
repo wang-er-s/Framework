@@ -5,6 +5,7 @@ using System.IO;
 using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
+using Tool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -13,7 +14,7 @@ namespace Framework.UI.Core
     public class UIManager : Singleton<UIManager>
     {
         private IRes _res;
-        private const string ILRuntimeDllName = "ILRuntime";
+       
         public Canvas Canvas { get; private set; }
 
         public UIManager(Canvas canvas = null)
@@ -24,7 +25,7 @@ namespace Framework.UI.Core
             {
                 _sortViews[level] = new List<View>();
             }
-            _res = new ResourcesRes();
+            _res = new AddressableRes();
             Timer.RegisterUpdate(Update);
         }
 
@@ -73,7 +74,7 @@ namespace Framework.UI.Core
                 promise.SetResult(view);
                 yield break;
             }
-            view = CreateView(type);
+            view = ReflectionHelper.CreateInstance(type) as View;
             var path = view.Path;
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)
@@ -145,20 +146,6 @@ namespace Framework.UI.Core
             _openedViews.Remove(path);
             view.Hide();
             _waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
-        }
-
-        private View CreateView(Type type)
-        {
-            View view;
-            if (type.Assembly.GetName().Name == ILRuntimeDllName)
-            {
-                view = ILRuntimeHelper.appdomain.Instantiate<View>(type.FullName);
-            }
-            else
-            {
-                view = Activator.CreateInstance(type) as View;
-            }
-            return view;
         }
 
         private void Sort(View view)

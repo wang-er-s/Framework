@@ -14,7 +14,7 @@ public class ListPairsBindView : View
     protected override void OnVmChange()
     {
         vm = ViewModel as ListPairsBindViewModel;
-        Binding.BindIpairs(vm.Items, ItemRoot, "item[?]");
+        Binding.BindIpairs<ItemViewModel,ItemView>(vm.Items, ItemRoot, "item[?]");
     }
 }
 

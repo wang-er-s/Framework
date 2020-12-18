@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Framework.UI.Wrap;
 using Framework.UI.Wrap.Base;
+using Tool;
 using UnityEngine;
 
 namespace Framework.UI.Core.Bind
@@ -63,7 +64,7 @@ namespace Framework.UI.Core.Bind
         }
     }
 
-    public class BindIpairsViewList<TVm> : BaseBind where TVm : ViewModel
+    public class BindIpairsViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {
         private ObservableList<TVm> _list;
         private List<View> _views;
@@ -87,7 +88,8 @@ namespace Framework.UI.Core.Bind
             Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
             foreach (Transform child in root)
             {
-                var view = child.GetComponent<View>();
+                var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+                view.SetGameObject (child.gameObject);
                 Log.Assert(view != null, $"{child.name} must have view component", child);
                 _views.Add(view);
             }

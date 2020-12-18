@@ -18,18 +18,38 @@ namespace Framework.Assets
 
         protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
 
-        public abstract IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
+        public IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
             bool instantiateInWorldSpace = false,
-            bool trackHandle = true) where T : MonoBehaviour;
-
-        public abstract IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 position, Quaternion rotation,
-            Transform parent = null,
-            bool trackHandle = true) where T : MonoBehaviour;
-
-        public virtual void Release()
+            bool trackHandle = true) where T : Component
         {
-            
+            var progress = InstantiateAsync(key, parent, instantiateInWorldSpace, trackHandle);
+            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            progress.Callbackable().OnProgressCallback(result.UpdateProgress);
+            progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
+            return result;
         }
+
+        public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 position, Quaternion rotation,
+            Transform parent = null,
+            bool trackHandle = true) where T : Component
+        {
+            var progress = InstantiateAsync(key, position, rotation, parent, trackHandle);
+            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            progress.Callbackable().OnProgressCallback(result.UpdateProgress);
+            progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
+            return result;
+        }
+
+        public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
+            bool instantiateInWorldSpace = false,
+            bool trackHandle = true);
+
+        public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
+            Quaternion rotation,
+            Transform parent = null,
+            bool trackHandle = true);
+
+        public abstract void Release();
 
         public abstract GameObject Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false);

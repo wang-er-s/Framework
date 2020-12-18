@@ -39,8 +39,10 @@ namespace Framework.UI.Core
             {
                 return com as T;
             }
-
-            var result = Go.transform.Find(name).GetComponent<T>();
+            var obj = string.IsNullOrEmpty(name) ? Go.transform : Go.transform.Find(name);
+            Log.Assert(obj != null, $"obj != null  name = {name}");
+            var result = obj.GetComponent<T>();
+            Log.Assert(result != null, $"{name} not have {typeof(T).Name}");
             _cacheComponent[name] = result;
             return result;
         }
@@ -49,6 +51,7 @@ namespace Framework.UI.Core
         {
             Go = obj;
             _canvasGroup = Go.GetOrAddComponent<CanvasGroup>();
+            Start();
         }
         
         public void SetVm(ViewModel vm)
@@ -66,6 +69,11 @@ namespace Framework.UI.Core
 
         #region 界面显示隐藏的调用和回调方法
 
+        protected virtual void Start()
+        {
+            
+        }
+        
         public void Show()
         {
             SetCanvas(true);

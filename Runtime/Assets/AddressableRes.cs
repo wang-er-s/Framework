@@ -70,11 +70,12 @@ namespace Framework.Assets
 
         #endregion
 
+        private static Type MonoType = typeof(MonoBehaviour);
         private List<AsyncOperationHandle> _handles = new List<AsyncOperationHandle>();
 
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
-            if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
+            if (typeof(T).IsSubclassOf(MonoType))
             {
                 var operation = Addressables.LoadAssetAsync<GameObject>(key);
                 while (!operation.IsDone)
@@ -84,6 +85,7 @@ namespace Framework.Assets
                 }
                 promise.UpdateProgress(1);
                 promise.SetResult(operation.Result.GetComponent(typeof(T)));
+                _handles.Add(operation);
             }
             else
             {
@@ -95,21 +97,22 @@ namespace Framework.Assets
                 }
                 promise.UpdateProgress(1);
                 promise.SetResult(operation.Result);
+                _handles.Add(operation);
             }
         }
 
-        public override IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
+        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
             bool instantiateInWorldSpace = false, bool trackHandle = true)
         {
-            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
+            ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
             instantiateAsync(getOperation(key, parent, instantiateInWorldSpace, trackHandle), progressResult);
             return progressResult;
         }
 
-        public override IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 position, Quaternion rotation,
+        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation,
             Transform parent = null, bool trackHandle = true)
         {
-            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
+            ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
             instantiateAsync(getOperation(key, position, rotation, parent, trackHandle), progressResult);
             return progressResult;
         }
@@ -126,19 +129,17 @@ namespace Framework.Assets
             return Addressables.InstantiateAsync(key, position, rotation, parent, trackHandle);
         }
 
-        private async void instantiateAsync<T>(AsyncOperationHandle<GameObject> operation,
-            IProgressPromise<float, T> promise)
+        private async void instantiateAsync(AsyncOperationHandle<GameObject> operation,
+            IProgressPromise<float, GameObject> promise)
         {
+            _handles.Add(operation);
             while (!operation.IsDone)
             {
                 promise.UpdateProgress(operation.PercentComplete);
                 await Task.Yield();
             }
             promise.UpdateProgress(1);
-            if (typeof(T) == typeof(GameObject))
-                promise.SetResult(operation.Result);
-            else
-                promise.SetResult(operation.Result.GetComponent<T>());
+            promise.SetResult(operation.Result);
         }
 
         public override void Release()
@@ -148,8 +149,6 @@ namespace Framework.Assets
                 try
                 {
                     Addressables.Release(_handles[i]);
-                    _handles.RemoveAt(i);
-                    i--;
                 }
                 catch (Exception)
                 {

@@ -36,6 +36,9 @@ namespace Framework.Editor
                 sb.AppendLine($"\tpublic const string {label} = \"{label}\";");
             }
             sb.AppendLine("}");
+            var dirPath = Path.GetDirectoryName(GenPath);
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
             File.WriteAllText(GenPath, sb.ToString());
             AssetDatabase.Refresh();
             Debug.Log($"生成成功-->{GenPath}");
