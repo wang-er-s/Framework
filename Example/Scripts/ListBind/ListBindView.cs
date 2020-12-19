@@ -8,7 +8,7 @@ public class ListBindView : View
 {
     private ListBindViewModel vm;
     public ItemView item;
-    public Dropdown dropdown;
+    public Dropdown dropdown => Find<Dropdown>("");
     public Button deleteBtn;
     public Button addBtn;
     public Button updateBtn;

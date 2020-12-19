@@ -17,7 +17,7 @@ public class #ClassName : View
         vm = ViewModel as #VMName;
     }
     
-    public override string ViewPath { get; } = "#PrefabPath";
+    public override string Path { get; } = "#PrefabPath";
     
     public override UILevel UILevel { get; } = UILevel.Common;
     

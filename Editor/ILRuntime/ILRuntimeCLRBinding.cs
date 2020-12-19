@@ -1,12 +1,12 @@
 ﻿#if UNITY_EDITOR
 using UnityEditor;
 
-namespace Framework
+namespace Framework.Editor
 {
     [System.Reflection.Obfuscation(Exclude = true)]
     public class ILRuntimeCLRBinding
     {
-        [MenuItem("ILRuntime/通过自动分析热更DLL生成CLR绑定")]
+        [MenuItem("Framework/ILRuntime/通过自动分析热更DLL生成CLR绑定")]
         static void GenerateCLRBindingByAnalysis()
         {
             //用新的分析热更dll调用引用来生成绑定代码

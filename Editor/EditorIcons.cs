@@ -9,7 +9,7 @@ namespace Framework.Editor
 
     public class EditorIcons : EditorWindow
     {
-        [MenuItem("Tools/Editor Icons", priority = -1001)]
+        [MenuItem("Framework/Tool/Editor Icons", priority = -1001)]
         public static void EditorIconsOpen()
         {
             var w = CreateWindow<EditorIcons>("Editor Icons");

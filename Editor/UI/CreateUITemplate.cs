@@ -1,42 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Framework.UI.Core;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Editor
+namespace Framework.Editor
 {
 	public static class CreateUITemplate
 	{
-		private static string _templatePath;
-		// Editor/UI
-		private static string templatePath
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(_templatePath))
-				{
-					string[] res = Directory.GetFiles(Application.dataPath, "ViewTemplate.txt", SearchOption.AllDirectories);
-					Log.Assert(res.Length == 1,"没有找到ViewTemplate.txt或存在多个");
-					_templatePath = Path.GetDirectoryName(res[0]);
-				}
-				return _templatePath;
-			}
-		}
-		
+		private static UIConfig _uiConfig;
+
 		[MenuItem("Assets/@UI Kit - Create UICode")]
 		public static void CreateUiCode()
 		{
 			var go = Selection.activeGameObject;
 			if(go == null) return;
+			_uiConfig = ConfigBase.Load<UIConfig>() as UIConfig;
 			CreateCode(go, AssetDatabase.GetAssetPath(go));
 			AssetDatabase.Refresh();
 		}
@@ -153,22 +136,22 @@ namespace Framework.UI.Editor
 
 		private static void GeneratorView(PanelCodeInfo panelCodeInfo)
 		{
-			Directory.CreateDirectory(UIEnv.UIPanelScriptFolder);
-			var generateFilePath = Path.Combine(UIEnv.UIPanelScriptFolder, $"{panelCodeInfo.BehaviourName}.cs");
+			Directory.CreateDirectory(_uiConfig.GenUIScriptsPath);
+			var generateFilePath = Path.Combine(_uiConfig.GenUIScriptsPath, $"{panelCodeInfo.BehaviourName}.cs");
 			var strBuilder = new StringBuilder();
-			var template = File.ReadAllText(File.Exists(generateFilePath)
-				? generateFilePath
-				: $"{templatePath}/ViewTemplate.txt");
+			var template = File.Exists(generateFilePath)
+				? File.ReadAllText(generateFilePath)
+				: Resources.Load<TextAsset>("ViewTemplate").text;
 			string vmName = $"{panelCodeInfo.BehaviourName}VM";
 			template = template.Replace("#ClassName", panelCodeInfo.BehaviourName);
 			template = template.Replace("#VMName", vmName);
 			template = template.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
-			foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark.Values)
+			foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark)
 			{
-				foreach (var uiMark in uiMarks)
+				foreach (var uiMark in uiMarks.Value)
 				{
 					strBuilder.AppendLine(
-						$"\t[SerializeField] private {uiMark.component.GetType().Name} {uiMark.fieldName};");
+						$"\tprivate {uiMark.component.GetType().Name} {uiMark.fieldName}  => Find<{uiMark.component.GetType().Name}>(\"{uiMarks.Key}\");");
 				}
 			}
 			var markStr = strBuilder.ToString();
@@ -180,11 +163,10 @@ namespace Framework.UI.Editor
 		private static void GeneratorVM(PanelCodeInfo panelCodeInfo)
 		{
 			string className = $"{panelCodeInfo.BehaviourName}VM";
-			//var generateFilePath = $"{BuildScript.GetSettings().uiScriptPath}{className}.cs";
-			var generateFilePath = Path.Combine(UIEnv.UIPanelScriptFolder, $"{className}.cs");
+			var generateFilePath = Path.Combine(_uiConfig.GenUIScriptsPath, $"{className}.cs");
 			if (File.Exists(generateFilePath)) return;
 			var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
-			var template = File.ReadAllText($"{templatePath}/VMTemplate.txt");
+			var template = Resources.Load<TextAsset>("VMTemplate").text;
 			template = template.Replace("#ClassName", className);
 			sw.Write(template);
 			sw.Flush();
@@ -199,51 +181,7 @@ namespace Framework.UI.Editor
 
 			EditorPrefs.SetString("AutoGenUIPrefabPath", prefabPath);
 		}
-
-		[DidReloadScripts]
-		private static void DoAddComponent2Prefab()
-		{
-			var pathStr = EditorPrefs.GetString("AutoGenUIPrefabPath");
-			if (string.IsNullOrEmpty(pathStr))
-				return;
-
-			EditorPrefs.DeleteKey("AutoGenUIPrefabPath");
-			Debug.Log(">>>>>>>SerializeUIPrefab: " + pathStr);
-
-			var uiPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(pathStr);
-			SetObjectRef2Property(uiPrefab, uiPrefab.name, ReflectionExtension.GetAssemblyCSharp());
-
-			Debug.Log(">>>>>>>Success Serialize UIPrefab: " + uiPrefab.name);
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-		}
-
-		private static void SetObjectRef2Property(GameObject obj, string behaviourName, Assembly assembly)
-		{
-			var uiMark = obj.GetComponent<UIMark>();
-			var t = assembly.GetType(behaviourName);
-			var com = obj.GetComponent(t) ?? obj.AddComponent(t);
-			var sObj = new SerializedObject(com);
-			var marks = new List<_uiMark>();
-			CollectMark(obj.transform, ref marks);
-
-			foreach (var mark in marks)
-			{
-				var uiType = mark.component;
-				var propertyName = mark.fieldName;
-
-				if (sObj.FindProperty(propertyName) == null)
-				{
-					Log.Error($"sObj is Null:{propertyName} {uiType} {sObj}");
-					continue;
-				}
-
-				sObj.FindProperty(propertyName).objectReferenceValue = mark.transform.gameObject;
-			}
-
-			sObj.ApplyModifiedPropertiesWithoutUndo();
-		}
-
+		
 		private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
 		{
 			var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath).ToLower();
