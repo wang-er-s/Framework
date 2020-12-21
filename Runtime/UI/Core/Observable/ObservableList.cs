@@ -20,6 +20,11 @@ namespace Framework.UI.Core.Bind
             _items = new List<T>();
         }
 
+        public ObservableList(IEnumerable<T> collection)
+        {
+            _items = new List<T>(collection);
+        }
+        
         public ObservableList(int capacity)
         {
             _items = new List<T>(capacity);
@@ -121,8 +126,8 @@ namespace Framework.UI.Core.Bind
             lock (_locker)
             {
                 var item = _items[index];
-                _items.RemoveAt(index);
                 OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+                _items.RemoveAt(index);
             }
         }
 

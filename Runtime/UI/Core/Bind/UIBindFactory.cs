@@ -6,10 +6,11 @@ namespace Framework.UI.Core.Bind
 {
     public class UIBindFactory : BindFactory
     {
-        public void BindViewList<TItemVm>
-            (ObservableList<TItemVm> list, params View[] views) where TItemVm : ViewModel
+        public void BindViewList<TItemVm, TItemView>
+            (ObservableList<TItemVm> list,Transform root) where TItemVm : ViewModel
+        where TItemView : View
         {
-            var bind = new BindViewList<TItemVm>(list, views);
+            var bind = new BindViewList<TItemVm, TItemView>(list,root);
             Binds.Add(bind);
         }
 

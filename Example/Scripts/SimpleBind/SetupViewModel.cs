@@ -28,7 +28,7 @@ namespace Framework.UI.Example
             ATK = new ObservableProperty<int>();
             SuccessRage = new ObservableProperty<float>();
             Visible = new ObservableProperty<bool>(false);
-            Path = new ObservableProperty<string>("梅菜扣肉");
+            Path = new ObservableProperty<string>("回锅肉");
             Process = new ObservableProperty<float>(0.5f);
             SelectedIndex = new ObservableProperty<int>(1);
             Datas = new ObservableList<Dropdown.OptionData>()

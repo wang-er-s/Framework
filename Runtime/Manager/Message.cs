@@ -16,11 +16,6 @@ namespace Framework.MessageCenter
 
             public void Invoke(params object[] para)
             {
-                if (para.GetType() == TriggerType.Type)
-                {
-                    MethodInfo.Invoke(Instance, null);
-                    return;
-                }
                 MethodInfo.Invoke(Instance, para);
             }
 
@@ -35,12 +30,6 @@ namespace Framework.MessageCenter
                 Tag = tag;
                 ParaStr = paraStr;
             }
-        }
-        
-        private struct TriggerType
-        {
-            public static TriggerType Trigger = new TriggerType();
-            public static Type Type = typeof(TriggerType);
         }
 
         private Dictionary<string, List<MessageEvent>> _subscribeParaType2Methods = new Dictionary<string, List<MessageEvent>>(0);

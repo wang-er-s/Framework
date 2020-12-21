@@ -9,20 +9,20 @@ using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
-    public class BindViewList<TVm> : BaseBind where TVm : ViewModel
+    public class BindViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {
         private Transform _content;
-        private readonly List<View> _views;
+        private List<View> _views;
         private readonly ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
 
-        public BindViewList(ObservableList<TVm> list, params View[] view)
+        public BindViewList(ObservableList<TVm> list, Transform root)
         {
-            _views = view.ToList();
-            _content = _views[0].Go.transform.parent;
-            this._list = list;
+            _views = new List<View>();
+            _content = root;
+            _list = list;
             InitEvent();
-            InitCpntValue();
+            InitCpntValue(); 
         }
 
         private void InitCpntValue()
@@ -33,9 +33,11 @@ namespace Framework.UI.Core.Bind
                 var vm = _list[i];
                 if(i < childCount)
                 {
-                    var view = _content.GetChild(i).GetComponent<View>();
+                    var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
                     if (view == null || _views.Contains(view)) continue;
+                    view.SetGameObject(_content.GetChild(i).gameObject);
                     view.SetVm(vm);
+                    _views.Add(view);
                 }
                 else
                 {
@@ -47,15 +49,12 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _wrappers = new List<ViewWrapper>(_views.Count);
-            for (var i = 0; i < _views.Count; i++)
-            {
-                var wrapper = new ViewWrapper(_views[i]);
-                wrapper.SetTag(i);
-                _list.AddListener(((IBindList<ViewModel>) wrapper).GetBindListFunc());
-                _views[i].Hide();
-                _wrappers.Add(wrapper);
-            }
+            _wrappers = new List<ViewWrapper>();
+            var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+            var wrapper = new ViewWrapper(view, _content);
+            wrapper.SetTag(0);
+            _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
+            _wrappers.Add(wrapper);
         }
 
         public override void ClearBind()
@@ -88,6 +87,7 @@ namespace Framework.UI.Core.Bind
             Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
             foreach (Transform child in root)
             {
+
                 var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
                 view.SetGameObject (child.gameObject);
                 Log.Assert(view != null, $"{child.name} must have view component", child);

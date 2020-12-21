@@ -16,5 +16,8 @@ public class SimpleBind : MonoBehaviour
         vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");
+        //UIManager.Ins.Open<SetupView>(vm);
+        UIManager.Ins.OpenAsync<ListBindView>(new ListBindViewModel());
+        //UIManager.Ins.Open<ListPairsBindView>(new ListPairsBindViewModel());
     }
 }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Framework.UI.Wrap;
 using Framework.UI.Wrap.Base;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core.Bind
 {
@@ -35,7 +36,7 @@ namespace Framework.UI.Core.Bind
         private void InitEvent(Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide)
         {
             _bindList = _bindList ?? _component as IBindList<TVm> ??
-                new DefaultBindList<TComponent, TVm>(_component, onShow, onHide);
+                DefaultBindList<Component, TVm>.Create(_component, onShow, onHide);
             Log.Assert(_bindList != null, $"can not find IBindList of {_component}");
             _list.AddListener(_bindList.GetBindListFunc());
         }

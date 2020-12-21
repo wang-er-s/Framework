@@ -9,16 +9,16 @@ namespace Framework.UI.Example
 {
     public class SetupView : View
     {
-        public Text nameMessageText;
-        public Text mulBindText;
-        public InputField atkInputField;
-        public Toggle joinToggle;
-        public Button joinInButton;
-        public Image img;
-        public Slider slider;
-        public Dropdown dropDown;
-        public SetupViewModel vm;
-        public View subView;
+        private Text nameMessageText => Find<Text>("name");
+        private Text mulBindText => Find<Text>("mulBind");
+        private InputField atkInputField => Find<InputField>("InputField");
+        private Toggle joinToggle => Find<Toggle>("Toggle");
+        private Button joinInButton => Find<Button>("Button");
+        private Image img => Find<Image>("Image");
+        private Slider slider => Find<Slider>("Slider");
+        private Dropdown dropDown => Find<Dropdown>("Dropdown");
+        private SetupViewModel vm;
+        private View subView;
 
         protected override void OnVmChange()
         {
@@ -41,6 +41,6 @@ namespace Framework.UI.Example
         }
 
         public override UILevel UILevel { get; } = UILevel.Common;
-        public override string Path { get; }
+        public override string Path { get; } = "SimpleBind";
     }
 }

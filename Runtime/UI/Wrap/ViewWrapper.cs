@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Specialized;
+using Framework.Assets;
+using Framework.Asynchronous;
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using Framework.UI.Wrap.Base;
+using Tool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework.UI.Wrap
 {
-    public class ViewWrapper : BaseWrapper<View>, IBindList<ViewModel>
+    public class ViewWrapper: BaseWrapper<View>, IBindList<ViewModel>
     {
         private readonly Transform _content;
-        private readonly Transform _item;
+        private readonly View _item;
         private int _tag;
         private int _index;
+        private IRes _res;
 
-        public ViewWrapper(View view, int index = 0) : base(view)
+        public ViewWrapper(View view,Transform root, int index = 0) : base(view)
         {
-            _item = view.Go.transform;
-            _content = _item.parent;
+            _res = new AddressableRes();
+            _item =  view;
+            _content = root;
             _tag = 0;
             this._index = index;
         }
@@ -57,10 +62,11 @@ namespace Framework.UI.Wrap
             }
         }
 
-        private void AddItem(int index, ViewModel vm)
+        private async void AddItem(int index, ViewModel vm)
         {
-            var go = Object.Instantiate(_item, _content);
-            var view = go.GetComponent<View>();
+            GameObject go = await _res.InstantiateAsync(_item.Path, _content);
+            var view = ReflectionHelper.CreateInstance(_item.GetType()) as View;
+            view.SetGameObject(go);
             view.SetVm(vm);
             go.transform.SetSiblingIndex(index + 1);
             view.Show();
@@ -68,7 +74,7 @@ namespace Framework.UI.Wrap
 
         private void RemoveItem(int index)
         {
-            Object.Destroy(_content.GetChild(index + 1).gameObject);
+            Object.Destroy(_content.GetChild(index).gameObject);
         }
 
         private void ReplaceItem(int index, ViewModel vm)

@@ -2,26 +2,28 @@
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using Framework.UI.Example;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ListBindView : View
 {
     private ListBindViewModel vm;
-    public ItemView item;
-    public Dropdown dropdown => Find<Dropdown>("");
-    public Button deleteBtn;
-    public Button addBtn;
-    public Button updateBtn;
+    private ItemView item;
+    private Dropdown dropdown=>Find <Dropdown>("Dropdown");
+    private Button deleteBtn => Find<Button>("btn_delete");
+    private Button addBtn => Find<Button>("btn_add");
+    private Button updateBtn => Find<Button>("btn_update");
+    private Transform ItemRoot => Find<Transform>("Scroll View/Viewport/Content");
 
     public override UILevel UILevel { get; } = UILevel.Common;
-    public override string Path { get; }
+    public override string Path { get; } = "ListBind";
 
     protected override void OnVmChange()
     {
         vm = ViewModel as ListBindViewModel;
         dropdown.options = vm.DropdownData;
         Binding.RevertBind(dropdown, vm.SelectedDropDownIndex);
-        Binding.BindViewList(vm.Items, item);
+        Binding.BindViewList<ItemViewModel, ItemView>(vm.Items, ItemRoot);
         Binding.BindCommand(addBtn, vm.AddItem);
         Binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
         Binding.BindCommand(updateBtn, vm.UpdateItem);
@@ -38,13 +40,13 @@ public class ListBindViewModel : ViewModel
 
     public ListBindViewModel()
     {
-        Items = new ObservableList<ItemViewModel>();
+        Items = new ObservableList<ItemViewModel>() { new ItemViewModel(false, "回锅肉", OnItemClick) };
         SelectedDropDownIndex = new ObservableProperty<int>(0);
         DropdownData = new List<Dropdown.OptionData>()
         {
             new Dropdown.OptionData("回锅肉"),
-            new Dropdown.OptionData("梅菜扣肉"),
             new Dropdown.OptionData("水煮肉片"),
+            new Dropdown.OptionData("水煮鱼"),
             new Dropdown.OptionData("辣子鸡丁"),
             new Dropdown.OptionData("鱼香肉丝")
         };
@@ -85,7 +87,6 @@ public class ListBindViewModel : ViewModel
         selectedItem?.OnItemDeselected();
         selectedItem = selectedItem == viewModel ? null : viewModel;
     }
-
     private void OnUpdateItem()
     {
         if (Items.Count <= 0) return;

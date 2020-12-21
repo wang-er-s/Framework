@@ -8,15 +8,25 @@ namespace Framework.UI.Example
 {
     public class ItemView : View
     {
-        public Image itemImg;
-        public Text nameTxt;
-        public Button selfBtn;
-        public GameObject breakLine;
-        public GameObject selected;
+        private Image itemImg => Find<Image>("img_item");
+        private Text nameTxt => Find<Text>("txt_desc");
+        //private Button goBtn => Find<Button>("go_button");
+        private GameObject breakLine => Go.transform.Find("go_breakLine").gameObject;
+        private GameObject selected => Go.transform.Find("go_selected").gameObject;
         private ItemViewModel vm;
 
+        private Button selfBtn => Find<Button>(string.Empty);
+        
+
+        /*public Image itemImg ;
+        public Text nameTxt ;
+        public Button selfBtn ;
+        public GameObject breakLine ;
+        public GameObject selected ;
+        private ItemViewModel vm;*/
+
         public override UILevel UILevel { get; } = UILevel.Common;
-        public override string Path { get; }
+        public override string Path { get; } = "item";
 
         protected override void OnVmChange()
         {
@@ -24,14 +34,14 @@ namespace Framework.UI.Example
             Binding.Bind(itemImg, vm.Path);
             Binding.Bind(nameTxt, vm.Path);
             Binding.BindData(vm.Last, (last) => breakLine.SetActive(!last));
-            //Binding.BindData(vm.Selected, (value) => selected.SetActive(value));
+            Binding.BindData(vm.Selected, (value) => selected.SetActive(value));
             Binding.BindData(vm.Selected, CC);
             Binding.BindCommand(selfBtn, vm.OnItemClick);
         }
 
         public void CC(bool val)
         {
-            selected.SetActive(val);
+            /*selected.SetActive(val);*/
         }
     }
 
@@ -82,7 +92,7 @@ namespace Framework.UI.Example
 
         public void OnItemClick()
         {
-            _selected = true;
+             _selected = true;
             _itemClickCb?.Invoke(this);
         }
 
