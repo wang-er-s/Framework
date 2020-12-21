@@ -1,23 +1,25 @@
-using System.IO;
-using Framework;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Framework.Editor
 {
     [ShowOdinSerializedPropertiesInInspector]
-    public class BuildConfig : ConfigBase 
+    public class EditorConfig : ConfigBase 
     {
-
-        [BoxGroup("Android设置")]
+        [FoldoutGroup("打包设置",expanded: false)]
+        [BoxGroup("打包设置/Android设置")]
         [HideLabel]
         [InlinePropertyAttribute]
         public AndroidConfig Android = new AndroidConfig();
-        
-        [BoxGroup("Ios设置")]
+
+        [BoxGroup("打包设置/Ios设置")]
         [HideLabel]
         [InlinePropertyAttribute]
         public IosConfig IosConfig =new IosConfig();
+        
+        [FoldoutGroup("UI设置", expanded: false)]
+        [FolderPath(AbsolutePath = false)]
+        public string GenUIScriptsPath;
     }
     
     public class AndroidConfig

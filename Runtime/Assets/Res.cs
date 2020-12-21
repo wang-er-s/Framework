@@ -9,6 +9,30 @@ namespace Framework.Assets
 {
     public abstract class Res : IRes
     {
+        private static IRes @default;
+
+        public static IRes Default
+        {
+            get
+            {
+                if (@default == null)
+                {
+                    var config = ConfigBase.Load<RuntimeConfig>();
+                    switch (config.LoadType)
+                    {
+                        case RuntimeConfig.ResType.Resources:
+                            @default = new ResourcesRes();
+                            break;
+                        case RuntimeConfig.ResType.Addressable:
+                            @default = new AddressableRes();
+                            break;
+                    }
+                }
+
+                return @default;
+            }
+        }
+        
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
         {
             ProgressResult<float, T> progressResult = new ProgressResult<float, T>();

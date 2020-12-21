@@ -4,10 +4,9 @@ using UnityIO;
 
 namespace Framework
 {
-    
     public class ConfigBase : ScriptableObject
     {
-        public static ConfigBase Load<T>() where T : ConfigBase
+        public static T Load<T>() where T : ScriptableObject
         {
             IO.Root.CreateDirectory("Resources/Config");
             var path = $"Config/{typeof(T).Name}";
@@ -16,7 +15,7 @@ namespace Framework
             {
                 config = CreateInstance(typeof(T)) as T;
 #if UNITY_EDITOR
-                UnityEditor.AssetDatabase.CreateAsset(config, path + ".asset");
+                UnityEditor.AssetDatabase.CreateAsset(config, "Assets/Resources/" + path + ".asset");
                 UnityEditor.AssetDatabase.SaveAssets();
                 UnityEditor.AssetDatabase.Refresh();
 #endif

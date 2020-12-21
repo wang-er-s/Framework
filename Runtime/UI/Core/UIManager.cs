@@ -25,7 +25,8 @@ namespace Framework.UI.Core
             {
                 _sortViews[level] = new List<View>();
             }
-            _res = new AddressableRes();
+
+            _res = Res.Default;
             Timer.RegisterUpdate(Update);
         }
 

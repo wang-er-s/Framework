@@ -56,7 +56,9 @@ namespace Framework.UI.Wrap
             }
         }
 
+#pragma warning disable 693
         public static DefaultBindList<Component, TVm> Create<TObject,TVm>(Object component, Action<TObject, TVm> onShow, Action<TObject, TVm> onHide) where TObject : Object
+#pragma warning restore 693
         {
             Log.Assert(typeof(TObject).IsSubclassOf(typeof(Component)), "typeof(TObject) Is not SubclassOf(typeof(Component))");
             return new DefaultBindList<Component, TVm>(component as Component, (component1, vm) =>

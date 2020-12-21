@@ -10,8 +10,8 @@ namespace Framework.Editor
     {
         static GenConfigAsset()
         {
-            ConfigBase.Load<BuildConfig>();
-            ConfigBase.Load<UIConfig>();
+            ConfigBase.Load<EditorConfig>();
+            ConfigBase.Load<RuntimeConfig>();
         }
     }
 }
