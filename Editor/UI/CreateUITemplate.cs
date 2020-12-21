@@ -136,8 +136,8 @@ namespace Framework.Editor
 
 		private static void GeneratorView(PanelCodeInfo panelCodeInfo)
 		{
-			Directory.CreateDirectory(_config.GenUIScriptsPath);
-			var generateFilePath = Path.Combine(_config.GenUIScriptsPath, $"{panelCodeInfo.BehaviourName}.cs");
+			Directory.CreateDirectory(_config.UIConfig.GenUIScriptsPath);
+			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, $"{panelCodeInfo.BehaviourName}.cs");
 			var strBuilder = new StringBuilder();
 			var template = File.Exists(generateFilePath)
 				? File.ReadAllText(generateFilePath)
@@ -163,7 +163,7 @@ namespace Framework.Editor
 		private static void GeneratorVM(PanelCodeInfo panelCodeInfo)
 		{
 			string className = $"{panelCodeInfo.BehaviourName}VM";
-			var generateFilePath = Path.Combine(_config.GenUIScriptsPath, $"{className}.cs");
+			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, $"{className}.cs");
 			if (File.Exists(generateFilePath)) return;
 			var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
 			var template = Resources.Load<TextAsset>("VMTemplate").text;

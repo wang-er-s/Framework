@@ -16,10 +16,11 @@ namespace Framework.Editor
         [HideLabel]
         [InlinePropertyAttribute]
         public IosConfig IosConfig =new IosConfig();
-        
+
         [FoldoutGroup("UI设置", expanded: false)]
-        [FolderPath(AbsolutePath = false)]
-        public string GenUIScriptsPath;
+        [HideLabel]
+        [InlinePropertyAttribute]
+        public UIConfig UIConfig = new UIConfig();
     }
     
     public class AndroidConfig
@@ -42,5 +43,12 @@ namespace Framework.Editor
         public string Liscene;
         [LabelText("密钥")]
         public string Keystore;
+    }
+
+    public class UIConfig
+    {
+        [FolderPath(AbsolutePath = false)]
+        [LabelText("自动生成UI代码的路径")]
+        public string GenUIScriptsPath;
     }
 }
