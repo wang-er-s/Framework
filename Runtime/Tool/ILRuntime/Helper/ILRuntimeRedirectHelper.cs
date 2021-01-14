@@ -1,9 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Framework.UI.Core;
 using ILRuntime.CLR.Method;
+using ILRuntime.CLR.TypeSystem;
+using ILRuntime.CLR.Utils;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
 using UnityEngine;
+using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
+using Object = UnityEngine.Object;
 
 namespace Framework
 {
@@ -14,6 +21,8 @@ namespace Framework
             appdomain.RegisterCLRMethodRedirection(typeof(Debug).GetMethod("Log", new[] {typeof(object)}), LogOnePara);
             appdomain.RegisterCLRMethodRedirection(
                 typeof(Debug).GetMethod("Log", new[] {typeof(object), typeof(Object)}), LogTwoPara);
+            //TODO 泛型重定向
+            appdomain.RegisterCLRMethodRedirection(typeof(UIManager).GetMethod("OpenAsync", new []{typeof(ViewModel)}), UILoad);
         }
 
         private static unsafe StackObject* LogTwoPara(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
@@ -51,5 +60,59 @@ namespace Framework
             Debug.Log($"{message}\n{stackTrace}");
             return __ret;
         }
+
+        unsafe static StackObject* UILoad(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            //CLR重定向的说明请看相关文档和教程，这里不多做解释
+            AppDomain __domain = __intp.AppDomain;
+
+            var ptr = __esp - 1;
+            //成员方法的第一个参数为this
+            var ins = StackObject.ToObject(ptr, __domain, __mStack);
+            if (ins == null)
+                throw new NullReferenceException();
+            __intp.Free(ptr);
+
+            var genericArgument = __method.GenericArguments;
+            //AddComponent应该有且只有1个泛型参数
+            if (genericArgument != null && genericArgument.Length == 1)
+            {
+
+                if (ins is GameObject)
+                {
+                    Debug.Log(11);
+                }
+                else if (ins is Component)
+                {
+                    Debug.Log(22);
+                }
+                else if (ins is ILTypeInstance)
+                {
+                    Debug.Log(33);
+                }
+                else
+                {
+                    Debug.Log(44);
+                }
+
+
+                var type = genericArgument[0];
+                object res = null;
+                if (type is CLRType)
+                {
+                    Debug.Log(55);
+                }
+                else
+                {
+                    Debug.Log(55);
+                }
+
+                return ILIntepreter.PushObject(ptr, __mStack, res);
+            }
+
+            return __esp;
+        }
+
     }
 }
