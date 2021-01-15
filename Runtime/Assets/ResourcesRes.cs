@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
@@ -68,6 +69,7 @@ namespace Framework.Assets
             trans.localRotation = rotation;
         }
         
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         public override GameObject Instantiate(string key, Transform parent = null, bool instantiateInWorldSpace = false)
         {
             var obj = Object.Instantiate(Resources.Load<Object>(key), parent,instantiateInWorldSpace);
@@ -75,6 +77,7 @@ namespace Framework.Assets
             return obj as GameObject;
         }
 
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         public override T LoadAsset<T>(string key)
         {
             var obj = Resources.Load<T>(key);

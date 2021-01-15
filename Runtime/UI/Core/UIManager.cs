@@ -27,7 +27,7 @@ namespace Framework.UI.Core
             }
 
             _res = Res.Default;
-            Timer.RegisterUpdate(Update);
+            GameLoop.Ins.OnUpdate += Update;
         }
 
         public UIManager() : this(null)
@@ -39,7 +39,7 @@ namespace Framework.UI.Core
         private Dictionary<string, View> _openedViews = new Dictionary<string, View>();
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
 
-        internal IProgressResult<float, T> OpenAsync<T>(ViewModel viewModel = null) where T : View
+        public IProgressResult<float, T> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
             ProgressResult<float, T> result = new ProgressResult<float, T>();
             InternalOpen(typeof(T), result, viewModel);
@@ -120,12 +120,12 @@ namespace Framework.UI.Core
             return view;
         }
 
-        internal void Close<T>()
+        public void Close<T>()
         {
             Close(typeof(T));
         }
 
-        internal T Get<T>() where T : View
+        public T Get<T>() where T : View
         {
             var view = Get(typeof(T));
             return view as T;

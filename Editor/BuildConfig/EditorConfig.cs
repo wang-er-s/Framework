@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace Framework.Editor
         public UIConfig UIConfig = new UIConfig();
     }
     
+    [Serializable]
     public class AndroidConfig
     {
         [LabelText("Keystore路径")]
@@ -36,7 +38,7 @@ namespace Framework.Editor
         public  string KeyAliasPwd;
     }
 
-
+    [Serializable]
     public class IosConfig
     {
         [LabelText("证书")]
@@ -44,7 +46,8 @@ namespace Framework.Editor
         [LabelText("密钥")]
         public string Keystore;
     }
-
+    
+    [Serializable]
     public class UIConfig
     {
         [FolderPath(AbsolutePath = false)]

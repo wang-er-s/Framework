@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -6,18 +7,17 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class EventTriggerListener : EventTrigger
 {
-    public delegate void VoidDelegate();
     public delegate void VoidDelegate2(PointerEventData eventData);
-    public VoidDelegate onClick;
-    public VoidDelegate onDown;
-    public VoidDelegate onDrag;
-    public VoidDelegate2 onEndDrag;
-    public VoidDelegate2 onScroll;
-    public VoidDelegate onEnter;
-    public VoidDelegate onExit;
-    public VoidDelegate onUp;
-    public VoidDelegate onSelect;
-    public VoidDelegate onUpdateSelect;
+    public event Action onClick;
+    public event Action onDown;
+    public event Action onDrag;
+    public event Action<PointerEventData> onEndDrag;
+    public event Action<PointerEventData> onScroll;
+    public event Action onEnter;
+    public event Action onExit;
+    public event Action onUp;
+    public event Action onSelect;
+    public event Action onUpdateSelect;
 
     public static EventTriggerListener Get(GameObject go)
     {
@@ -25,7 +25,7 @@ public class EventTriggerListener : EventTrigger
         if (listener == null) listener = go.AddComponent<EventTriggerListener>();
         return listener;
     }
-    
+
     public override void OnDrag(PointerEventData eventData)
     {
         onDrag?.Invoke();

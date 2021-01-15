@@ -13,6 +13,7 @@ namespace Framework
             T config = Resources.Load(path,typeof(T)) as T;
             if (config == null)
             {
+                Debug.Log("创建了新的");
                 config = CreateInstance(typeof(T)) as T;
 #if UNITY_EDITOR
                 UnityEditor.AssetDatabase.CreateAsset(config, "Assets/Resources/" + path + ".asset");

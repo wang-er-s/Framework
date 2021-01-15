@@ -40,9 +40,9 @@ namespace Framework.Assets
 
         public static async Task<string> CheckDownloadSize()
         {
-            var result = await Addressables.LoadResourceLocationsAsync(DYNAMIC_TAG);
+            var list = await Addressables.LoadResourceLocationsAsync(DYNAMIC_TAG);
+            if (list.Count <= 0) return string.Empty;
             //判断有没有需要动态加载的资源
-            if (result.Count <= 0) return String.Empty;
             var size = await Addressables.GetDownloadSizeAsync(DYNAMIC_TAG);
             if (size <= 0) return String.Empty;
             var kb = size / 1024;
@@ -75,30 +75,21 @@ namespace Framework.Assets
 
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
+            var operation = Addressables.LoadAssetAsync<T>(key);
+            while (!operation.IsDone)
+            {
+                promise.UpdateProgress(operation.PercentComplete);
+                await Task.Yield();
+            }
             if (typeof(T).IsSubclassOf(MonoType))
             {
-                var operation = Addressables.LoadAssetAsync<GameObject>(key);
-                while (!operation.IsDone)
-                {
-                    promise.UpdateProgress(operation.PercentComplete);
-                    await Task.Yield();
-                }
-                promise.UpdateProgress(1);
-                promise.SetResult(operation.Result.GetComponent(typeof(T)));
-                _handles.Add(operation);
+                promise.SetResult((operation.Result as MonoBehaviour)?.GetComponent(typeof(T)));
             }
             else
             {
-                var operation = Addressables.LoadAssetAsync<T>(key);
-                while (!operation.IsDone)
-                {
-                    promise.UpdateProgress(operation.PercentComplete);
-                    await Task.Yield();
-                }
-                promise.UpdateProgress(1);
                 promise.SetResult(operation.Result);
-                _handles.Add(operation);
             }
+            _handles.Add(operation);
         }
 
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,

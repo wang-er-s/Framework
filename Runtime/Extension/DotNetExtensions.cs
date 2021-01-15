@@ -453,11 +453,14 @@ public static class IEnumerableExtension
         return selfList.Count > index ? selfList[index] : default(T);
     }
 
-    public static List<T> TryAdd<T>(this List<T> selfList, T value)
+    public static bool TryAdd<T>(this List<T> selfList, T value)
     {
         if (!selfList.Contains(value))
+        {
             selfList.Add(value);
-        return selfList;
+            return true;
+        }
+        return false;
     }
 
     #endregion

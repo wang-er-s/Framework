@@ -133,6 +133,23 @@ public static class GameObjectExtension
         transform.Layer("Default");
     }
 
+    /// <summary>
+    /// time单位是秒
+    /// withMono为true时，如果gameObject销毁则不会执行
+    /// </summary>
+    public static MonoBehaviour Delay(this MonoBehaviour obj, float time, Action action, bool withMono = false)
+    {
+        obj.StartCoroutine(delay(time, action, obj.gameObject, withMono));
+        return obj;
+    }
+
+    private static IEnumerator delay(float time, Action action, GameObject go, bool withMono)
+    {
+        yield return new WaitForSeconds(time);
+        if(withMono && go == null) yield break;
+        action?.Invoke();
+    }
+
     #region CEGO001 Show
 
     public static GameObject ActiveShow(this GameObject selfObj)

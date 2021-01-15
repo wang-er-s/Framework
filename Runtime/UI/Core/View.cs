@@ -33,7 +33,7 @@ namespace Framework.UI.Core
 
         private Dictionary<string, object> _cacheComponent;
         
-        protected T Find<T>(string name) where T  : Component
+        protected T Find<T>(string name) where T  : Object
         {
             if (_cacheComponent.TryGetValue(name, out var com))
             {
@@ -41,10 +41,18 @@ namespace Framework.UI.Core
             }
             var obj = string.IsNullOrEmpty(name) ? Go.transform : Go.transform.Find(name);
             Log.Assert(obj != null, $"obj != null  name = {name}");
-            var result = obj.GetComponent<T>();
+            object result = null;
+            if(typeof(T) == typeof(GameObject))
+            {
+                result = obj.gameObject;
+            }
+            else
+            {
+                result = obj.GetComponent<T>();
+            }
             Log.Assert(result != null, $"{name} not have {typeof(T).Name}");
             _cacheComponent[name] = result;
-            return result;
+            return result as T;
         }
 
         public void SetGameObject(GameObject obj)
@@ -52,6 +60,7 @@ namespace Framework.UI.Core
             Go = obj;
             _canvasGroup = Go.GetOrAddComponent<CanvasGroup>();
             Start();
+            GameLoop.Ins.OnUpdate += Update;
         }
         
         public void SetVm(ViewModel vm)
@@ -73,7 +82,11 @@ namespace Framework.UI.Core
         {
             
         }
-        
+
+        protected virtual void Update()
+        {
+        }
+
         public void Show()
         {
             SetCanvas(true);
@@ -98,6 +111,7 @@ namespace Framework.UI.Core
 
         public void Destroy()
         {
+            GameLoop.Ins.OnUpdate -= Update;
             Object.Destroy(Go.gameObject);
         }
 

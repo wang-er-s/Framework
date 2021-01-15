@@ -70,6 +70,7 @@ namespace Framework.UI.Wrap
             view.SetVm(vm);
             go.transform.SetSiblingIndex(index + 1);
             view.Show();
+            _index = index;
         }
 
         private void RemoveItem(int index)

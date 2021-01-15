@@ -107,12 +107,6 @@ namespace Framework
             return timer;
         }
 
-        public static Timer RegisterUpdate(Action onUpdate, bool useRealTime = false,
-            MonoBehaviour autoDestroyOwner = null)
-        {
-            return Register(0, null, (f) => onUpdate(), isLooped: true, useRealTime, autoDestroyOwner);
-        }
-
         /// <summary>
         /// Cancels a timer. The main benefit of this over the method on the instance is that you will not get
         /// a <see cref="NullReferenceException"/> if the timer is null.
@@ -393,7 +387,7 @@ namespace Framework
         private class TimerManager : MonoBehaviour
         {
             private List<Timer> _timers = new List<Timer>();
-
+            
             // buffer adding timers so we don't edit a collection during iteration
             private List<Timer> _timersToAdd = new List<Timer>();
 

@@ -26,9 +26,9 @@ namespace Framework.Assets
             bool trackHandle = true);
 
         void Release();
-        [Obsolete("AddressableRes 不要使用同步加载")]
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         GameObject Instantiate(string key, Transform parent = null, bool instantiateInWorldSpace = false);
-        [Obsolete("AddressableRes 不要使用同步加载")]
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         T LoadAsset<T>(string key) where T : Object;
     }
 }

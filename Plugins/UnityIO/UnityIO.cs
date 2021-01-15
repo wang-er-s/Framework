@@ -27,6 +27,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
+using UnityEngine;
 using UnityIO.Interfaces;
 using UnityIO.Classes;
 using UnityIO.AssetDatabaseWrapper;
@@ -208,7 +209,7 @@ namespace UnityIO
             }
 
             // Get the index of 'Asset/' part of the path 
-            if (!assetPath.StartsWith(ROOT_FOLDER_NAME + PATH_SPLITTER))
+            if (!assetPath.StartsWith(ROOT_FOLDER_NAME))
             {
                 // This is returned by Unity and we must have it to convert
                 throw new System.InvalidOperationException(string.Format("Can't convert '{0}' to a System Path since it does not start with '{1}'", assetPath, ROOT_FOLDER_NAME + PATH_SPLITTER));

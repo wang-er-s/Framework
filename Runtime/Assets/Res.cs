@@ -1,8 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
@@ -75,10 +73,12 @@ namespace Framework.Assets
 
         public abstract void Release();
 
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         public abstract GameObject Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false);
 
 
+        [Obsolete("仅做展示，暂时不使用同步加载")]
         public abstract T LoadAsset<T>(string key) where T : Object;
     }
 }

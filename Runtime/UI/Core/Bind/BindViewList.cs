@@ -49,12 +49,16 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _wrappers = new List<ViewWrapper>();
-            var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
-            var wrapper = new ViewWrapper(view, _content);
-            wrapper.SetTag(0);
-            _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
-            _wrappers.Add(wrapper);
+            int childCount = _content.childCount;
+            _wrappers = new List<ViewWrapper>(childCount);
+            for (int i = 0; i < childCount; i++)
+            {
+                var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+                var wrapper = new ViewWrapper(view, _content);
+                wrapper.SetTag(i);
+                _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
+                _wrappers.Add(wrapper);
+            }
         }
 
         public override void ClearBind()
