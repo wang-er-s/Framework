@@ -25,8 +25,8 @@ namespace Framework.Editor
                 if(assetGroup.ReadOnly) continue;
                 foreach (var assetEntry in assetGroup.entries)
                 {
-                    var path = $"{assetGroup.name}_{Path.GetFileNameWithoutExtension(assetEntry.MainAsset.name)}";
-                    assetEntry.address = path.Trim().ToLower();
+                    var path = $"{Path.GetFileNameWithoutExtension(assetEntry.MainAsset.name)}";
+                    assetEntry.address = path.Trim();
                     sb.AppendLine($"\tpublic const string {assetEntry.address} = \"{assetEntry.address}\";");
                 }
             }

@@ -118,6 +118,13 @@ namespace Framework.Helper
             return Application.internetReachability;
         }
         
+        public static long CurrentMillTime()
+        {
+            TimeSpan tss = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            long millTime = Convert.ToInt64(tss.TotalMilliseconds);
+            return millTime;
+        }
+        
         #region Editor
 
 #if UNITY_EDITOR
@@ -177,5 +184,6 @@ namespace Framework.Helper
 #endif
 
         #endregion
+        
     }
 }

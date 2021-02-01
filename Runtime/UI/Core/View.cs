@@ -13,6 +13,7 @@ namespace Framework.UI.Core
         Pop,
         Toast,
         Guide,
+        FullScreen,
     }
     
     public abstract class View
@@ -111,6 +112,7 @@ namespace Framework.UI.Core
 
         public void Destroy()
         {
+            Hide();
             GameLoop.Ins.OnUpdate -= Update;
             Object.Destroy(Go.gameObject);
         }

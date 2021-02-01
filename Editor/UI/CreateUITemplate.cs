@@ -184,7 +184,7 @@ namespace Framework.Editor
 		
 		private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
 		{
-			var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath).ToLower();
+			var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath);
 			return path;
 		}
 	

@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Linq;
+using Framework;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -137,15 +138,34 @@ public static class GameObjectExtension
     /// time单位是秒
     /// withMono为true时，如果gameObject销毁则不会执行
     /// </summary>
-    public static MonoBehaviour Delay(this MonoBehaviour obj, float time, Action action, bool withMono = false)
+    public static void Delay(this MonoBehaviour obj, float time, Action action, bool withMono = false)
     {
+        if (obj == null)
+        {
+            Log.Warning("obj is null, not call delay");
+            return;
+        }
         obj.StartCoroutine(delay(time, action, obj.gameObject, withMono));
-        return obj;
+    }
+    
+    /// <summary>
+    /// 延迟一帧执行
+    /// </summary>
+    public static void Delay(this MonoBehaviour obj, Action action, bool withMono = false)
+    {
+        Delay(obj, -1, action, withMono);
     }
 
     private static IEnumerator delay(float time, Action action, GameObject go, bool withMono)
     {
-        yield return new WaitForSeconds(time);
+        if (time <= 0)
+        {
+            yield return null;
+        }
+        else
+        {
+            yield return new WaitForSeconds(time);
+        }
         if(withMono && go == null) yield break;
         action?.Invoke();
     }
@@ -288,7 +308,6 @@ public static class GameObjectExtension
         var comp = selfComponent.gameObject.GetComponent(type);
         return comp ? comp : selfComponent.gameObject.AddComponent(type);
     }
-
     #endregion
 }
 
@@ -1239,6 +1258,15 @@ public static class Vector3Extension
     public static Vector3 SetX(this Vector3 self, float xValue)
     {
         return new Vector3(xValue, self.y, self.z);
+    }
+    
+    public static float SqrDistance(this Vector3 self, Vector3 other)
+    {
+        float num1 = self.x - other.x;
+        float num2 = self.y - other.y;
+        float num3 = self.z - other.z;
+        return (float) (num1 * (double) num1 + num2 * (double) num2 + num3 * (double) num3);
+
     }
 
     public static Vector3 SetY(this Vector3 self, float yValue)

@@ -15,9 +15,9 @@ namespace Framework.UI.Core
     {
         private IRes _res;
        
-        public Canvas Canvas { get; private set; }
+        public Canvas Canvas { get; }
 
-        public UIManager(Canvas canvas = null)
+        public UIManager()
         {
             if (Canvas == null) Canvas = CreateCanvas();
             Object.DontDestroyOnLoad(Canvas);
@@ -28,10 +28,6 @@ namespace Framework.UI.Core
 
             _res = Res.Default;
             GameLoop.Ins.OnUpdate += Update;
-        }
-
-        public UIManager() : this(null)
-        {
         }
 
         private const int ViewDestroyTime = 5;

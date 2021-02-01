@@ -142,7 +142,7 @@ namespace Framework.Asynchronous
         public virtual bool Cancel()
         {
             if (!this.Cancelable)
-                throw new NotSupportedException();
+                return false;
 
             if (this.IsDone)
                 return false;
