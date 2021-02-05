@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Framework.UI.Core.Bind;
+using Sirenix.Utilities;
+using Tool;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -29,41 +32,28 @@ namespace Framework.UI.Core
         {
             _subViews = new List<View>();
             Binding = new UIBindFactory();
-            _cacheComponent = new Dictionary<string, object>();
         }
-
-        private Dictionary<string, object> _cacheComponent;
         
-        protected T Find<T>(string name) where T  : Object
-        {
-            if (_cacheComponent.TryGetValue(name, out var com))
-            {
-                return com as T;
-            }
-            var obj = string.IsNullOrEmpty(name) ? Go.transform : Go.transform.Find(name);
-            Log.Assert(obj != null, $"obj != null  name = {name}");
-            object result = null;
-            if(typeof(T) == typeof(GameObject))
-            {
-                result = obj.gameObject;
-            }
-            else
-            {
-                result = obj.GetComponent<T>();
-            }
-            Log.Assert(result != null, $"{name} not have {typeof(T).Name}");
-            _cacheComponent[name] = result;
-            return result as T;
-        }
-
         public void SetGameObject(GameObject obj)
         {
             Go = obj;
             _canvasGroup = Go.GetOrAddComponent<CanvasGroup>();
+            SetComponentsValue();
             Start();
             GameLoop.Ins.OnUpdate += Update;
         }
-        
+
+        private void SetComponentsValue()
+        {
+            var memberInfos = ReflectionHelper.GetCacheMember(GetType(), info => info.GetCustomAttribute<TransformPath>() != null, BindingFlags.Instance | BindingFlags.NonPublic);
+            foreach (var mi in memberInfos.Values)
+            {
+                var path = mi.GetCustomAttribute<TransformPath>();
+                var trans = Go.transform.Find(path.Path);
+                mi.SetMemberValue(this, trans.GetComponent(mi.GetReturnType()));
+            }
+        }
+
         public void SetVm(ViewModel vm)
         {
             if (vm == null || ViewModel == vm) return;
@@ -130,6 +120,11 @@ namespace Framework.UI.Core
         {
             if (_subViews.Contains(view)) return;
             _subViews.Add(view);
+        }
+
+        protected void Close()
+        {
+            UIManager.Ins.Close(GetType());
         }
 
         protected abstract void OnVmChange();

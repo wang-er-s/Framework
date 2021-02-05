@@ -9,7 +9,8 @@ public class ListPairsBindView : View
     public override UILevel UILevel { get; } = UILevel.Common;
     public override string Path { get; } = "ListPairsBind";
 
-    private Transform ItemRoot =>Find <Transform>("Scroll View/Viewport/Content");
+    [TransformPath("Scroll View/Viewport/Content")]
+    private Transform ItemRoot;
 
     protected override void OnVmChange()
     {

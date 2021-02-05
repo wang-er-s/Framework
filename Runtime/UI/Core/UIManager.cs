@@ -194,9 +194,7 @@ namespace Framework.UI.Core
         
         private static Canvas CreateCanvas()
         {
-            var canvas = Object.FindObjectOfType<Canvas>();
-            if (canvas == null)
-                canvas = Object.Instantiate(Resources.Load<Canvas>("Canvas"));
+            var canvas = Object.Instantiate(Resources.Load<Canvas>("Canvas"));
             return canvas;
         }
     }

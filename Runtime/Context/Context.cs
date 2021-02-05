@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-using System;
 using System.Collections.Generic;
-using Framework.Services;
 
 namespace Framework.Contexts
 {
@@ -66,23 +64,16 @@ namespace Framework.Contexts
         
         private bool _innerContainer;
         private Context _contextBase;
-        private IServiceContainer _container;
         private Dictionary<string, object> _attributes;
 
-        public Context() : this(null, null)
+        public Context() : this(null)
         {
         }
 
-        public Context(IServiceContainer container, Context contextBase)
+        public Context(Context contextBase)
         {
             _attributes = new Dictionary<string, object>();
             _contextBase = contextBase;
-            _container = container;
-            if (_container == null)
-            {
-               _innerContainer = true;
-               _container = new ServiceContainer();
-            }
         }
         
         public virtual bool Contains(string name, bool cascade = true)
@@ -137,125 +128,5 @@ namespace Framework.Contexts
             this._attributes.Remove(name);
             return (T)v;
         }
-
-        public virtual IServiceContainer GetContainer()
-        {
-            return _container;
-        }
-
-        public virtual object GetService(Type type)
-        {
-            object result = _container.Resolve(type);
-            if (result != null)
-                return result;
-
-            if (this._contextBase != null)
-                return _contextBase.GetService(type);
-
-            return null;
-        }
-        
-        public virtual object GetService(string name)
-        {
-            object result = _container.Resolve(name);
-            if (result != null)
-                return result;
-
-            if (_contextBase != null)
-                return _contextBase.GetService(name);
-
-            return null;
-        }
-
-        public virtual T GetService<T>()
-        {
-            T result = _container.Resolve<T>();
-            if (result != null)
-                return result;
-
-            if (_contextBase != null)
-                return _contextBase.GetService<T>();
-
-            return default(T);
-        }
-
-        public virtual T GetService<T>(string name)
-        {
-            T result = _container.Resolve<T>(name);
-            if (result != null)
-                return result;
-
-            if (_contextBase != null)
-                return _contextBase.GetService<T>(name);
-
-            return default(T);
-        }
-
-        public virtual void Register<T>(T target)
-        {
-            Register(typeof(T).Name, target);
-        }
-
-        public virtual void Register<T>(Func<T> factory)
-        {
-            Register(typeof(T).Name, factory);
-        }
-
-        public virtual void Register<T>(string name, T target)
-        {
-            _container.Register(name, target);
-        }
-
-        public virtual void Register<T>(string name, Func<T> factory)
-        {
-            _container.Register(name, factory);
-        }
-
-        public virtual void UnRegister<T>()
-        {
-            _container.Unregister<T>();
-        }
-
-        public virtual void UnRegister(Type type)
-        {
-            _container.Unregister(type);
-        }
-
-        public virtual void UnRegister(string name)
-        {
-            _container.Unregister(name);
-        }
-
-        #region IDisposable Support
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    if (this._innerContainer && this._container != null)
-                    {
-                        IDisposable dis = this._container as IDisposable;
-                        if (dis != null)
-                            dis.Dispose();
-                    }
-                }
-                disposed = true;
-            }
-        }
-
-        ~Context()
-        {
-            Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }

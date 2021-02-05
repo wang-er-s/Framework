@@ -9,11 +9,17 @@ public class ListBindView : View
 {
     private ListBindViewModel vm;
     private ItemView item;
-    private Dropdown dropdown=>Find <Dropdown>("Dropdown");
-    private Button deleteBtn => Find<Button>("btn_delete");
-    private Button addBtn => Find<Button>("btn_add");
-    private Button updateBtn => Find<Button>("btn_update");
-    private Transform ItemRoot => Find<Transform>("Scroll View/Viewport/Content");
+
+    [TransformPath("Dropdown")] private Dropdown dropdown;
+
+    [TransformPath("btn_delete")] private Button deleteBtn;
+
+    [TransformPath("btn_add")] private Button addBtn;
+
+    [TransformPath("btn_update")] private Button updateBtn;
+
+    [TransformPath("Scroll View/Viewport/Content")]
+    private Transform ItemRoot;
 
     public override UILevel UILevel { get; } = UILevel.Common;
     public override string Path { get; } = "ListBind";

@@ -8,14 +8,22 @@ namespace Framework.UI.Example
 {
     public class ItemView : View
     {
-        private Image itemImg => Find<Image>("img_item");
-        private Text nameTxt => Find<Text>("txt_desc");
-        //private Button goBtn => Find<Button>("go_button");
+
+		[TransformPath("img_item")]
+        private Image itemImg ;
+
+		[TransformPath("txt_desc")]
+        private Text nameTxt ;
+
+		[TransformPath("go_button")]
+        //private Button goBtn ;
         private GameObject breakLine => Go.transform.Find("go_breakLine").gameObject;
         private GameObject selected => Go.transform.Find("go_selected").gameObject;
         private ItemViewModel vm;
 
-        private Button selfBtn => Find<Button>(string.Empty);
+
+		[TransformPath("")]
+        private Button selfBtn ;
         
 
         /*public Image itemImg ;
