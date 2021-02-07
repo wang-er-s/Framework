@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Reflection;
+using Framework.Assets;
+using Framework.Asynchronous;
+using Framework.Execution;
 using Framework.UI.Core.Bind;
-using Sirenix.Utilities;
-using Tool;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -23,7 +24,7 @@ namespace Framework.UI.Core
     {
         private List<View> _subViews;
         private CanvasGroup _canvasGroup;
-
+        private IRes _res;
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
@@ -32,28 +33,31 @@ namespace Framework.UI.Core
         {
             _subViews = new List<View>();
             Binding = new UIBindFactory();
+            _res = Res.Create();
         }
-        
+
         public void SetGameObject(GameObject obj)
         {
             Go = obj;
             _canvasGroup = Go.GetOrAddComponent<CanvasGroup>();
-            SetComponentsValue();
+            SetComponent();
             Start();
             GameLoop.Ins.OnUpdate += Update;
         }
 
-        private void SetComponentsValue()
+        private void SetComponent()
         {
-            var memberInfos = ReflectionHelper.GetCacheMember(GetType(), info => info.GetCustomAttribute<TransformPath>() != null, BindingFlags.Instance | BindingFlags.NonPublic);
-            foreach (var mi in memberInfos.Values)
+            var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            foreach (var fieldInfo in fields)
             {
-                var path = mi.GetCustomAttribute<TransformPath>();
-                var trans = Go.transform.Find(path.Path);
-                mi.SetMemberValue(this, trans.GetComponent(mi.GetReturnType()));
+                var path = fieldInfo.GetCustomAttribute<TransformPath>();
+                if (path != null)
+                {
+                    fieldInfo.SetValue(this, Go.transform.Find(path.Path).GetComponent(fieldInfo.FieldType));
+                }
             }
         }
-
+        
         public void SetVm(ViewModel vm)
         {
             if (vm == null || ViewModel == vm) return;
@@ -65,11 +69,9 @@ namespace Framework.UI.Core
             }
         }
 
-        public bool Visible => Go != null && _canvasGroup.alpha == 1;
-
         #region 界面显示隐藏的调用和回调方法
 
-        protected virtual void Start()
+        protected virtual async void Start()
         {
             
         }
@@ -80,14 +82,13 @@ namespace Framework.UI.Core
 
         public void Show()
         {
-            SetCanvas(true);
+            Visible(true);
             OnShow();
-            _subViews.ForEach(subView => subView.OnShow());
         }
 
         public void Hide()
         {
-            SetCanvas(false);
+            Visible(false);
             OnHide();
             _subViews.ForEach((subView) => subView.OnHide());
         }
@@ -107,7 +108,7 @@ namespace Framework.UI.Core
             Object.Destroy(Go.gameObject);
         }
 
-        private void SetCanvas(bool visible)
+        public void Visible(bool visible)
         {
             _canvasGroup.interactable = visible;
             _canvasGroup.alpha = visible ? 1 : 0;
@@ -116,13 +117,37 @@ namespace Framework.UI.Core
 
         #endregion
 
+        public IProgressResult<float, T> AddSubView<T>(ViewModel viewModel = null) where T : View
+        {
+            foreach (var subView in _subViews)
+            {
+                if(subView is T)
+                    return null;
+            }
+            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
+            Executors.RunOnCoroutineNoReturn(UIManager.Ins.CreateView(progressResult, typeof(T), viewModel));
+            progressResult.Callbackable().OnCallback((result => _subViews.Add(result.Result)));
+            return progressResult;
+        }
+
         public void AddSubView(View view)
         {
-            if (_subViews.Contains(view)) return;
+            if(_subViews.Contains(view))
+                return;
             _subViews.Add(view);
         }
 
-        protected void Close()
+        public T GetSubView<T>() where T : View
+        {
+            foreach (var subView in _subViews)
+            {
+                if (subView is T view)
+                    return view;
+            }
+            return null;
+        }
+
+        public void Close()
         {
             UIManager.Ins.Close(GetType());
         }

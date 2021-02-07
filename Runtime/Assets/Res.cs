@@ -9,26 +9,22 @@ namespace Framework.Assets
     {
         private static IRes @default;
 
-        public static IRes Default
-        {
-            get
-            {
-                if (@default == null)
-                {
-                    var config = ConfigBase.Load<RuntimeConfig>();
-                    switch (config.LoadType)
-                    {
-                        case RuntimeConfig.ResType.Resources:
-                            @default = new ResourcesRes();
-                            break;
-                        case RuntimeConfig.ResType.Addressable:
-                            @default = new AddressableRes();
-                            break;
-                    }
-                }
+        public static IRes Default => @default ?? (@default = Create());
 
-                return @default;
+        public static IRes Create()
+        {
+            IRes result = null;
+            var config = ConfigBase.Load<RuntimeConfig>();
+            switch (config.LoadType)
+            {
+                case RuntimeConfig.ResType.Resources:
+                    result = new ResourcesRes();
+                    break;
+                case RuntimeConfig.ResType.Addressable:
+                    result = new AddressableRes();
+                    break;
             }
+            return result;
         }
         
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object

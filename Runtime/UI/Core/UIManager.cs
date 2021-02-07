@@ -49,8 +49,16 @@ namespace Framework.UI.Core
             return result;
         }
 
-        private void InternalOpen<T>(Type type, IProgressPromise<float, T> promise, ViewModel viewModel) where T : View
+        private void InternalOpen<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
+            promise.Callbackable().OnCallback(progressResult =>
+            {
+                var _view = progressResult.Result;
+                Sort(_view);
+                _view.Show();
+                if (_view.IsSingle)
+                    _openedViews[type.Name] = _view;
+            });
             if (_openedViews.TryGetValue(type.Name, out var view))
             {
                 promise.UpdateProgress(1);
@@ -62,7 +70,7 @@ namespace Framework.UI.Core
             }
         }
 
-        private IEnumerator CreateView<T>(IProgressPromise<float, T> promise, Type type, ViewModel viewModel)
+        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, Type type, ViewModel viewModel)
             where T : View
         {
             if (_openedViews.TryGetValue(type.Name, out var view))
@@ -90,12 +98,9 @@ namespace Framework.UI.Core
             go.name = viewTemplateGo.name;
             view.SetGameObject(go);
             view.SetVm(viewModel);
-            Sort(view);
-            view.Show();
+            view.Visible(false);
             promise.UpdateProgress(1f);
             promise.SetResult(view);
-            if (view.IsSingle)
-                _openedViews[type.Name] = view;
         }
 
         [Obsolete("use LoadViewAsync replace", true)]
@@ -141,8 +146,9 @@ namespace Framework.UI.Core
             if (!_openedViews.TryGetValue(path, out var view))
                 return;
             _openedViews.Remove(path);
-            view.Hide();
-            _waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
+            //view.Hide();
+            view.Destroy();
+            //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
         }
 
         private void Sort(View view)
@@ -194,7 +200,8 @@ namespace Framework.UI.Core
         
         private static Canvas CreateCanvas()
         {
-            var canvas = Object.Instantiate(Resources.Load<Canvas>("Canvas"));
+            var obj = Resources.Load<Canvas>("Canvas");
+            var canvas = Object.Instantiate(obj);
             return canvas;
         }
     }

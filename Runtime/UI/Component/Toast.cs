@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using Framework.Contexts;
+using Framework.Execution;
 using Framework.UI.Core;
 using UnityEngine;
 
@@ -54,32 +55,16 @@ namespace Framework.Runtime.UI.Component
             this.callback = callback;
         }
 
-        public float Duration
-        {
-            get { return this.duration; }
-        }
+        public float Duration => this.duration;
 
-        public string Text
-        {
-            get { return this.text; }
-        }
+        public string Text => this.text;
 
-        public ToastView View
-        {
-            get { return this.view; }
-        }
+        public ToastView View => this.view;
 
         public void Cancel()
         {
             if (this.view == null)
                 return;
-
-            if (!this.view.Visible)
-            {
-                view.Destroy();
-                return;
-            }
-
             view.Destroy();
             this.DoCallback();
         }
@@ -88,6 +73,7 @@ namespace Framework.Runtime.UI.Component
         {
             this.view.Show();
             this.view.Text.text = this.text;
+            Executors.RunOnCoroutineNoReturn(DelayDismiss(duration));
         }
 
         protected IEnumerator DelayDismiss(float duration)

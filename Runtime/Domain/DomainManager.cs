@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+
+namespace Framework
+{
+    public class DomainManager : ManagerBase<DomainManager, ManagerAttribute>
+    {
+        Dictionary<int, IDomain> _allDomains = new Dictionary<int, IDomain>();
+        private IDomain _currentDomain = null;
+        private int _defaultScreenTag = 0;
+        
+        public override void Init()
+        {
+            foreach (var classData in this.GetAllClassDatas())
+            {
+                var attr = classData.Attribute as DomainAttribute;
+
+                var sv = CreateInstance<IDomain>(attr.IntTag);
+                //设置name属性
+                var t = sv.GetType();
+                t.GetProperty(nameof(IDomain.Name))?.SetValue(sv, attr.IntTag, null);
+                RegisterScreen(sv);
+                //
+                Log.Msg("创建domain:", attr.IntTag);
+            }
+        }
+        
+        private void RegisterScreen(IDomain domain)
+        {
+            _allDomains.Add(domain.Name, domain);
+        }
+
+        public IDomain GetDomain(int svName)
+        {
+            IDomain sv = null;
+            foreach (var _sv in _allDomains.Values)
+            {
+                if (_sv.Name == svName)
+                {
+                    sv = _sv;
+                    break;
+                }
+            }
+            return sv;
+        }
+
+        public void BeginNavTo(Enum name)
+        {
+            BeginNavTo(name.GetHashCode());
+        }
+        
+        public void BeginNavTo(int name)
+        {
+            if (_currentDomain != null && _currentDomain.Name == name)
+            {
+                Log.Error("别闹，当前就是" + name);
+                return;
+            }
+            
+            if (_allDomains.TryGetValue(name, out var domain))
+            {
+                domain.BeginEnter();
+                _currentDomain?.BeginExit();
+                _currentDomain = domain;
+            }
+        }
+    }
+}

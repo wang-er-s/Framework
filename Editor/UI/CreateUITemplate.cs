@@ -150,8 +150,9 @@ namespace Framework.Editor
 			{
 				foreach (var uiMark in uiMarks.Value)
 				{
+					strBuilder.AppendLine($"\t[TransformPath(\"{uiMarks.Key}\")]");
 					strBuilder.AppendLine(
-						$"\tprivate {uiMark.component.GetType().Name} {uiMark.fieldName}  => Find<{uiMark.component.GetType().Name}>(\"{uiMarks.Key}\");");
+						$"\tprivate {uiMark.component.GetType().Name} {uiMark.fieldName};");
 				}
 			}
 			var markStr = strBuilder.ToString();
