@@ -5,19 +5,20 @@ using System.IO;
 using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
+using Sirenix.Utilities;
 using Tool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core
 {
-    public class UIManager : Singleton<UIManager>
+    public class UIManager : ManagerBase<UIManager, UIAttribute>
     {
         private IRes _res;
        
-        public Canvas Canvas { get; }
+        public Canvas Canvas { get; private set; }
 
-        public UIManager()
+        public override void Init()
         {
             if (Canvas == null) Canvas = CreateCanvas();
             Object.DontDestroyOnLoad(Canvas);
@@ -26,30 +27,31 @@ namespace Framework.UI.Core
                 _sortViews[level] = new List<View>();
             }
 
-            _res = Res.Default;
+            _res = Res.Create();
             GameLoop.Ins.OnUpdate += Update;
         }
 
         private const int ViewDestroyTime = 5;
         private Dictionary<View,DateTime> _waitDestroyViews = new Dictionary<View, DateTime>();
-        private Dictionary<string, View> _openedViews = new Dictionary<string, View>();
+        private Dictionary<int, View> _openedViews = new Dictionary<int, View>();
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
 
         public IProgressResult<float, T> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
             ProgressResult<float, T> result = new ProgressResult<float, T>();
-            InternalOpen(typeof(T), result, viewModel);
+            var attr = typeof(T).GetCustomAttribute<UIAttribute>();
+            InternalOpen(attr.IntTag, result, viewModel);
             return result;
         }
 
-        public IProgressResult<float, View> OpenAsync(Type type, ViewModel viewModel = null)
+        public IProgressResult<float, View> OpenAsync(Enum uiIndex, ViewModel viewModel = null)
         {
             ProgressResult<float, View> result = new ProgressResult<float, View>();
-            InternalOpen(type, result, viewModel);
+            InternalOpen(uiIndex.GetHashCode(), result, viewModel);
             return result;
         }
 
-        private void InternalOpen<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
+        private void InternalOpen<T>(int uiIndex, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
             promise.Callbackable().OnCallback(progressResult =>
             {
@@ -57,30 +59,31 @@ namespace Framework.UI.Core
                 Sort(_view);
                 _view.Show();
                 if (_view.IsSingle)
-                    _openedViews[type.Name] = _view;
+                    _openedViews[uiIndex] = _view;
             });
-            if (_openedViews.TryGetValue(type.Name, out var view))
+            if (_openedViews.TryGetValue(uiIndex, out var view))
             {
                 promise.UpdateProgress(1);
                 promise.SetResult(view);
             }
             else
             {
-                Executors.RunOnCoroutineNoReturn(CreateView(promise, type, viewModel));
+                Executors.RunOnCoroutineNoReturn(CreateView(promise, uiIndex, viewModel));
             }
         }
 
-        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, Type type, ViewModel viewModel)
+        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, Enum index, ViewModel viewModel)
             where T : View
         {
-            if (_openedViews.TryGetValue(type.Name, out var view))
-            {
-                promise.UpdateProgress(1f);
-                promise.SetResult(view);
-                yield break;
-            }
-            view = ReflectionHelper.CreateInstance(type) as View;
-            var path = view.Path;
+            return CreateView(promise, index.GetHashCode(), viewModel);
+        }
+
+        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, int index, ViewModel viewModel)
+            where T : View
+        {
+            var classData = GetClassData(index);
+            var view = ReflectionHelper.CreateInstance(classData.Type) as T;
+            var path = (classData.Attribute as UIAttribute).Path;
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)
             {
@@ -120,32 +123,40 @@ namespace Framework.UI.Core
             Sort(view);
             return view;
         }
-
-        public void Close<T>()
-        {
-            Close(typeof(T));
-        }
-
+        
         public T Get<T>() where T : View
         {
-            var view = Get(typeof(T));
+            var view = Get(typeof(T).GetCustomAttribute<UIAttribute>().IntTag);
             return view as T;
         }
 
-        public View Get(Type type)
+        public View Get(Enum index)
         {
-            var path = type.Name;
-            if (_openedViews.TryGetValue(path, out var view))
+            return Get(index.GetHashCode());
+        }
+        
+        private View Get(int index)
+        {
+            if (_openedViews.TryGetValue(index, out var view))
                 return view;
             return null;
         }
-
-        public void Close(Type type)
+        
+        public void Close<T>() where T : View
         {
-            var path = type.Name;
-            if (!_openedViews.TryGetValue(path, out var view))
+            Close(typeof(T).GetCustomAttribute<UIAttribute>().IntTag);
+        }
+
+        public void Close(Enum index)
+        {
+            Close(index.GetHashCode());
+        }
+        
+        private void Close(int index)
+        {
+            if (!_openedViews.TryGetValue(index, out var view))
                 return;
-            _openedViews.Remove(path);
+            _openedViews.Remove(index);
             //view.Hide();
             view.Destroy();
             //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);

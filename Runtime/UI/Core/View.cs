@@ -5,7 +5,6 @@ using Framework.Asynchronous;
 using Framework.Execution;
 using Framework.UI.Core.Bind;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace Framework.UI.Core
 {
@@ -24,7 +23,6 @@ namespace Framework.UI.Core
     {
         private List<View> _subViews;
         private CanvasGroup _canvasGroup;
-        private IRes _res;
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
@@ -33,7 +31,6 @@ namespace Framework.UI.Core
         {
             _subViews = new List<View>();
             Binding = new UIBindFactory();
-            _res = Res.Create();
         }
 
         public void SetGameObject(GameObject obj)
@@ -90,7 +87,7 @@ namespace Framework.UI.Core
         {
             Visible(false);
             OnHide();
-            _subViews.ForEach((subView) => subView.OnHide());
+            _subViews.ForEach((subView) => subView.Hide());
         }
 
         protected virtual void OnShow()
@@ -105,6 +102,7 @@ namespace Framework.UI.Core
         {
             Hide();
             GameLoop.Ins.OnUpdate -= Update;
+            _subViews.ForEach(subView => subView.Destroy());
             Object.Destroy(Go.gameObject);
         }
 
