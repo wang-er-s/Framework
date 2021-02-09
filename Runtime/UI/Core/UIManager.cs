@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core
 {
-    public class UIManager : ManagerBase<UIManager, UIAttribute>
+    public class UIManager : ManagerBase<UIManager, UIAttribute, Type>
     {
         private IRes _res;
        
@@ -31,27 +31,36 @@ namespace Framework.UI.Core
             GameLoop.Ins.OnUpdate += Update;
         }
 
+        public override void CheckType(Type type)
+        {
+            var attr = type.GetCustomAttribute<UIAttribute>();
+            
+            if (attr != null)
+            {
+                ClassDataMap[type] = new ClassData {Attribute = attr, Type = type};
+            }
+        }
+
         private const int ViewDestroyTime = 5;
         private Dictionary<View,DateTime> _waitDestroyViews = new Dictionary<View, DateTime>();
-        private Dictionary<int, View> _openedViews = new Dictionary<int, View>();
+        private Dictionary<Type, View> _openedViews = new Dictionary<Type, View>();
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
 
         public IProgressResult<float, T> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
             ProgressResult<float, T> result = new ProgressResult<float, T>();
-            var attr = typeof(T).GetCustomAttribute<UIAttribute>();
-            InternalOpen(attr.IntTag, result, viewModel);
+            InternalOpen(typeof(T), result, viewModel);
             return result;
         }
 
-        public IProgressResult<float, View> OpenAsync(Enum uiIndex, ViewModel viewModel = null)
+        public IProgressResult<float, View> OpenAsync(Type type, ViewModel viewModel = null)
         {
             ProgressResult<float, View> result = new ProgressResult<float, View>();
-            InternalOpen(uiIndex.GetHashCode(), result, viewModel);
+            InternalOpen(type, result, viewModel);
             return result;
         }
 
-        private void InternalOpen<T>(int uiIndex, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
+        private void InternalOpen<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
             promise.Callbackable().OnCallback(progressResult =>
             {
@@ -59,31 +68,44 @@ namespace Framework.UI.Core
                 Sort(_view);
                 _view.Show();
                 if (_view.IsSingle)
-                    _openedViews[uiIndex] = _view;
+                    _openedViews[type] = _view;
             });
-            if (_openedViews.TryGetValue(uiIndex, out var view))
+            if (_openedViews.TryGetValue(type, out var view))
             {
                 promise.UpdateProgress(1);
                 promise.SetResult(view);
             }
             else
             {
-                Executors.RunOnCoroutineNoReturn(CreateView(promise, uiIndex, viewModel));
+                Executors.RunOnCoroutineNoReturn(CreateView(promise, type, viewModel));
             }
         }
 
-        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, Enum index, ViewModel viewModel)
-            where T : View
+        public IProgressResult<float, T> CreateView<T>(ViewModel vm) where T : View
         {
-            return CreateView(promise, index.GetHashCode(), viewModel);
+            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
+            Executors.RunOnCoroutineNoReturn(CreateView(progressResult, typeof(T), vm));
+            return progressResult;
+        }
+        
+        public IProgressResult<float, View> CreateView(Type type, ViewModel vm)
+        {
+            ProgressResult<float, View> progressResult = new ProgressResult<float, View>();
+            Executors.RunOnCoroutineNoReturn(CreateView(progressResult, type, vm));
+            return progressResult;
         }
 
-        public IEnumerator CreateView<T>(IProgressPromise<float, T> promise, int index, ViewModel viewModel)
+        private IEnumerator CreateView<T>(IProgressPromise<float, T> promise,Type type, ViewModel viewModel)
             where T : View
         {
-            var classData = GetClassData(index);
-            var view = ReflectionHelper.CreateInstance(classData.Type) as T;
-            var path = (classData.Attribute as UIAttribute).Path;
+            if (_openedViews.TryGetValue(type, out var view))
+            {
+                promise.UpdateProgress(1f);
+                promise.SetResult(view);
+                yield break;
+            }
+            view = ReflectionHelper.CreateInstance(type) as View;
+            var path = (GetClassData(type).Attribute as UIAttribute).Path;
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)
             {
@@ -94,6 +116,7 @@ namespace Framework.UI.Core
             if (viewTemplateGo == null)
             {
                 promise.UpdateProgress(1f);
+                Log.Error($"Not found the window path = \"{path}\".");
                 promise.SetException(new FileNotFoundException(path));
                 yield break;
             }
@@ -123,40 +146,30 @@ namespace Framework.UI.Core
             Sort(view);
             return view;
         }
-        
+
+        public void Close<T>()
+        {
+            Close(typeof(T));
+        }
+
         public T Get<T>() where T : View
         {
-            var view = Get(typeof(T).GetCustomAttribute<UIAttribute>().IntTag);
+            var view = Get(typeof(T));
             return view as T;
         }
 
-        public View Get(Enum index)
+        public View Get(Type type)
         {
-            return Get(index.GetHashCode());
-        }
-        
-        private View Get(int index)
-        {
-            if (_openedViews.TryGetValue(index, out var view))
+            if (_openedViews.TryGetValue(type, out var view))
                 return view;
             return null;
         }
-        
-        public void Close<T>() where T : View
-        {
-            Close(typeof(T).GetCustomAttribute<UIAttribute>().IntTag);
-        }
 
-        public void Close(Enum index)
+        public void Close(Type type)
         {
-            Close(index.GetHashCode());
-        }
-        
-        private void Close(int index)
-        {
-            if (!_openedViews.TryGetValue(index, out var view))
+            if (!_openedViews.TryGetValue(type, out var view))
                 return;
-            _openedViews.Remove(index);
+            _openedViews.Remove(type);
             //view.Hide();
             view.Destroy();
             //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);

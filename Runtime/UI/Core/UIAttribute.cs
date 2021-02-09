@@ -5,8 +5,8 @@ namespace Framework.UI.Core
     public class UIAttribute : ManagerAttribute
     {
         public string Path { get; private set; }
-        
-        public UIAttribute(int intTag, string path) : base(intTag)
+
+        public UIAttribute(string path) : base(-1)
         {
             Path = path;
         }

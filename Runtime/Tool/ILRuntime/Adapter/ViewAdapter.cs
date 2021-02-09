@@ -87,11 +87,6 @@ namespace Framework
             {
                 get { return get_UILevel.Invoke(this.instance); }
             }
-
-            public override string Path
-            {
-                get { return get_Path.Invoke(this.instance); }
-            }
         }
     }
 }

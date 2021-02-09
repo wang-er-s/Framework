@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public class DomainManager : ManagerBase<DomainManager, ManagerAttribute>
+    public class DomainManager : ManagerBase<DomainManager, DomainAttribute, int>
     {
         Dictionary<int, IDomain> _allDomains = new Dictionary<int, IDomain>();
         private IDomain _currentDomain = null;
@@ -20,8 +20,6 @@ namespace Framework
                 var t = sv.GetType();
                 t.GetProperty(nameof(IDomain.Name))?.SetValue(sv, attr.IntTag, null);
                 RegisterScreen(sv);
-                //
-                Log.Msg("创建domain:", attr.IntTag);
             }
         }
         

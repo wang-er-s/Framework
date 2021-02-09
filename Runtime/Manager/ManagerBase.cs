@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Sirenix.Utilities;
 
 namespace Framework
 {
@@ -11,9 +13,11 @@ namespace Framework
         {
             this.IntTag = intTag;
         }
+
+        public virtual string IndexName { get; } = nameof(IntTag);
     }
     
-    public class ManagerBase<T,V> : IManager  where T : IManager, new() 
+    public class ManagerBase<T,V,I> : IManager  where T : IManager, new() 
         where V : ManagerAttribute
     {
         
@@ -32,7 +36,7 @@ namespace Framework
             }
         }
 
-        private Dictionary<int, ClassData> ClassDataMap_IntKey { get; } = new Dictionary<int, ClassData>();
+        protected Dictionary<I, ClassData> ClassDataMap { get; } = new Dictionary<I, ClassData>();
         
         public virtual void Init()
         {
@@ -44,29 +48,25 @@ namespace Framework
             
         }
 
-        private Type vType;
-
+        private PropertyInfo _indexProperty;
+        
         public virtual void CheckType(Type type)
         {
-            if (vType == null)
+            var attr = type.GetCustomAttribute<V>();
+            
+            if (attr != null)
             {
-                vType = typeof(V);
-            }
-
-            var attrs = type.GetCustomAttributes(vType, false);
-            if (attrs.Length > 0)
-            {
-                var attr = attrs[0];
-                if (attr is V attr1)
+                if (_indexProperty == null)
                 {
-                    ClassDataMap_IntKey[attr1.IntTag] = new ClassData {Attribute = attr1, Type = type};
+                    _indexProperty = typeof(V).GetProperty(attr.IndexName);
                 }
+                ClassDataMap[(I)_indexProperty.GetValue(attr)] = new ClassData {Attribute = attr, Type = type};
             }
         }
         
-        public ClassData GetClassData(int tag)
+        public ClassData GetClassData(I tag)
         {
-            this.ClassDataMap_IntKey.TryGetValue(tag, out var classData);
+            this.ClassDataMap.TryGetValue(tag, out var classData);
             return classData;
         }
         
@@ -90,7 +90,7 @@ namespace Framework
         
         public IEnumerable<ClassData> GetAllClassDatas()
         {
-            return ClassDataMap_IntKey.Values;
+            return ClassDataMap.Values;
         }
         
         public T2 CreateInstance<T2>(ClassData cd, params object[] args) where T2 : class
@@ -112,7 +112,7 @@ namespace Framework
             }
         }
         
-        public T2 CreateInstance<T2>(int tag, params object[] args) where T2 : class
+        public T2 CreateInstance<T2>(I tag, params object[] args) where T2 : class
         {
             var cd = GetClassData(tag);
             if (cd == null)

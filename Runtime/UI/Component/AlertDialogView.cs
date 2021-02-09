@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace Framework.Runtime.UI.Component
 {
+    [UI("UI_AlertDialog")]
     public class AlertDialogView : View
     {
         public Text Title;
@@ -28,8 +29,6 @@ namespace Framework.Runtime.UI.Component
         private AlertDialogVM vm;
 
         public override UILevel UILevel { get; }
-        public override string Path { get; }
-
 
         protected virtual void Button_OnClick(int which)
         {

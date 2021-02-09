@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace Framework.UI.Example
 {
+    [UI("item")]
     public class ItemView : View
     {
 
@@ -34,7 +35,6 @@ namespace Framework.UI.Example
         private ItemViewModel vm;*/
 
         public override UILevel UILevel { get; } = UILevel.Common;
-        public override string Path { get; } = "item";
 
         protected override void OnVmChange()
         {

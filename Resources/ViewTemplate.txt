@@ -5,6 +5,7 @@ using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using TMPro;
 
+[UI("#PrefabPath")]
 public class #ClassName : View
 {
     private #VMName vm;
@@ -16,9 +17,7 @@ public class #ClassName : View
     {
         vm = ViewModel as #VMName;
     }
-    
-    public override string Path { get; } = "#PrefabPath";
-    
+     
     public override UILevel UILevel { get; } = UILevel.Common;
     
 }

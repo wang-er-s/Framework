@@ -1,15 +1,17 @@
-﻿using Framework.UI.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ListBind : MonoBehaviour
+namespace Framework.UI.Example
 {
-    private ListBindViewModel vm;
-    private ListPairsBindViewModel pair_vm;
-
-    // Start is called before the first frame update
-    private void Start()
+    public class ListBind : MonoBehaviour
     {
-        vm = new ListBindViewModel();
-        pair_vm = new ListPairsBindViewModel();
+        private ListBindViewModel vm;
+        private ListPairsBindViewModel pair_vm;
+
+        // Start is called before the first frame update
+        private void Start()
+        {
+            vm = new ListBindViewModel();
+            pair_vm = new ListPairsBindViewModel();
+        }
     }
 }

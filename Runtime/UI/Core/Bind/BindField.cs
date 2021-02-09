@@ -59,7 +59,7 @@ namespace Framework.UI.Core.Bind
                 case BindType.OnWay:
                     if (_propChangeCb == null)
                         _propChangeCb = (_defaultWrapper as IFieldChangeCb<TData>)?.GetFieldChangeCb();
-                    Log.Assert(_propChangeCb != null);
+                    Log.Assert(_propChangeCb != null, "_propChangeCb != null");
                     _property.AddListener((value) =>
                         _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
                     break;

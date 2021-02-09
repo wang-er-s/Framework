@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
 using Framework.UI.Core.Bind;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core
 {
@@ -42,15 +45,35 @@ namespace Framework.UI.Core
             GameLoop.Ins.OnUpdate += Update;
         }
 
+        private static Dictionary<Type, List<Tuple<FieldInfo, string>>> _type2TransPath =
+            new Dictionary<Type, List<Tuple<FieldInfo, string>>>();
+
         private void SetComponent()
         {
-            var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            foreach (var fieldInfo in fields)
+            if (!_type2TransPath.TryGetValue(GetType(), out var paths))
             {
-                var path = fieldInfo.GetCustomAttribute<TransformPath>();
-                if (path != null)
+                paths = new List<Tuple<FieldInfo, string>>();
+                var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                foreach (var fieldInfo in fields)
                 {
-                    fieldInfo.SetValue(this, Go.transform.Find(path.Path).GetComponent(fieldInfo.FieldType));
+                    var path = fieldInfo.GetCustomAttribute<TransformPath>();
+                    if (path != null)
+                    {
+                        paths.Add(new Tuple<FieldInfo, string>(fieldInfo, path.Path));
+                        
+                    }
+                }
+            }
+            foreach (var tuple in paths)
+            {
+                try
+                {
+                    tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType));
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                    Debug.Log(tuple.Item2 + " not found", Go);
                 }
             }
         }
@@ -122,8 +145,7 @@ namespace Framework.UI.Core
                 if(subView is T)
                     return null;
             }
-            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
-            Executors.RunOnCoroutineNoReturn(UIManager.Ins.CreateView(progressResult, typeof(T), viewModel));
+            var progressResult = UIManager.Ins.CreateView<T>(viewModel);
             progressResult.Callbackable().OnCallback((result => _subViews.Add(result.Result)));
             return progressResult;
         }
@@ -152,7 +174,6 @@ namespace Framework.UI.Core
 
         protected abstract void OnVmChange();
         public virtual UILevel UILevel { get; } = UILevel.Common;
-        public abstract string Path { get; }
         public virtual bool IsSingle { get; } = true;
     }
 }

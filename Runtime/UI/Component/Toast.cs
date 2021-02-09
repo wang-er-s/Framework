@@ -12,15 +12,6 @@ namespace Framework.Runtime.UI.Component
 {
     public class Toast
     {
-        private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "UI_Toast";
-
-        private static string viewName;
-        public static string ViewName
-        {
-            get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
-            set { viewName = value; }
-        }
 
         private static UIManager GetUIViewLocator()
         {
@@ -29,9 +20,6 @@ namespace Framework.Runtime.UI.Component
 
         public static async Task<Toast> Show(string text, float duration = 3f, Action callback = null)
         {
-            if (string.IsNullOrEmpty(viewName))
-                viewName = ViewName;
-
             UIManager locator = GetUIViewLocator();
             ToastView view = await locator.OpenAsync<ToastView>();
             if (view == null)

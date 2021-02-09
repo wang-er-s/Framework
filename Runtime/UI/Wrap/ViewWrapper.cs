@@ -64,11 +64,8 @@ namespace Framework.UI.Wrap
 
         private async void AddItem(int index, ViewModel vm)
         {
-            GameObject go = await _res.InstantiateAsync(_item.Path, _content);
-            var view = ReflectionHelper.CreateInstance(_item.GetType()) as View;
-            view.SetGameObject(go);
-            view.SetVm(vm);
-            go.transform.SetSiblingIndex(index + 1);
+            var view = await UIManager.Ins.CreateView(_item.GetType(), vm);
+            view.Go.transform.SetSiblingIndex(index + 1);
             view.Show();
             _index = index;
         }

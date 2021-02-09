@@ -17,16 +17,6 @@ namespace Framework.Runtime.UI.Component
         public const int BUTTON_NEGATIVE = -2;
         public const int BUTTON_NEUTRAL = -3;
 
-        private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
-        private const string DEFAULT_VIEW_NAME = "UI_AlertDialog";
-
-        private static string viewName;
-        public static string ViewName
-        {
-            get => string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName;
-            set => viewName = value;
-        }
-
         private static UIManager GetUIViewLocator()
         {
             return UIManager.Ins;
@@ -112,7 +102,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.CanceledOnTouchOutside.Value = canceledOnTouchOutside;
             viewModel.Click = afterHideCallback;
 
-            return await ShowMessage(ViewName, viewModel);
+            return await ShowMessage(viewModel);
         }
 
         /// <summary>
@@ -152,26 +142,9 @@ namespace Framework.Runtime.UI.Component
             
             UIManager locator = GetUIViewLocator();
             AlertDialogView window = await locator.OpenAsync<AlertDialogView>();
-            if (window == null)
-            {
-                Log.Warning($"Not found the dialog window named \"{viewModel}\".");
-
-                throw new FileNotFoundException($"Not found the dialog window named \"{viewName}\".");
-            }
-
             AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
             dialog.Show();
             return window;
-        }
-
-        /// <summary>
-        /// Displays information to the user. 
-        /// </summary>
-        /// <param name="viewModel">The view model of the dialog box</param>
-        /// <returns>A AlertDialog.</returns>
-        public static async Task<AlertDialog> ShowMessage(AlertDialogVM viewModel)
-        {
-            return await ShowMessage(ViewName, viewModel);
         }
 
         /// <summary>
@@ -181,23 +154,13 @@ namespace Framework.Runtime.UI.Component
         /// <param name="contentViewName">The custom content view name to be shown to the user.</param>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static async Task<AlertDialog> ShowMessage(string viewName, AlertDialogVM viewModel)
+        public static async Task<AlertDialog> ShowMessage(AlertDialogVM viewModel)
         {
             AlertDialogView view = null;
             try
             {
-                if (string.IsNullOrEmpty(viewName))
-                    viewName = ViewName;
-
                 UIManager locator = GetUIViewLocator();
                 view = await locator.OpenAsync<AlertDialogView>();
-                if (view == null)
-                {
-                    Log.Warning($"Not found the dialog window named \"{viewName}\".");
-
-                    throw new FileNotFoundException($"Not found the dialog window named \"{viewName}\".");
-                }
-                
                 AlertDialog dialog = new AlertDialog(view, null, viewModel);
                 dialog.Show();
                 return dialog;

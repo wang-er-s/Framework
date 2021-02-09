@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 namespace Framework.UI.Example
 {
+	[UI("SimpleBind")]
 	public class SetupView : View
 	{
 		[TransformPath("name")] private Text nameMessageText;
@@ -48,6 +49,5 @@ namespace Framework.UI.Example
 		}
 
 		public override UILevel UILevel { get; } = UILevel.Common;
-		public override string Path { get; } = "SimpleBind";
 	}
 }
