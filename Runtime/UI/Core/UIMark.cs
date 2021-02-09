@@ -1,6 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
 using System.Collections.Generic;
-using Framework.UI.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -80,3 +79,4 @@ public class UIMark : MonoBehaviour
         }
     }
 }
+#endif

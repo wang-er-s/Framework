@@ -6,7 +6,7 @@ namespace Framework
     public class DomainManager : ManagerBase<DomainManager, DomainAttribute, int>
     {
         Dictionary<int, IDomain> _allDomains = new Dictionary<int, IDomain>();
-        private IDomain _currentDomain = null;
+        private IDomain _currentDomain;
         private int _defaultScreenTag = 0;
         
         public override void Init()
@@ -22,7 +22,12 @@ namespace Framework
                 RegisterScreen(sv);
             }
         }
-        
+
+        public override void Start()
+        {
+            BeginNavTo(_defaultScreenTag);
+        }
+
         private void RegisterScreen(IDomain domain)
         {
             _allDomains.Add(domain.Name, domain);

@@ -20,7 +20,7 @@ namespace Framework.UI.Core
 
         public override void Init()
         {
-            if (Canvas == null) Canvas = CreateCanvas();
+            Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
             Object.DontDestroyOnLoad(Canvas);
             foreach (UILevel level in (UILevel[]) Enum.GetValues(typeof(UILevel)))
             {
@@ -196,7 +196,7 @@ namespace Framework.UI.Core
                     i--;
                 }
             }
-            index = lastTrans == null ? 0 : lastTrans.GetSiblingIndex() + 1;
+            index = lastTrans == null ? Canvas.transform.childCount : lastTrans.GetSiblingIndex() + 1;
             viewTransform.SetParent(Canvas.transform, false);
             viewTransform.SetSiblingIndex(index);
             _sortViews[view.UILevel].Add(view);
@@ -220,13 +220,6 @@ namespace Framework.UI.Core
                 _waitDestroyViews.Remove(view);
             }
             _needDestroyViews.Clear();
-        }
-        
-        private static Canvas CreateCanvas()
-        {
-            var obj = Resources.Load<Canvas>("Canvas");
-            var canvas = Object.Instantiate(obj);
-            return canvas;
         }
     }
 }

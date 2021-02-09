@@ -174,6 +174,7 @@ public static class GameObjectExtension
 
     public static GameObject ActiveShow(this GameObject selfObj)
     {
+        if (selfObj.activeSelf) return selfObj;
         selfObj.SetActive(true);
         return selfObj;
     }
@@ -202,6 +203,7 @@ public static class GameObjectExtension
 
     public static GameObject ActiveHide(this GameObject selfObj)
     {
+        if (selfObj.activeSelf == false) return selfObj;
         selfObj.SetActive(false);
         return selfObj;
     }

@@ -14,7 +14,6 @@ namespace Framework.Editor
 	{
 		private static EditorConfig _config;
 
-		[MenuItem("Assets/@UI Kit - Create UICode")]
 		public static void CreateUiCode()
 		{
 			var go = Selection.activeGameObject;

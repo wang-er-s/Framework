@@ -13,9 +13,9 @@ namespace Framework.Runtime.UI.Component
     public class AlertDialog
     {
 
-        public const int BUTTON_POSITIVE = -1;
-        public const int BUTTON_NEGATIVE = -2;
-        public const int BUTTON_NEUTRAL = -3;
+        public const int BUTTON_POSITIVE = 1;
+        public const int BUTTON_NEGATIVE = -1;
+        public const int BUTTON_NEUTRAL = 0;
 
         private static UIManager GetUIViewLocator()
         {
@@ -174,7 +174,7 @@ namespace Framework.Runtime.UI.Component
             }
         }
 
-        private AlertDialogView view;
+        public AlertDialogView View { get; private set; }
         private View contentView;
         private AlertDialogVM viewModel;
 
@@ -184,7 +184,7 @@ namespace Framework.Runtime.UI.Component
 
         public AlertDialog(AlertDialogView view, View contentView, AlertDialogVM viewModel)
         {
-            this.view = view;
+            this.View = view;
             this.contentView = contentView;
             this.viewModel = viewModel;
         }
@@ -196,15 +196,15 @@ namespace Framework.Runtime.UI.Component
 
         public void Show()
         {
-            this.view.SetVm(viewModel);
+            this.View.SetVm(viewModel);
             if (this.contentView != null)
-                contentView.AddSubView(view);
-            this.view.Show();
+                contentView.AddSubView(View);
+            this.View.Show();
         }
 
         public void Cancel()
         {
-            this.view.Cancel();
+            this.View.Cancel();
         }
     }
 }

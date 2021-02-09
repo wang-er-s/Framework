@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
+using Framework.Execution;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -56,16 +58,25 @@ namespace Framework.Assets
             Addressables.LoadResourceLocationsAsync(DYNAMIC_TAG);
         }
 
-        public static async void DownloadNewAssets(Action<float> progressCb, Action endCb)
+        public static IProgressResult<float> DownloadNewAssets()
         {
+            ProgressResult<float> progressResult = new ProgressResult<float>();
             var operation = Addressables.DownloadDependenciesAsync(DYNAMIC_TAG);
-            while (!operation.IsDone)
+            Executors.RunOnCoroutineNoReturn(Download(progressResult, operation));            
+            return progressResult;
+        }
+
+        static IEnumerator Download(IProgressPromise<float> promise, AsyncOperationHandle handle)
+        {
+            while (!handle.IsDone)
             {
-                progressCb?.Invoke(operation.PercentComplete);
-                await Task.Yield();
+                promise.UpdateProgress(handle.PercentComplete);
+                yield return null;
+                if(handle.OperationException != null)
+                    promise.SetException(handle.OperationException);
             }
-            progressCb?.Invoke(1);
-            endCb?.Invoke();
+            promise.SetException(handle.OperationException);
+            promise.SetResult();
         }
 
         #endregion

@@ -28,7 +28,7 @@ namespace Framework.Runtime.UI.Component
 
         private AlertDialogVM vm;
 
-        public override UILevel UILevel { get; }
+        public override UILevel UILevel { get; } = UILevel.Pop;
 
         protected virtual void Button_OnClick(int which)
         {
@@ -131,5 +131,6 @@ namespace Framework.Runtime.UI.Component
         }
 
         public override bool IsSingle { get; } = false;
+        
     }
 }

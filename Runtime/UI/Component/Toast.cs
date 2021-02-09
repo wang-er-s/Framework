@@ -34,13 +34,15 @@ namespace Framework.Runtime.UI.Component
         private readonly string text;
         private readonly ToastView view;
         private readonly Action callback;
+        private readonly bool autoHide;
         
-        protected Toast(ToastView view, string text, float duration = 3, Action callback = null)
+        protected Toast(ToastView view, string text, float duration = 3, Action callback = null, bool autoHide = true)
         {
             this.view = view;
             this.text = text;
             this.duration = duration;
             this.callback = callback;
+            this.autoHide = autoHide;
         }
 
         public float Duration => this.duration;
@@ -61,7 +63,8 @@ namespace Framework.Runtime.UI.Component
         {
             this.view.Show();
             this.view.Text.text = this.text;
-            Executors.RunOnCoroutineNoReturn(DelayDismiss(duration));
+            if (autoHide)
+                Executors.RunOnCoroutineNoReturn(DelayDismiss(duration));
         }
 
         protected IEnumerator DelayDismiss(float duration)

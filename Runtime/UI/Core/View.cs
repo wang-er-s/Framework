@@ -91,7 +91,7 @@ namespace Framework.UI.Core
 
         #region 界面显示隐藏的调用和回调方法
 
-        protected virtual async void Start()
+        protected virtual void Start()
         {
             
         }
@@ -154,6 +154,7 @@ namespace Framework.UI.Core
         {
             if(_subViews.Contains(view))
                 return;
+            view.Go.transform.SetParent(Go.transform, true);
             _subViews.Add(view);
         }
 
