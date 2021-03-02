@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Framework.Runtime.UI.Component
 {
-    [UI("UI_Toast")]
+    [UI("Toast")]
     public class ToastView : View
     {
         public Text Text;

@@ -8,7 +8,7 @@ namespace Framework.UI.Wrap.Base
 {
     public static class BindTool
     {
-        private static readonly Dictionary<Type, Type> supportWrapperTypes = new Dictionary<Type, Type>()
+        private static readonly Dictionary<Type, Type> supportWrapperTypes = new Dictionary<Type, Type>
         {
             {typeof(Text), typeof(TextWrapper)},
             {typeof(Toggle), typeof(ToggleWrapper)},
@@ -17,7 +17,8 @@ namespace Framework.UI.Wrap.Base
             {typeof(Button), typeof(ButtonWrapper)},
             {typeof(Image), typeof(ImageWrapper)},
             {typeof(Dropdown), typeof(DropdownWrapper)},
-            {typeof(TextMeshProUGUI), typeof(TmpWrapper)}
+            {typeof(TextMeshProUGUI), typeof(TmpWrapper)},
+            {typeof(TMP_InputField), typeof(TMP_InputFieldWrapper)}
         };
 
         private static readonly object[] args = new object[1];

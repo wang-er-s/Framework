@@ -68,7 +68,14 @@ namespace Framework.UI.Core
             {
                 try
                 {
-                    tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType));
+                    if (tuple.Item1.FieldType == typeof(GameObject))
+                    {
+                        tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).gameObject);
+                    }
+                    else
+                    {
+                        tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -127,6 +134,7 @@ namespace Framework.UI.Core
             GameLoop.Ins.OnUpdate -= Update;
             _subViews.ForEach(subView => subView.Destroy());
             Object.Destroy(Go.gameObject);
+            ViewModel.OnViewDestroy();
         }
 
         public void Visible(bool visible)
@@ -146,7 +154,7 @@ namespace Framework.UI.Core
                     return null;
             }
             var progressResult = UIManager.Ins.CreateView<T>(viewModel);
-            progressResult.Callbackable().OnCallback((result => _subViews.Add(result.Result)));
+            progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
             return progressResult;
         }
 
@@ -154,11 +162,12 @@ namespace Framework.UI.Core
         {
             if(_subViews.Contains(view))
                 return;
-            view.Go.transform.SetParent(Go.transform, true);
+            view.Show();
+            view.Go.transform.SetParent(Go.transform, false);
             _subViews.Add(view);
         }
 
-        public T GetSubView<T>() where T : View
+        protected T GetSubView<T>() where T : View
         {
             foreach (var subView in _subViews)
             {

@@ -29,16 +29,16 @@ namespace Framework.Runtime.UI.Component
         /// <param name="title">The title of the dialog box. This may be null.</param>
         /// <param name="buttonText">The text shown in the only button
         /// in the dialog box. If left null, the button will be invisible.</param>
-        /// <param name="afterHideCallback">A callback that should be executed after
+        /// <param name="clickCallback">A callback that should be executed after
         /// the dialog box is closed by the user.</param>
         /// <returns>A AlertDialog.</returns>
         public static async Task<AlertDialog> ShowMessage(
             string message,
             string title,
             string buttonText,
-            Action<int> afterHideCallback)
+            Action<int> clickCallback)
         {
-            return await ShowMessage(message, title, buttonText, null, null, false, afterHideCallback);
+            return await ShowMessage(message, title, buttonText, null, null, false, clickCallback);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Framework.Runtime.UI.Component
         /// in the dialog box. If left null, the button will be invisible.</param>
         /// <param name="cancelButtonText">The text shown in the "cancel" button
         /// in the dialog box. If left null, the button will be invisible.</param>
-        /// <param name="afterHideCallback">A callback that should be executed after
+        /// <param name="clickCallback">A callback that should be executed after
         /// the dialog box is closed by the user. The callback method will get a boolean
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
@@ -60,9 +60,9 @@ namespace Framework.Runtime.UI.Component
             string title,
             string confirmButtonText,
             string cancelButtonText,
-            Action<int> afterHideCallback)
+            Action<int> clickCallback)
         {
-            return await ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, afterHideCallback);
+            return await ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, clickCallback);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Framework.Runtime.UI.Component
         /// in the dialog box. If left null, the button will be invisible.</param>
         /// <param name="canceledOnTouchOutside">Whether the dialog box is canceled when 
         /// touched outside the window's bounds. </param>
-        /// <param name="afterHideCallback">A callback that should be executed after
+        /// <param name="clickCallback">A callback that should be executed after
         /// the dialog box is closed by the user. The callback method will get a boolean
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
@@ -91,7 +91,7 @@ namespace Framework.Runtime.UI.Component
             string neutralButtonText = null,
             string cancelButtonText = null,
             bool canceledOnTouchOutside = true,
-            Action<int> afterHideCallback = null)
+            Action<int> clickCallback = null)
         {
             AlertDialogVM viewModel = new AlertDialogVM();
             viewModel.Message.Value = message;
@@ -100,7 +100,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.NeutralButtonText.Value = neutralButtonText;
             viewModel.CancelButtonText.Value = cancelButtonText;
             viewModel.CanceledOnTouchOutside.Value = canceledOnTouchOutside;
-            viewModel.Click = afterHideCallback;
+            viewModel.Click = clickCallback;
 
             return await ShowMessage(viewModel);
         }
@@ -118,7 +118,7 @@ namespace Framework.Runtime.UI.Component
         /// in the dialog box. If left null, the button will be invisible.</param>
         /// <param name="canceledOnTouchOutside">Whether the dialog box is canceled when 
         /// touched outside the window's bounds. </param>
-        /// <param name="afterHideCallback">A callback that should be executed after
+        /// <param name="clickCallback">A callback that should be executed after
         /// the dialog box is closed by the user. The callback method will get a boolean
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.</param>
@@ -130,7 +130,7 @@ namespace Framework.Runtime.UI.Component
             string neutralButtonText,
             string cancelButtonText,
             bool canceledOnTouchOutside,
-            Action<int> afterHideCallback)
+            Action<int> clickCallback)
         {
             AlertDialogVM viewModel = new AlertDialogVM();
             viewModel.Title.Value = title;
@@ -138,7 +138,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.NeutralButtonText.Value = neutralButtonText;
             viewModel.CancelButtonText.Value = cancelButtonText;
             viewModel.CanceledOnTouchOutside.Value = canceledOnTouchOutside;
-            viewModel.Click = afterHideCallback;
+            viewModel.Click = clickCallback;
             
             UIManager locator = GetUIViewLocator();
             AlertDialogView window = await locator.OpenAsync<AlertDialogView>();

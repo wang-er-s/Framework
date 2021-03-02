@@ -59,7 +59,8 @@ namespace Framework.UI.Core.Bind
                 case BindType.OnWay:
                     if (_propChangeCb == null)
                         _propChangeCb = (_defaultWrapper as IFieldChangeCb<TData>)?.GetFieldChangeCb();
-                    Log.Assert(_propChangeCb != null, "_propChangeCb != null");
+                    Log.Assert(_propChangeCb != null,
+                        $"_propChangeCb != null , can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TData).Name}> interface");
                     _property.AddListener((value) =>
                         _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
                     break;

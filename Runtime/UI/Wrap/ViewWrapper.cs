@@ -65,6 +65,7 @@ namespace Framework.UI.Wrap
         private async void AddItem(int index, ViewModel vm)
         {
             var view = await UIManager.Ins.CreateView(_item.GetType(), vm);
+            view.Go.transform.SetParent(_content);
             view.Go.transform.SetSiblingIndex(index + 1);
             view.Show();
             _index = index;

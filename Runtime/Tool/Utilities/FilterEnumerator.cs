@@ -31,6 +31,11 @@ namespace Framework.Helper
 
             return false;
         }
+        
+        public IEnumerator GetEnumerator()
+        {
+            return this;
+        }
 
         public void Reset()
         {
@@ -67,6 +72,11 @@ namespace Framework.Helper
             }
 
             return false;
+        }
+        
+        public IEnumerator<T> GetEnumerator()
+        {
+            return this;
         }
 
         public void Reset()

@@ -448,12 +448,20 @@ public static class IEnumerableExtension
     /// <param name="selfList"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    public static T TryGet<T>(this List<T> selfList, int index)
+    public static T TryGet<T>(this IList<T> selfList, int index)
     {
         return selfList.Count > index ? selfList[index] : default(T);
     }
 
-    public static bool TryAdd<T>(this List<T> selfList, T value)
+    public static bool TryRemove<T>(this IList<T> self, T value)
+    {
+        var index = self.IndexOf(value);
+        if (index == -1) return false;
+        self.RemoveAt(index);
+        return true;
+    }
+
+    public static bool TryAdd<T>(this IList<T> selfList, T value)
     {
         if (!selfList.Contains(value))
         {
@@ -2478,6 +2486,11 @@ public static class StringExtention
             .Any(attrs => attrs.OfType<FromString>().Any());
     }
 
+    public static bool IsStruct(this Type type)
+    {
+        return type.IsValueType && !type.IsPrimitive && !type.IsEnum;
+    }
+    
     /// <summary>
     /// 是否可以转换为String
     /// </summary>

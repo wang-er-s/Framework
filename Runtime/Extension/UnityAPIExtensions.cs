@@ -1164,7 +1164,7 @@ public static class TransformExtension
         return null;
     }
 
-    public static string GetPath(this Transform transform)
+    public static string GetPathFromRoot(this Transform transform)
     {
         var sb = new System.Text.StringBuilder();
         var t = transform;
@@ -1181,6 +1181,33 @@ public static class TransformExtension
                 return sb.ToString();
             }
         }
+    }
+
+    public static string GetPathFromTarget(this Transform transform, Transform root)
+    {
+        var sb = new System.Text.StringBuilder();
+        var t = transform;
+        while (true)
+        {
+            sb.Insert(0, t.name);
+            t = t.parent;
+            if (t == root) return sb.ToString();
+            if (t)
+            {
+                sb.Insert(0, "/");
+            }
+            else
+            {
+                return sb.ToString();
+            }
+        }
+    }
+
+    public static Transform GetRootParent(this Transform transform)
+    {
+        if (transform.parent == null)
+            return transform;
+        return GetRootParent(transform.parent);
     }
 }
 

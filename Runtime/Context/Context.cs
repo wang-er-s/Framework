@@ -52,9 +52,24 @@ namespace Framework.Contexts
             return (T)GetContext(key);
         }
 
+        public static T GetContext<T>() where T : Context
+        {
+            return (T) GetContext(typeof(T).Name);
+        }
+
+        public static void AddContext<T>(T context) where T : Context
+        {
+            AddContext(typeof(T).Name, context);
+        }
+
         public static void AddContext(string key, Context context)
         {
             contexts.Add(key, context);
+        }
+
+        public static void RemoveContext<T>()
+        {
+            RemoveContext(typeof(T).Name);
         }
 
         public static void RemoveContext(string key)
@@ -86,12 +101,22 @@ namespace Framework.Contexts
 
             return false;
         }
+        
+        public virtual bool Contains<T>( bool cascade = true)
+        {
+            return Contains(typeof(T).Name, cascade);
+        }
 
         public virtual object Get(string name, bool cascade = true)
         {
             return this.Get<object>(name, cascade);
         }
 
+        public virtual T Get<T>(bool cascade = true)
+        {
+            return Get<T>(typeof(T).Name);
+        }
+        
         public virtual T Get<T>(string name, bool cascade = true)
         {
             object v;
@@ -109,6 +134,11 @@ namespace Framework.Contexts
             this.Set<object>(name, value);
         }
 
+        public virtual void Set<T>(T value)
+        {
+            Set(typeof(T).Name, value);
+        }
+
         public virtual void Set<T>(string name, T value)
         {
             this._attributes[name] = value;
@@ -117,6 +147,11 @@ namespace Framework.Contexts
         public virtual object Remove(string name)
         {
             return this.Remove<object>(name);
+        }
+
+        public virtual T Remove<T>()
+        {
+            return Remove<T>(typeof(T).Name);
         }
 
         public virtual T Remove<T>(string name)

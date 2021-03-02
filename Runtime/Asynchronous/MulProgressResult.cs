@@ -16,7 +16,8 @@ namespace Framework.Asynchronous
         {
             AddProgress(allProgress);
         }
-
+        
+        
         public void AddProgress(IProgressResult<float> progressResult)
         {
             _allProgress.Add(progressResult);
@@ -44,10 +45,14 @@ namespace Framework.Asynchronous
             if(Progress >= 1)
                 SetResult();
         }
- 
+
         protected override void RaiseOnCallback()
         {
             base.RaiseOnCallback();
+            _allProgress.ForEach((result =>
+            {
+                ((IPromise)result).SetResult(); 
+            }));
             _callbackable?.RaiseOnCallback();
         }
 

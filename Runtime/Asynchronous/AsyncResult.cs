@@ -101,6 +101,8 @@ namespace Framework.Asynchronous
 
         public virtual void SetResult(object result = null)
         {
+            
+            
             lock (Lock)
             {
                 if (this._done)
@@ -110,7 +112,7 @@ namespace Framework.Asynchronous
                 this._done = true;
                 Monitor.PulseAll(Lock);
             }
-
+            
             this.RaiseOnCallback();
         }
 

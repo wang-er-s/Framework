@@ -26,7 +26,6 @@ namespace Framework.Assets
             }
             
             promise.UpdateProgress(1);
-            Log.Msg("加载场景", scene, loader.Status, loader.Result);
             promise.SetResult(loader.Result);
         }
         

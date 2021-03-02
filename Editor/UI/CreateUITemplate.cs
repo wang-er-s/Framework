@@ -14,6 +14,7 @@ namespace Framework.Editor
 	{
 		private static EditorConfig _config;
 
+		[MenuItem("Assets/@Create UICode")]
 		public static void CreateUiCode()
 		{
 			var go = Selection.activeGameObject;
@@ -136,8 +137,13 @@ namespace Framework.Editor
 		private static void GeneratorView(PanelCodeInfo panelCodeInfo)
 		{
 			Directory.CreateDirectory(_config.UIConfig.GenUIScriptsPath);
-			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, $"{panelCodeInfo.BehaviourName}.cs");
+			var fileName = $"{panelCodeInfo.BehaviourName}.cs";
+			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, fileName);
 			var strBuilder = new StringBuilder();
+			if (TryGetTemplate(fileName, Application.dataPath, out var tempPath))
+			{
+				generateFilePath = tempPath;
+			}
 			var template = File.Exists(generateFilePath)
 				? File.ReadAllText(generateFilePath)
 				: Resources.Load<TextAsset>("ViewTemplate").text;
@@ -163,7 +169,12 @@ namespace Framework.Editor
 		private static void GeneratorVM(PanelCodeInfo panelCodeInfo)
 		{
 			string className = $"{panelCodeInfo.BehaviourName}VM";
-			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, $"{className}.cs");
+			var fileName = className + ".cs";
+			var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, fileName);
+			if (TryGetTemplate(fileName, Application.dataPath, out var tempPath))
+			{
+				generateFilePath = tempPath;
+			}
 			if (File.Exists(generateFilePath)) return;
 			var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
 			var template = Resources.Load<TextAsset>("VMTemplate").text;
@@ -171,6 +182,26 @@ namespace Framework.Editor
 			sw.Write(template);
 			sw.Flush();
 			sw.Close();
+		}
+
+		public static bool TryGetTemplate(string fileName, string dirPath, out string path)
+		{
+			path = string.Empty;
+			DirectoryInfo dir = new DirectoryInfo(dirPath);
+			var files = dir.GetFiles(fileName);
+			if (files.Length > 0)
+			{
+				path = files[0].FullName;
+				return true;
+			}
+			foreach (var directoryInfo in dir.GetDirectories())
+			{
+				if (TryGetTemplate(fileName, directoryInfo.FullName, out path))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static void StartAddComponent2PrefabAfterCompile(GameObject uiPrefab)

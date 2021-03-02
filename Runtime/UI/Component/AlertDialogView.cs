@@ -5,22 +5,29 @@ using UnityEngine.UI;
 
 namespace Framework.Runtime.UI.Component
 {
-    [UI("UI_AlertDialog")]
+    [UI("AlertDialog")]
     public class AlertDialogView : View
     {
-        public Text Title;
+        [TransformPath("Panel/Title")]
+        private Text Title;
 
-        public Text Message;
+        [TransformPath("Panel/Content/Message")]
+        private Text Message;
 
-        public GameObject Content;
+        [TransformPath("Panel/Content")]
+        private GameObject Content;
 
-        public Button ConfirmButton;
+        [TransformPath("Panel/ButtonGroup/Confirm")]
+        private Button ConfirmButton;
 
-        public Button NeutralButton;
+        [TransformPath("Panel/ButtonGroup/Neutral")]
+        private Button NeutralButton;
 
-        public Button CancelButton;
+        [TransformPath("Panel/ButtonGroup/Cancel")]
+        private Button CancelButton;
 
-        public Button OutsideButton;
+        [TransformPath("Background")]
+        private Button OutsideButton;
 
         public bool CanceledOnTouchOutside { get; set; }
 

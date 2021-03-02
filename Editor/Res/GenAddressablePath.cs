@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -25,9 +26,17 @@ namespace Framework.Editor
                 if(assetGroup.ReadOnly) continue;
                 foreach (var assetEntry in assetGroup.entries)
                 {
-                    var path = $"{Path.GetFileNameWithoutExtension(assetEntry.MainAsset.name)}";
-                    assetEntry.address = path.Trim();
-                    sb.AppendLine($"\tpublic const string {assetEntry.address} = \"{assetEntry.address}\";");
+                    try
+                    {
+                        var path = $"{Path.GetFileNameWithoutExtension(assetEntry.MainAsset.name)}";
+                        assetEntry.address = path.Trim();
+                        sb.AppendLine($"\tpublic const string {assetEntry.address} = \"{assetEntry.address}\";");
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(assetEntry.address + " get error ===>" + e);
+                    }
+                    
                 }
             }
             

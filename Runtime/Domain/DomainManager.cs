@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Framework
 {
@@ -45,6 +46,11 @@ namespace Framework
                 }
             }
             return sv;
+        }
+
+        public IDomain GetDomain(Enum name)
+        {
+            return GetDomain(name.GetHashCode());
         }
 
         public void BeginNavTo(Enum name)

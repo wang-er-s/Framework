@@ -9,8 +9,8 @@
 #endregion
 
 
-//namespace LitJson
-//{
+namespace LitJson
+{
     internal enum ParserToken
     {
         // Lexer tokens (see section A.1.1. of the manual)
@@ -41,4 +41,4 @@
         // The empty rule
         Epsilon
     }
-//}
+}

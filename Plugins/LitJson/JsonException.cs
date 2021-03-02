@@ -12,9 +12,14 @@
 using System;
 
 
-//namespace LitJson
-//{
-    public class JsonException : ApplicationException
+namespace LitJson
+{
+    public class JsonException :
+#if NETSTANDARD1_5
+        Exception
+#else
+        ApplicationException
+#endif
     {
         public JsonException () : base ()
         {
@@ -57,4 +62,4 @@ using System;
         {
         }
     }
-//}
+}

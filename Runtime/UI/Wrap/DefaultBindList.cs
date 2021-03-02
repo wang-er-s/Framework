@@ -34,7 +34,6 @@ namespace Framework.UI.Wrap
             switch (type)
             {
                 case NotifyCollectionChangedAction.Add:
-
                     var gen = Object.Instantiate(_template, _parent, false);
                     _onShow?.Invoke(gen, obj);
                     _allObj.Add(gen);
