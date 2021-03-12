@@ -12,14 +12,14 @@ namespace Framework.Editor
 {
 	public static class CreateUITemplate
 	{
-		private static EditorConfig _config;
+		private static FrameworkEditorConfig _config;
 
 		[MenuItem("Assets/@Create UICode")]
 		public static void CreateUiCode()
 		{
 			var go = Selection.activeGameObject;
 			if(go == null) return;
-			_config = ConfigBase.Load<EditorConfig>();
+			_config = ConfigBase.Load<FrameworkEditorConfig>();
 			CreateCode(go, AssetDatabase.GetAssetPath(go));
 			AssetDatabase.Refresh();
 		}

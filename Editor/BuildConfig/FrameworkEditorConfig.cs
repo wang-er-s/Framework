@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Framework.Editor
 {
     [ShowOdinSerializedPropertiesInInspector]
-    public class EditorConfig : ConfigBase 
+    public class FrameworkEditorConfig : ConfigBase 
     {
-        [FoldoutGroup("打包设置",expanded: false)]
+        [FoldoutGroup("打包设置",expanded: true)]
         [BoxGroup("打包设置/Android设置")]
         [HideLabel]
         [InlinePropertyAttribute]
@@ -18,7 +18,7 @@ namespace Framework.Editor
         [InlinePropertyAttribute]
         public IosConfig IosConfig =new IosConfig();
 
-        [FoldoutGroup("UI设置", expanded: false)]
+        [FoldoutGroup("UI设置", expanded: true)]
         [HideLabel]
         [InlinePropertyAttribute]
         public UIConfig UIConfig = new UIConfig();

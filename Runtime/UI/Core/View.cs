@@ -43,6 +43,7 @@ namespace Framework.UI.Core
             SetComponent();
             Start();
             GameLoop.Ins.OnUpdate += Update;
+            GameLoop.Ins.OnLateUpdate += LateUpdate;
         }
 
         private static Dictionary<Type, List<Tuple<FieldInfo, string>>> _type2TransPath =
@@ -53,7 +54,7 @@ namespace Framework.UI.Core
             if (!_type2TransPath.TryGetValue(GetType(), out var paths))
             {
                 paths = new List<Tuple<FieldInfo, string>>();
-                var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
                 foreach (var fieldInfo in fields)
                 {
                     var path = fieldInfo.GetCustomAttribute<TransformPath>();
@@ -76,11 +77,12 @@ namespace Framework.UI.Core
                     {
                         tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType));
                     }
+                    this.Msg(tuple.Item2,"1111");
                 }
                 catch (Exception e)
                 {
                     Log.Error(e);
-                    Debug.Log(tuple.Item2 + " not found", Go);
+                    Debug.LogError(tuple.Item2 + " not found", Go);
                 }
             }
         }
@@ -107,6 +109,10 @@ namespace Framework.UI.Core
         {
         }
 
+        protected virtual void LateUpdate()
+        {
+        }
+
         public void Show()
         {
             Visible(true);
@@ -117,7 +123,6 @@ namespace Framework.UI.Core
         {
             Visible(false);
             OnHide();
-            _subViews.ForEach((subView) => subView.Hide());
         }
 
         protected virtual void OnShow()
@@ -132,9 +137,10 @@ namespace Framework.UI.Core
         {
             Hide();
             GameLoop.Ins.OnUpdate -= Update;
+            GameLoop.Ins.OnLateUpdate -= LateUpdate;
             _subViews.ForEach(subView => subView.Destroy());
             Object.Destroy(Go.gameObject);
-            ViewModel.OnViewDestroy();
+            ViewModel?.OnViewDestroy();
         }
 
         public void Visible(bool visible)
@@ -150,7 +156,7 @@ namespace Framework.UI.Core
         {
             foreach (var subView in _subViews)
             {
-                if(subView is T)
+                if (subView is T)
                     return null;
             }
             var progressResult = UIManager.Ins.CreateView<T>(viewModel);

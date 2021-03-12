@@ -1,12 +1,13 @@
-﻿#if UNITY_EDITOR
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
+[DisallowMultipleComponent]
 public class UIMark : MonoBehaviour
 {
+#if UNITY_EDITOR
     public string FieldName;
 
     [ValueDropdown("Components")]
@@ -78,5 +79,5 @@ public class UIMark : MonoBehaviour
             return null;
         }
     }
-}
 #endif
+}

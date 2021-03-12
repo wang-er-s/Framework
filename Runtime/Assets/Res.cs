@@ -14,13 +14,13 @@ namespace Framework.Assets
         public static IRes Create()
         {
             IRes result = null;
-            var config = ConfigBase.Load<RuntimeConfig>();
+            var config = ConfigBase.Load<FrameworkRuntimeConfig>();
             switch (config.LoadType)
             {
-                case RuntimeConfig.ResType.Resources:
+                case FrameworkRuntimeConfig.ResType.Resources:
                     result = new ResourcesRes();
                     break;
-                case RuntimeConfig.ResType.Addressable:
+                case FrameworkRuntimeConfig.ResType.Addressable:
                     result = new AddressableRes();
                     break;
             }

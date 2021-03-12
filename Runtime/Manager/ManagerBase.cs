@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Sirenix.Utilities;
+using Tool;
 
 namespace Framework
 {
@@ -92,36 +93,16 @@ namespace Framework
         {
             return ClassDataMap.Values;
         }
-        
-        public T2 CreateInstance<T2>(ClassData cd, params object[] args) where T2 : class
-        {
-            if (cd.Type != null)
-            {
-                if (args.Length == 0)
-                {
-                    return Activator.CreateInstance(cd.Type) as T2;
-                }
-                else
-                {
-                    return Activator.CreateInstance(cd.Type, args) as T2;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        
-        public T2 CreateInstance<T2>(I tag, params object[] args) where T2 : class
+
+        protected T CreateInstance<T>(I tag, params object[] args) where T : class
         {
             var cd = GetClassData(tag);
             if (cd == null)
             {
-                Log.Error("没有找到:", tag, " -", typeof(T2).Name);
+                Log.Error("没有找到:", tag, " -");
                 return null;
             }
-
-            return CreateInstance<T2>(cd, args);
+            return ReflectionHelper.CreateInstance<T>(cd.Type, args);
         }
     }
 }

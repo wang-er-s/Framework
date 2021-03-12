@@ -5,6 +5,7 @@ namespace Framework
     public class GameLoop : MonoSingleton<GameLoop>
     {
         public event Action OnUpdate;
+        public event Action OnLateUpdate;
         public event Action OnFixedUpdate;
         public event Action OnApplicationQuitEvent;
 
@@ -18,7 +19,12 @@ namespace Framework
             OnFixedUpdate?.Invoke();
         }
 
-		private void OnApplicationQuit()
+        private void LateUpdate()
+        {
+            OnLateUpdate?.Invoke();
+        }
+
+        private void OnApplicationQuit()
 		{
             OnApplicationQuitEvent?.Invoke();
 		}

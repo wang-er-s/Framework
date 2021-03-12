@@ -60,58 +60,34 @@ namespace Framework
             Debug.Log($"{message}\n{stackTrace}");
             return __ret;
         }
-
-        unsafe static StackObject* UILoad(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
-            CLRMethod __method, bool isNewObj)
+        
+        static unsafe StackObject* UILoad(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
-            //CLR重定向的说明请看相关文档和教程，这里不多做解释
-            AppDomain __domain = __intp.AppDomain;
-
-            var ptr = __esp - 1;
-            //成员方法的第一个参数为this
-            var ins = StackObject.ToObject(ptr, __domain, __mStack);
-            if (ins == null)
-                throw new NullReferenceException();
-            __intp.Free(ptr);
-
-            var genericArgument = __method.GenericArguments;
-            //AddComponent应该有且只有1个泛型参数
-            if (genericArgument != null && genericArgument.Length == 1)
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            IType[] genericArguments = __method.GenericArguments;
+            //只有一个参数，所以返回指针就是当前栈指针ESP - 1
+            StackObject* __ret = ILIntepreter.Minus(__esp, 1);
+            //第一个参数为ESP -1， 第二个参数为ESP - 2，以此类推
+            StackObject* ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
+            object vm = StackObject.ToObject(ptr_of_this_method, __domain, __mStack);
+            //load只能有一个泛型
+            if (genericArguments != null && genericArguments.Length == 1)
             {
-
-                if (ins is GameObject)
+                var t = genericArguments[0];
+                if (t is ILType)//如果T是热更DLL里的类型
                 {
-                    Debug.Log(11);
-                }
-                else if (ins is Component)
-                {
-                    Debug.Log(22);
-                }
-                else if (ins is ILTypeInstance)
-                {
-                    Debug.Log(33);
+                    var res = UIManager.Ins.OpenAsync(t.ReflectionType, (ViewModel) vm);
+                    return ILIntepreter.PushObject(__ret, __mStack, res);
                 }
                 else
                 {
-                    Debug.Log(44);
+                    var res = UIManager.Ins.OpenAsync(t.TypeForCLR, (ViewModel) vm);
+                    return ILIntepreter.PushObject(__ret, __mStack, res);
                 }
-
-
-                var type = genericArgument[0];
-                object res = null;
-                if (type is CLRType)
-                {
-                    Debug.Log(55);
-                }
-                else
-                {
-                    Debug.Log(55);
-                }
-
-                return ILIntepreter.PushObject(ptr, __mStack, res);
             }
 
-            return __esp;
+            return __ret;
         }
 
     }

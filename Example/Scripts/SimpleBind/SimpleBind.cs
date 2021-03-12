@@ -1,4 +1,5 @@
-﻿using Framework.UI.Core;
+﻿using Framework;
+using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using Framework.UI.Example;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class SimpleBind : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
+        Log.Msg();
         vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");

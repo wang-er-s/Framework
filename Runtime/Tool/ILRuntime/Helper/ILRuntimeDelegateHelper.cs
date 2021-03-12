@@ -23,7 +23,16 @@ namespace Framework
                 return new UnityAction<bool>((arg0) => { ((Action<Boolean>) act)(arg0); });
             });
             appdomain.DelegateManager.RegisterMethodDelegate<bool>();
+            appdomain.DelegateManager.RegisterMethodDelegate<object>();
             appdomain.DelegateManager.RegisterFunctionDelegate<string, string>();
+            // new thread
+            appdomain.DelegateManager.RegisterDelegateConvertor<System.Threading.ParameterizedThreadStart>((act) =>
+            {
+                return new System.Threading.ParameterizedThreadStart((obj) =>
+                {
+                    ((Action<System.Object>)act)(obj);
+                });
+            });
         }
     }
 }

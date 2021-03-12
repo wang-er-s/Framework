@@ -22,13 +22,12 @@ namespace Framework
             if (config == null)
             {
                 IO.Root.CreateDirectory("Resources/Config");
-                Debug.Log("创建了新的");
                 config = CreateInstance(typeof(T)) as T;
                 UnityEditor.AssetDatabase.CreateAsset(config, "Assets/Resources/" + path + ".asset");
                 UnityEditor.AssetDatabase.SaveAssets();
                 UnityEditor.AssetDatabase.Refresh();
-#endif
             }
+#endif
             _configs.Add(config);
             return config;
         }

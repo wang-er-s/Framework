@@ -378,13 +378,15 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
+                            throw;
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
+                    throw;
                 }
                 finally
                 {

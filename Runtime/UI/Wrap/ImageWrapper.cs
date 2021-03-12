@@ -1,4 +1,5 @@
 ﻿using System;
+using Framework.Assets;
 using Framework.UI.Core;
 using Framework.UI.Wrap.Base;
 using UnityEngine;
@@ -16,7 +17,11 @@ namespace Framework.UI.Wrap
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            return path => View.sprite = Resources.Load<Sprite>(path);
+            return path =>
+            {
+                Res.Default.LoadAssetAsync<Sprite>(path).Callbackable()
+                    .OnCallback(result => View.sprite = result.Result);
+            };
         }
     }
 }

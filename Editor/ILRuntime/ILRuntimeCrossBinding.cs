@@ -1,27 +1,108 @@
 ﻿#if UNITY_EDITOR
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using UnityEditor.Compilation;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Framework.Editor
 {
-    [System.Reflection.Obfuscation(Exclude = true)]
+    [Obfuscation(Exclude = true)]
     public class ILRuntimeCrossBinding
     {
-        [MenuItem("Framework/ILRuntime/生成跨域继承适配器")]
-        static void GenerateCrossbindAdapter()
+        internal class ILRuntimeCrossBindingAdapterGenerator : OdinEditorWindow
         {
-            //由于跨域继承特殊性太多，自动生成无法实现完全无副作用生成，所以这里提供的代码自动生成主要是给大家生成个初始模版，简化大家的工作
-            //大多数情况直接使用自动生成的模版即可，如果遇到问题可以手动去修改生成后的文件，因此这里需要大家自行处理是否覆盖的问题
+            private static ILRuntimeCrossBindingAdapterGenerator window;
+            private string[] AllAssembly;
+            private Type[] AllClass;
+            private const string OUTPUT_PATH = "Assets/_Scripts/Adapters";
 
-            //TODO 
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(
-                "Assets/Samples/ILRuntime/1.6.5/Demo/Scripts/Examples/04_Inheritance/InheritanceAdapter.cs"))
+            [MenuItem("Framework/ILRuntime/生成适配器", priority = 1001)]
+            public static void ShowWindow()
             {
-                sw.WriteLine(
-                    ILRuntime.Runtime.Enviorment.CrossBindingCodeGenerator.GenerateCrossBindingAdapterCode(
-                        typeof(ILRuntimeCrossBinding), "ILRuntimeDemo"));
+                window = GetWindow<ILRuntimeCrossBindingAdapterGenerator>();
+                window.titleContent = new GUIContent("Generate Cross bind Adapter");
+                window.minSize = new Vector2(300, 150);
+                window.Init();
+                window.Show();
             }
 
-            AssetDatabase.Refresh();
+            private void Init()
+            {
+                AllAssembly = CompilationPipeline.GetAssemblies(AssembliesType.Player)
+                    .Select((assembly => assembly.name)).ToArray();
+                Assembly = "GamePlay";
+            }
+
+            private string _assembly;
+            [SerializeField]
+            [LabelText("程序集名")]
+            [ValueDropdown("AllAssembly")]
+            private string Assembly
+            {
+                get => _assembly;
+                set
+                {
+                    _assembly = value;
+                    OnChangeAssembly();
+                }
+            }
+            [SerializeField]
+            [LabelText("类名")]
+            [ValueDropdown("AllClass")]
+            private Type _class;
+
+            [Button("生成适配器")]
+            private void GenAdapter()
+            {
+                //获取主工程DLL的类
+                //Type t = AssemblyManager.GetAssembly(_assembly).GetType(_class);
+                Type t = _class;
+
+                if (!Directory.Exists(OUTPUT_PATH))
+                {
+                    Directory.CreateDirectory(OUTPUT_PATH);
+                }
+
+                //如果有先删除
+                if (File.Exists($"{OUTPUT_PATH}/{_class}Adapter.cs"))
+                {
+                    File.Delete($"{OUTPUT_PATH}/{_class}Adapter.cs");
+                    if (File.Exists($"{OUTPUT_PATH}/{_class}Adapter.cs.meta"))
+                    {
+                        File.Delete($"{OUTPUT_PATH}/{_class}Adapter.cs.meta");
+                    }
+
+                    AssetDatabase.Refresh();
+                }
+
+                //生成适配器
+                FileStream stream =
+                    new FileStream($"{OUTPUT_PATH}/{_class}Adapter.cs", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(stream);
+                Stopwatch watch = new Stopwatch();
+                sw.WriteLine(
+                    ILRuntime.Runtime.Enviorment.CrossBindingCodeGenerator.GenerateCrossBindingAdapterCode(t, "Adapter"));
+                watch.Stop();
+                Log.Msg($"Generated {OUTPUT_PATH}/{_class}Adapter.cs in: " +
+                        watch.ElapsedMilliseconds + " ms.");
+                sw.Dispose();
+
+                window.Close();
+
+                AssetDatabase.Refresh();
+            }
+
+            private void OnChangeAssembly()
+            {
+                AllClass = AssemblyManager.GetTypeList(_assembly);
+            }
         }
     }
 #endif

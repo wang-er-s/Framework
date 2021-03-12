@@ -8,35 +8,43 @@ namespace Framework
 {
     public class ViewAdapter : CrossBindingAdaptor
     {
-        static CrossBindingFunctionInfo<UILevel> get_UILevel = new CrossBindingFunctionInfo<UILevel>("get_UILevel");
-        static CrossBindingFunctionInfo<string> get_Path = new CrossBindingFunctionInfo<string>("get_Path");
-        static CrossBindingMethodInfo show = new CrossBindingMethodInfo("OnShow");
-        static CrossBindingMethodInfo hide = new CrossBindingMethodInfo("OnHide");
-        static CrossBindingMethodInfo vmChange = new CrossBindingMethodInfo("OnVmChange");
-
+        static CrossBindingMethodInfo mStart_0 = new CrossBindingMethodInfo("Start");
+        static CrossBindingMethodInfo mUpdate_1 = new CrossBindingMethodInfo("Update");
+        static CrossBindingMethodInfo mLateUpdate_2 = new CrossBindingMethodInfo("LateUpdate");
+        static CrossBindingMethodInfo mOnShow_3 = new CrossBindingMethodInfo("OnShow");
+        static CrossBindingMethodInfo mOnHide_4 = new CrossBindingMethodInfo("OnHide");
+        static CrossBindingMethodInfo mOnVmChange_5 = new CrossBindingMethodInfo("OnVmChange");
+        static CrossBindingFunctionInfo<Framework.UI.Core.UILevel> mget_UILevel_6 = new CrossBindingFunctionInfo<Framework.UI.Core.UILevel>("get_UILevel");
+        static CrossBindingFunctionInfo<System.Boolean> mget_IsSingle_7 = new CrossBindingFunctionInfo<System.Boolean>("get_IsSingle");
         public override Type BaseCLRType
         {
-            get { return typeof(View); }
+            get
+            {
+                return typeof(Framework.UI.Core.View);
+            }
         }
 
         public override Type AdaptorType
         {
-            get { return typeof(Adapter); }
+            get
+            {
+                return typeof(Adapter);
+            }
         }
 
-        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain,
-            ILTypeInstance instance)
+        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
         {
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : View, CrossBindingAdaptorType
+        public class Adapter : Framework.UI.Core.View, CrossBindingAdaptorType
         {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
             public Adapter()
             {
+
             }
 
             public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
@@ -45,30 +53,75 @@ namespace Framework
                 this.instance = instance;
             }
 
-            public ILTypeInstance ILInstance
+            public ILTypeInstance ILInstance { get { return instance; } }
+
+            protected override void Start()
             {
-                get { return instance; }
+                if (mStart_0.CheckShouldInvokeBase(this.instance))
+                    base.Start();
+                else
+                    mStart_0.Invoke(this.instance);
+            }
+
+            protected override void Update()
+            {
+                if (mUpdate_1.CheckShouldInvokeBase(this.instance))
+                    base.Update();
+                else
+                    mUpdate_1.Invoke(this.instance);
+            }
+
+            protected override void LateUpdate()
+            {
+                if (mLateUpdate_2.CheckShouldInvokeBase(this.instance))
+                    base.LateUpdate();
+                else
+                    mLateUpdate_2.Invoke(this.instance);
             }
 
             protected override void OnShow()
             {
-                if (show.CheckShouldInvokeBase(this.instance))
+                if (mOnShow_3.CheckShouldInvokeBase(this.instance))
                     base.OnShow();
                 else
-                    show.Invoke(this.instance);
+                    mOnShow_3.Invoke(this.instance);
             }
 
             protected override void OnHide()
             {
-                if (hide.CheckShouldInvokeBase(this.instance))
+                if (mOnHide_4.CheckShouldInvokeBase(this.instance))
                     base.OnHide();
                 else
-                    hide.Invoke(this.instance);
+                    mOnHide_4.Invoke(this.instance);
             }
 
             protected override void OnVmChange()
             {
-                vmChange.Invoke(this.instance);
+                mOnVmChange_5.Invoke(this.instance);
+            }
+
+            public override Framework.UI.Core.UILevel UILevel
+            {
+            get
+            {
+                if (mget_UILevel_6.CheckShouldInvokeBase(this.instance))
+                    return base.UILevel;
+                else
+                    return mget_UILevel_6.Invoke(this.instance);
+
+            }
+            }
+
+            public override System.Boolean IsSingle
+            {
+            get
+            {
+                if (mget_IsSingle_7.CheckShouldInvokeBase(this.instance))
+                    return base.IsSingle;
+                else
+                    return mget_IsSingle_7.Invoke(this.instance);
+
+            }
             }
 
             public override string ToString()
@@ -81,11 +134,6 @@ namespace Framework
                 }
                 else
                     return instance.Type.FullName;
-            }
-
-            public override UILevel UILevel
-            {
-                get { return get_UILevel.Invoke(this.instance); }
             }
         }
     }

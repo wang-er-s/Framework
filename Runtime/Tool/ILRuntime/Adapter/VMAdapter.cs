@@ -6,31 +6,38 @@ using ILRuntime.Runtime.Intepreter;
 
 namespace Framework
 {
-    public class VMAdapter : CrossBindingAdaptor
+    public class ViewModelAdapter : CrossBindingAdaptor
     {
+        static CrossBindingMethodInfo mOnViewDestroy_0 = new CrossBindingMethodInfo("OnViewDestroy");
         public override Type BaseCLRType
         {
-            get { return typeof(ViewModel); }
+            get
+            {
+                return typeof(Framework.UI.Core.ViewModel);
+            }
         }
 
         public override Type AdaptorType
         {
-            get { return typeof(Adapter); }
+            get
+            {
+                return typeof(Adapter);
+            }
         }
 
-        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain,
-            ILTypeInstance instance)
+        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
         {
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : ViewModel, CrossBindingAdaptorType
+        public class Adapter : Framework.UI.Core.ViewModel, CrossBindingAdaptorType
         {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
             public Adapter()
             {
+
             }
 
             public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
@@ -39,9 +46,14 @@ namespace Framework
                 this.instance = instance;
             }
 
-            public ILTypeInstance ILInstance
+            public ILTypeInstance ILInstance { get { return instance; } }
+
+            public override void OnViewDestroy()
             {
-                get { return instance; }
+                if (mOnViewDestroy_0.CheckShouldInvokeBase(this.instance))
+                    base.OnViewDestroy();
+                else
+                    mOnViewDestroy_0.Invoke(this.instance);
             }
 
             public override string ToString()
