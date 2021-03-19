@@ -26,7 +26,6 @@ namespace Framework
 
         public override void Start()
         {
-            return;
             BeginNavTo(_defaultScreenTag);
         }
 

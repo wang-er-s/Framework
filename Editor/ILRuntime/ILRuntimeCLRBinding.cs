@@ -1,14 +1,17 @@
 ﻿#if UNITY_EDITOR
+using System;
+using Sirenix.OdinInspector;
 using UnityEditor;
 
 namespace Framework.Editor
 {
-    [System.Reflection.Obfuscation(Exclude = true)]
+    [Serializable]
     public class ILRuntimeCLRBinding
     {
-        [MenuItem("Framework/ILRuntime/通过自动分析热更DLL生成CLR绑定")]
-        static void GenerateCLRBindingByAnalysis()
+        [Button("生成CLR绑定[不知道干嘛别点！]")]
+        public static void GenerateCLRBindingByAnalysis()
         {
+            if(!EditorUtility.DisplayDialog("注意", "确定要生成吗", "我很清楚后果", "不敢")) return;
             //用新的分析热更dll调用引用来生成绑定代码
             ILRuntime.Runtime.Enviorment.AppDomain domain = new ILRuntime.Runtime.Enviorment.AppDomain();
             using (System.IO.FileStream fs = new System.IO.FileStream("Assets/StreamingAssets/HotFix_Project.dll",

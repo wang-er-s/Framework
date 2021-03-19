@@ -1,10 +1,29 @@
 using System;
+using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
 {
+    
+    public struct DownloadProgress
+    {
+        public string DownloadedSize;
+        public string TotalSize;
+        public string DownloadSpeed;
+        public float Progress;
+            
+        public DownloadProgress(string downloadedSize, string totalSize, string downloadSpeed, float progress)
+        {
+            DownloadedSize = downloadedSize;
+            TotalSize = totalSize;
+            DownloadSpeed = downloadSpeed;
+            Progress = progress;
+        }
+    }
+    
     public abstract class Res : IRes
     {
         private static IRes @default;
@@ -23,9 +42,25 @@ namespace Framework.Assets
                 case FrameworkRuntimeConfig.ResType.Addressable:
                     result = new AddressableRes();
                     break;
+                case FrameworkRuntimeConfig.ResType.XAsset:
+                    result = new XAssetRes();
+                    break;
             }
             return result;
         }
+        
+        public IProgressResult<float,Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        {
+            ProgressResult<float,Scene> progressResult = new ProgressResult<float, Scene>();
+            LoadScene(progressResult, path, loadSceneMode);
+            return progressResult;
+        }
+
+        protected abstract void LoadScene(IProgressPromise<float, Scene> promise, string path,
+            LoadSceneMode loadSceneMode);
+        
+        public abstract Task<string> CheckDownloadSize(string key);
+        public abstract Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
         
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
         {
@@ -37,10 +72,9 @@ namespace Framework.Assets
         protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
 
         public IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false,
-            bool trackHandle = true) where T : Component
+            bool instantiateInWorldSpace = false) where T : Component
         {
-            var progress = InstantiateAsync(key, parent, instantiateInWorldSpace, trackHandle);
+            var progress = InstantiateAsync(key, parent, instantiateInWorldSpace);
             ProgressResult<float, T> result = new ProgressResult<float, T>();
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
@@ -48,10 +82,9 @@ namespace Framework.Assets
         }
 
         public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 position, Quaternion rotation,
-            Transform parent = null,
-            bool trackHandle = true) where T : Component
+            Transform parent = null) where T : Component
         {
-            var progress = InstantiateAsync(key, position, rotation, parent, trackHandle);
+            var progress = InstantiateAsync(key, position, rotation, parent);
             ProgressResult<float, T> result = new ProgressResult<float, T>();
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
@@ -59,13 +92,11 @@ namespace Framework.Assets
         }
 
         public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false,
-            bool trackHandle = true);
+            bool instantiateInWorldSpace = false);
 
         public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
             Quaternion rotation,
-            Transform parent = null,
-            bool trackHandle = true);
+            Transform parent = null);
 
         public abstract void Release();
 

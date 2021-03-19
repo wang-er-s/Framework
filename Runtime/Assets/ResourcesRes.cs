@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
@@ -12,6 +13,27 @@ namespace Framework.Assets
 
         private List<Object> _handles = new List<Object>();
         
+        protected override void LoadScene(IProgressPromise<float, Scene> promise, string path, LoadSceneMode loadSceneMode)
+        {
+            throw new NotImplementedException();
+        }
+
+#pragma warning disable 1998
+        public override async Task<string> CheckDownloadSize(string key)
+#pragma warning restore 1998
+        {
+            return "";
+        }
+
+#pragma warning disable 1998
+        public override async Task<IProgressResult<DownloadProgress>> DownloadAssets(string key)
+#pragma warning restore 1998
+        {
+            ProgressResult<DownloadProgress> progressResult = new ProgressResult<DownloadProgress>();
+            progressResult.SetResult();
+            return progressResult;
+        }
+
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
             var operation = Resources.LoadAsync<T>(key);
@@ -25,8 +47,7 @@ namespace Framework.Assets
             _handles.Add(operation.asset);
         }
 
-        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null, bool instantiateInWorldSpace = false,
-            bool trackHandle = true)
+        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null, bool instantiateInWorldSpace = false)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
             progressResult.Callbackable().OnCallback((result =>
@@ -39,14 +60,13 @@ namespace Framework.Assets
             return progressResult;
         }
 
-        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation, Transform parent = null,
-            bool trackHandle = true)
+        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation, Transform parent = null)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
             progressResult.Callbackable().OnCallback((result =>
             {
                 var ins = Object.Instantiate(result.Result);
-                SetTransform(ins, position, rotation, parent, trackHandle);
+                SetTransform(ins, position, rotation, parent);
                 progressResult.SetResult(ins);
             }));
             loadAssetAsync(key, progressResult);
@@ -54,7 +74,7 @@ namespace Framework.Assets
         }
 
         private void SetTransform(GameObject obj, Transform parent = null,
-            bool instantiateInWorldSpace = false, bool trackHandle = true)
+            bool instantiateInWorldSpace = false)
         {
             var trans = obj.transform;
             trans.SetParent(parent, instantiateInWorldSpace);

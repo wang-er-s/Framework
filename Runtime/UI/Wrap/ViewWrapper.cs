@@ -15,6 +15,7 @@ namespace Framework.UI.Wrap
     {
         private readonly Transform _content;
         private readonly View _item;
+        private readonly GameObject _template;
         private int _tag;
         private int _index;
         private IRes _res;
@@ -24,8 +25,11 @@ namespace Framework.UI.Wrap
             _res = new AddressableRes();
             _item =  view;
             _content = root;
+            Log.Assert(_content.childCount == 1 , "_content.childCount 只能有一个");
+            _template = _content.GetChild(0).gameObject;
+            _template.ActiveHide();
             _tag = 0;
-            this._index = index;
+            _index = index;
         }
 
         public void SetTag(int tag)
@@ -62,11 +66,15 @@ namespace Framework.UI.Wrap
             }
         }
 
-        private async void AddItem(int index, ViewModel vm)
+        private void AddItem(int index, ViewModel vm)
         {
-            var view = await UIManager.Ins.CreateView(_item.GetType(), vm);
-            view.Go.transform.SetParent(_content,false);
-            view.Go.transform.SetSiblingIndex(index + 1);
+            var view = ReflectionHelper.CreateInstance(_item.GetType()) as View;
+            var go = Object.Instantiate(_template);
+            go.transform.SetParent(_content);
+            go.transform.SetAsLastSibling();
+            go.ActiveShow();
+            view.SetGameObject(go);
+            view.SetVm(vm);
             view.Show();
             _index = index;
         }

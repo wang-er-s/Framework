@@ -94,7 +94,7 @@ namespace Framework
             return ClassDataMap.Values;
         }
 
-        protected T CreateInstance<T>(I tag, params object[] args) where T : class
+        protected TIns CreateInstance<TIns>(I tag, params object[] args) where TIns : class
         {
             var cd = GetClassData(tag);
             if (cd == null)
@@ -102,7 +102,7 @@ namespace Framework
                 Log.Error("没有找到:", tag, " -");
                 return null;
             }
-            return ReflectionHelper.CreateInstance<T>(cd.Type, args);
+            return ReflectionHelper.CreateInstance<TIns>(cd.Type, args);
         }
     }
 }

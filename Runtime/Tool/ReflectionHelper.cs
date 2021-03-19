@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Framework;
 using Framework.UI.Core;
+using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 
 namespace Tool
@@ -19,11 +20,11 @@ namespace Tool
             }
             else
             {
-                result = (T)Activator.CreateInstance(typeof(T), args);
+                result = (T)Activator.CreateInstance(type, args);
             }
             return result;
         }
-        
+
         public static object CreateInstance(Type type, params object[] args)
         {
             object result;
@@ -37,6 +38,21 @@ namespace Tool
                 result = Activator.CreateInstance(type, args);
             }
             return result;
+        }
+
+        public static Type GetType(object obj)
+        {
+            //如果是继承了主项目的热更的类型
+            if (obj is CrossBindingAdaptorType adaptor)
+            {
+                return adaptor.ILInstance.Type.ReflectionType;
+            }
+            //如果是热更的类型
+            if (obj is ILTypeInstance ilInstance)
+            {
+                return ilInstance.GetType().ReflectedType;
+            }
+            return obj.GetType();
         }
     }
 }

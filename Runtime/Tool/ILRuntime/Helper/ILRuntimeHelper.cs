@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Framework.Assets;
 using Framework.Asynchronous;
 using ILRuntime.Mono.Cecil.Pdb;
@@ -18,7 +19,7 @@ namespace Framework
         private static MemoryStream fs;
         private static MemoryStream pdb;
         
-        public static async void LoadILRuntime()
+        public static async Task LoadILRuntime()
         {
 	        Appdomain = new AppDomain();
 			
@@ -27,22 +28,29 @@ namespace Framework
 	        //开发模式
 	        if (ilrConfig.UseHotFix)
 	        {
-		        var dllPath = Path.Combine(Application.streamingAssetsPath, $"{ilrConfig.DllName}.bytes");
-		        var pdbPath = Path.Combine(Application.streamingAssetsPath, $"{ilrConfig.DllName}.pdb");
-		        // UnityWebRequest www = new UnityWebRequest(dllPath);
-		        // await www.SendWebRequest();
-		        // if (www.isHttpError | www.isNetworkError)
-		        // {
-			       //  Log.Error(www.error);
-		        // }
-		        fs = new MemoryStream(File.ReadAllBytes(dllPath));
-		        // www = new UnityWebRequest(pdbPath);
-		        // await www.SendWebRequest();
-		        // if (www.isHttpError | www.isNetworkError)
-		        // {
-			       //  Log.Error(www.error);
-		        // }
-		        pdb = new MemoryStream(File.ReadAllBytes(pdbPath));
+		        string prefix = String.Empty;
+		        if (Application.platform == RuntimePlatform.OSXEditor ||
+		            Application.platform == RuntimePlatform.WindowsEditor)
+		        {
+			        prefix = "file:///";
+		        }
+
+		        var dllPath = $"{prefix}{Application.streamingAssetsPath}/{ilrConfig.DllName}.dll";
+		        var pdbPath = $"{prefix}{Application.streamingAssetsPath}/{ilrConfig.DllName}.pdb";
+		        UnityWebRequest www = UnityWebRequest.Get(dllPath);
+		        await www.SendWebRequest();
+		        if (www.isHttpError | www.isNetworkError)
+		        {
+			        Log.Error(www.error);
+		        }
+		        fs = new MemoryStream(www.downloadHandler.data);
+		        www = UnityWebRequest.Get(pdbPath);
+		        await www.SendWebRequest();
+		        if (www.isHttpError | www.isNetworkError)
+		        {
+			        Log.Error(www.error);
+		        }
+		        pdb = new MemoryStream(www.downloadHandler.data);
 	        }
 
 	        try
@@ -52,7 +60,6 @@ namespace Framework
 	        catch (Exception e)
 	        {
 		        Log.Error("加载热更DLL错误：\n" , e.Message);
-		        Log.Error("可能是DLL和PDB版本不一致，可能DLL是Release，如果是Release出包，请取消UsePdb选项，本次已跳过使用PDB");
 	        }
 
 #if UNITY_EDITOR
@@ -73,7 +80,7 @@ namespace Framework
             ILRuntimeRedirectHelper.RegisterMethodRedirection(Appdomain);
             ILRuntimeValueTypeBinderHelper.Register(Appdomain);
             ILRuntimeGenericHelper.RegisterGenericFunc();
-            
+
             //初始化CLR绑定请放在初始化的最后一步！！
             //初始化CLR绑定请放在初始化的最后一步！！
             //初始化CLR绑定请放在初始化的最后一步！！

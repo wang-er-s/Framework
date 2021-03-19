@@ -4,13 +4,12 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEngine;
-using UnityIO;
 
 namespace Framework.Editor
 {
     public static class GenAddressablePath
     {
-        private static string GenPath => Path.Combine(IO.Root.path, "_Scripts/Base/ResPath.cs");
+        private static string GenPath => Path.Combine(FApplication.AssetsRoot, "_Scripts/Base/ResPath.cs");
         private const string LabPre = "lab";
 
         [MenuItem("Tools/生成资源地址")]

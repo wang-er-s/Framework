@@ -104,7 +104,7 @@ namespace Framework.UI.Core
                 promise.SetResult(view);
                 yield break;
             }
-            view = ReflectionHelper.CreateInstance(type) as View;
+            view = ReflectionHelper.CreateInstance<View>(type);
             var path = (GetClassData(type).Attribute as UIAttribute).Path;
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)

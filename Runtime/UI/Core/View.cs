@@ -6,6 +6,7 @@ using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
 using Framework.UI.Core.Bind;
+using Tool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -51,18 +52,19 @@ namespace Framework.UI.Core
 
         private void SetComponent()
         {
-            if (!_type2TransPath.TryGetValue(GetType(), out var paths))
+            var type = ReflectionHelper.GetType(this);
+            if (!_type2TransPath.TryGetValue(type, out var paths))
             {
                 paths = new List<Tuple<FieldInfo, string>>();
-                var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
                 foreach (var fieldInfo in fields)
                 {
-                    var path = fieldInfo.GetCustomAttribute<TransformPath>();
-                    if (path != null)
+                    var attributes = fieldInfo.GetCustomAttributes(typeof(TransformPath), false);
+                    if (attributes.Length <= 0)
                     {
-                        paths.Add(new Tuple<FieldInfo, string>(fieldInfo, path.Path));
-                        
+                        continue;
                     }
+                    paths.Add(new Tuple<FieldInfo, string>(fieldInfo, ((TransformPath)attributes[0]).Path));
                 }
             }
             foreach (var tuple in paths)
@@ -75,9 +77,9 @@ namespace Framework.UI.Core
                     }
                     else
                     {
-                        tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType));
+                        //热更IlRuntimeFieldInfo中的FieldType是ILRuntimeWrapperType类型，直接get unity会蹦掉
+                        tuple.Item1.SetValue(this, Go.transform.Find(tuple.Item2).GetComponent(tuple.Item1.FieldType.Name));
                     }
-                    this.Msg(tuple.Item2,"1111");
                 }
                 catch (Exception e)
                 {

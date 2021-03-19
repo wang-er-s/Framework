@@ -9,68 +9,19 @@ using Framework.Execution;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 
 namespace Framework.Assets
 {
     public class AddressableRes : Res
     {
-        #region static
-
-        private const string DYNAMIC_TAG = "lab_dynamic";
         private static bool initialized = false;
 
-        public static void UnloadUnusedAssets()
-        {
-            var per = typeof(Addressables).GetProperty("Instance", BindingFlags.Static | BindingFlags.NonPublic);
-            var obj = per.GetValue(null);
-            Dictionary<object, AsyncOperationHandle> dic =
-                obj.GetType().GetField("m_resultToHandle", BindingFlags.Instance | BindingFlags.NonPublic)
-                        .GetValue(obj) as
-                    Dictionary<object, AsyncOperationHandle>;
-            var operations = dic.Values.ToList();
-            for (int i = 0; i < operations.Count; i++)
-            {
-                try
-                {
-                    Addressables.Release(operations[i]);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
-
-        public static async Task<string> CheckDownloadSize()
-        {
-            var list = await Addressables.LoadResourceLocationsAsync(DYNAMIC_TAG);
-            if (list.Count <= 0) return string.Empty;
-            //判断有没有需要动态加载的资源
-            var size = await Addressables.GetDownloadSizeAsync(DYNAMIC_TAG);
-            if (size <= 0) return String.Empty;
-            var kb = size / 1024;
-            if (kb < 1024)
-                return $"{kb}kb";
-            return $"{kb / 1024:.00}mb";
-        }
-
-        private static void CheckHaveDynamicAsset()
-        {
-            Addressables.LoadResourceLocationsAsync(DYNAMIC_TAG);
-        }
-
-        public static IProgressResult<float> DownloadNewAssets()
-        {
-            ProgressResult<float> progressResult = new ProgressResult<float>();
-            var operation = Addressables.DownloadDependenciesAsync(DYNAMIC_TAG);
-            Executors.RunOnCoroutineNoReturn(Download(progressResult, operation));            
-            return progressResult;
-        }
-
-        static IEnumerator Download(IProgressPromise<float> promise, AsyncOperationHandle handle)
+        static IEnumerator Download(IProgressPromise<DownloadProgress> promise, AsyncOperationHandle handle)
         {
             while (!handle.IsDone)
             {
-                promise.UpdateProgress(handle.PercentComplete);
+                promise.UpdateProgress(new DownloadProgress("", "", "", handle.PercentComplete));
                 yield return null;
                 if(handle.OperationException != null)
                     promise.SetException(handle.OperationException);
@@ -79,10 +30,46 @@ namespace Framework.Assets
             promise.SetResult();
         }
 
-        #endregion
-
         private static Type MonoType = typeof(MonoBehaviour);
         private List<AsyncOperationHandle> _handles = new List<AsyncOperationHandle>();
+
+        public override async Task<string> CheckDownloadSize(string key)
+        {
+            var list = await Addressables.LoadResourceLocationsAsync(key);
+            if (list.Count <= 0) return string.Empty;
+            //判断有没有需要动态加载的资源
+            var size = await Addressables.GetDownloadSizeAsync(key);
+            if (size <= 0) return String.Empty;
+            var kb = size / 1024;
+            if (kb < 1024)
+                return $"{kb}kb";
+            return $"{kb / 1024:.00}mb";
+        }
+        
+
+        protected override async void LoadScene(IProgressPromise<float, Scene> promise,string path, LoadSceneMode loadSceneMode)
+        {
+            var loader = Addressables.LoadSceneAsync(path, loadSceneMode);
+            while (!loader.IsDone)
+            {
+                await Task.Yield();
+                promise.UpdateProgress(loader.PercentComplete);
+            }
+            
+            promise.UpdateProgress(1);
+            promise.SetResult(loader.Result.Scene);
+        }
+
+
+#pragma warning disable 1998
+        public override async Task<IProgressResult<DownloadProgress>> DownloadAssets(string key)
+#pragma warning restore 1998
+        {
+            ProgressResult<DownloadProgress> progressResult = new ProgressResult<DownloadProgress>();
+            var operation = Addressables.DownloadDependenciesAsync(key);
+            Executors.RunOnCoroutineNoReturn(Download(progressResult, operation));            
+            return progressResult;
+        }
 
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
@@ -104,18 +91,18 @@ namespace Framework.Assets
         }
 
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false, bool trackHandle = true)
+            bool instantiateInWorldSpace = false)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            instantiateAsync(getOperation(key, parent, instantiateInWorldSpace, trackHandle), progressResult);
+            instantiateAsync(getOperation(key, parent, instantiateInWorldSpace), progressResult);
             return progressResult;
         }
 
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation,
-            Transform parent = null, bool trackHandle = true)
+            Transform parent = null)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            instantiateAsync(getOperation(key, position, rotation, parent, trackHandle), progressResult);
+            instantiateAsync(getOperation(key, position, rotation, parent), progressResult);
             return progressResult;
         }
 
@@ -126,9 +113,9 @@ namespace Framework.Assets
         }
 
         private AsyncOperationHandle<GameObject> getOperation(object key, Vector3 position, Quaternion rotation,
-            Transform parent = null, bool trackHandle = true)
+            Transform parent = null)
         {
-            return Addressables.InstantiateAsync(key, position, rotation, parent, trackHandle);
+            return Addressables.InstantiateAsync(key, position, rotation, parent);
         }
 
         private async void instantiateAsync(AsyncOperationHandle<GameObject> operation,

@@ -33,6 +33,8 @@ namespace Framework
                     ((Action<System.Object>)act)(obj);
                 });
             });
+            appdomain.DelegateManager
+                .RegisterMethodDelegate<Asynchronous.IProgressResult<System.Single, System.String>>();
         }
     }
 }

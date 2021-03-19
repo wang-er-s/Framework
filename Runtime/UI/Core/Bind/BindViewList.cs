@@ -26,23 +26,11 @@ namespace Framework.UI.Core.Bind
 
         private void InitCpntValue()
         {
-            int childCount = _content.childCount;
             for (var i = 0; i < _list.Count; i++)
             {
                 var vm = _list[i];
-                if(i < childCount)
-                {
-                    var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
-                    if (view == null || _views.Contains(view)) continue;
-                    view.SetGameObject(_content.GetChild(i).gameObject);
-                    view.SetVm(vm);
-                    _views.Add(view);
-                }
-                else
-                {
-                    _wrappers.ForEach((wrapper) =>
-                        ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
-                }
+                _wrappers.ForEach((wrapper) =>
+                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
             }
         }
 
@@ -53,7 +41,7 @@ namespace Framework.UI.Core.Bind
             for (int i = 0; i < childCount; i++)
             {
                 var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
-                var wrapper = new ViewWrapper(view, _content);
+                var wrapper = new ViewWrapper(view, _content,i);
                 wrapper.SetTag(i);
                 _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
                 _wrappers.Add(wrapper);
