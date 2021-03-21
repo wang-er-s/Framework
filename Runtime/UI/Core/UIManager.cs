@@ -46,9 +46,9 @@ namespace Framework.UI.Core
         private Dictionary<Type, View> _openedViews = new Dictionary<Type, View>();
         private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
 
-        public IProgressResult<float, T> OpenAsync<T>(ViewModel viewModel = null) where T : View
+        public IProgressResult<float, View> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
-            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            ProgressResult<float, View> result = new ProgressResult<float, View>();
             InternalOpen(typeof(T), result, viewModel);
             return result;
         }

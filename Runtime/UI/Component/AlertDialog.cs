@@ -141,7 +141,7 @@ namespace Framework.Runtime.UI.Component
             viewModel.Click = clickCallback;
             
             UIManager locator = GetUIViewLocator();
-            AlertDialogView window = await locator.OpenAsync<AlertDialogView>();
+            AlertDialogView window = (await locator.OpenAsync<AlertDialogView>()) as AlertDialogView;
             AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
             dialog.Show();
             return window;
@@ -160,7 +160,7 @@ namespace Framework.Runtime.UI.Component
             try
             {
                 UIManager locator = GetUIViewLocator();
-                view = await locator.OpenAsync<AlertDialogView>();
+                view = await locator.OpenAsync<AlertDialogView>() as AlertDialogView;
                 AlertDialog dialog = new AlertDialog(view, null, viewModel);
                 dialog.Show();
                 return dialog;

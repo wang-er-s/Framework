@@ -187,7 +187,7 @@ namespace Framework.UI.Core
 
         public void Close()
         {
-            UIManager.Ins.Close(GetType());
+            UIManager.Ins.Close(ReflectionHelper.GetType(this));
         }
 
         protected abstract void OnVmChange();

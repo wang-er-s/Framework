@@ -21,7 +21,7 @@ namespace Framework.Runtime.UI.Component
         public static async Task<Toast> Show(string text, float duration = 3f, Action callback = null)
         {
             UIManager locator = GetUIViewLocator();
-            ToastView view = await locator.OpenAsync<ToastView>();
+            ToastView view = (await locator.OpenAsync<ToastView>()) as ToastView;
             if (view == null)
                 throw new FileNotFoundException("Not found the \"ToastView\".");
 
