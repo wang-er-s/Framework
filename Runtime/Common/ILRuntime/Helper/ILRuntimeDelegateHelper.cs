@@ -35,6 +35,8 @@ namespace Framework
             });
             appdomain.DelegateManager
                 .RegisterMethodDelegate<Asynchronous.IProgressResult<System.Single, System.String>>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean>();
+
         }
     }
 }

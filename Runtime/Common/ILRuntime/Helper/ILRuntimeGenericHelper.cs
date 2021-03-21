@@ -1,5 +1,4 @@
 using Framework.Asynchronous;
-using Framework.UI.Core;
 using UnityEngine.Events;
 
 namespace Framework
@@ -10,7 +9,7 @@ namespace Framework
         {
             ILRuntimeHelper.Appdomain.GetType(typeof(IAsyncResult<object>));
             ILRuntimeHelper.Appdomain.GetType(typeof(UnityEvent<object>));
-            ILRuntimeHelper.Appdomain.GetType(typeof(ProgressResult<float, View>));
+            ILRuntimeHelper.Appdomain.GetType(typeof(ProgressResult<object, object>));
         }
     }
 }

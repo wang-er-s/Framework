@@ -31,7 +31,7 @@ namespace Framework
             
             foreach (MethodInfo methodInfo in typeof(UIManager).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (methodInfo.Name == "OpenAsync")
+                if (methodInfo.Name == "OpenAsync" && methodInfo.IsGenericMethod)
                 {
                     appdomain.RegisterCLRMethodRedirection(methodInfo, UIOpenAsync);
                 }else if (methodInfo.Name == "Close" && methodInfo.IsGenericMethod)
@@ -106,18 +106,26 @@ namespace Framework
             object vm = StackObject.ToObject(ptr_of_this_method, __domain, __mStack);
             __intp.Free(ptr_of_this_method);
             //load只能有一个泛型
+            string stackTrace = __domain.DebugService.GetStackTrace(__intp);
             if (genericArguments != null && genericArguments.Length == 1)
             {
-                var t = genericArguments[0];
-                if (t is ILType)//如果T是热更DLL里的类型
+                try
                 {
-                    var result = UIManager.Ins.OpenAsync(t.ReflectionType, (ViewModel) vm);
-                    return ILIntepreter.PushObject(__ret, __mStack, result);
+                    var t = genericArguments[0];
+                    if (t is ILType) //如果T是热更DLL里的类型
+                    {
+                        var result = UIManager.Ins.OpenAsync(t.ReflectionType, (ViewModel) ((ILTypeInstance) vm)?.CLRInstance);
+                        return ILIntepreter.PushObject(__ret, __mStack, result);
+                    }
+                    else
+                    {
+                        var result = UIManager.Ins.OpenAsync(t.TypeForCLR, (ViewModel) vm);
+                        return ILIntepreter.PushObject(__ret, __mStack, result);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    var result = UIManager.Ins.OpenAsync(t.TypeForCLR, (ViewModel) vm);
-                    return ILIntepreter.PushObject(__ret, __mStack, result);
+                    Log.Error(e, stackTrace);
                 }
             }
 
@@ -134,9 +142,17 @@ namespace Framework
             //close只能有一个泛型
             if (genericArguments != null && genericArguments.Length == 1)
             {
-                var t = genericArguments[0];
-                var result = UIManager.Ins.Get(t is ILType ? t.ReflectionType : t.TypeForCLR);
-                return ILIntepreter.PushObject(__ret, __mStack, result);
+                string stackTrace = __domain.DebugService.GetStackTrace(__intp);
+                try
+                {
+                    var t = genericArguments[0];
+                    var result = UIManager.Ins.Get(t is ILType ? t.ReflectionType : t.TypeForCLR);
+                    return ILIntepreter.PushObject(__ret, __mStack, result);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, stackTrace);
+                }
             }
 
             return __ret;
@@ -152,8 +168,16 @@ namespace Framework
             //close只能有一个泛型
             if (genericArguments != null && genericArguments.Length == 1)
             {
-                var t = genericArguments[0];
-                UIManager.Ins.Close(t is ILType ? t.ReflectionType : t.TypeForCLR);
+                string stackTrace = __domain.DebugService.GetStackTrace(__intp);
+                try
+                {
+                    var t = genericArguments[0];
+                    UIManager.Ins.Close(t is ILType ? t.ReflectionType : t.TypeForCLR);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, stackTrace);
+                }
             }
 
             return __ret;

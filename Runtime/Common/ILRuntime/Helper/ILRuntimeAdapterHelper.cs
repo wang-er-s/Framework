@@ -15,15 +15,7 @@ namespace Framework
                 _adaptors.Add(t);
         }
 
-        private static List<Type> _adaptors = new List<Type>()
-        {
-            typeof(CoroutineAdapter),
-            typeof(IDomainAdapter),
-            typeof(IAsyncStateMachineAdaptor),
-            typeof(ViewAdapter),
-            typeof(ViewModelAdapter),
-            typeof(ExceptionAdapter)
-        };
+        private static List<Type> _adaptors = new List<Type>();
 
         public static void RegisterCrossBindingAdaptor(AppDomain appdomain)
         {
