@@ -8,7 +8,7 @@ namespace Framework.Editor
     [Serializable]
     public class ILRuntimeCLRBinding
     {
-        [Button("生成CLR绑定[不知道干嘛别点！]")]
+        [Button("生成CLR绑定[不知道干嘛别点！]", ButtonSizes.Large)]
         public static void GenerateCLRBindingByAnalysis()
         {
             if(!EditorUtility.DisplayDialog("注意", "确定要生成吗", "我很清楚后果", "不敢")) return;

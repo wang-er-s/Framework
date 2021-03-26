@@ -33,8 +33,10 @@ namespace Framework.UI.Core
 
         public override void CheckType(Type type)
         {
-            var attr = type.GetCustomAttribute<UIAttribute>();
             
+            var attrs = type.GetCustomAttributes(typeof(UIAttribute), false);
+            if (attrs.Length <= 0) return;
+            var attr = (UIAttribute)attrs[0];
             if (attr != null)
             {
                 ClassDataMap[type] = new ClassData {Attribute = attr, Type = type};

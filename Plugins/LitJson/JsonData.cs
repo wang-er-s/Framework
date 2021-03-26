@@ -73,16 +73,6 @@ namespace LitJson
         public ICollection<string> Keys {
             get { EnsureDictionary (); return inst_object.Keys; }
         }
-        
-        /// <summary>
-        /// Determines whether the json contains an element that has the specified key.
-        /// </summary>
-        /// <param name="key">The key to locate in the json.</param>
-        /// <returns>true if the json contains an element that has the specified key; otherwise, false.</returns>
-        public Boolean ContainsKey(String key) {
-            EnsureDictionary();
-            return this.inst_object.Keys.Contains(key);
-        }
         #endregion
 
 
@@ -376,8 +366,8 @@ namespace LitJson
                 return;
             }
 
-            throw new ArgumentException(
-                "Unable to wrap the given object with JsonData --" + obj.GetType().Name);
+            throw new ArgumentException (
+                "Unable to wrap the given object with JsonData");
         }
 
         public JsonData (string str)
@@ -435,27 +425,22 @@ namespace LitJson
             return data.inst_double;
         }
 
-       public static explicit operator Int32(JsonData data)
+        public static explicit operator Int32 (JsonData data)
         {
-            if (data.type != JsonType.Int && data.type != JsonType.Long)
-            {
-                throw new InvalidCastException(
+            if (data.type != JsonType.Int)
+                throw new InvalidCastException (
                     "Instance of JsonData doesn't hold an int");
-            }
 
-            // cast may truncate data... but that's up to the user to consider
-            return data.type == JsonType.Int ? data.inst_int : (int)data.inst_long;
+            return data.inst_int;
         }
 
-        public static explicit operator Int64(JsonData data)
+        public static explicit operator Int64 (JsonData data)
         {
-            if (data.type != JsonType.Long && data.type != JsonType.Int)
-            {
-                throw new InvalidCastException(
-                    "Instance of JsonData doesn't hold a long");
-            }
+            if (data.type != JsonType.Long)
+                throw new InvalidCastException (
+                    "Instance of JsonData doesn't hold an int");
 
-            return data.type == JsonType.Long ? data.inst_long : data.inst_int;
+            return data.inst_long;
         }
 
         public static explicit operator String (JsonData data)
@@ -819,25 +804,6 @@ namespace LitJson
             return EnsureList ().Add (data);
         }
 
-        public bool Remove(object obj)
-        {
-            json = null;
-            if(IsObject)
-            {
-                JsonData value = null;
-                if (inst_object.TryGetValue((string)obj, out value))
-                    return inst_object.Remove((string)obj) && object_list.Remove(new KeyValuePair<string, JsonData>((string)obj, value));
-                else
-                    throw new KeyNotFoundException("The specified key was not found in the JsonData object.");
-            }
-            if(IsArray)
-            {
-                return inst_array.Remove(ToJsonData(obj));
-            }
-            throw new InvalidOperationException (
-                    "Instance of JsonData is not an object or a list.");
-        }
-
         public void Clear ()
         {
             if (IsObject) {
@@ -857,14 +823,7 @@ namespace LitJson
                 return false;
 
             if (x.type != this.type)
-            {
-                // further check to see if this is a long to int comparison
-                if ((x.type != JsonType.Int && x.type != JsonType.Long)
-                    || (this.type != JsonType.Int && this.type != JsonType.Long))
-                {
-                    return false;
-                }
-            }
+                return false;
 
             switch (this.type) {
             case JsonType.None:
@@ -880,26 +839,10 @@ namespace LitJson
                 return this.inst_string.Equals (x.inst_string);
 
             case JsonType.Int:
-            {
-                if (x.IsLong)
-                {
-                    if (x.inst_long < Int32.MinValue || x.inst_long > Int32.MaxValue)
-                        return false;
-                    return this.inst_int.Equals((int)x.inst_long);
-                }
-                return this.inst_int.Equals(x.inst_int);
-            }
+                return this.inst_int.Equals (x.inst_int);
 
             case JsonType.Long:
-            {
-                if (x.IsInt)
-                {
-                    if (this.inst_long < Int32.MinValue || this.inst_long > Int32.MaxValue)
-                        return false;
-                    return x.inst_int.Equals((int)this.inst_long);
-                }
-                return this.inst_long.Equals(x.inst_long);
-            }
+                return this.inst_long.Equals (x.inst_long);
 
             case JsonType.Double:
                 return this.inst_double.Equals (x.inst_double);
@@ -914,6 +857,90 @@ namespace LitJson
         public JsonType GetJsonType ()
         {
             return type;
+        }
+        
+        public object ToObject(Type newType)
+        {
+
+            if (newType.IsArray)
+            {
+                var item = Activator.CreateInstance(newType);
+                Type array_element_type = item.GetType().GetGenericArguments()[0];
+                Type array_type = typeof(List<>).MakeGenericType(array_element_type);
+                IList responseList = (IList) System.Activator.CreateInstance(array_type);
+                for (int i = 0; i < inst_array.Count; i++)
+                {
+                    var cListElement = inst_array[i].ToObject(array_element_type);
+                    responseList.Add(cListElement);
+                }
+                return responseList;
+            }
+            if (newType == typeof(bool))
+                return inst_boolean;
+
+            if (newType == typeof(double))
+                return inst_double;
+
+            if (newType == typeof(float))
+                return float.Parse(ToString());
+
+            if (newType == typeof(int))
+                return inst_int;
+
+            if (newType == typeof(long))
+                return inst_long;
+
+            if (newType == typeof(string))
+                return inst_string;
+
+            if (newType.IsEnum)
+                return Enum.Parse(newType, ToString());
+
+
+            {
+                object response = null;
+                try
+                {
+                    response = Activator.CreateInstance(newType);
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogError("not support parse type " + newType.Name);
+                    UnityEngine.Debug.LogError(e);
+                    return null;
+                }
+
+                if (newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    Type dictionary_element_type = response.GetType().GetGenericArguments()[1];
+                    foreach (KeyValuePair<string, JsonData> element in inst_object)
+                    {
+                        ((IDictionary) response).Add(element.Key, element.Value.ToObject(dictionary_element_type));
+                    }
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, JsonData> element in inst_object)
+                    {
+                        System.Reflection.PropertyInfo cProp = response.GetType().GetProperty(element.Key);
+                        if (cProp != null)
+                        {
+                            cProp.SetValue(response,
+                                element.Value?.ToObject(cProp.PropertyType), null);
+                        }
+                        else
+                        {
+                            System.Reflection.FieldInfo filed = response.GetType().GetField(element.Key);
+                            if (filed != null)
+                            {
+                                filed.SetValue(response, element.Value.ToObject(filed.FieldType));
+                            }
+                        }
+                    }
+                }
+                return response;
+            }
+            
         }
 
         public void SetJsonType (JsonType type)
@@ -1010,89 +1037,6 @@ namespace LitJson
             }
 
             return "Uninitialized JsonData";
-        }
-        
-        public object ToObject(Type newType)
-        {
-
-            if (newType.IsArray)
-            {
-                var item = Activator.CreateInstance(newType);
-                Type array_element_type = item.GetType().GetGenericArguments()[0];
-                Type array_type = typeof(List<>).MakeGenericType(array_element_type);
-                IList responseList = (IList) System.Activator.CreateInstance(array_type);
-                for (int i = 0; i < inst_array.Count; i++)
-                {
-                    var cListElement = inst_array[i].ToObject(array_element_type);
-                    responseList.Add(cListElement);
-                }
-                return responseList;
-            }
-            if (newType == typeof(bool))
-                return inst_boolean;
-
-            if (newType == typeof(double))
-                return inst_double;
-
-            if (newType == typeof(float))
-                return float.Parse(ToString());
-
-            if (newType == typeof(int))
-                return inst_int;
-
-            if (newType == typeof(long))
-                return inst_long;
-
-            if (newType == typeof(string))
-                return inst_string;
-
-            if (newType.IsEnum)
-                return Enum.Parse(newType, ToString());
-
-
-            {
-                object response = null;
-                try
-                {
-                    response = Activator.CreateInstance(newType);
-                }
-                catch (Exception e)
-                {
-                    UnityEngine.Debug.LogError("not support parse type " + newType.Name);
-                    UnityEngine.Debug.LogError(e);
-                    return null;
-                }
-
-                if (newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
-                {
-                    Type dictionary_element_type = response.GetType().GetGenericArguments()[1];
-                    foreach (KeyValuePair<string, JsonData> element in inst_object)
-                    {
-                        ((IDictionary) response).Add(element.Key, element.Value.ToObject(dictionary_element_type));
-                    }
-                }
-                else
-                {
-                    foreach (KeyValuePair<string, JsonData> element in inst_object)
-                    {
-                        System.Reflection.PropertyInfo cProp = response.GetType().GetProperty(element.Key);
-                        if (cProp != null)
-                        {
-                            cProp.SetValue(response, element.Value.ToObject(cProp.PropertyType), null);
-                        }
-                        else
-                        {
-                            System.Reflection.FieldInfo filed = response.GetType().GetField(element.Key);
-                            if (filed != null)
-                            {
-                                filed.SetValue(response, element.Value.ToObject(filed.FieldType));
-                            }
-                        }
-                    }
-                }
-                return response;
-            }
-            
         }
     }
 

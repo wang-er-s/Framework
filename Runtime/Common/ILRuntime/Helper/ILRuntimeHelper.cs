@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Framework.Assets;
 using Framework.Asynchronous;
 using ILRuntime.Mono.Cecil.Pdb;
+using ILRuntime.Runtime.Intepreter;
 using UnityEngine;
 using UnityEngine.Networking;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
@@ -80,6 +81,7 @@ namespace Framework
             ILRuntimeRedirectHelper.RegisterMethodRedirection(Appdomain);
             ILRuntimeValueTypeBinderHelper.Register(Appdomain);
             ILRuntimeGenericHelper.RegisterGenericFunc();
+            LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(Appdomain);
 
             //初始化CLR绑定请放在初始化的最后一步！！
             //初始化CLR绑定请放在初始化的最后一步！！
@@ -107,7 +109,7 @@ namespace Framework
 
 	        return hotfixTypeList;
         }
-        
+
         public static void Dispose()
         {
 	        fs?.Close();

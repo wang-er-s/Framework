@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Sirenix.Utilities;
 using Tool;
@@ -50,16 +51,19 @@ namespace Framework
         }
 
         private PropertyInfo _indexProperty;
+        private BindingFlags _flags = BindingFlags.Instance | BindingFlags.Public;
         
         public virtual void CheckType(Type type)
         {
-            var attr = type.GetCustomAttribute<V>();
-            
+            var attrs = type.GetCustomAttributes(typeof(V), false);
+            if(attrs.Length <= 0) return;
+            Log.Assert(attrs.Length == 1, $"{type.Name} has mul attribute {typeof(V)}");
+            var attr = (V) attrs[0];
             if (attr != null)
             {
                 if (_indexProperty == null)
                 {
-                    _indexProperty = typeof(V).GetProperty(attr.IndexName);
+                    _indexProperty = typeof(V).GetProperty(attr.IndexName, _flags);
                 }
                 ClassDataMap[(I)_indexProperty.GetValue(attr)] = new ClassData {Attribute = attr, Type = type};
             }

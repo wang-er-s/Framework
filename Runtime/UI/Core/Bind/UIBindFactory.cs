@@ -13,6 +13,15 @@ namespace Framework.UI.Core.Bind
             var bind = new BindViewList<TItemVm, TItemView>(list,root);
             Binds.Add(bind);
         }
+        
+        /// <summary>
+        /// 用在热更的BindView
+        /// </summary>
+        public void BindViewList(ObservableList<ViewModelAdapter.Adapter> list,Transform root, Type view)
+        {
+            var bind = new BindViewList<ViewModelAdapter.Adapter>(list, root, view);
+            Binds.Add(bind);
+        }
 
         public void BindIpairs<TItemVm, TItemView>
             (ObservableList<TItemVm> list, Transform root, string pattern) where TItemVm : ViewModel

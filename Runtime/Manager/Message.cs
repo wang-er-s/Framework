@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Tool;
 
 namespace Framework.MessageCenter
 {
@@ -85,7 +86,7 @@ namespace Framework.MessageCenter
         /// <param name="val"></param>
         public void Unregister<T>(T val) where T : class
         {
-            var type = val.GetType();
+            var type = ReflectionHelper.GetType(val);
             if (!_classType2Methods.TryGetValue(type, out var methods))
             {
                 return;
@@ -146,7 +147,7 @@ namespace Framework.MessageCenter
 
         public void Register<T>(T val)
         {
-            var type = typeof(T);
+            var type = ReflectionHelper.GetType(val);
             
             if (_subscribeInstance2Methods.ContainsKey(val))
             {
@@ -181,7 +182,7 @@ namespace Framework.MessageCenter
             }
         }
 
-        public void Register<T, ParaT>(T val, MethodInfo method) where T : class
+        public void Register<T>(T val, MethodInfo method) where T : class
         {
             var paraStr = string.Join(",", method.GetParameters().Select((para) => para.ParameterType));
             var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), false);

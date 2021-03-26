@@ -37,5 +37,9 @@ namespace Framework
 
 		[LabelText("是否自动编译热更dll")]
 		public bool AutoCompile;
+
+		[FolderPath(AbsolutePath = false)]
+		[LabelText("生成适配器地址")]
+		public string AdaptorPath;
 	}
 }

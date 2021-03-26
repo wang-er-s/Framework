@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using Framework;
 using Framework.UI.Core;
+using ILRuntime.CLR.TypeSystem;
+using ILRuntime.Reflection;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 
@@ -50,9 +52,18 @@ namespace Tool
             //如果是热更的类型
             if (obj is ILTypeInstance ilInstance)
             {
-                return ilInstance.GetType().ReflectedType;
+                return ilInstance.Type.ReflectionType;
             }
             return obj.GetType();
+        }
+
+        public static Type GetType(Type type)
+        {
+            if (type is ILRuntimeType)
+            {
+                return type;
+            }
+            return type;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Framework
                 this.instance = instance;
             }
 
-            public ILTypeInstance ILInstance { get { return instance; } }
+            public ILTypeInstance ILInstance => instance;
 
             protected override void Start()
             {

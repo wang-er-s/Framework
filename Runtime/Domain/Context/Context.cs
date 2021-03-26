@@ -114,7 +114,7 @@ namespace Framework.Contexts
 
         public virtual T Get<T>(bool cascade = true)
         {
-            return Get<T>(typeof(T).Name);
+            return Get<T>(typeof(T).Name, cascade);
         }
         
         public virtual T Get<T>(string name, bool cascade = true)
@@ -131,17 +131,12 @@ namespace Framework.Contexts
 
         public virtual void Set(string name, object value)
         {
-            this.Set<object>(name, value);
+            this._attributes[name] = value;
         }
 
         public virtual void Set<T>(T value)
         {
             Set(typeof(T).Name, value);
-        }
-
-        public virtual void Set<T>(string name, T value)
-        {
-            this._attributes[name] = value;
         }
 
         public virtual object Remove(string name)

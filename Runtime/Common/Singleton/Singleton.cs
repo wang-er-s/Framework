@@ -1,4 +1,5 @@
 using System;
+using Tool;
 
 namespace Framework
 {
@@ -18,7 +19,7 @@ namespace Framework
 					{
 						lock ( locker )
 						{
-							instance = Activator.CreateInstance<T>();
+							instance = ReflectionHelper.CreateInstance<T>(typeof(T));
 						}
 					}
 				}

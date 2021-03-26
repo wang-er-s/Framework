@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
@@ -41,6 +42,59 @@ namespace Framework.UI.Core.Bind
             for (int i = 0; i < childCount; i++)
             {
                 var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+                var wrapper = new ViewWrapper(view, _content,i);
+                wrapper.SetTag(i);
+                _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
+                _wrappers.Add(wrapper);
+            }
+        }
+
+        public override void ClearBind()
+        {
+            _list.ClearListener();
+        }
+    }
+    
+    public class BindViewList<TVm> : BaseBind where TVm : ViewModel
+    {
+        private Transform _content;
+        private List<View> _views;
+        private readonly ObservableList<TVm> _list;
+        private List<ViewWrapper> _wrappers;
+        private Type _viewType;
+
+        public BindViewList(ObservableList<TVm> list, Transform root, Type view)
+        {
+            if (!view.IsSubclassOf(typeof(View)))
+            {
+                Log.Error(view,"no subclass of View");
+                return;
+            }
+            _viewType = view;
+            _views = new List<View>();
+            _content = root;
+            _list = list;
+            InitEvent();
+            InitCpntValue(); 
+        }
+
+        private void InitCpntValue()
+        {
+            for (var i = 0; i < _list.Count; i++)
+            {
+                var vm = _list[i];
+                _wrappers.ForEach((wrapper) =>
+                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
+            }
+        }
+
+        private void InitEvent()
+        {
+            int childCount = _content.childCount;
+            _wrappers = new List<ViewWrapper>(childCount);
+            for (int i = 0; i < childCount; i++)
+            {
+                var view = ReflectionHelper.CreateInstance(_viewType) as View;
                 var wrapper = new ViewWrapper(view, _content,i);
                 wrapper.SetTag(i);
                 _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());

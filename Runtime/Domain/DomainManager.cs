@@ -28,7 +28,7 @@ namespace Framework
         {
             BeginNavTo(_defaultScreenTag);
         }
-
+        
         private void RegisterScreen(IDomain domain)
         {
             _allDomains.Add(domain.Name, domain);

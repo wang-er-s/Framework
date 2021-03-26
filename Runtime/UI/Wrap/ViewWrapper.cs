@@ -68,7 +68,7 @@ namespace Framework.UI.Wrap
 
         private void AddItem(int index, ViewModel vm)
         {
-            var view = ReflectionHelper.CreateInstance(_item.GetType()) as View;
+            var view = ReflectionHelper.CreateInstance(ReflectionHelper.GetType(_item)) as View;
             var go = Object.Instantiate(_template);
             go.transform.SetParent(_content);
             go.transform.SetAsLastSibling();

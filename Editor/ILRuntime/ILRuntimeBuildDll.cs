@@ -19,14 +19,14 @@ namespace Framework.Editor
     public class ILRuntimeBuildDll
     {
         [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Debug)",ButtonSizes.Medium)]
+        [Button("编译dll(Roslyn-Debug)",ButtonSizes.Large)]
         public static void DebugBuild()
         {
             BuildDLL(true);
         }
 
         [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Release)",ButtonSizes.Medium)]
+        [Button("编译dll(Roslyn-Release)",ButtonSizes.Large)]
         public  static void ReleaseBuild()
         {
             BuildDLL(false);
