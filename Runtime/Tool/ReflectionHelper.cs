@@ -10,11 +10,12 @@ using ILRuntime.Runtime.Intepreter;
 
 namespace Tool
 {
-    public class ReflectionHelper
+    public static class ReflectionHelper
     {
         private const string IlRuntimeDllName = "ILRuntime";
-        public static T CreateInstance<T>(Type type, params object[] args)
+        public static T CreateInstance<T>(params object[] args)
         {
+            var type = typeof(T).GetCLRType();
             T result;
             if (type.Assembly.GetName().Name == IlRuntimeDllName)
             {
@@ -42,7 +43,7 @@ namespace Tool
             return result;
         }
 
-        public static Type GetType(object obj)
+        public static Type GetCLRType(this object obj)
         {
             //如果是继承了主项目的热更的类型
             if (obj is CrossBindingAdaptorType adaptor)
@@ -57,12 +58,12 @@ namespace Tool
             return obj.GetType();
         }
 
-        public static Type GetType(Type type)
+        public static Type GetCLRType(this Type type)
         {
-            if (type is ILRuntimeType)
-            {
-                return type;
-            }
+            if (type is ILRuntimeType runtimeType)
+                return runtimeType.ILType.ReflectionType;
+            if (type is ILRuntimeWrapperType wrapperType)
+                return wrapperType.RealType;
             return type;
         }
     }

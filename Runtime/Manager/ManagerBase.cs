@@ -106,7 +106,7 @@ namespace Framework
                 Log.Error("没有找到:", tag, " -");
                 return null;
             }
-            return ReflectionHelper.CreateInstance<TIns>(cd.Type, args);
+            return ReflectionHelper.CreateInstance(cd.Type, args) as TIns;
         }
     }
 }

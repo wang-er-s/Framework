@@ -61,6 +61,9 @@ namespace Framework
                 }
             }
 
+            var addSubView = typeof(View).GetMethods(flag).First((info => info.Name == "AddSubView" && info.IsGenericMethod));
+            appdomain.RegisterCLRMethodRedirection(addSubView, UIAddSubview);
+
             foreach (var methodInfo in typeof(Context).GetMethods(flag))
             {
                 if (methodInfo.Name == "Contains" && methodInfo.IsGenericMethod)
@@ -217,6 +220,44 @@ namespace Framework
             }
 
             return ret;
+        }
+        
+        static unsafe StackObject* UIAddSubview(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            IType[] genericArguments = method.GenericArguments;
+            //成员方法的第一个参数
+            StackObject* ptr1 = ILIntepreter.Minus(esp, 1);
+            var vm = StackObject.ToObject(ptr1, domain, mstack);
+            StackObject* ptr2 = ILIntepreter.Minus(esp, 2);
+            var ins = StackObject.ToObject(ptr2, domain, mstack);
+            intp.Free(ptr1);
+            intp.Free(ptr2);
+            string stackTrace = domain.DebugService.GetStackTrace(intp);
+            if (genericArguments != null && genericArguments.Length == 1)
+            {
+                try
+                {
+                    object result = null;
+                    if (ins is ILTypeInstance typeInstance)
+                    {
+                        result = ((View) typeInstance.CLRInstance).AddSubView(genericArguments[0].ReflectionType,
+                            ((ILTypeInstance)vm).CLRInstance as ViewModel);
+                    }
+                    else
+                    {
+                        result = ((View) ins).AddSubView(genericArguments[0].TypeForCLR, vm as ViewModel);
+                    }
+                    return ILIntepreter.PushObject(ptr2, mstack, result);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return esp;
         }
 
         static unsafe StackObject* UIGet(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)

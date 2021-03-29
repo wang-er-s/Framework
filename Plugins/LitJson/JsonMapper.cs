@@ -276,7 +276,7 @@ namespace LitJson
 
             IList<PropertyMetadata> props = new List<PropertyMetadata> ();
 
-            foreach (PropertyInfo p_info in type.GetProperties ()) {
+            foreach (PropertyInfo p_info in type.GetProperties (BindingFlags.Instance | BindingFlags.Public)) {
                 if (p_info.Name == "Item")
                     continue;
 
@@ -286,7 +286,7 @@ namespace LitJson
                 props.Add (p_data);
             }
 
-            foreach (FieldInfo f_info in type.GetFields ()) {
+            foreach (FieldInfo f_info in type.GetFields (BindingFlags.Instance| BindingFlags.Public)) {
                 PropertyMetadata p_data = new PropertyMetadata ();
                 p_data.Info = f_info;
                 p_data.IsField = true;
@@ -333,7 +333,7 @@ namespace LitJson
 
             if (reader.Token == JsonToken.ArrayEnd)
                 return null;
-
+            
             //ILRuntime doesn't support nullable valuetype
             Type underlying_type = inst_type;//Nullable.GetUnderlyingType(inst_type);
             Type value_type = inst_type;

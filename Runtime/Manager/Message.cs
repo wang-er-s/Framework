@@ -86,7 +86,7 @@ namespace Framework.MessageCenter
         /// <param name="val"></param>
         public void Unregister<T>(T val) where T : class
         {
-            var type = ReflectionHelper.GetType(val);
+            var type = val.GetCLRType();
             if (!_classType2Methods.TryGetValue(type, out var methods))
             {
                 return;
@@ -147,7 +147,7 @@ namespace Framework.MessageCenter
 
         public void Register<T>(T val)
         {
-            var type = ReflectionHelper.GetType(val);
+            var type = val.GetCLRType();
             
             if (_subscribeInstance2Methods.ContainsKey(val))
             {

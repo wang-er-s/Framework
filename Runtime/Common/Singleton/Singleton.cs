@@ -19,7 +19,7 @@ namespace Framework
 					{
 						lock ( locker )
 						{
-							instance = ReflectionHelper.CreateInstance<T>(typeof(T));
+							instance = ReflectionHelper.CreateInstance<T>();
 						}
 					}
 				}

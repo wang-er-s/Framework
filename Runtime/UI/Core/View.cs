@@ -52,7 +52,7 @@ namespace Framework.UI.Core
 
         private void SetComponent()
         {
-            var type = ReflectionHelper.GetType(this);
+            var type = this.GetCLRType();
             if (!_type2TransPath.TryGetValue(type, out var paths))
             {
                 paths = new List<Tuple<FieldInfo, string>>();
@@ -154,22 +154,23 @@ namespace Framework.UI.Core
 
         #endregion
 
-        public IProgressResult<float, T> AddSubView<T>(ViewModel viewModel = null) where T : View
+        public IProgressResult<float, View> AddSubView<T>(ViewModel viewModel = null) where T : View
         {
-            foreach (var subView in _subViews)
-            {
-                if (subView is T)
-                    return null;
-            }
-            var progressResult = UIManager.Ins.CreateView<T>(viewModel);
+            var progressResult = UIManager.Ins.CreateView(typeof(T), viewModel);
+            progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
+            return progressResult;
+        }
+        
+        public IProgressResult<float, View> AddSubView(Type type, ViewModel viewModel = null)
+        {
+            var progressResult = UIManager.Ins.CreateView(type, viewModel);
             progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
             return progressResult;
         }
 
+
         public void AddSubView(View view)
         {
-            if(_subViews.Contains(view))
-                return;
             view.Show();
             view.Go.transform.SetParent(Go.transform, false);
             _subViews.Add(view);
@@ -187,7 +188,7 @@ namespace Framework.UI.Core
 
         public void Close()
         {
-            UIManager.Ins.Close(ReflectionHelper.GetType(this));
+            UIManager.Ins.Close(this.GetCLRType());
         }
 
         protected abstract void OnVmChange();

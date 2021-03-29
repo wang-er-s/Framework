@@ -45,7 +45,8 @@ namespace Framework
             appdomain.DelegateManager.RegisterMethodDelegate<GameObject, Action>();
             appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.GameObject, UnityEngine.EventSystems.PointerEventData>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.MonoBehaviourAdapter.Adaptor>();
-
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, Framework.ViewAdapter.Adapter>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, Framework.UI.Core.View>>();
             #endregion
 
             #region Function

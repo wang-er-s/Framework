@@ -15,6 +15,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using Framework;
+using Tool;
 
 
 namespace LitJson
@@ -859,13 +861,17 @@ namespace LitJson
             return type;
         }
         
-        public object ToObject(Type newType)
+        public object ToObject(Type oldType)
         {
-
+            Type newType = oldType;
+            if (newType is ILRuntime.Reflection.ILRuntimeWrapperType wrapper)
+            {
+                newType = wrapper.CLRType.TypeForCLR;
+            }
             if (newType.IsArray)
             {
                 var item = Activator.CreateInstance(newType);
-                Type array_element_type = item.GetType().GetGenericArguments()[0];
+                Type array_element_type = item.GetCLRType().GetGenericArguments()[0];
                 Type array_type = typeof(List<>).MakeGenericType(array_element_type);
                 IList responseList = (IList) System.Activator.CreateInstance(array_type);
                 for (int i = 0; i < inst_array.Count; i++)
@@ -901,7 +907,7 @@ namespace LitJson
                 object response = null;
                 try
                 {
-                    response = Activator.CreateInstance(newType);
+                    response = ReflectionHelper.CreateInstance(newType);
                 }
                 catch (Exception e)
                 {
@@ -912,25 +918,49 @@ namespace LitJson
 
                 if (newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
-                    Type dictionary_element_type = response.GetType().GetGenericArguments()[1];
+                    Type dictionary_element_type = oldType;
+                    if (dictionary_element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
+                    {
+                        dictionary_element_type = wrapperType.CLRType.GenericArguments[1].Value.ReflectionType;
+                    }
+                    else
+                    {
+                        dictionary_element_type = dictionary_element_type.GetGenericArguments()[1];
+                    }
                     foreach (KeyValuePair<string, JsonData> element in inst_object)
                     {
                         ((IDictionary) response).Add(element.Key, element.Value.ToObject(dictionary_element_type));
+                    }
+                }
+                else if(newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    Type element_type = oldType;
+                    if (element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
+                    {
+                        element_type = wrapperType.CLRType.GenericArguments[0].Value.ReflectionType;
+                    }
+                    else
+                    {
+                        element_type = element_type.GetGenericArguments()[0];
+                    }
+                    foreach (var element in inst_array)
+                    {
+                        ((IList) response).Add(element.ToObject(element_type));
                     }
                 }
                 else
                 {
                     foreach (KeyValuePair<string, JsonData> element in inst_object)
                     {
-                        System.Reflection.PropertyInfo cProp = response.GetType().GetProperty(element.Key);
-                        if (cProp != null)
+                        System.Reflection.PropertyInfo cProp = response.GetCLRType().GetProperty(element.Key);
+                        if (cProp != null && cProp.CanWrite)
                         {
                             cProp.SetValue(response,
                                 element.Value?.ToObject(cProp.PropertyType), null);
                         }
                         else
                         {
-                            System.Reflection.FieldInfo filed = response.GetType().GetField(element.Key);
+                            System.Reflection.FieldInfo filed = response.GetCLRType().GetField(element.Key);
                             if (filed != null)
                             {
                                 filed.SetValue(response, element.Value.ToObject(filed.FieldType));
