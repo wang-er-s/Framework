@@ -870,16 +870,30 @@ namespace LitJson
             }
             if (newType.IsArray)
             {
-                var item = Activator.CreateInstance(newType);
-                Type array_element_type = item.GetCLRType().GetGenericArguments()[0];
-                Type array_type = typeof(List<>).MakeGenericType(array_element_type);
-                IList responseList = (IList) System.Activator.CreateInstance(array_type);
-                for (int i = 0; i < inst_array.Count; i++)
+                if (newType.IsGenericType)
                 {
-                    var cListElement = inst_array[i].ToObject(array_element_type);
-                    responseList.Add(cListElement);
+                    var item = Activator.CreateInstance(newType);
+                    Type array_element_type = item.GetCLRType().GetGenericArguments()[0];
+                    Type array_type = typeof(List<>).MakeGenericType(array_element_type);
+                    IList responseList = (IList) System.Activator.CreateInstance(array_type);
+                    for (int i = 0; i < inst_array.Count; i++)
+                    {
+                        var cListElement = inst_array[i].ToObject(array_element_type);
+                        responseList.Add(cListElement);
+                    }
+                    return responseList;
                 }
-                return responseList;
+                else
+                {
+                    Array arr = Activator.CreateInstance(newType, inst_array.Count) as Array;
+                    Type elementType = newType.GetElementType();
+                    for (int i = 0; i < inst_array.Count; i++)
+                    {
+                        var element = inst_array[i].ToObject(elementType);
+                        arr.SetValue(element, i);
+                    }
+                    return arr;
+                }
             }
             if (newType == typeof(bool))
                 return inst_boolean;

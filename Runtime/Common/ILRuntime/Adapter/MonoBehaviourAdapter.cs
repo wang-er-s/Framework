@@ -155,7 +155,7 @@ namespace Framework
                                 await Task.Delay(20);
                             }
                         }
-                        catch (MissingReferenceException e) //如果gameObject被删了，就会触发这个，这个时候就直接return了
+                        catch (MissingReferenceException) //如果gameObject被删了，就会触发这个，这个时候就直接return了
                         {
                             return;
                         }

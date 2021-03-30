@@ -135,7 +135,7 @@ namespace Framework.UI.Core
         {
         }
 
-        public void Destroy()
+        public virtual void Destroy()
         {
             Hide();
             GameLoop.Ins.OnUpdate -= Update;
