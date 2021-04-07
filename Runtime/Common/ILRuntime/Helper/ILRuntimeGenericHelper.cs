@@ -1,15 +1,16 @@
 using Framework.Asynchronous;
+using ILRuntime.Runtime.Enviorment;
 using UnityEngine.Events;
 
 namespace Framework
 {
     public static class ILRuntimeGenericHelper
     {
-        public static void RegisterGenericFunc()
+        public static void RegisterGenericFunc(AppDomain appDomain)
         {
-            ILRuntimeHelper.Appdomain.GetType(typeof(IAsyncResult<object>));
-            ILRuntimeHelper.Appdomain.GetType(typeof(UnityEvent<object>));
-            ILRuntimeHelper.Appdomain.GetType(typeof(ProgressResult<object, object>));
+            appDomain.GetType(typeof(IAsyncResult<object>));
+            appDomain.GetType(typeof(UnityEvent<object>));
+            appDomain.GetType(typeof(ProgressResult<object, object>));
         }
     }
 }

@@ -5,6 +5,7 @@ using System.IO;
 using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.Execution;
+using ILRuntime.Runtime.Enviorment;
 using Sirenix.Utilities;
 using Tool;
 using UnityEngine;
@@ -100,13 +101,7 @@ namespace Framework.UI.Core
         private IEnumerator CreateView<T>(IProgressPromise<float, T> promise,Type type, ViewModel viewModel)
             where T : View
         {
-            if (_openedViews.TryGetValue(type, out var view))
-            {
-                promise.UpdateProgress(1f);
-                promise.SetResult(view);
-                yield break;
-            }
-            view = ReflectionHelper.CreateInstance(type) as View;
+            var view = ReflectionHelper.CreateInstance(type) as View;
             var path = (GetClassData(type).Attribute as UIAttribute).Path;
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)
@@ -130,6 +125,16 @@ namespace Framework.UI.Core
             promise.UpdateProgress(1f);
             promise.SetResult(view);
         }
+#if UNITY_EDITOR
+        public async void EditorCreateView(View view, ViewModel viewModel,string path)
+        {
+            var goPrefab = await Res.Default.LoadAssetAsync<GameObject>(path);
+            Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
+            GameObject go = Object.Instantiate(goPrefab, Canvas.transform);
+            view.SetGameObject(go);
+            view.SetVm(viewModel);
+        }
+#endif
 
         [Obsolete("use LoadViewAsync replace", true)]
         public View Open(string path, ViewModel viewModel = null)
@@ -163,7 +168,9 @@ namespace Framework.UI.Core
         public View Get(Type type)
         {
             if (_openedViews.TryGetValue(type, out var view))
+            {
                 return view;
+            }
             return null;
         }
 

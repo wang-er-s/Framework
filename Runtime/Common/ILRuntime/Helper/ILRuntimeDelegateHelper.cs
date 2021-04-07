@@ -16,6 +16,7 @@ namespace Framework
         public static void RegisterDelegate(ILRuntime.Runtime.Enviorment.AppDomain appdomain)
         {
             #region Method
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.GameObject>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Sprite>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.TextAsset>>();
             appdomain.DelegateManager.RegisterMethodDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();
@@ -50,7 +51,7 @@ namespace Framework
             #endregion
 
             #region Function
-
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Type>();
             appdomain.DelegateManager.RegisterFunctionDelegate<string, string>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Boolean>();

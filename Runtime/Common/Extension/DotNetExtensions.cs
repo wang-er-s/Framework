@@ -1058,19 +1058,19 @@ public static class OOPExtension
     }
 }
 
+#if UNITY_EDITOR
 public class AssemblyManager
 {
     /// <summary>
     /// 编辑器默认的程序集Assembly-CSharp.dll
     /// </summary>
     private static Assembly defaultCSharpAssembly;
-
-#if UNITY_ANDROID
+    
         /// <summary>
         /// 程序集缓存
         /// </summary>
         private static Dictionary<string, Assembly> assemblyCache = new Dictionary<string, Assembly> ();
-#endif
+
 
     /// <summary>
     /// 获取编辑器默认的程序集Assembly-CSharp.dll
@@ -1107,12 +1107,6 @@ public class AssemblyManager
     /// <returns></returns>
     public static Assembly GetAssembly(string name)
     {
-#if UNITY_ANDROID
-            if ( !assemblyCache.ContainsKey ( name ) )
-                return null;
-
-            return assemblyCache[ name ];
-#else
         foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             if (assembly.GetName().Name == name)
@@ -1120,9 +1114,7 @@ public class AssemblyManager
                 return assembly;
             }
         }
-
         return null;
-#endif
     }
 
     /// <summary>
@@ -1186,6 +1178,7 @@ public class AssemblyManager
         return GetAssembly(assemblyName).GetTypes();
     }
 }
+#endif
 
 public static class ReflectionExtension
 {
@@ -1234,7 +1227,7 @@ public static class ReflectionExtension
     /// <returns></returns>
     public static object InvokeByReflect(this object obj, string methodName, params object[] args)
     {
-        var methodInfo = obj.GetType().GetMethod(methodName);
+        var methodInfo = obj.GetType().GetMethod(methodName,BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         return methodInfo == null ? null : methodInfo.Invoke(obj, args);
     }
 
@@ -1246,8 +1239,21 @@ public static class ReflectionExtension
     /// <returns></returns>
     public static object GetFieldByReflect(this object obj, string fieldName)
     {
-        var fieldInfo = obj.GetType().GetField(fieldName);
+        var fieldInfo = obj.GetType().GetField(fieldName,BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         return fieldInfo == null ? null : fieldInfo.GetValue(obj);
+    }
+    
+    public static void SetFieldByReflect(this object obj, string fieldName, object value)
+    {
+        var fieldInfo = obj.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fieldInfo != null)
+        {
+            fieldInfo.SetValue(obj, value);
+        }
+        else
+        {
+            Debug.LogError($"{obj.GetType().Name} 找不到字段 {fieldName}");
+        }
     }
 
     /// <summary>
@@ -1258,8 +1264,21 @@ public static class ReflectionExtension
     /// <returns></returns>
     public static object GetPropertyByReflect(this object obj, string propertyName, object[] index = null)
     {
-        var propertyInfo = obj.GetType().GetProperty(propertyName);
+        var propertyInfo = obj.GetType().GetProperty(propertyName,BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         return propertyInfo == null ? null : propertyInfo.GetValue(obj, index);
+    }
+    
+    public static void SetPropertyByReflect(this object obj, string propertyName, object value)
+    {
+        var propertyInfo = obj.GetType().GetProperty(propertyName,BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        if (propertyInfo != null)
+        {
+            propertyInfo.SetValue(obj, value);
+        }
+        else
+        {
+            Debug.Log($"{obj.GetType().Name} 找不到字段 {propertyName}");
+        }
     }
 
     /// <summary>

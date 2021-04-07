@@ -23,6 +23,7 @@
  */
 
 using System.Collections.Generic;
+using Tool;
 
 namespace Framework.Contexts
 {
@@ -59,7 +60,7 @@ namespace Framework.Contexts
 
         public static void AddContext<T>(T context) where T : Context
         {
-            AddContext(typeof(T).Name, context);
+            AddContext(context.GetCLRType().Name, context);
         }
 
         public static void AddContext(string key, Context context)

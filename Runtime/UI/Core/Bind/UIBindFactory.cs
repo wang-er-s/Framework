@@ -30,6 +30,13 @@ namespace Framework.UI.Core.Bind
             var bind = new BindIpairsViewList<TItemVm, TItemView>(list, pattern, root);
             Binds.Add(bind);
         }
+        
+        public void BindIpairs<TItemVm>
+            (ObservableList<TItemVm> list, Transform root, string pattern, Type view) where TItemVm : ViewModel
+        {
+            var bind = new BindIpairsViewList<TItemVm>(list, pattern, root, view);
+            Binds.Add(bind);
+        }
 
         public void BindDropDown(Dropdown dropdown, ObservableProperty<int> property,
             ObservableList<Dropdown.OptionData> listProperty = null)

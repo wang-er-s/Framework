@@ -22,6 +22,9 @@ namespace Framework.Editor
         [HideLabel]
         [InlinePropertyAttribute]
         public UIConfig UIConfig = new UIConfig();
+
+        [LabelText("游戏程序集")]
+        public string GameDllName;
     }
     
     [Serializable]
@@ -29,13 +32,16 @@ namespace Framework.Editor
     {
         [LabelText("Keystore路径")]
         [FilePath(Extensions = "keystore", AbsolutePath = false)]
-        public  string KeystoreName = "../key.keystore";
+        public string KeystoreName = "../key.keystore";
         [LabelText("Keystore密码")]
-        public  string KeystorePwd = "";
+        public string KeystorePwd = "";
         [LabelText("keyalias")]
-        public  string KeyAliasName;
+        public string KeyAliasName;
         [LabelText("keyalias密码")]
-        public  string KeyAliasPwd;
+        public string KeyAliasPwd;
+        [FolderPath]
+        [LabelText("输出路径")]
+        public string OutputPath;
     }
 
     [Serializable]

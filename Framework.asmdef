@@ -2,7 +2,6 @@
     "name": "Framework",
     "references": [
         "Unity.ResourceManager",
-        "Debugger1",
         "Unity.Addressables",
         "Unity.TextMeshPro",
         "ILRuntime"
@@ -12,7 +11,13 @@
     "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [
-        "Debugger.dll"
+        "Debugger.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Google.Protobuf.dll",
+        "DOTweenPro.dll",
+        "DOTween.dll",
+        "Sirenix.Serialization.dll",
+        "XAsset.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

@@ -7,9 +7,9 @@ namespace Framework
     public class DomainManager : ManagerBase<DomainManager, DomainAttribute, int>
     {
         Dictionary<int, IDomain> _allDomains = new Dictionary<int, IDomain>();
-        private IDomain _currentDomain;
         private int _defaultScreenTag = 0;
-        
+        public IDomain CurrentDomain { get; private set; }
+
         public override void Init()
         {
             foreach (var classData in this.GetAllClassDatas())
@@ -57,10 +57,10 @@ namespace Framework
         {
             BeginNavTo(name.GetHashCode());
         }
-        
+
         public void BeginNavTo(int name)
         {
-            if (_currentDomain != null && _currentDomain.Name == name)
+            if (CurrentDomain != null && CurrentDomain.Name == name)
             {
                 Log.Error("别闹，当前就是" + name);
                 return;
@@ -69,8 +69,8 @@ namespace Framework
             if (_allDomains.TryGetValue(name, out var domain))
             {
                 domain.BeginEnter();
-                _currentDomain?.BeginExit();
-                _currentDomain = domain;
+                CurrentDomain?.BeginExit();
+                CurrentDomain = domain;
             }
         }
     }

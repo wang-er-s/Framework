@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using Sirenix.OdinInspector;
 using UnityEditor;
 
@@ -9,12 +8,13 @@ namespace Framework.Editor
     public class ILRuntimeCLRBinding
     {
         [Button("生成CLR绑定[不知道干嘛别点！]", ButtonSizes.Large)]
-        public static void GenerateCLRBindingByAnalysis()
+        public static void GenerateCLRBindingByAnalysis(bool showTips = true)
         {
-            if(!EditorUtility.DisplayDialog("注意", "确定要生成吗", "我很清楚后果", "不敢")) return;
+            if(showTips && !EditorUtility.DisplayDialog("注意", "确定要生成吗", "是的", "点错")) return;
             //用新的分析热更dll调用引用来生成绑定代码
             ILRuntime.Runtime.Enviorment.AppDomain domain = new ILRuntime.Runtime.Enviorment.AppDomain();
-            using (System.IO.FileStream fs = new System.IO.FileStream("Assets/StreamingAssets/HotFix_Project.dll",
+            var ilrConfig = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
+            using (System.IO.FileStream fs = new System.IO.FileStream($"Assets/StreamingAssets/{ilrConfig.DllName}.dll",
                 System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
                 domain.LoadAssembly(fs);
@@ -22,7 +22,7 @@ namespace Framework.Editor
                 //Crossbind Adapter is needed to generate the correct binding code
                 InitILRuntime(domain);
                 ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain,
-                    "Assets/Samples/ILRuntime/Generated");
+                    "Assets/_Scripts/ILRuntime/Generated");
             }
 
             AssetDatabase.Refresh();
@@ -31,9 +31,16 @@ namespace Framework.Editor
         static void InitILRuntime(ILRuntime.Runtime.Enviorment.AppDomain domain)
         {
             //这里需要注册所有热更DLL中用到的跨域继承Adapter，否则无法正确抓取引用
-            ILRuntimeValueTypeBinderHelper.Register(domain);
-            ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(domain);
+            var gameDll = AssemblyManager.GetAssembly(ConfigBase.Load<FrameworkEditorConfig>().GameDllName);
+            foreach (var type in gameDll.GetTypes())
+            {
+                ILRuntimeAdapterHelper.AddAdaptor(type);
+            }
+            foreach (var type in typeof(ILRuntimeHelper).Assembly.GetTypes())
+            {
+                ILRuntimeAdapterHelper.AddAdaptor(type);
+            }
+            ILRuntimeHelper.InitializeILRuntime(domain);
         }
     }
-#endif
 }

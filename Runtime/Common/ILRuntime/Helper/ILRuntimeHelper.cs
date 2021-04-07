@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Framework.Assets;
 using Framework.Asynchronous;
 using ILRuntime.Mono.Cecil.Pdb;
-using ILRuntime.Runtime.Intepreter;
 using UnityEngine;
 using UnityEngine.Networking;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
@@ -45,13 +41,19 @@ namespace Framework
 			        Log.Error(www.error);
 		        }
 		        fs = new MemoryStream(www.downloadHandler.data);
-		        www = UnityWebRequest.Get(pdbPath);
-		        await www.SendWebRequest();
-		        if (www.isHttpError | www.isNetworkError)
+		        if (ilrConfig.UsePbd)
 		        {
-			        Log.Error(www.error);
+			        www = UnityWebRequest.Get(pdbPath);
+			        await www.SendWebRequest();
+			        if (www.isHttpError | www.isNetworkError)
+			        {
+				        Log.Error(www.error);
+			        }
+			        else
+			        {
+				        pdb = new MemoryStream(www.downloadHandler.data);
+			        }
 		        }
-		        pdb = new MemoryStream(www.downloadHandler.data);
 	        }
 
 	        try
@@ -70,44 +72,46 @@ namespace Framework
 	        GameLoop.Ins.OnApplicationQuitEvent += Dispose;
         }
 
-        public static void InitializeILRuntime()
+        public static void InitializeILRuntime(AppDomain appDomain)
         {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
             //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
-            Appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            appDomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
 #endif
-            ILRuntimeDelegateHelper.RegisterDelegate(Appdomain);
-            ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(Appdomain);
-            ILRuntimeRedirectHelper.RegisterMethodRedirection(Appdomain);
-            ILRuntimeValueTypeBinderHelper.Register(Appdomain);
-            ILRuntimeGenericHelper.RegisterGenericFunc();
-            LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(Appdomain);
+            ILRuntimeDelegateHelper.RegisterDelegate(appDomain);
+            ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(appDomain);
+            ILRuntimeRedirectHelper.RegisterMethodRedirection(appDomain);
+            ILRuntimeValueTypeBinderHelper.Register(appDomain);
+            ILRuntimeGenericHelper.RegisterGenericFunc(appDomain);
+            LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appDomain);
 
             //初始化CLR绑定请放在初始化的最后一步！！
-            //初始化CLR绑定请放在初始化的最后一步！！
-            //初始化CLR绑定请放在初始化的最后一步！！
-
             //请在生成了绑定代码后解除下面这行的注释
-            //请在生成了绑定代码后解除下面这行的注释
-            //请在生成了绑定代码后解除下面这行的注释
-            //ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain);
+            // if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.OSXPlayer)
+	           //  ILRuntime.Runtime.CLRBinding.CLRBindingUtils.Initialize(appDomain);
         }
         
-        private static List<Type> hotfixTypeList = null;
+        private static Dictionary<string,Type> hotfixType = null;
         
-        public static List<Type> GetHotfixTypes()
+        public static IEnumerable<Type> GetHotfixTypes()
         {
-	        if (hotfixTypeList == null)
+	        if (hotfixType == null)
 	        {
-		        hotfixTypeList = new List<Type>();
-		        var values = Appdomain.LoadedTypes.Values.ToList();
-		        foreach (var v in values)
+		        hotfixType = new Dictionary<string, Type>();
+		        foreach (var v in Appdomain.LoadedTypes)
 		        {
-			        hotfixTypeList.Add(v.ReflectionType);
+			        hotfixType.Add(v.Key,v.Value.ReflectionType);
 		        }
 	        }
 
-	        return hotfixTypeList;
+	        return hotfixType.Values;
+        }
+
+        public static Type GetType(string name)
+        {
+	        if (hotfixType == null)
+		        GetHotfixTypes();
+	        return hotfixType.TryGetValue(name, out var type) ? type : null;
         }
 
         public static void Dispose()

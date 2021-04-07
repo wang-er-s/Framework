@@ -81,7 +81,7 @@ namespace Framework.UI.Wrap
 
         private void RemoveItem(int index)
         {
-            Object.Destroy(_content.GetChild(index).gameObject);
+            Object.Destroy(_content.GetChild(index+1).gameObject);
         }
 
         private void ReplaceItem(int index, ViewModel vm)

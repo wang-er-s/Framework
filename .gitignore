@@ -310,3 +310,4 @@ AssetBundles/
 ColaCache/
 /Assets/Plugins
 .DS_Store
+/Plugins/XAsset

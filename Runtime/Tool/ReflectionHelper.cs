@@ -66,5 +66,14 @@ namespace Tool
                 return wrapperType.RealType;
             return type;
         }
+
+        public static Type GetCLRType(this IType type)
+        {
+            if (type is CLRType clrType)
+            {
+                return clrType.TypeForCLR;
+            }
+            return type.ReflectionType;
+        }
     }
 }

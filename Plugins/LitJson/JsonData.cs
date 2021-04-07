@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using Framework;
+using Google.Protobuf.Collections;
 using Tool;
 
 
@@ -118,7 +119,7 @@ namespace LitJson
                 IList<string> keys = new List<string> ();
 
                 foreach (KeyValuePair<string, JsonData> entry in
-                         object_list) {
+                    object_list) {
                     keys.Add (entry.Key);
                 }
 
@@ -132,7 +133,7 @@ namespace LitJson
                 IList<JsonData> values = new List<JsonData> ();
 
                 foreach (KeyValuePair<string, JsonData> entry in
-                         object_list) {
+                    object_list) {
                     values.Add (entry.Value);
                 }
 
@@ -828,29 +829,29 @@ namespace LitJson
                 return false;
 
             switch (this.type) {
-            case JsonType.None:
-                return true;
+                case JsonType.None:
+                    return true;
 
-            case JsonType.Object:
-                return this.inst_object.Equals (x.inst_object);
+                case JsonType.Object:
+                    return this.inst_object.Equals (x.inst_object);
 
-            case JsonType.Array:
-                return this.inst_array.Equals (x.inst_array);
+                case JsonType.Array:
+                    return this.inst_array.Equals (x.inst_array);
 
-            case JsonType.String:
-                return this.inst_string.Equals (x.inst_string);
+                case JsonType.String:
+                    return this.inst_string.Equals (x.inst_string);
 
-            case JsonType.Int:
-                return this.inst_int.Equals (x.inst_int);
+                case JsonType.Int:
+                    return this.inst_int.Equals (x.inst_int);
 
-            case JsonType.Long:
-                return this.inst_long.Equals (x.inst_long);
+                case JsonType.Long:
+                    return this.inst_long.Equals (x.inst_long);
 
-            case JsonType.Double:
-                return this.inst_double.Equals (x.inst_double);
+                case JsonType.Double:
+                    return this.inst_double.Equals (x.inst_double);
 
-            case JsonType.Boolean:
-                return this.inst_boolean.Equals (x.inst_boolean);
+                case JsonType.Boolean:
+                    return this.inst_boolean.Equals (x.inst_boolean);
             }
 
             return false;
@@ -929,10 +930,9 @@ namespace LitJson
                     UnityEngine.Debug.LogError(e);
                     return null;
                 }
-
+                var dictionary_element_type = oldType;
                 if (newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
-                    Type dictionary_element_type = oldType;
                     if (dictionary_element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
                     {
                         dictionary_element_type = wrapperType.CLRType.GenericArguments[1].Value.ReflectionType;
@@ -943,23 +943,28 @@ namespace LitJson
                     }
                     foreach (KeyValuePair<string, JsonData> element in inst_object)
                     {
-                        ((IDictionary) response).Add(element.Key, element.Value.ToObject(dictionary_element_type));
+                        var keyType = oldType.GetGenericArguments()[0];
+                        if (keyType == typeof(int))
+                            ((IDictionary) response).Add(int.Parse(element.Key),element.Value.ToObject(dictionary_element_type));
+                        else if (keyType == typeof(float))
+                            ((IDictionary) response).Add(float.Parse(element.Key),element.Value.ToObject(dictionary_element_type));
+                        else if (keyType == typeof(string))
+                            ((IDictionary) response).Add(element.Key,element.Value.ToObject(dictionary_element_type));
                     }
                 }
-                else if(newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(List<>))
+                else if(newType.IsGenericType && typeof(IList).IsAssignableFrom(newType.GetGenericTypeDefinition()))
                 {
-                    Type element_type = oldType;
-                    if (element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
+                    if (dictionary_element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
                     {
-                        element_type = wrapperType.CLRType.GenericArguments[0].Value.ReflectionType;
+                        dictionary_element_type = wrapperType.CLRType.GenericArguments[0].Value.ReflectionType;
                     }
                     else
                     {
-                        element_type = element_type.GetGenericArguments()[0];
+                        dictionary_element_type = dictionary_element_type.GetGenericArguments()[0];
                     }
                     foreach (var element in inst_array)
                     {
-                        ((IList) response).Add(element.ToObject(element_type));
+                        ((IList) response).Add(element.ToObject(dictionary_element_type));
                     }
                 }
                 else
@@ -993,37 +998,37 @@ namespace LitJson
                 return;
 
             switch (type) {
-            case JsonType.None:
-                break;
+                case JsonType.None:
+                    break;
 
-            case JsonType.Object:
-                inst_object = new Dictionary<string, JsonData> ();
-                object_list = new List<KeyValuePair<string, JsonData>> ();
-                break;
+                case JsonType.Object:
+                    inst_object = new Dictionary<string, JsonData> ();
+                    object_list = new List<KeyValuePair<string, JsonData>> ();
+                    break;
 
-            case JsonType.Array:
-                inst_array = new List<JsonData> ();
-                break;
+                case JsonType.Array:
+                    inst_array = new List<JsonData> ();
+                    break;
 
-            case JsonType.String:
-                inst_string = default (String);
-                break;
+                case JsonType.String:
+                    inst_string = default (String);
+                    break;
 
-            case JsonType.Int:
-                inst_int = default (Int32);
-                break;
+                case JsonType.Int:
+                    inst_int = default (Int32);
+                    break;
 
-            case JsonType.Long:
-                inst_long = default (Int64);
-                break;
+                case JsonType.Long:
+                    inst_long = default (Int64);
+                    break;
 
-            case JsonType.Double:
-                inst_double = default (Double);
-                break;
+                case JsonType.Double:
+                    inst_double = default (Double);
+                    break;
 
-            case JsonType.Boolean:
-                inst_boolean = default (Boolean);
-                break;
+                case JsonType.Boolean:
+                    inst_boolean = default (Boolean);
+                    break;
             }
 
             this.type = type;
@@ -1058,26 +1063,26 @@ namespace LitJson
         public override string ToString ()
         {
             switch (type) {
-            case JsonType.Array:
-                return "JsonData array";
+                case JsonType.Array:
+                    return "JsonData array";
 
-            case JsonType.Boolean:
-                return inst_boolean.ToString ();
+                case JsonType.Boolean:
+                    return inst_boolean.ToString ();
 
-            case JsonType.Double:
-                return inst_double.ToString ();
+                case JsonType.Double:
+                    return inst_double.ToString ();
 
-            case JsonType.Int:
-                return inst_int.ToString ();
+                case JsonType.Int:
+                    return inst_int.ToString ();
 
-            case JsonType.Long:
-                return inst_long.ToString ();
+                case JsonType.Long:
+                    return inst_long.ToString ();
 
-            case JsonType.Object:
-                return "JsonData object";
+                case JsonType.Object:
+                    return "JsonData object";
 
-            case JsonType.String:
-                return inst_string;
+                case JsonType.String:
+                    return inst_string;
             }
 
             return "Uninitialized JsonData";

@@ -10,6 +10,7 @@ using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
+using Tool;
 using UnityEngine;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 using Object = UnityEngine.Object;
@@ -34,30 +35,62 @@ namespace Framework
                                 BindingFlags.DeclaredOnly;
             
             Type log = typeof(Log);
-            appdomain.RegisterCLRMethodRedirection(log.GetMethod("Msg" , flag),
-                (intp, esp, stack, method, obj) =>
-                    LogMsg(intp, esp, stack, method, obj, Log.Msg));
-            appdomain.RegisterCLRMethodRedirection(log.GetMethod("Error",flag),
-                (intp, esp, stack, method, obj) =>
-                    LogMsg(intp, esp, stack, method, obj, Log.Error));
-            appdomain.RegisterCLRMethodRedirection(log.GetMethod("Warning",flag),
-                (intp, esp, stack, method, obj) =>
-                    LogMsg(intp, esp, stack, method, obj, Log.Warning));
-            appdomain.RegisterCLRMethodRedirection(log.GetMethod("Assert",flag), LogAssert);
-            appdomain.RegisterCLRMethodRedirection(typeof(Log).GetMethod("MsgWithGo"), LogMsgWithGo);
-            
-            
+            foreach (var methodInfo in log.GetMethods(flag))
+            {
+                switch (methodInfo.Name)
+                {
+                    case "Msg":
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, (intp, esp, stack, method, obj) =>
+                            LogMsg(intp, esp, stack, method, obj, Log.Msg));
+                        break;
+                    case "Error":
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, (intp, esp, stack, method, obj) =>
+                            LogMsg(intp, esp, stack, method, obj, Log.Error));
+                        break;
+                    case "Warning":
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, (intp, esp, stack, method, obj) =>
+                            LogMsg(intp, esp, stack, method, obj, Log.Warning));
+                        break;
+                    case "Assert":
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, LogAssert);
+                        break;
+                    case "MsgWithGo":
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, LogMsgWithGo);
+                        break;
+                }
+            }
+
             foreach (MethodInfo methodInfo in typeof(UIManager).GetMethods(flag))
             {
-                if (methodInfo.Name == "OpenAsync" && methodInfo.IsGenericMethod)
+                switch (methodInfo.Name)
                 {
-                    appdomain.RegisterCLRMethodRedirection(methodInfo, UIOpenAsync);
-                }else if (methodInfo.Name == "Close" && methodInfo.IsGenericMethod)
+                    case "OpenAsync" when methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, UIOpenAsync);
+                        break;
+                    case "Close" when methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, UIClose);
+                        break;
+                    case "Get" when methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, UIGet);
+                        break;
+                    case "Get" when !methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, UIGet2);
+                        break;
+                }
+            }
+            
+            Type uiBindFactory = typeof(UIBindFactory);
+
+            foreach (var methodInfo in uiBindFactory.GetMethods(flag))
+            {
+                switch (methodInfo.Name)
                 {
-                    appdomain.RegisterCLRMethodRedirection(methodInfo, UIClose);
-                }else if (methodInfo.Name == "Get" && methodInfo.IsGenericMethod)
-                {
-                    appdomain.RegisterCLRMethodRedirection(methodInfo, UIGet);
+                    case "BindViewList" when methodInfo.GetGenericArguments().Length == 2:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, BindViewList);
+                        break;
+                    case "BindIpairs" when methodInfo.GetGenericArguments().Length == 2:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, BindIpairs);
+                        break;
                 }
             }
 
@@ -66,69 +99,99 @@ namespace Framework
 
             foreach (var methodInfo in typeof(Context).GetMethods(flag))
             {
-                if (methodInfo.Name == "Contains" && methodInfo.IsGenericMethod)
+                switch (methodInfo.Name)
                 {
-                    appdomain.RegisterCLRMethodRedirection(methodInfo, ContextContains);
-                }else if (methodInfo.Name == "Get" && methodInfo.IsGenericMethod)
-                {
-                    var paras = methodInfo.GetParameters();
-                    if (paras.Length == 1)
+                    case "Contains" when methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextContains);
+                        break;
+                    case "Get" when methodInfo.IsGenericMethod:
                     {
-                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextGet1);
+                        var paras = methodInfo.GetParameters();
+                        if (paras.Length == 1)
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextGet1);
+                        }
+                        else
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextGet2);
+                        }
+                        break;
                     }
-                    else
+                    case "Set" when methodInfo.IsGenericMethod:
                     {
-                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextGet2);
+                        var paras = methodInfo.GetParameters();
+                        if (paras.Length == 1)
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextSet1);
+                        }
+                        break;
                     }
-                }else if (methodInfo.Name == "Set" && methodInfo.IsGenericMethod)
-                {
-                    var paras = methodInfo.GetParameters();
-                    if (paras.Length == 1)
+                    case "Remove" when methodInfo.IsGenericMethod:
                     {
-                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextSet1);
+                        var paras = methodInfo.GetParameters();
+                        if (paras.Length == 1)
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemove1);
+                        }
+                        else
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemove0);
+                        }
+                        break;
                     }
-                }else if (methodInfo.Name == "Remove" && methodInfo.IsGenericMethod)
-                {
-                    var paras = methodInfo.GetParameters();
-                    if (paras.Length == 1)
+                    case "GetContext" when methodInfo.IsGenericMethod:
                     {
-                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemove1);
+                        var paras = methodInfo.GetParameters();
+                        if (paras.Length == 0)
+                        {
+                            appdomain.RegisterCLRMethodRedirection(methodInfo, ContextGetContext);
+                        }
+                        break;
                     }
-                    else
-                    {
-                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemove0);
-                    }
+                    // case "RemoveContext" when methodInfo.IsGenericMethod:
+                    // {
+                    //     appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemoveContext);
+                    //     break;
+                    // }
                 }
             }
             
 
             //注册Add Component
             Type gameObjectType = typeof(GameObject);
-            Type componentType = typeof(Component);
-            var addComponentMethod = gameObjectType.GetMethods().First(i => i.Name == "AddComponent" && i.GetGenericArguments().Length == 1);
-            appdomain.RegisterCLRMethodRedirection(addComponentMethod, AddComponent);
-
-            //注册get，有2种get component，一个是GameObject调用，一个是脚本调用
-            var getComponentMethod = gameObjectType.GetMethods().First(i => i.Name == "GetComponent" && i.GetGenericArguments().Length == 1);
-            appdomain.RegisterCLRMethodRedirection(getComponentMethod, GetComponent);
-            var getComponentMethod2 = componentType.GetMethods().First(i => i.Name == "GetComponent" && i.GetGenericArguments().Length == 1);
-            appdomain.RegisterCLRMethodRedirection(getComponentMethod2, GetComponent);
+            foreach (var methodInfo in gameObjectType.GetMethods(flag))
+            {
+                switch (methodInfo.Name)
+                {
+                    case "AddComponent" when methodInfo.IsGenericMethod :
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, AddComponent);
+                        break;
+                    case "GetComponent" when methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent);
+                        break; 
+                    case "GetComponent" when !methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent_1);
+                        break; 
+                }
+            }
             
-            //get还能是字符串。
-            args = new[]{typeof(String)};
-            var getComponentMethod3 = gameObjectType.GetMethod("GetComponent", flag, null, args, null);
-            appdomain.RegisterCLRMethodRedirection(getComponentMethod3, GetComponent_1);
-            var getComponentMethod4 = componentType.GetMethod("GetComponent", flag, null, args, null);
-            appdomain.RegisterCLRMethodRedirection(getComponentMethod4, GetComponent_1);
+            Type componentType = typeof(Component);
+            foreach (var methodInfo in componentType.GetMethods(flag))
+            {
+                switch (methodInfo.Name)
+                {
+                    case "GetComponent" when methodInfo.IsGenericMethod :
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent);
+                        break;
+                    case "GetComponent" when !methodInfo.IsGenericMethod:
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent_1);
+                        break; 
+                }
+            }
 
             args = new[] {typeof(GameObject)};
             var getOrAdd1 = typeof(GameObjectExtension).GetMethod("GetOrAddComponent", flag, null, args, null);
             appdomain.RegisterCLRMethodRedirection(getOrAdd1, GetOrAddComponent);
-
-            Type uiBindFactory = typeof(UIBindFactory);
-            var bindView = uiBindFactory.GetMethods(flag)
-                .First((info => info.Name == "BindViewList" && info.GetGenericArguments().Length == 2));
-            appdomain.RegisterCLRMethodRedirection(bindView, BindViewList);
         }
 
         #region Log
@@ -195,8 +258,6 @@ namespace Framework
             StackObject* ptr_of_this_method = ILIntepreter.Minus(esp, 1);
             object vm = StackObject.ToObject(ptr_of_this_method, domain, mStack);
             intp.Free(ptr_of_this_method);
-            //load只能有一个泛型
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -215,6 +276,7 @@ namespace Framework
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -234,7 +296,6 @@ namespace Framework
             var ins = StackObject.ToObject(ptr2, domain, mstack);
             intp.Free(ptr1);
             intp.Free(ptr2);
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -253,6 +314,7 @@ namespace Framework
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -267,25 +329,59 @@ namespace Framework
             IType[] genericArguments = method.GenericArguments;
             //只有一个参数，所以返回指针就是当前栈指针ESP - 1
             StackObject* ret = ILIntepreter.Minus(esp, 1);
+            intp.Free(ret);
             //close只能有一个泛型
             if (genericArguments != null && genericArguments.Length == 1)
             {
-                string stackTrace = domain.DebugService.GetStackTrace(intp);
                 try
                 {
                     var t = genericArguments[0];
-                    var result = UIManager.Ins.Get(t is ILType ? t.ReflectionType : t.TypeForCLR);
+                    object result = UIManager.Ins.Get(t is ILType ? t.ReflectionType : t.TypeForCLR);
+                    if (result is CrossBindingAdaptorType adaptorType)
+                    {
+                        result = adaptorType.ILInstance;
+                    }
                     return ILIntepreter.PushObject(ret, mStack, result);
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
 
             return ret;
         }
-        
+
+        static unsafe StackObject* UIGet2(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method,
+            bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            //只有一个参数，所以返回指针就是当前栈指针ESP - 1
+            StackObject* ptr1 = ILIntepreter.Minus(esp, 1);
+            var viewType = (Type) StackObject.ToObject(ptr1, domain, mStack);
+            StackObject* ret = ILIntepreter.Minus(esp, 2);
+            intp.Free(ret);
+            intp.Free(ptr1);
+            try
+            {
+                object result = UIManager.Ins.Get(viewType);
+                if (result is CrossBindingAdaptorType adaptorType)
+                {
+                    result = adaptorType.ILInstance;
+                }
+                return ILIntepreter.PushObject(ret, mStack, result);
+            }
+            catch (Exception e)
+            {
+                string stackTrace = domain.DebugService.GetStackTrace(intp);
+                Log.Error(e, stackTrace);
+            }
+
+            return ret;
+        }
+
         static unsafe StackObject* UIClose(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
         {
             AppDomain domain = intp.AppDomain;
@@ -293,10 +389,10 @@ namespace Framework
             IType[] genericArguments = method.GenericArguments;
             //只有一个参数，所以返回指针就是当前栈指针ESP - 1
             StackObject* ret = ILIntepreter.Minus(esp, 1);
+            intp.Free(ret);
             //close只能有一个泛型
             if (genericArguments != null && genericArguments.Length == 1)
             {
-                string stackTrace = domain.DebugService.GetStackTrace(intp);
                 try
                 {
                     var t = genericArguments[0];
@@ -304,6 +400,7 @@ namespace Framework
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -315,7 +412,32 @@ namespace Framework
         #region Context
         static unsafe StackObject* ContextContains(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
         {
-            throw new Exception();
+            ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            IType[] genericArguments = method.GenericArguments;
+            //成员方法的第一个参数
+            StackObject* ptr_this = ILIntepreter.Minus(esp, 1);
+            var cascade = StackObject.ToObject(ptr_this, domain, mStack);
+            //第二个参数为ESP - 2，以此类推
+            StackObject* ret = ILIntepreter.Minus(esp, 2);
+            object ins = StackObject.ToObject(ret, domain, mStack);
+            intp.Free(ptr_this);
+            if (genericArguments != null && genericArguments.Length == 1)
+            {
+                try
+                {
+                    var t = genericArguments[0];
+                    var result = ((Context) ins).Contains(t.GetCLRType().Name, (int) cascade == 1);
+                    return ILIntepreter.PushObject(ret, mStack, result);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return ret;
         }
         
         private static unsafe StackObject* ContextRemove0(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
@@ -328,17 +450,21 @@ namespace Framework
             //调用方 this
             object ins = StackObject.ToObject(ret, domain, mstack);
             intp.Free(ret);
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
                 {
                     var t = genericArguments[0];
-                    var result = ((Context) ins).Remove(t.Name);
+                    var result = ((Context) ins).Remove(t.GetCLRType().Name);
+                    if (result is CrossBindingAdaptorType adaptorType)
+                    {
+                        return ILIntepreter.PushObject(ret, mstack, adaptorType.ILInstance);
+                    }
                     return ILIntepreter.PushObject(ret, mstack, result);
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -358,23 +484,80 @@ namespace Framework
             var ins = StackObject.ToObject(ptr2, domain, mstack);
             intp.Free(ptr1);
             intp.Free(ptr2);
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
+            
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
                 {
                     var result = ((Context) ins).Remove((string)name);
+                    if (result is CrossBindingAdaptorType adaptorType)
+                    {
+                        return ILIntepreter.PushObject(ptr2, mstack, adaptorType.ILInstance);
+                    }
                     return ILIntepreter.PushObject(ptr2, mstack, result);
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
 
             return esp;
         }
+       
+        
+        private static unsafe StackObject* ContextGetContext(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            IType[] genericArguments = method.GenericArguments;
+            //成员方法的第一个参数
+            StackObject* ret = ILIntepreter.Minus(esp, 1);
+            if (genericArguments != null && genericArguments.Length == 1)
+            {
+                try
+                {
+                    var t = genericArguments[0];
+                    string name = t.GetCLRType().Name;
+                    var result = Context.GetContext(name);
+                    return ILIntepreter.PushObject(ret, mstack, result);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
 
+            return esp;
+        }
+        
+        private static unsafe StackObject* ContextRemoveContext(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
+            //获取泛型参数<T>的实际类型
+            IType[] genericArguments = method.GenericArguments;
+            //成员方法的第一个参数
+            StackObject* ret = ILIntepreter.Minus(esp, 1);
+            if (genericArguments != null && genericArguments.Length == 1)
+            {
+                try
+                {
+                    var t = genericArguments[0];
+                    string name = t.GetCLRType().Name;
+                    Context.RemoveContext(name);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return esp;
+        }
+        
         private static unsafe StackObject* ContextSet1(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
@@ -387,17 +570,18 @@ namespace Framework
             StackObject* ptr_of_this_method = ILIntepreter.Minus(esp, 2);
             //调用方 this
             object ins = StackObject.ToObject(ptr_of_this_method, domain, mstack);
+            intp.Free(ptr_this);
             intp.Free(ptr_of_this_method);
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
                 {
                     var t = genericArguments[0];
-                    ((Context) ins).Set(t.Name, value);
+                    ((Context) ins).Set(t.GetCLRType().Name, value);
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -420,7 +604,7 @@ namespace Framework
             intp.Free(ptr1);
             intp.Free(ptr2);
             intp.Free(ptr3);
-            string stackTrace = domain.DebugService.GetStackTrace(intp);
+            
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -438,6 +622,7 @@ namespace Framework
                 }
                 catch (Exception e)
                 {
+                    string stackTrace = domain.DebugService.GetStackTrace(intp);
                     Log.Error(e, stackTrace);
                 }
             }
@@ -463,7 +648,15 @@ namespace Framework
                 try
                 {
                     var t = genericArguments[0];
-                    var result = ((Context) ins).Get(t.Name, (int)cascade == 1);
+                    object result;
+                    if (ins is ILTypeInstance ilTypeInstance)
+                    {
+                        result = ((Context) ilTypeInstance.CLRInstance).Get(t.GetCLRType().Name, (int) cascade == 1);
+                    }
+                    else
+                    {
+                        result = ((Context) ins).Get(t.GetCLRType().Name, (int) cascade == 1);
+                    }
                     return ILIntepreter.PushObject(ptr2, mstack, result);
                 }
                 catch (Exception e)
@@ -512,10 +705,6 @@ namespace Framework
                     {
                         //添加组件
                         res = addComponent(ins as GameObject, genericArgument[0], __domain);
-                    }
-                    else
-                    {
-                        return ILIntepreter.PushObject(ptr, __mStack, res);
                     }
                     return ILIntepreter.PushObject(ptr, __mStack, res);
                 }
@@ -862,6 +1051,55 @@ namespace Framework
                         type = viewType.ReflectionType;
                     }
                     ((UIBindFactory)ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>)list,(Transform)root, type);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = __domain.DebugService.GetStackTrace(__intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return __esp;
+        }
+        
+        unsafe static StackObject* BindIpairs(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            //CLR重定向的说明请看相关文档和教程，这里不多做解释
+            AppDomain __domain = __intp.AppDomain;
+
+            var ptr1 =  ILIntepreter.Minus(__esp, 1);
+            var pattern = StackObject.ToObject(ptr1, __domain, __mStack);
+            var ptr2 =  ILIntepreter.Minus(__esp, 2);
+            var root = StackObject.ToObject(ptr2, __domain, __mStack);
+            var ptr3 =  ILIntepreter.Minus(__esp, 3);
+            var list = StackObject.ToObject(ptr3, __domain, __mStack);
+            var ptr4 =  ILIntepreter.Minus(__esp, 4);
+            var ins = StackObject.ToObject(ptr4, __domain, __mStack);
+            __intp.Free(ptr1);
+            __intp.Free(ptr2);
+            __intp.Free(ptr3);
+            __intp.Free(ptr4);
+
+            var genericArgument = __method.GenericArguments;
+            
+            if (genericArgument != null && genericArgument.Length == 2)
+            {
+                try
+                {
+                    var viewType = genericArgument[1];
+                    Type type = null;
+                    if (viewType is CLRType)
+                    {
+                        type = viewType.TypeForCLR;
+                    }
+                    else
+                    {
+                        type = viewType.ReflectionType;
+                    }
+
+                    ((UIBindFactory) ins).BindIpairs((ObservableList<ViewModelAdapter.Adapter>) list, (Transform) root,
+                        (string) pattern, type);
                 }
                 catch (Exception e)
                 {

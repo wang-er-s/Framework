@@ -7,7 +7,6 @@ using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VEngine;
-using Logger = NUnit.Framework.Internal.Logger;
 using Object = UnityEngine.Object;
 using Scene = VEngine.Scene;
 

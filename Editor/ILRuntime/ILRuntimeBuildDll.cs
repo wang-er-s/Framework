@@ -31,6 +31,8 @@ namespace Framework.Editor
         {
             BuildDLL(false);
         }
+
+        private static List<string> defineList = new List<string>();
         
         private static void BuildDLL(bool isDebug)
         {
@@ -39,11 +41,17 @@ namespace Framework.Editor
             string outPath = Application.streamingAssetsPath + $"/{dllName}.dll";
             List<string> allDll = new List<string>();
             var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
-            List<string> defineList = new List<string>();
+            if (!isDebug)
+            {
+                //非debug模式删除pdb文件
+                var pdbPath = Path.ChangeExtension(outPath, "pdb");
+                if(File.Exists(pdbPath))
+                    File.Delete(pdbPath);
+            }
             try
             {
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
-                FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll, ref defineList);
+                FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
                 BuildByRoslyn(allDll, allCsFiles, outPath, isDebug);
             }
@@ -58,10 +66,8 @@ namespace Framework.Editor
         /// 解析project中的dll
         /// </summary>
         /// <returns></returns>
-        private static void FindDLLByCSPROJ(string projName, ref List<string> dllList, ref List<string> defineList)
+        private static void FindDLLByCSPROJ(string projName, ref List<string> dllList)
         {
-            if (dllList == null) dllList = new List<string>();
-
             var projpath = FApplication.ProjectRoot + "/" + projName;
             XmlDocument xml = new XmlDocument();
             xml.Load(projpath);
@@ -75,7 +81,7 @@ namespace Framework.Editor
                     break;
                 }
             }
-
+            defineList.Clear();
             List<string> csprojList = new List<string>();
             foreach (XmlNode childNode in ProjectNode.ChildNodes)
             {
@@ -103,12 +109,12 @@ namespace Framework.Editor
                         if (item.Name == "DefineConstants")
                         {
                             var define = item.InnerText;
-
+                
                             var defines = define.Split(';');
-
+                
                             defineList.AddRange(defines);
                         }
-
+                
                     }
                 }
             }
@@ -119,7 +125,7 @@ namespace Framework.Editor
                 //有editor退出
                 if (csproj.ToLower().Contains("editor")) continue;
                 //添加扫描到的dllF
-                FindDLLByCSPROJ(csproj, ref dllList, ref defineList);
+                FindDLLByCSPROJ(csproj, ref dllList);
                 //
                 var gendll = FApplication.Library + "/ScriptAssemblies/" + csproj.Replace(".csproj", ".dll");
                 if (!File.Exists(gendll))
@@ -156,7 +162,7 @@ namespace Framework.Editor
 
             //添加语法树
             List<SyntaxTree> codes = new List<SyntaxTree>();
-            var opa = new CSharpParseOptions(LanguageVersion.Latest);
+            var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
             foreach (var cs in codefiles)
             {
                 //判断文件是否存在
@@ -166,7 +172,7 @@ namespace Framework.Editor
                 var syntaxTree = CSharpSyntaxTree.ParseText(content, opa, cs, Encoding.UTF8);
                 codes.Add(syntaxTree);
             }
-
+            
             //添加dll
             List<MetadataReference> assemblies = new List<MetadataReference>();
             foreach (var dll in dlls)
