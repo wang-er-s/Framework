@@ -7,7 +7,6 @@ using Object = UnityEngine.Object;
 
 namespace Framework.Assets
 {
-    
     public struct DownloadProgress
     {
         public string DownloadedSize;
@@ -39,12 +38,16 @@ namespace Framework.Assets
                 case FrameworkRuntimeConfig.ResType.Resources:
                     result = new ResourcesRes();
                     break;
+#if ADDRESSABLE
                 case FrameworkRuntimeConfig.ResType.Addressable:
                     result = new AddressableRes();
                     break;
+#endif
+#if XASSET
                 case FrameworkRuntimeConfig.ResType.XAsset:
                     result = new XAssetRes();
                     break;
+#endif
             }
             return result;
         }

@@ -25,6 +25,8 @@ namespace Framework
     ///             else type.ReflectionType 
     ///
     /// object is ILTypeInstance 是热更实例
+    ///
+    /// 有返回值时，push的指针如果是ins则使用ins，否则使用esp
     /// </summary>
     public static class ILRuntimeRedirectHelper
     {
@@ -512,8 +514,6 @@ namespace Framework
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
             IType[] genericArguments = method.GenericArguments;
-            //成员方法的第一个参数
-            StackObject* ret = ILIntepreter.Minus(esp, 1);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -521,7 +521,7 @@ namespace Framework
                     var t = genericArguments[0];
                     string name = t.GetCLRType().Name;
                     var result = Context.GetContext(name);
-                    return ILIntepreter.PushObject(ret, mstack, result);
+                    return ILIntepreter.PushObject(esp, mstack, result);
                 }
                 catch (Exception e)
                 {

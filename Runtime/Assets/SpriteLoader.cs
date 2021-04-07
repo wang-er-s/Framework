@@ -10,8 +10,14 @@ namespace Framework.Assets
 {
     public class SpriteLoader
     {
-        private readonly List<AsyncOperationHandle> _spriteAssets = new List<AsyncOperationHandle>();
-        private AddressableRes addressableRes;
+        public static SpriteLoader Default = new SpriteLoader();
+
+        public SpriteLoader()
+        {
+            _res = Res.Create();
+        }
+        private readonly List<IProgressResult<float,Sprite>> _spriteAssets = new List<IProgressResult<float,Sprite>>();
+        private IRes _res;
 
         private async void LoadSpriteAsync(string path, IProgressPromise<float, Sprite> promise)
         {
@@ -21,10 +27,10 @@ namespace Framework.Assets
             Sprite sprite = null;
             if (string.IsNullOrEmpty(_path))
             {
-                var operation = Addressables.LoadAssetAsync<Sprite>(_path);
+                var operation = _res.LoadAssetAsync<Sprite>(_path);
                 while (!operation.IsDone)
                 {
-                    promise.UpdateProgress(operation.PercentComplete);
+                    promise.UpdateProgress(operation.Progress);
                     await Task.Yield();
                 }
                 _spriteAssets.Add(operation);
@@ -32,19 +38,19 @@ namespace Framework.Assets
             }
             else
             {
-                var operation = Addressables.LoadAssetAsync<IList<Sprite>>(_path);
-                while (!operation.IsDone)
-                {
-                    promise.UpdateProgress(operation.PercentComplete);
-                    await Task.Yield();
-                }
-                _spriteAssets.Add(operation);
-                foreach (var sp in operation.Result)
-                {
-                    if (sp.name != spriteName) continue;
-                    sprite = sp;
-                    break;
-                }
+                // var operation = _res.LoadAssetAsync<IList<Sprite>>(_path);
+                // while (!operation.IsDone)
+                // {
+                //     promise.UpdateProgress(operation.Progress);
+                //     await Task.Yield();
+                // }
+                // _spriteAssets.Add(operation);
+                // foreach (var sp in operation.Result)
+                // {
+                //     if (sp.name != spriteName) continue;
+                //     sprite = sp;
+                //     break;
+                // }
             }
             promise.SetResult(sprite);
         }
@@ -67,18 +73,7 @@ namespace Framework.Assets
 
         public void Release()
         {
-            for (int i = 0; i < _spriteAssets.Count; i++)
-            {
-                try
-                {
-                    Addressables.Release(_spriteAssets[i]);
-                    _spriteAssets.RemoveAt(i);
-                    i--;
-                }
-                catch (Exception)
-                {
-                }
-            }
+            _res.Release();
             _spriteAssets.Clear();
         }
 

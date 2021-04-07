@@ -8,7 +8,7 @@ namespace Framework
 	public class FrameworkRuntimeConfig : ConfigBase
 	{
 		[LabelText("资源加载类型")]
-		public ResType LoadType = ResType.Addressable;
+		public ResType LoadType = ResType.Resources;
 
 		[FoldoutGroup("热更设置", expanded: true)]
 		[HideLabel]
@@ -18,8 +18,12 @@ namespace Framework
 		public enum ResType
 		{
 			Resources,
+#if ADDRESSABLE
 			Addressable,
+#endif
+#if XASSET
 			XAsset,
+#endif
 		}
 	}
 

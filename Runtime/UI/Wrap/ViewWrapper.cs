@@ -18,11 +18,9 @@ namespace Framework.UI.Wrap
         private readonly GameObject _template;
         private int _tag;
         private int _index;
-        private IRes _res;
 
         public ViewWrapper(View view,Transform root, int index = 0) : base(view)
         {
-            _res = new AddressableRes();
             _item =  view;
             _content = root;
             Log.Assert(_content.childCount == 1 , "_content.childCount 只能有一个");

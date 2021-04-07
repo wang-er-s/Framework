@@ -1,3 +1,6 @@
+#if XASSET
+
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -156,3 +159,4 @@ namespace Framework.Assets
         }
     }
 }
+#endif
