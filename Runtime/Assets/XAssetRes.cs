@@ -1,6 +1,4 @@
 #if XASSET
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +17,7 @@ namespace Framework.Assets
     {
         private string _preDownloadKey;
         private List<DownloadInfo> _needDownloadRes;
+        private Dictionary<string, Loadable> _handles = new Dictionary<string, Loadable>();
 
         public override async Task<string> CheckDownloadSize(string key)
         {
@@ -83,13 +82,14 @@ namespace Framework.Assets
                 await Task.Yield();
                 promise.UpdateProgress(loader.progress);
             }
-            
+
+            _handles[path] = loader;
             promise.SetResult();
         }
 
         protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
-            Asset.LoadAsync(key, typeof(T), result =>
+            var asset = Asset.LoadAsync(key, typeof(T), result =>
             {
                 if (result.status == LoadableStatus.SuccessToLoad)
                 {
@@ -102,6 +102,7 @@ namespace Framework.Assets
                 }
                 result.Release();
             });
+            _handles[key] = asset;
         }
 
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null, bool instantiateInWorldSpace = false) 
@@ -112,7 +113,7 @@ namespace Framework.Assets
         private IProgressResult<float, GameObject> instantiateAsync(string key, Action<GameObject> dealGo)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            Asset.LoadAsync(key, typeof(GameObject), result =>
+            var asset = Asset.LoadAsync(key, typeof(GameObject), result =>
             {
                 if (result.status == LoadableStatus.SuccessToLoad)
                 {
@@ -127,13 +128,18 @@ namespace Framework.Assets
                 }
                 result.Release();
             });
+            _handles[key] = asset;
             return progressResult;
         }
         
 
         public override void Release()
         {
-            
+            foreach (var loadable in _handles.Values)
+            {
+                loadable.Release();
+            }
+            _handles.Clear();
         }
 
         [Obsolete("仅做展示，暂时不使用同步加载")]

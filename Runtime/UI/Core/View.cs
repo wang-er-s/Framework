@@ -30,11 +30,13 @@ namespace Framework.UI.Core
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
+        protected IRes Res;
 
         public View()
         {
             _subViews = new List<View>();
             Binding = new UIBindFactory();
+            Res = Assets.Res.Create();
         }
 
         public void SetGameObject(GameObject obj)
@@ -138,6 +140,7 @@ namespace Framework.UI.Core
         public virtual void Destroy()
         {
             Hide();
+            Res.Release();
             GameLoop.Ins.OnUpdate -= Update;
             GameLoop.Ins.OnLateUpdate -= LateUpdate;
             _subViews.ForEach(subView => subView.Destroy());
