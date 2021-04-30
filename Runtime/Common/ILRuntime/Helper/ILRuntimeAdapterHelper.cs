@@ -8,11 +8,12 @@ namespace Framework
 {
     public static class ILRuntimeAdapterHelper
     {
-        public static void AddAdaptor(Type t)
+        public static bool AddAdaptor(Type t)
         {
-            if(!t.IsSubclassOf(typeof(CrossBindingAdaptor))) return;
+            if(!t.IsSubclassOf(typeof(CrossBindingAdaptor))) return false;
             if (!_adaptors.Contains(t))
                 _adaptors.Add(t);
+            return true;
         }
 
         private static List<Type> _adaptors = new List<Type>();

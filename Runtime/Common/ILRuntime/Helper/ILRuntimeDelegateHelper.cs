@@ -51,11 +51,14 @@ namespace Framework
             #endregion
 
             #region Function
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.String>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Type>();
             appdomain.DelegateManager.RegisterFunctionDelegate<string, string>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.String>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Int64, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Reflection.ParameterInfo, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Threading.Tasks.Task<ILRuntime.Runtime.Intepreter.ILTypeInstance>>();
             appdomain.DelegateManager.RegisterFunctionDelegate<Object, Boolean>();
@@ -76,6 +79,7 @@ namespace Framework
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.KeyValuePair<System.String, ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.KeyValuePair<System.String, ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance, Framework.MonoBehaviourAdapter.Adaptor>();
+            
 
             #endregion
 

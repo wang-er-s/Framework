@@ -100,7 +100,8 @@ namespace Framework.Assets
                     Log.Error("load", key, "error", result.error);
                     promise.SetException(result.error);   
                 }
-                result.Release();
+                //TODO  考虑一下怎么release asset。。 
+                //result.Release();
             });
             _handles[key] = asset;
         }

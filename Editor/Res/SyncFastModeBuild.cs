@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#if ADDRESSABLE
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Framework.Assets;
@@ -110,3 +111,4 @@ public class SyncFastModeBuild : BuildScriptFastMode
         return errorString;
     }
 }
+#endif

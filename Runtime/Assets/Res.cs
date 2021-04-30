@@ -29,11 +29,13 @@ namespace Framework.Assets
 
         public static IRes Default => @default ?? (@default = Create());
 
-        public static IRes Create()
+        public static IRes Create(FrameworkRuntimeConfig.ResType? loadType = null)
         {
-            IRes result = null;
             var config = ConfigBase.Load<FrameworkRuntimeConfig>();
-            switch (config.LoadType)
+            if (loadType == null)
+                loadType = config.LoadType;
+            IRes result = null;
+            switch (loadType)
             {
                 case FrameworkRuntimeConfig.ResType.Resources:
                     result = new ResourcesRes();

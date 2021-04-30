@@ -12,7 +12,6 @@ namespace Framework.MessageCenter
         {
             public MethodInfo MethodInfo;
             public string Tag;
-            public string ParaStr;
             public object Instance;
 
             public void Invoke(params object[] para)
@@ -20,20 +19,19 @@ namespace Framework.MessageCenter
                 MethodInfo.Invoke(Instance, para);
             }
 
-            public MessageEvent(MessageEvent messageEvent) : this(messageEvent.MethodInfo, messageEvent.Instance, messageEvent.Tag, messageEvent.ParaStr)
+            public MessageEvent(MessageEvent messageEvent) : this(messageEvent.MethodInfo, messageEvent.Instance, messageEvent.Tag)
             {
             }
 
-            public MessageEvent(MethodInfo info, object instance, string tag, string paraStr)
+            public MessageEvent(MethodInfo info, object instance, string tag)
             {
                 MethodInfo = info;
                 Instance = instance;
                 Tag = tag;
-                ParaStr = paraStr;
             }
         }
 
-        private Dictionary<string, List<MessageEvent>> _subscribeParaType2Methods = new Dictionary<string, List<MessageEvent>>(0);
+        private Dictionary<string, List<MessageEvent>> _subscribeTag2Methods = new Dictionary<string, List<MessageEvent>>(0);
         private Dictionary<object, List<MessageEvent>> _subscribeInstance2Methods = new Dictionary<object, List<MessageEvent>>();
         private Dictionary<Type, List<MessageEvent>> _classType2Methods = new Dictionary<Type, List<MessageEvent>>();
 
@@ -41,29 +39,18 @@ namespace Framework.MessageCenter
         /// Default static JEvent
         /// 默认静态JEvent
         /// </summary>
-        public static Message defaultEvent
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new Message();
-                }
-                return _instance;
-            }
-        }
+        public static Message defaultEvent => _instance ?? (_instance = new Message());
         private static Message _instance = new Message();
 
         /// <summary>
         /// Post parameters to all subscibed methods
         /// 将参数广播到全部监听方法
         /// </summary>
-        /// <param name="value"></param>
         /// <param name="tag"></param>
+        /// <param name="parameters"></param>
         public void Post(string tag, params object[] parameters)
         {
-            var paraStr = string.Join(",", parameters.Select(para => para.GetType()));
-            if (!_subscribeParaType2Methods.TryGetValue(paraStr, out var todo)) return;
+            if (!_subscribeTag2Methods.TryGetValue(tag, out var todo)) return;
             if (todo.Count == 0) return;
             foreach (var td in todo)
             {
@@ -94,29 +81,29 @@ namespace Framework.MessageCenter
 
             foreach (var method in methods)
             {
-                UnregisterOneMethod(method.ParaStr, val);
+                UnregisterOneMethod(method.Tag, val);
             }
         }
         
-        public void Unregister<T>(T val, MethodInfo _method) where T : class
+        public void Unregister<T>(T val, MethodInfo method) where T : class
         {
             if (!_subscribeInstance2Methods.TryGetValue(val, out var methods))
             {
                 return;
             }
-            foreach (var method in methods)
+            foreach (var _method in methods)
             {
-                if (method.MethodInfo == _method)
+                if (_method.MethodInfo == method)
                 {
-                    UnregisterOneMethod(method.ParaStr, val);
+                    UnregisterOneMethod(_method.Tag, val);
                     break;
                 }
             }
         }
         
-        private void UnregisterOneMethod(string paraStr, object instance)
+        private void UnregisterOneMethod(string tag, object instance)
         {
-            if (_subscribeParaType2Methods.TryGetValue(paraStr, out var values))
+            if (_subscribeTag2Methods.TryGetValue(tag, out var values))
             {
                 for (int i = 0; i < values.Count; i++)
                 {
@@ -126,7 +113,7 @@ namespace Framework.MessageCenter
                 }
                 if (values.Count <= 0)
                 {
-                    _subscribeParaType2Methods.Remove(paraStr);
+                    _subscribeTag2Methods.Remove(tag);
                 }
             }
             
@@ -134,7 +121,7 @@ namespace Framework.MessageCenter
             {
                 for (int i = 0; i < events.Count; i++)
                 {
-                    if (events[i].ParaStr != paraStr) continue;
+                    if (events[i].Tag != tag) continue;
                     events.RemoveAt(i);
                     break;
                 }
@@ -170,7 +157,7 @@ namespace Framework.MessageCenter
                     }
                     var paras = method.GetParameters();
                     string paraStr = string.Join(",", paras.Select((para => para.ParameterType)));
-                    events.Add(new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag, paraStr));
+                    events.Add(new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag));
                 }
                 _classType2Methods[type] = events;
             }
@@ -184,7 +171,6 @@ namespace Framework.MessageCenter
 
         public void Register<T>(T val, MethodInfo method) where T : class
         {
-            var paraStr = string.Join(",", method.GetParameters().Select((para) => para.ParameterType));
             var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), false);
             var HasAttr = methodAttr.Length > 0;
             if (!HasAttr)
@@ -192,7 +178,7 @@ namespace Framework.MessageCenter
                 Log.Error("必须要有",nameof(SubscriberAttribute),"的标签");  
                 return;
             }
-            var msgEvent = new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag, paraStr);
+            var msgEvent = new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag);
             Register(msgEvent);
         }
 
@@ -205,10 +191,10 @@ namespace Framework.MessageCenter
             }
             instanceEvents.Add(messageEvent);
 
-            if (!_subscribeParaType2Methods.TryGetValue(messageEvent.ParaStr, out var paraTypeEvents))
+            if (!_subscribeTag2Methods.TryGetValue(messageEvent.Tag, out var paraTypeEvents))
             {
                 paraTypeEvents = new List<MessageEvent>();
-                _subscribeParaType2Methods[messageEvent.ParaStr] = paraTypeEvents;
+                _subscribeTag2Methods[messageEvent.Tag] = paraTypeEvents;
             }
             paraTypeEvents.Add(messageEvent);
         }
@@ -218,7 +204,7 @@ namespace Framework.MessageCenter
     public class SubscriberAttribute : Attribute
     {
         public string Tag { get; private set; }
-        public SubscriberAttribute(string tag = null)
+        public SubscriberAttribute(string tag)
         {
             Tag = tag ?? string.Empty;
         }

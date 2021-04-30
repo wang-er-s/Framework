@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 namespace Framework.UI.Example
 {
-	[UI("SimpleBind")]
 	public class SetupView : View
 	{
 		[TransformPath("name")] private Text nameMessageText;
@@ -24,7 +23,6 @@ namespace Framework.UI.Example
 
 		[TransformPath("Slider")] private Slider slider;
 
-		[TransformPath("Dropdown")] private Dropdown dropDown;
 		private SetupViewModel vm;
 		private View subView;
 
@@ -43,7 +41,6 @@ namespace Framework.UI.Example
 			Binding.BindData(vm.Visible, vm.OnToggleChanged);
 			Binding.RevertBind(joinToggle, vm.Visible);
 			Binding.RevertBind(atkInputField, vm.ATK, (string str) => int.Parse(str));
-			Binding.BindDropDown(dropDown, vm.SelectedIndex, vm.Datas);
 			vm.OnClick += () => Debug.Log(222);
 			Debug.Log(vm.OnClick.GetHashCode());
 		}

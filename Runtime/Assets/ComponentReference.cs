@@ -1,3 +1,4 @@
+#if ADDRESSABLE
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -70,3 +71,4 @@ namespace Framework.Assets
         }
     }
 }
+#endif

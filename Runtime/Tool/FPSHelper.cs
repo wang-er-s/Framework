@@ -35,7 +35,7 @@ namespace Framework.Helper
         private Color ColorRed = new Color(1.0f, 0, 0);
         private Rect MemoryPosition = new Rect(Screen.width - 330, 0, 330, 300);
         private Rect GCBtnPosition = new Rect(Screen.width / 2 - 30, 0, 100, 50);
-        private Rect FpsPosition = new Rect(0, 50, 300, 300);
+        private Rect FpsPosition = new Rect(100, 150, 300, 300);
         private StringBuilder stringBuilder;
         private float MBSize = 1024f * 1024f;
 

@@ -10,8 +10,14 @@ namespace Framework.UI.Example
         // Start is called before the first frame update
         private void Start()
         {
-            vm = new ListBindViewModel();
-            pair_vm = new ListPairsBindViewModel();
+            var listGo = (GameObject) Instantiate(Resources.Load("ListBind"), GameObject.Find("UIRoot").transform);
+            var pairsGo = (GameObject) Instantiate(Resources.Load("ListPairsBind"), GameObject.Find("UIRoot").transform);
+            var listView = new ListBindView();
+            var pairsView = new ListPairsBindView();
+            listView.SetGameObject(listGo);
+            listView.SetVm(new ListBindViewModel());
+            pairsView.SetGameObject(pairsGo);
+            pairsView.SetVm(new ListPairsBindViewModel());
         }
     }
 }

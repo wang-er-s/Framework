@@ -1,3 +1,5 @@
+using Framework.Asynchronous;
+
 namespace Framework.Pool
 {
 	public interface IPool<T>
@@ -6,5 +8,11 @@ namespace Framework.Pool
 
         void Free(T obj);
 
+	}
+
+	public interface IAsyncPool<T>
+	{
+		AsyncResult<T> Allocate();
+		void Free(T obj);
 	}
 }

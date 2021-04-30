@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Framework.Contexts;
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
+using Google.Protobuf;
 using ILRuntime.CLR.Method;
 using ILRuntime.CLR.TypeSystem;
+using ILRuntime.CLR.Utils;
+using ILRuntime.Runtime;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
+using ProtoBuf.Meta;
 using Tool;
 using UnityEngine;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
@@ -35,7 +40,7 @@ namespace Framework
             Type[] args;
             BindingFlags flag = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.DeclaredOnly;
-            
+
             Type log = typeof(Log);
             foreach (var methodInfo in log.GetMethods(flag))
             {
@@ -80,7 +85,7 @@ namespace Framework
                         break;
                 }
             }
-            
+
             Type uiBindFactory = typeof(UIBindFactory);
 
             foreach (var methodInfo in uiBindFactory.GetMethods(flag))
@@ -96,7 +101,8 @@ namespace Framework
                 }
             }
 
-            var addSubView = typeof(View).GetMethods(flag).First((info => info.Name == "AddSubView" && info.IsGenericMethod));
+            var addSubView = typeof(View).GetMethods(flag)
+                .First((info => info.Name == "AddSubView" && info.IsGenericMethod));
             appdomain.RegisterCLRMethodRedirection(addSubView, UIAddSubview);
 
             foreach (var methodInfo in typeof(Context).GetMethods(flag))
@@ -150,14 +156,13 @@ namespace Framework
                         }
                         break;
                     }
-                    // case "RemoveContext" when methodInfo.IsGenericMethod:
-                    // {
-                    //     appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemoveContext);
-                    //     break;
-                    // }
+                    case "RemoveContext" when methodInfo.IsGenericMethod:
+                    {
+                        appdomain.RegisterCLRMethodRedirection(methodInfo, ContextRemoveContext);
+                        break;
+                    }
                 }
             }
-            
 
             //注册Add Component
             Type gameObjectType = typeof(GameObject);
@@ -165,45 +170,83 @@ namespace Framework
             {
                 switch (methodInfo.Name)
                 {
-                    case "AddComponent" when methodInfo.IsGenericMethod :
+                    case "AddComponent" when methodInfo.IsGenericMethod:
                         appdomain.RegisterCLRMethodRedirection(methodInfo, AddComponent);
                         break;
                     case "GetComponent" when methodInfo.IsGenericMethod:
                         appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent);
-                        break; 
+                        break;
                     case "GetComponent" when !methodInfo.IsGenericMethod:
                         appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent_1);
-                        break; 
+                        break;
                 }
             }
-            
+
             Type componentType = typeof(Component);
             foreach (var methodInfo in componentType.GetMethods(flag))
             {
                 switch (methodInfo.Name)
                 {
-                    case "GetComponent" when methodInfo.IsGenericMethod :
+                    case "GetComponent" when methodInfo.IsGenericMethod:
                         appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent);
                         break;
                     case "GetComponent" when !methodInfo.IsGenericMethod:
                         appdomain.RegisterCLRMethodRedirection(methodInfo, GetComponent_1);
-                        break; 
+                        break;
                 }
             }
 
             args = new[] {typeof(GameObject)};
             var getOrAdd1 = typeof(GameObjectExtension).GetMethod("GetOrAddComponent", flag, null, args, null);
             appdomain.RegisterCLRMethodRedirection(getOrAdd1, GetOrAddComponent);
-        }
 
+            //注册pb反序列化
+            Type pbSerializeType = typeof(ProtoBuf.Serializer);
+            args = new Type[] {typeof(System.Type), typeof(System.IO.Stream)};
+            var pbDeserializeMethod = pbSerializeType.GetMethod("Deserialize", flag, null, args, null);
+            appdomain.RegisterCLRMethodRedirection(pbDeserializeMethod, Deserialize_1);
+            args = new Type[] {typeof(ILRuntime.Runtime.Intepreter.ILTypeInstance)};
+            Dictionary<string, List<MethodInfo>> genericMethods = new Dictionary<string, List<MethodInfo>>();
+            List<MethodInfo> lst = null;
+            if (genericMethods.TryGetValue("Deserialize", out lst))
+            {
+                foreach (var m in lst)
+                {
+                    if (m.MatchGenericParameters(args, typeof(ILRuntime.Runtime.Intepreter.ILTypeInstance),
+                        typeof(System.IO.Stream)))
+                    {
+                        var method = m.MakeGenericMethod(args);
+                        appdomain.RegisterCLRMethodRedirection(method, Deserialize_2);
+                        break;
+                    }
+                }
+            }
+            
+            Type JsonFormatter = typeof(JsonFormatter);
+            appdomain.RegisterCLRMethodRedirection(JsonFormatter.GetMethod("ToDiagnosticString"),
+                ToDiagnosticString);
+        }
+        
+        private static unsafe StackObject* ToDiagnosticString(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod method, bool isnewobj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            StackObject* __ret = ILIntepreter.Minus(__esp, 2);
+            StackObject* ptr2 = ILIntepreter.Minus(__esp, 1);
+            object msg = StackObject.ToObject(ptr2, __domain, __mStack);
+            JsonFormatter.ToDiagnosticString((IMessage) ((ILTypeInstance) msg).CLRInstance);
+            __intp.Free(ptr2);
+            return __ret;
+        }
+        
         #region Log
+
         private static unsafe StackObject* LogMsg(ILIntepreter intp, StackObject* esp, IList<object> mStack,
             CLRMethod method, bool isNewObj, Action<object[]> action)
         {
             AppDomain domain = intp.AppDomain;
             StackObject* ret = ILIntepreter.Minus(esp, 1);
             var ptr_msg = ILIntepreter.Minus(esp, 1);
-            object[] message = (object[])StackObject.ToObject(ptr_msg, domain, mStack);
+            object[] message = (object[]) StackObject.ToObject(ptr_msg, domain, mStack);
             intp.Free(ptr_msg);
             string stackTrace = domain.DebugService.GetStackTrace(intp);
             Array.Resize(ref message, message.Length + 1);
@@ -211,18 +254,18 @@ namespace Framework
             action(message);
             return ret;
         }
-        
+
         private static unsafe StackObject* LogAssert(ILIntepreter intp, StackObject* esp, IList<object> mStack,
             CLRMethod method, bool isNewObj)
         {
             AppDomain domain = intp.AppDomain;
             StackObject* ret = ILIntepreter.Minus(esp, 1);
             var ptr_msg1 = ILIntepreter.Minus(esp, 1);
-            bool condition = (int)StackObject.ToObject(ptr_msg1, domain, mStack) == 1;
+            bool condition = (int) StackObject.ToObject(ptr_msg1, domain, mStack) == 1;
             var ptr_msg2 = ILIntepreter.Minus(esp, 2);
-            string message = (string)StackObject.ToObject(ptr_msg2, domain, mStack);
+            string message = (string) StackObject.ToObject(ptr_msg2, domain, mStack);
             var ptr_msg3 = ILIntepreter.Minus(esp, 3);
-            Object context = (Object)StackObject.ToObject(ptr_msg3, domain, mStack);
+            Object context = (Object) StackObject.ToObject(ptr_msg3, domain, mStack);
             intp.Free(ptr_msg1);
             intp.Free(ptr_msg2);
             intp.Free(ptr_msg3);
@@ -239,17 +282,20 @@ namespace Framework
             var ptr_msg = ILIntepreter.Minus(esp, 1);
             var ptr_go = ILIntepreter.Minus(esp, 2);
             object message = StackObject.ToObject(ptr_msg, domain, mStack);
-            Object go = (Object)StackObject.ToObject(ptr_go, domain, mStack);
+            Object go = (Object) StackObject.ToObject(ptr_go, domain, mStack);
             intp.Free(ptr_msg);
             intp.Free(ptr_go);
             string stackTrace = domain.DebugService.GetStackTrace(intp);
             Log.MsgWithGo(message + "/n" + stackTrace, go);
             return ret;
         }
+
         #endregion
 
         #region UI
-        static unsafe StackObject* UIOpenAsync(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
+
+        static unsafe StackObject* UIOpenAsync(ILIntepreter intp, StackObject* esp, IList<object> mStack,
+            CLRMethod method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -267,7 +313,8 @@ namespace Framework
                     var t = genericArguments[0];
                     if (t is ILType) //如果T是热更DLL里的类型
                     {
-                        var result = UIManager.Ins.OpenAsync(t.ReflectionType, (ViewModel) ((ILTypeInstance) vm)?.CLRInstance);
+                        var result = UIManager.Ins.OpenAsync(t.ReflectionType,
+                            (ViewModel) ((ILTypeInstance) vm)?.CLRInstance);
                         return ILIntepreter.PushObject(ret, mStack, result);
                     }
                     else
@@ -285,8 +332,9 @@ namespace Framework
 
             return ret;
         }
-        
-        static unsafe StackObject* UIAddSubview(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isNewObj)
+
+        static unsafe StackObject* UIAddSubview(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -306,7 +354,7 @@ namespace Framework
                     if (ins is ILTypeInstance typeInstance)
                     {
                         result = ((View) typeInstance.CLRInstance).AddSubView(genericArguments[0].ReflectionType,
-                            ((ILTypeInstance)vm).CLRInstance as ViewModel);
+                            ((ILTypeInstance) vm).CLRInstance as ViewModel);
                     }
                     else
                     {
@@ -324,7 +372,8 @@ namespace Framework
             return esp;
         }
 
-        static unsafe StackObject* UIGet(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
+        static unsafe StackObject* UIGet(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method,
+            bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -384,7 +433,8 @@ namespace Framework
             return ret;
         }
 
-        static unsafe StackObject* UIClose(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
+        static unsafe StackObject* UIClose(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method,
+            bool isNewObj)
         {
             AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -409,10 +459,13 @@ namespace Framework
 
             return ret;
         }
+
         #endregion
 
         #region Context
-        static unsafe StackObject* ContextContains(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method, bool isNewObj)
+
+        static unsafe StackObject* ContextContains(ILIntepreter intp, StackObject* esp, IList<object> mStack,
+            CLRMethod method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -441,8 +494,9 @@ namespace Framework
 
             return ret;
         }
-        
-        private static unsafe StackObject* ContextRemove0(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+
+        private static unsafe StackObject* ContextRemove0(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -474,7 +528,8 @@ namespace Framework
             return esp;
         }
 
-        private static unsafe StackObject* ContextRemove1(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        private static unsafe StackObject* ContextRemove1(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -486,12 +541,12 @@ namespace Framework
             var ins = StackObject.ToObject(ptr2, domain, mstack);
             intp.Free(ptr1);
             intp.Free(ptr2);
-            
+
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
                 {
-                    var result = ((Context) ins).Remove((string)name);
+                    var result = ((Context) ins).Remove((string) name);
                     if (result is CrossBindingAdaptorType adaptorType)
                     {
                         return ILIntepreter.PushObject(ptr2, mstack, adaptorType.ILInstance);
@@ -507,9 +562,10 @@ namespace Framework
 
             return esp;
         }
-       
-        
-        private static unsafe StackObject* ContextGetContext(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+
+
+        private static unsafe StackObject* ContextGetContext(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -521,6 +577,10 @@ namespace Framework
                     var t = genericArguments[0];
                     string name = t.GetCLRType().Name;
                     var result = Context.GetContext(name);
+                    if (result is CrossBindingAdaptorType adaptorType)
+                    {
+                        return ILIntepreter.PushObject(esp, mstack, adaptorType.ILInstance);
+                    }
                     return ILIntepreter.PushObject(esp, mstack, result);
                 }
                 catch (Exception e)
@@ -532,14 +592,13 @@ namespace Framework
 
             return esp;
         }
-        
-        private static unsafe StackObject* ContextRemoveContext(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+
+        private static unsafe StackObject* ContextRemoveContext(ILIntepreter intp, StackObject* esp,
+            IList<object> mstack, CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
             IType[] genericArguments = method.GenericArguments;
-            //成员方法的第一个参数
-            StackObject* ret = ILIntepreter.Minus(esp, 1);
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -557,8 +616,9 @@ namespace Framework
 
             return esp;
         }
-        
-        private static unsafe StackObject* ContextSet1(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+
+        private static unsafe StackObject* ContextSet1(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -589,7 +649,8 @@ namespace Framework
             return esp;
         }
 
-        private static unsafe StackObject* ContextGet2(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        private static unsafe StackObject* ContextGet2(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -604,7 +665,7 @@ namespace Framework
             intp.Free(ptr1);
             intp.Free(ptr2);
             intp.Free(ptr3);
-            
+
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -612,11 +673,11 @@ namespace Framework
                     object result = null;
                     if (ins is ILTypeInstance typeInstance)
                     {
-                        result = ((Context) typeInstance.CLRInstance).Get((string) name,  (int)cascade == 1);
+                        result = ((Context) typeInstance.CLRInstance).Get((string) name, (int) cascade == 1);
                     }
                     else
                     {
-                        result = ((Context) ins).Get((string) name,  (int)cascade == 1);
+                        result = ((Context) ins).Get((string) name, (int) cascade == 1);
                     }
                     return ILIntepreter.PushObject(ptr3, mstack, result);
                 }
@@ -630,7 +691,8 @@ namespace Framework
             return esp;
         }
 
-        private static unsafe StackObject* ContextGet1(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        private static unsafe StackObject* ContextGet1(ILIntepreter intp, StackObject* esp, IList<object> mstack,
+            CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain domain = intp.AppDomain;
             //获取泛型参数<T>的实际类型
@@ -642,7 +704,7 @@ namespace Framework
             var ins = StackObject.ToObject(ptr2, domain, mstack);
             intp.Free(ptr1);
             intp.Free(ptr2);
-            
+
             if (genericArguments != null && genericArguments.Length == 1)
             {
                 try
@@ -668,10 +730,11 @@ namespace Framework
 
             return esp;
         }
+
         #endregion
 
         #region Component
-        
+
         /// <summary>
         /// Get的字符串参数重定向
         /// </summary>
@@ -681,7 +744,8 @@ namespace Framework
         /// <param name="__method"></param>
         /// <param name="isNewObj"></param>
         /// <returns></returns>
-        private static unsafe StackObject* GetOrAddComponent(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        private static unsafe StackObject* GetOrAddComponent(ILIntepreter __intp, StackObject* __esp,
+            IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             //CLR重定向的说明请看相关文档和教程，这里不多做解释
             AppDomain __domain = __intp.AppDomain;
@@ -855,18 +919,20 @@ namespace Framework
         /// <param name="__method"></param>
         /// <param name="isNewObj"></param>
         /// <returns></returns>
-        private static unsafe StackObject* GetComponent_1(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        private static unsafe StackObject* GetComponent_1(ILIntepreter __intp, StackObject* __esp,
+            IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
             StackObject* __ret = ILIntepreter.Minus(__esp, 2);
 
             ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
-            String type = (String)StackObject.ToObject(ptr_of_this_method, __domain, __mStack);
+            String type = (String) StackObject.ToObject(ptr_of_this_method, __domain, __mStack);
             __intp.Free(ptr_of_this_method);
 
             ptr_of_this_method = ILIntepreter.Minus(__esp, 2);
-            GameObject instance_of_this_method = (GameObject)(StackObject.ToObject(ptr_of_this_method, __domain, __mStack));
+            GameObject instance_of_this_method =
+                (GameObject) (StackObject.ToObject(ptr_of_this_method, __domain, __mStack));
             __intp.Free(ptr_of_this_method);
 
             object result_of_this_method = null;
@@ -904,7 +970,7 @@ namespace Framework
 
             return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
-        
+
 
         /// <summary>
         /// GetComponent 的实现
@@ -922,7 +988,7 @@ namespace Framework
             //CLR重定向的说明请看相关文档和教程，这里不多做解释
             AppDomain __domain = __intp.AppDomain;
 
-            var ptr =  ILIntepreter.Minus(__esp, 1);
+            var ptr = ILIntepreter.Minus(__esp, 1);
             //成员方法的第一个参数为this
             var ins = StackObject.ToObject(ptr, __domain, __mStack);
             if (ins == null)
@@ -998,7 +1064,7 @@ namespace Framework
             }
             return res;
         }
-        
+
         private static GameObject FindGOFromHotClass(ILTypeInstance instance)
         {
             var returnType = instance.Type;
@@ -1017,25 +1083,25 @@ namespace Framework
         }
 
         #endregion
-        
+
         unsafe static StackObject* BindViewList(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
             CLRMethod __method, bool isNewObj)
         {
             //CLR重定向的说明请看相关文档和教程，这里不多做解释
             AppDomain __domain = __intp.AppDomain;
 
-            var ptr1 =  ILIntepreter.Minus(__esp, 1);
+            var ptr1 = ILIntepreter.Minus(__esp, 1);
             var root = StackObject.ToObject(ptr1, __domain, __mStack);
-            var ptr2 =  ILIntepreter.Minus(__esp, 2);
+            var ptr2 = ILIntepreter.Minus(__esp, 2);
             var list = StackObject.ToObject(ptr2, __domain, __mStack);
-            var ptr3 =  ILIntepreter.Minus(__esp, 3);
+            var ptr3 = ILIntepreter.Minus(__esp, 3);
             var ins = StackObject.ToObject(ptr3, __domain, __mStack);
             __intp.Free(ptr1);
             __intp.Free(ptr2);
             __intp.Free(ptr3);
 
             var genericArgument = __method.GenericArguments;
-            
+
             if (genericArgument != null && genericArgument.Length == 2)
             {
                 try
@@ -1050,7 +1116,8 @@ namespace Framework
                     {
                         type = viewType.ReflectionType;
                     }
-                    ((UIBindFactory)ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>)list,(Transform)root, type);
+                    ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
+                        (Transform) root, type);
                 }
                 catch (Exception e)
                 {
@@ -1061,20 +1128,20 @@ namespace Framework
 
             return __esp;
         }
-        
+
         unsafe static StackObject* BindIpairs(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
             CLRMethod __method, bool isNewObj)
         {
             //CLR重定向的说明请看相关文档和教程，这里不多做解释
             AppDomain __domain = __intp.AppDomain;
 
-            var ptr1 =  ILIntepreter.Minus(__esp, 1);
+            var ptr1 = ILIntepreter.Minus(__esp, 1);
             var pattern = StackObject.ToObject(ptr1, __domain, __mStack);
-            var ptr2 =  ILIntepreter.Minus(__esp, 2);
+            var ptr2 = ILIntepreter.Minus(__esp, 2);
             var root = StackObject.ToObject(ptr2, __domain, __mStack);
-            var ptr3 =  ILIntepreter.Minus(__esp, 3);
+            var ptr3 = ILIntepreter.Minus(__esp, 3);
             var list = StackObject.ToObject(ptr3, __domain, __mStack);
-            var ptr4 =  ILIntepreter.Minus(__esp, 4);
+            var ptr4 = ILIntepreter.Minus(__esp, 4);
             var ins = StackObject.ToObject(ptr4, __domain, __mStack);
             __intp.Free(ptr1);
             __intp.Free(ptr2);
@@ -1082,7 +1149,7 @@ namespace Framework
             __intp.Free(ptr4);
 
             var genericArgument = __method.GenericArguments;
-            
+
             if (genericArgument != null && genericArgument.Length == 2)
             {
                 try
@@ -1109,6 +1176,72 @@ namespace Framework
             }
 
             return __esp;
+        }
+
+        /// <summary>
+        /// pb net 反序列化重定向
+        /// </summary>
+        /// <param name="__intp"></param>
+        /// <param name="__esp"></param>
+        /// <param name="__mStack"></param>
+        /// <param name="__method"></param>
+        /// <param name="isNewObj"></param>
+        /// <returns></returns>
+        private static unsafe StackObject* Deserialize_1(ILIntepreter __intp, StackObject* __esp,
+            IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            StackObject* ptr_of_this_method;
+            StackObject* __ret = ILIntepreter.Minus(__esp, 2);
+            ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
+            System.IO.Stream @source =
+                (System.IO.Stream) typeof(System.IO.Stream).CheckCLRTypes(StackObject.ToObject(ptr_of_this_method,
+                    __domain,
+                    __mStack));
+            __intp.Free(ptr_of_this_method);
+            ptr_of_this_method = ILIntepreter.Minus(__esp, 2);
+            System.Type @type =
+                (System.Type) typeof(System.Type).CheckCLRTypes(
+                    StackObject.ToObject(ptr_of_this_method, __domain, __mStack));
+            __intp.Free(ptr_of_this_method);
+            var result_of_this_method = RuntimeTypeModel.Default.Deserialize(source, null, type);
+            object obj_result_of_this_method = result_of_this_method;
+            if (obj_result_of_this_method is CrossBindingAdaptorType)
+            {
+                return ILIntepreter.PushObject(__ret, __mStack,
+                    ((CrossBindingAdaptorType) obj_result_of_this_method).ILInstance, true);
+            }
+            return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method, true);
+        }
+
+        /// <summary>
+        /// pb net 反序列化重定向
+        /// </summary>
+        /// <param name="__intp"></param>
+        /// <param name="__esp"></param>
+        /// <param name="__mStack"></param>
+        /// <param name="__method"></param>
+        /// <param name="isNewObj"></param>
+        /// <returns></returns>
+        private static unsafe StackObject* Deserialize_2(ILIntepreter __intp, StackObject* __esp,
+            IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            StackObject* ptr_of_this_method;
+            StackObject* __ret = ILIntepreter.Minus(__esp, 1);
+            ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
+            System.IO.Stream @source =
+                (System.IO.Stream) typeof(System.IO.Stream).CheckCLRTypes(StackObject.ToObject(ptr_of_this_method,
+                    __domain,
+                    __mStack));
+            __intp.Free(ptr_of_this_method);
+            var genericArgument = __method.GenericArguments;
+            var type = genericArgument[0];
+            var @realType = type is CLRType ? type.TypeForCLR : type.ReflectionType;
+            var result_of_this_method = RuntimeTypeModel.Default.Deserialize(source, null, realType);
+            return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
     }
 }

@@ -7,19 +7,16 @@ using UnityEngine.SceneManagement;
 
 public class SimpleBind : MonoBehaviour
 {
-    private SetupViewModel vm;
-    private ObservableProperty<int> Age;
-    private View view;
 
     // Use this for initialization
     private void Start()
     {
-        Log.Msg();
-        vm = new SetupViewModel();
+        var vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");
-        //UIManager.Ins.Open<SetupView>(vm);
-        UIManager.Ins.OpenAsync<ListBindView>(new ListBindViewModel());
-        //UIManager.Ins.Open<ListPairsBindView>(new ListPairsBindViewModel());
+        var go = (GameObject) Instantiate(Resources.Load("SimpleBind"), GameObject.Find("UIRoot").transform);
+        var setup = new SetupView();
+        setup.SetGameObject(go);
+        setup.SetVm(vm);
     }
 }

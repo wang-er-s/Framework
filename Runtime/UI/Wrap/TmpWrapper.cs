@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Framework.UI.Wrap
 {
     public class TmpWrapper : BaseWrapper<TextMeshProUGUI>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>,
-        IFieldChangeCb<double>
+        IFieldChangeCb<double>, IFieldChangeCb<long>
     {
         public TmpWrapper(TextMeshProUGUI text) : base(text)
         {
@@ -30,6 +30,11 @@ namespace Framework.UI.Wrap
         }
 
         Action<double> IFieldChangeCb<double>.GetFieldChangeCb()
+        {
+            return value => View.text = value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        Action<long> IFieldChangeCb<long>.GetFieldChangeCb()
         {
             return value => View.text = value.ToString(CultureInfo.InvariantCulture);
         }

@@ -41,7 +41,7 @@ namespace Framework
 			        Log.Error(www.error);
 		        }
 		        fs = new MemoryStream(www.downloadHandler.data);
-		        if (ilrConfig.UsePbd)
+		        if (ilrConfig.UsePbd && File.Exists(pdbPath))
 		        {
 			        www = UnityWebRequest.Get(pdbPath);
 			        await www.SendWebRequest();
@@ -75,22 +75,23 @@ namespace Framework
         public static void InitializeILRuntime(AppDomain appDomain)
         {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
-            //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
-            appDomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+	        //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
+	        appDomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
 #endif
-            ILRuntimeDelegateHelper.RegisterDelegate(appDomain);
-            ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(appDomain);
-            ILRuntimeRedirectHelper.RegisterMethodRedirection(appDomain);
-            ILRuntimeValueTypeBinderHelper.Register(appDomain);
-            ILRuntimeGenericHelper.RegisterGenericFunc(appDomain);
-            LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appDomain);
+	        ILRuntimeDelegateHelper.RegisterDelegate(appDomain);
+	        ILRuntimeAdapterHelper.RegisterCrossBindingAdaptor(appDomain);
+	        ILRuntimeRedirectHelper.RegisterMethodRedirection(appDomain);
+	        ILRuntimeValueTypeBinderHelper.Register(appDomain);
+	        ILRuntimeGenericHelper.RegisterGenericFunc(appDomain);
+	        LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appDomain);
 
-            //初始化CLR绑定请放在初始化的最后一步！！
-            //请在生成了绑定代码后解除下面这行的注释
-            // if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.OSXPlayer)
-	           //  ILRuntime.Runtime.CLRBinding.CLRBindingUtils.Initialize(appDomain);
+	        //初始化CLR绑定请放在初始化的最后一步！！
+	        //请在生成了绑定代码后解除下面这行的注释
+	        var ilrConfig = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
+	        if (ilrConfig.ReleaseBuild)
+		        ILRuntime.Runtime.CLRBinding.CLRBindingUtils.Initialize(appDomain);
         }
-        
+
         private static Dictionary<string,Type> hotfixType = null;
         
         public static IEnumerable<Type> GetHotfixTypes()

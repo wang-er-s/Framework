@@ -1,3 +1,4 @@
+#if ADDRESSABLE
 namespace Framework.Assets
 {
 #if UNITY_EDITOR
@@ -16,3 +17,4 @@ namespace Framework.Assets
     }
 #endif
 }
+#endif

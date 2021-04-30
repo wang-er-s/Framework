@@ -1,3 +1,4 @@
+#if ADDRESSABLE
 using System;
 using System.ComponentModel;
 using UnityEngine;
@@ -55,3 +56,4 @@ namespace Framework.Assets
         }
     }
 }
+#endif

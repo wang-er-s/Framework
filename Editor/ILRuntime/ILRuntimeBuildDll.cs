@@ -33,17 +33,22 @@ namespace Framework.Editor
         }
 
         private static List<string> defineList = new List<string>();
+        private static bool usePdb;
         
         private static void BuildDLL(bool isDebug)
         {
-            var dllName = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig.DllName;
-            string codeSource = Application.dataPath + "/_scripts@hotfix";
+            var config = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
+            config.ReleaseBuild = !isDebug;
+            AssetDatabase.SaveAssets();
+            usePdb = config.UsePbd;
+            var dllName = config.DllName;
+                string codeSource = Application.dataPath + "/_scripts@hotfix";
             string outPath = Application.streamingAssetsPath + $"/{dllName}.dll";
             List<string> allDll = new List<string>();
             var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
-            if (!isDebug)
+            if (!usePdb)
             {
-                //非debug模式删除pdb文件
+                //删除pdb文件
                 var pdbPath = Path.ChangeExtension(outPath, "pdb");
                 if(File.Exists(pdbPath))
                     File.Delete(pdbPath);
@@ -206,7 +211,7 @@ namespace Framework.Editor
             var assemblyname = Path.GetFileNameWithoutExtension(output);
             var compilation = CSharpCompilation.Create(assemblyname, codes, assemblies, option);
             EmitResult result = null;
-            if (!isdebug)
+            if (!usePdb)
             {
                 result = compilation.Emit(output);
             }

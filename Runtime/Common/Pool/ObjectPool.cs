@@ -5,22 +5,20 @@ namespace Framework.Pool
 {
     public class ObjectPool<T> : Pool<T>
     {
-        private readonly Action<T> _resetMethod;
-
-        public ObjectPool(IFactory<T> factory, Action<T> resetMethod = null, int initCount = 0)
+        public ObjectPool(IFactory<T> factory, Action<T> onAlloc, Action<T> onFree) : base(factory, onAlloc, onFree)
         {
-            Factory = factory;
-            _resetMethod = resetMethod;
-            for (int i = 0; i < initCount; i++)
-            {
-                CacheStack.Push(Factory.Create());
-            }
         }
+    }
 
+    public class AsyncObjectPool<T> : AsyncPool<T>
+    {
         public override void Free(T obj)
         {
-            _resetMethod?.Invoke(obj);
-            CacheStack.Push(obj);
+            
+        }
+
+        public AsyncObjectPool(IAsyncFactory<T> factory, Action<T> onAlloc, Action<T> onFree) : base(factory, onAlloc, onFree)
+        {
         }
     }
 }

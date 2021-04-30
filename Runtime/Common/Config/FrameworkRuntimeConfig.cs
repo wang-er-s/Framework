@@ -45,5 +45,8 @@ namespace Framework
 		[FolderPath(AbsolutePath = false)]
 		[LabelText("生成适配器地址")]
 		public string AdaptorPath;
+
+		[HideInInspector]
+		public bool ReleaseBuild = false;
 	}
 }

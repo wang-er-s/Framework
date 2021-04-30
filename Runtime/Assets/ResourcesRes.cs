@@ -50,27 +50,39 @@ namespace Framework.Assets
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null, bool instantiateInWorldSpace = false)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            progressResult.Callbackable().OnCallback((result =>
+            instantiateAsync(key, progressResult, (ins) =>
             {
-                var ins = Object.Instantiate(result.Result);
                 SetTransform(ins, parent, instantiateInWorldSpace);
-                progressResult.SetResult(ins);
-            }));
-            loadAssetAsync(key, progressResult);
+            });
             return progressResult;
         }
-
+        
         public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation, Transform parent = null)
         {
             ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            progressResult.Callbackable().OnCallback((result =>
+            instantiateAsync(key, progressResult, (ins) =>
             {
-                var ins = Object.Instantiate(result.Result);
                 SetTransform(ins, position, rotation, parent);
-                progressResult.SetResult(ins);
-            }));
-            loadAssetAsync(key, progressResult);
+            });
             return progressResult;
+        }
+        
+        private async void instantiateAsync(string key, IProgressPromise<float, GameObject> promise, Action<GameObject> dealGo)
+        {
+            var operation = Resources.LoadAsync<GameObject>(key);
+            while (!operation.isDone)
+            {
+                promise.UpdateProgress(operation.progress);
+                await Task.Yield();
+            }
+            if (operation.asset == null)
+            {
+                Log.Warning("要加载的", key, "为空");
+            }
+            var ins = Object.Instantiate(operation.asset) as GameObject;
+            dealGo(ins);
+            promise.SetResult(ins);
+            _handles.Add(operation.asset);
         }
 
         private void SetTransform(GameObject obj, Transform parent = null,

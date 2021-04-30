@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Sirenix.OdinInspector;
 using UnityEditor;
 
@@ -8,6 +11,11 @@ namespace Framework.Editor
     public class ILRuntimeCLRBinding
     {
         [Button("生成CLR绑定[不知道干嘛别点！]", ButtonSizes.Large)]
+        private static void Gen()
+        {
+            GenerateCLRBindingByAnalysis(true);
+        }
+
         public static void GenerateCLRBindingByAnalysis(bool showTips = true)
         {
             if(showTips && !EditorUtility.DisplayDialog("注意", "确定要生成吗", "是的", "点错")) return;
@@ -21,6 +29,9 @@ namespace Framework.Editor
 
                 //Crossbind Adapter is needed to generate the correct binding code
                 InitILRuntime(domain);
+                var path = "Assets/_Scripts/ILRuntime/Generated";
+                if(Directory.Exists(path))
+                    Directory.Delete(path, true);
                 ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain,
                     "Assets/_Scripts/ILRuntime/Generated");
             }
@@ -35,6 +46,11 @@ namespace Framework.Editor
             foreach (var type in gameDll.GetTypes())
             {
                 ILRuntimeAdapterHelper.AddAdaptor(type);
+                if (type.GetCustomAttribute(typeof(HotfixInitAttribute), false) != null)
+                {
+                    type.GetMethods().First(info => info.GetCustomAttribute(typeof(HotfixInitAttribute)) != null)
+                        .Invoke(null, new object[] {domain});
+                }
             }
             foreach (var type in typeof(ILRuntimeHelper).Assembly.GetTypes())
             {

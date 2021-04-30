@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
@@ -22,6 +23,8 @@ namespace Framework.Assets
         
         IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
             bool instantiateInWorldSpace = false);
+
+        IProgressResult<float, Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single);
         
         Task<string> CheckDownloadSize(string key);
         Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
