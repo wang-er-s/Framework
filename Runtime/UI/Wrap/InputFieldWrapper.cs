@@ -1,4 +1,5 @@
 ﻿using System;
+using Framework.UI.Core;
 using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine.Events;
@@ -8,37 +9,36 @@ namespace Framework.UI.Wrap
 {
     public class InputFieldWrapper : BaseWrapper<InputField>, IFieldChangeCb<string>, IComponentEvent<string>
     {
-        public InputFieldWrapper(InputField inputField) : base(inputField)
-        {
-            View = inputField;
-        }
-
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            return (value) => View.text = value;
+            return (value) => Component.text = value;
         }
 
         UnityEvent<string> IComponentEvent<string>.GetComponentEvent()
         {
-            return View.onEndEdit;
+            return Component.onEndEdit;
+        }
+
+        public InputFieldWrapper(InputField component, View view) : base(component, view)
+        {
         }
     }
     
-    public class TMP_InputFieldWrapper : BaseWrapper<TMP_InputField>, IFieldChangeCb<string>, IComponentEvent<string>
+    public class TMPInputFieldWrapper : BaseWrapper<TMP_InputField>, IFieldChangeCb<string>, IComponentEvent<string>
     {
-        public TMP_InputFieldWrapper(TMP_InputField inputField) : base(inputField)
-        {
-            View = inputField;
-        }
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
-            return (value) => View.text = value;
+            return (value) => Component.text = value;
         }
 
         UnityEvent<string> IComponentEvent<string>.GetComponentEvent()
         {
-            return View.onEndEdit;
+            return Component.onEndEdit;
+        }
+
+        public TMPInputFieldWrapper(TMP_InputField component, View view) : base(component, view)
+        {
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Framework.UI.Core.Bind
 {
     public class UIBindFactory : BindFactory
     {
+
         public void BindViewList<TItemVm, TItemView>
             (ObservableList<TItemVm> list,Transform root) where TItemVm : ViewModel
         where TItemView : View
@@ -43,6 +44,10 @@ namespace Framework.UI.Core.Bind
         {
             TwoWayBind(dropdown, property);
             BindList(dropdown, listProperty);
+        }
+
+        public UIBindFactory(View view) : base(view)
+        {
         }
     }
 }

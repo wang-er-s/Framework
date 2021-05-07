@@ -23,19 +23,19 @@ namespace Framework.UI.Core
         FullScreen,
     }
     
-    public abstract class View
+    public abstract class View : ICustomRes
     {
         private List<View> _subViews;
         private CanvasGroup _canvasGroup;
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
-        protected IRes Res;
+        public IRes Res { get; }
 
         public View()
         {
             _subViews = new List<View>();
-            Binding = new UIBindFactory();
+            Binding = new UIBindFactory(this);
             Res = Assets.Res.Create();
         }
 
@@ -197,5 +197,9 @@ namespace Framework.UI.Core
         protected abstract void OnVmChange();
         public virtual UILevel UILevel { get; } = UILevel.Common;
         public virtual bool IsSingle { get; } = true;
+        public IRes GetRes()
+        {
+            return Res;
+        }
     }
 }

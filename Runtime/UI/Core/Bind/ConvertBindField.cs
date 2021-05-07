@@ -14,11 +14,11 @@ namespace Framework.UI.Core.Bind
         private ObservableProperty<TData> _property;
         private object _defaultWrapper;
 
-        public ConvertBindField(TComponent component, ObservableProperty<TData> property,
+        public ConvertBindField(object container, TComponent component, ObservableProperty<TData> property,
             Action<TResult> propChangeCb,
             Func<TData, TResult> prop2CpntWrap,
             Func<TResult, TData> cpnt2PropWrap,
-            UnityEvent<TResult> componentEvent)
+            UnityEvent<TResult> componentEvent) : base(container)
         {
             SetValue(component, property, propChangeCb, prop2CpntWrap, cpnt2PropWrap, componentEvent);
             InitEvent();
@@ -46,7 +46,7 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             _componentEvent = _componentEvent ?? (_component as IComponentEvent<TResult>)?.GetComponentEvent() ?? (_defaultWrapper as IComponentEvent<TResult>)?.GetComponentEvent();
             _propChangeCb = _propChangeCb ?? (_component as IFieldChangeCb<TResult>)?.GetFieldChangeCb() ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
             Log.Assert(_prop2CpntWrap != null || _cpnt2PropWrap != null);

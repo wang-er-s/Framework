@@ -9,19 +9,18 @@ namespace Framework.UI.Wrap
 {
     public class SliderWrapper : BaseWrapper<Slider>, IFieldChangeCb<float>, IComponentEvent<float>
     {
-        public SliderWrapper(Slider slider) : base(slider)
-        {
-            View = slider;
-        }
-
         Action<float> IFieldChangeCb<float>.GetFieldChangeCb()
         {
-            return (value) => View.value = value;
+            return (value) => Component.value = value;
         }
 
         UnityEvent<float> IComponentEvent<float>.GetComponentEvent()
         {
-            return View.onValueChanged;
+            return Component.onValueChanged;
+        }
+
+        public SliderWrapper(Slider component, View view) : base(component, view)
+        {
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Framework.UI.Core.Bind
         private readonly ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
 
-        public BindViewList(ObservableList<TVm> list, Transform root)
+        public BindViewList(ObservableList<TVm> list, Transform root)  : base(null)
         {
             _views = new List<View>();
             _content = root;
@@ -63,7 +63,7 @@ namespace Framework.UI.Core.Bind
         private List<ViewWrapper> _wrappers;
         private Type _viewType;
 
-        public BindViewList(ObservableList<TVm> list, Transform root, Type view)
+        public BindViewList(ObservableList<TVm> list, Transform root, Type view): base(null)
         {
             if (!view.IsSubclassOf(typeof(View)))
             {
@@ -113,7 +113,7 @@ namespace Framework.UI.Core.Bind
         private ObservableList<TVm> _list;
         private List<View> _views;
 
-        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root)
+        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root) : base(null)
         {
             SetValue(list, itemName, root);
         }
@@ -157,7 +157,7 @@ namespace Framework.UI.Core.Bind
         private List<View> _views;
         private Type _viewType;
 
-        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root, Type view)
+        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root, Type view) : base(null)
         {
             _viewType = view;
             this._list = list;

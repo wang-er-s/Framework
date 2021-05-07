@@ -13,8 +13,8 @@ namespace Framework.UI.Core.Bind
         private object _defaultWrapper;
         private Func<Action, Action> _wrapFunc;
 
-        public BindCommand(TComponent component, Action command, UnityEvent componentEvent = null,
-            Func<Action, Action> wrapFunc = null)
+        public BindCommand(object container, TComponent component, Action command, UnityEvent componentEvent = null,
+            Func<Action, Action> wrapFunc = null) : base(container)
         {
             SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
@@ -31,7 +31,7 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
+            _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             _componentEvent = _componentEvent ?? (_component as IComponentEvent)?.GetComponentEvent() ??
                 (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
             Log.Assert(_componentEvent != null, "componentEvent can not be null");
@@ -55,8 +55,8 @@ namespace Framework.UI.Core.Bind
         private UnityEvent<TData> _componentEvent;
         private object _defaultWrapper;
 
-        public BindCommandWithPara(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
-            Func<Action<TData>, Action<TData>> wrapFunc = null)
+        public BindCommandWithPara(object container, TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
+            Func<Action<TData>, Action<TData>> wrapFunc = null) : base(container)
         {
             SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
@@ -73,9 +73,18 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
-            _defaultWrapper = BindTool.GetDefaultWrapper(_component);
-            _componentEvent = _componentEvent ??  (_defaultWrapper as IComponentEvent<TData>)?.GetComponentEvent();
-            Log.Assert(_componentEvent != null);
+            _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
+            if (_componentEvent == null)
+            {
+                IComponentEvent<TData> changeCb = _defaultWrapper as IComponentEvent<TData>;
+                if (_component is IComponentEvent<TData> cb)
+                {
+                    changeCb = cb;
+                }
+                _componentEvent = changeCb?.GetComponentEvent();
+            }
+            Log.Assert(_componentEvent != null,
+                $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IComponentEvent<{typeof(TData).Name}> interface");
             if (_wrapFunc == null)
                 _componentEvent.AddListener((value) => _command(value));
             else

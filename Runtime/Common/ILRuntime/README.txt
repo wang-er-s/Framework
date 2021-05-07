@@ -16,4 +16,5 @@
 继承Mono的同时实现IDraggable接口，Army继承DraggableMono，使用List<DraggableMono> 来接Army
 17.不能使用ref/out  例如TryGetComponent
 18.使用Release编译的dll运行，需要生成clr绑定并初始化
+19.热更中不要定义枚举，一定要用则使用int来代替
 

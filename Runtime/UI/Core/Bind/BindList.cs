@@ -16,9 +16,9 @@ namespace Framework.UI.Core.Bind
         private readonly ObservableList<TVm> _list;
         private IBindList<TVm> _bindList;
 
-        public BindList(TComponent view, ObservableList<TVm> list, Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide)
+        public BindList(object container, TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide) : base(container)
         {
-            _component = view;
+            _component = component;
             this._list = list;
             InitEvent(onShow, onHide);
             InitCpntValue();

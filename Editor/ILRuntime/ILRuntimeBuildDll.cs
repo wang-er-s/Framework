@@ -166,7 +166,7 @@ namespace Framework.Editor
             }
 
             //添加语法树
-            List<SyntaxTree> codes = new List<SyntaxTree>();
+            List<Microsoft.CodeAnalysis.SyntaxTree> codes = new List<Microsoft.CodeAnalysis.SyntaxTree>();
             var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
             foreach (var cs in codefiles)
             {
@@ -240,6 +240,10 @@ namespace Framework.Editor
                 {
                     Debug.LogError(diagnostic.ToString());
                 }
+            }
+            else
+            {
+                Debug.Log("编译DLL成功");
             }
             return result.Success;
         }

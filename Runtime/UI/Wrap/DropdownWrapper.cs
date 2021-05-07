@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Specialized;
+using Framework.UI.Core;
 using Framework.UI.Wrap.Base;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -9,19 +10,15 @@ namespace Framework.UI.Wrap
     public class DropdownWrapper : BaseWrapper<Dropdown>, IFieldChangeCb<int>, IComponentEvent<int>,
         IBindList<Dropdown.OptionData>
     {
-        public DropdownWrapper(Dropdown view) : base(view)
-        {
-            this.View = view;
-        }
 
         public Action<int> GetFieldChangeCb()
         {
-            return (index) => View.value = index;
+            return (index) => Component.value = index;
         }
 
         public UnityEvent<int> GetComponentEvent()
         {
-            return View.onValueChanged;
+            return Component.onValueChanged;
         }
 
         public Action<NotifyCollectionChangedAction, Dropdown.OptionData, int> GetBindListFunc()
@@ -35,13 +32,13 @@ namespace Framework.UI.Wrap
             switch (type)
             {
                 case NotifyCollectionChangedAction.Add:
-                    View.options.Insert(index, data);
+                    Component.options.Insert(index, data);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    View.options.RemoveAt(index);
+                    Component.options.RemoveAt(index);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    View.options[index] = data;
+                    Component.options[index] = data;
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     Clear();
@@ -53,7 +50,11 @@ namespace Framework.UI.Wrap
 
         private void Clear()
         {
-            View.options.Clear();
+            Component.options.Clear();
+        }
+
+        public DropdownWrapper(Dropdown component, View view) : base(component, view)
+        {
         }
     }
 }

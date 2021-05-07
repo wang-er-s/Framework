@@ -10,12 +10,19 @@ namespace Framework.UI.Core.Bind
     {
         protected List<BaseBind> Binds = new List<BaseBind>();
 
+        protected object Container;
+
+        public BindFactory(object container)
+        {
+            Container = container;
+        }
+
         //单向绑定
         public void Bind<TComponent, TData>
         (TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(component, property, fieldChangeCb, null, BindType.OnWay,
+            var bind = new BindField<TComponent, TData>(Container, component, property, fieldChangeCb, null, BindType.OnWay,
                 prop2CpntWrap, null);
             Binds.Add(bind);
         }
@@ -26,7 +33,8 @@ namespace Framework.UI.Core.Bind
             UnityEvent<TData> componentEvent = null,
             Func<TData, TData> cpnt2PropWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(component, property, null, componentEvent, BindType.Revert,
+            var bind = new BindField<TComponent, TData>(Container, component, property, null, componentEvent,
+                BindType.Revert,
                 null, cpnt2PropWrap);
             Binds.Add(bind);
         }
@@ -48,7 +56,7 @@ namespace Framework.UI.Core.Bind
             ObservableProperty<TData> property, Func<TData, TResult> field2CpntConvert,
             Action<TResult> fieldChangeCb = null) where TComponent : class
         {
-            var bind = new ConvertBindField<TComponent, TData, TResult>(component, property, fieldChangeCb,
+            var bind = new ConvertBindField<TComponent, TData, TResult>(Container, component, property, fieldChangeCb,
                 field2CpntConvert, null, null);
             Binds.Add(bind);
         }
@@ -59,7 +67,7 @@ namespace Framework.UI.Core.Bind
             Func<TResult, TData> cpnt2FieldConvert,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
-            var bind = new ConvertBindField<TComponent, TData, TResult>(component, property, null, null,
+            var bind = new ConvertBindField<TComponent, TData, TResult>(Container, component, property, null, null,
                 cpnt2FieldConvert, componentEvent);
             Binds.Add(bind);
         }
@@ -81,7 +89,7 @@ namespace Framework.UI.Core.Bind
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
             where TComponent : class
         {
-            var bind = new BindField<TComponent, TData1, TData2, TResult>(component, property1, property2,
+            var bind = new BindField<TComponent, TData1, TData2, TResult>(Container, component, property1, property2,
                 wrapFunc, filedChangeCb);
             Binds.Add(bind);
         }
@@ -97,7 +105,7 @@ namespace Framework.UI.Core.Bind
         (TComponent component, Action command, UnityEvent componentEvent = null,
             Func<Action, Action> wrapFunc = null) where TComponent : class
         {
-            var bind = new BindCommand<TComponent>(component, command, componentEvent, wrapFunc);
+            var bind = new BindCommand<TComponent>(Container, component, command, componentEvent, wrapFunc);
             Binds.Add(bind);
         }
 
@@ -106,14 +114,14 @@ namespace Framework.UI.Core.Bind
         (TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
             Func<Action<TData>, Action<TData>> wrapFunc = null) where TComponent : class
         {
-            var bind = new BindCommandWithPara<TComponent, TData>(component, command, componentEvent, wrapFunc);
+            var bind = new BindCommandWithPara<TComponent, TData>(Container, component, command, componentEvent, wrapFunc);
             Binds.Add(bind);
         }
 
         public void BindList<TComponent, TData>(TComponent component, ObservableList<TData> property,
             Action<TComponent, TData> onShow = null, Action<TComponent, TData> onHide = null) where TComponent : Object
         {
-            var bind = new BindList<TComponent, TData>(component, property, onShow, onHide);
+            var bind = new BindList<TComponent, TData>(Container, component, property, onShow, onHide);
             Binds.Add(bind);
         }
 

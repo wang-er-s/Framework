@@ -19,9 +19,9 @@ namespace Framework.UI.Wrap
         private int _tag;
         private int _index;
 
-        public ViewWrapper(View view,Transform root, int index = 0) : base(view)
+        public ViewWrapper(View component, Transform root, int index = 0) : base(component, component)
         {
-            _item =  view;
+            _item = component;
             _content = root;
             Log.Assert(_content.childCount == 1 , "_content.childCount 只能有一个");
             _template = _content.GetChild(0).gameObject;

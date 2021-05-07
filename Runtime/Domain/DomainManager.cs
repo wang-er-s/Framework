@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Framework
 {
@@ -62,7 +61,7 @@ namespace Framework
         {
             if (CurrentDomain != null && CurrentDomain.Name == name)
             {
-                Log.Error("别闹，当前就是" + name);
+                Log.Error("别闹，当前就是" + CurrentDomain.GetType().Name);
                 return;
             }
             

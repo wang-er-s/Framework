@@ -10,18 +10,26 @@ namespace Framework.UI.Wrap
     public class ImageWrapper : BaseWrapper<Image>, IFieldChangeCb<string>
     {
 
-        public ImageWrapper(Image image) : base(image)
-        {
-            View = image;
-        }
-
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
         {
             return path =>
             {
-                Res.Default.LoadAssetAsync<Sprite>(path).Callbackable()
-                    .OnCallback(result => View.sprite = result.Result);
+                IRes res = null;
+                if (Container is ICustomRes customRes)
+                {
+                    res = customRes.GetRes();
+                }
+                else
+                {
+                    res = Res.Default;
+                }
+                res.LoadAssetAsync<Sprite>(path).Callbackable()
+                    .OnCallback(result => Component.sprite = result.Result);
             };
+        }
+
+        public ImageWrapper(Image component, View view) : base(component, view)
+        {
         }
     }
 }
