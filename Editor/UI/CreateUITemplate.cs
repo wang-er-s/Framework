@@ -88,13 +88,13 @@ namespace Framework.Editor
 
 		private static void CollectMark(Transform trans, ref List<_uiMark> uiMarks)
 		{
-			UIMark uiMark = trans.GetComponent<UIMark>();
-			if (uiMark != null && uiMark.IgnoreChild && uiMark.IgnoreSelf)
+			UIMark[] uiMark = trans.GetComponents<UIMark>();
+			if (uiMark.Length > 0 && uiMark[0].IgnoreChild && uiMark[0].IgnoreSelf)
 			{
 				return;
 			}
 
-			if (uiMark == null || (uiMark != null && !uiMark.IgnoreChild))
+			if (uiMark.Length <= 0 || (uiMark.Length > 0 && !uiMark[0].IgnoreChild))
 			{
 				for (int i = 0; i < trans.childCount; i++)
 				{
@@ -102,16 +102,19 @@ namespace Framework.Editor
 				}
 			}
 
-			if (uiMark != null && uiMark.IgnoreSelf)
+			if (uiMark.Length > 0 && uiMark[0].IgnoreSelf)
 			{
 				return;
 			}
 
 			string fieldName = trans.name;
-			if (uiMark != null)
+			if (uiMark.Length > 0)
 			{
-				var _mark = new _uiMark(uiMark);
-				uiMarks.Add(_mark);
+				foreach (var mark in uiMark)
+				{
+					var _mark = new _uiMark(mark);
+					uiMarks.Add(_mark);
+				}
 			}
 			else
 			{

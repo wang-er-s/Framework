@@ -1,4 +1,6 @@
 ﻿using System;
+using Framework.Assets;
+using Framework.Asynchronous;
 using Framework.UI.Wrap.Base;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +20,24 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     private float _downTime;
     private float _upTime;
 
+    private static Material _grayMat;
+    private Material _selfMat;
+    private CanvasRenderer _canvasRenderer;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _canvasRenderer = GetComponent<CanvasRenderer>();
+        _selfMat = targetGraphic.material;
+    }
+
+    protected override async void Start()
+    {
+        base.Start();
+        if (_grayMat == null && Application.isPlaying)
+            await Res.Default.LoadAssetAsync<Material>("gray");
+    }
+
     public ButtonClickedEvent OnSingleClick { get; } = new ButtonClickedEvent(); 
     public ButtonClickedEvent OnDoubleClick { get; } = new ButtonClickedEvent(); 
     public UnityEvent OnLongClick { get; } = new UnityEvent();
@@ -28,6 +48,18 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
         if(!IsInteractable()) return;
         _lastDownTime = _downTime;
         _downTime = Time.time;
+    }
+
+    public void SetGray(bool interactable = true)
+    {
+        targetGraphic.material = _grayMat;
+        this.interactable = interactable;
+    }
+
+    public void SetNormal()
+    {
+        targetGraphic.material = _selfMat;
+        interactable = true;
     }
     
     public override void OnPointerUp(PointerEventData eventData)

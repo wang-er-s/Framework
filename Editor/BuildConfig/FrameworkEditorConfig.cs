@@ -58,6 +58,6 @@ namespace Framework.Editor
     {
         [FolderPath(AbsolutePath = false)]
         [LabelText("自动生成UI代码的路径")]
-        public string GenUIScriptsPath;
+        public string GenUIScriptsPath = "Assets/_Scripts/UI";
     }
 }

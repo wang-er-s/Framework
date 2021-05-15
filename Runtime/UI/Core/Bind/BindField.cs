@@ -132,6 +132,7 @@ namespace Framework.UI.Core.Bind
 
         private void InitEvent()
         {
+            _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             if (_propertyChangeCb == null)
             {
                 IFieldChangeCb<TResult> changeCb = _defaultWrapper as IFieldChangeCb<TResult>;
@@ -141,7 +142,6 @@ namespace Framework.UI.Core.Bind
                 }
                 _propertyChangeCb = changeCb?.GetFieldChangeCb();
             }
-            _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             Log.Assert(_propertyChangeCb != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TResult).Name}> interface");
             _property1.AddListener((data1) => _propertyChangeCb(_wrapFunc(data1, _property2.Value)));

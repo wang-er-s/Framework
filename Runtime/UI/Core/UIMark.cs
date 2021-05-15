@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
-[DisallowMultipleComponent]
 public class UIMark : MonoBehaviour
 {
 #if UNITY_EDITOR

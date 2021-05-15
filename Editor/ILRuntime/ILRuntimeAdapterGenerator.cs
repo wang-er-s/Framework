@@ -45,7 +45,7 @@ namespace Framework.Editor
         private string _dllPath;
 
         [ShowInInspector]
-        [FilePath]
+        [Sirenix.OdinInspector.FilePath]
         [LabelText("Dll地址")]
         [InfoBox("如果上面没有，可手动选择dll")]
         public string DllPath

@@ -18,7 +18,7 @@ namespace Framework.Runtime.UI.Component
             return UIManager.Ins;
         }
 
-        public static async Task<Toast> Show(string text, float duration = 3f, Action callback = null)
+        public static async Task<Toast> Show(string text, float duration = 2f, Action callback = null)
         {
             UIManager locator = GetUIViewLocator();
             ToastView view = (await locator.OpenAsync<ToastView>()) as ToastView;

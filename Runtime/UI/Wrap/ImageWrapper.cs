@@ -14,6 +14,7 @@ namespace Framework.UI.Wrap
         {
             return path =>
             {
+                if(string.IsNullOrEmpty(path)) return;
                 IRes res = null;
                 if (Container is ICustomRes customRes)
                 {
