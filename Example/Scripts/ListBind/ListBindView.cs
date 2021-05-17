@@ -18,6 +18,8 @@ namespace Framework.UI.Example
         [TransformPath("btn_delete")] private Button deleteBtn;
 
         [TransformPath("btn_add")] private Button addBtn;
+        
+        [TransformPath("btn_clear")] private Button clearBtn;
 
         [TransformPath("btn_update")] private Button updateBtn;
 
@@ -35,6 +37,7 @@ namespace Framework.UI.Example
             Binding.BindCommand(addBtn, vm.AddItem);
             Binding.BindCommand(deleteBtn, vm.DeleteSelectedItem);
             Binding.BindCommand(updateBtn, vm.UpdateItem);
+            Binding.BindCommand(clearBtn, vm.ClearItem);
         }
     }
 
@@ -72,6 +75,11 @@ namespace Framework.UI.Example
         {
             var vm = CreateItem();
             AddItem(vm);
+        }
+
+        public void ClearItem()
+        {
+            Items.Clear();
         }
 
         public void UpdateItem()

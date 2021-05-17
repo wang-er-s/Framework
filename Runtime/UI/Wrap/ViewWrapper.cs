@@ -57,7 +57,7 @@ namespace Framework.UI.Wrap
                     ReplaceItem(index, newViewModel);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    Clear();
+                    Clear(index);
                     break;
                 case NotifyCollectionChangedAction.Move: break;
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -88,11 +88,11 @@ namespace Framework.UI.Wrap
             AddItem(index, vm);
         }
 
-        private void Clear()
+        private void Clear(int itemCount)
         {
-            while (_content.childCount > 1)
+            while (itemCount > 0)
             {
-                RemoveItem(1);
+                RemoveItem(--itemCount);
             }
         }
 

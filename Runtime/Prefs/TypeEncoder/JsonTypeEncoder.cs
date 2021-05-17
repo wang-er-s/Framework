@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections;
+using LitJson;
 using UnityEngine;
 
 namespace Framework.Prefs
@@ -34,11 +35,6 @@ namespace Framework.Prefs
 
         public bool IsSupport(Type type)
         {
-            if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type))
-                return false;
-
-            if (type.IsPrimitive)
-                return false;
 
             return true;
         }
@@ -47,7 +43,7 @@ namespace Framework.Prefs
         {
             try
             {
-                return JsonUtility.ToJson(value);
+                return JsonMapper.ToJson(value);
             }
             catch (Exception e)
             {
@@ -59,7 +55,7 @@ namespace Framework.Prefs
         {
             try
             {
-                return JsonUtility.FromJson(value, type);
+                return JsonMapper.ToObject(value, type);
             }
             catch (Exception e)
             {

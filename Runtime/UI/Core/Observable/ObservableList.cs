@@ -153,8 +153,9 @@ namespace Framework.UI.Core.Bind
         {
             lock (_locker)
             {
+                var count = Count;
                 _items.Clear();
-                OnCollectionChanged(NotifyCollectionChangedAction.Reset, default(T), -1);
+                OnCollectionChanged(NotifyCollectionChangedAction.Reset, default, count);
             }
         }
 

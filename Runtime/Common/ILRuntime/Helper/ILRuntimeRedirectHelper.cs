@@ -225,8 +225,22 @@ namespace Framework
             Type JsonFormatter = typeof(JsonFormatter);
             appdomain.RegisterCLRMethodRedirection(JsonFormatter.GetMethod("ToDiagnosticString"),
                 ToDiagnosticString);
+
+            args = new[] {typeof(Enum)};
+            appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
         }
-        
+
+        private static unsafe StackObject* BeginNavTo(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
+        {
+            AppDomain domain = intp.AppDomain;
+            StackObject* ret = ILIntepreter.Minus(esp, 1);
+            var ptr_msg1 = ILIntepreter.Minus(esp, 1);
+            ILTypeInstance obj = (ILTypeInstance)StackObject.ToObject(ptr_msg1, domain, mstack);
+            DomainManager.Ins.BeginNavTo(obj.Fields[0].Value);
+            intp.Free(ptr_msg1);
+            return ret;
+        }
+
         private static unsafe StackObject* ToDiagnosticString(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod method, bool isnewobj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;

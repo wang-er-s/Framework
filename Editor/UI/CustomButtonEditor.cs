@@ -4,7 +4,7 @@ using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Editor
+namespace Framework.Editor
 {
     [CustomEditor(typeof(CustomButton))]
     public class CustomButtonEditor : ButtonEditor

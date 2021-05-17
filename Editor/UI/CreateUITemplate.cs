@@ -71,6 +71,7 @@ namespace Framework.Editor
 		{
 			panelCodeInfo.BehaviourName = transform.name.Replace("(clone)", string.Empty);
 			panelCodeInfo.PanelPath = prefabPath;
+			panelCodeInfo.PanelGo = transform.gameObject;
 			List<_uiMark> marks = new List<_uiMark>();
 			CollectMark(transform, ref marks);
 			if (marks.Count <= 0) return;
@@ -159,12 +160,13 @@ namespace Framework.Editor
 				foreach (var uiMark in uiMarks.Value)
 				{
 					strBuilder.AppendLine($"\t[TransformPath(\"{uiMarks.Key}\")]");
+					var fieldName = uiMark.transform == panelCodeInfo.PanelGo.transform ? "self" : uiMark.fieldName;
 					strBuilder.AppendLine(
-						$"\tprivate {uiMark.component.GetType().Name} {uiMark.fieldName};");
+						$"\tprivate {uiMark.component.GetType().Name} {fieldName};");
 				}
 			}
-			var markStr = strBuilder.ToString();
-			template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(\s*?#endregion)",
+			var markStr = strBuilder.ToString() + "\t";
+			template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(#endregion)",
 				$"$1{markStr}$3");
 			File.WriteAllText(generateFilePath, template);
 		}
@@ -249,6 +251,7 @@ namespace Framework.Editor
 			}
 			public string BehaviourName;
 			public string PanelPath;
+			public GameObject PanelGo;
 			public Dictionary<string, List<_uiMark>> FieldFullPathToUIMark;
 		}
 		

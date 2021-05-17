@@ -16,14 +16,9 @@ namespace Framework
         public static void RegisterDelegate(ILRuntime.Runtime.Enviorment.AppDomain appdomain)
         {
             #region Method
-            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.GameObject>>();
-            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Sprite>>();
-            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.TextAsset>>();
             appdomain.DelegateManager.RegisterMethodDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();
             appdomain.DelegateManager.RegisterMethodDelegate<System.Object, System.Timers.ElapsedEventArgs>();
             appdomain.DelegateManager.RegisterMethodDelegate<System.Object[]>();
-            appdomain.DelegateManager.RegisterMethodDelegate<Object>();
-            appdomain.DelegateManager.RegisterMethodDelegate<System.Object>();
             appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean?>();
             appdomain.DelegateManager
                 .RegisterFunctionDelegate<ILTypeInstance, Boolean>();
@@ -46,11 +41,20 @@ namespace Framework
             appdomain.DelegateManager.RegisterMethodDelegate<GameObject, Action>();
             appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.GameObject, UnityEngine.EventSystems.PointerEventData>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.MonoBehaviourAdapter.Adaptor>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.GameObject>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.TextAsset>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, Framework.ViewAdapter.Adapter>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, Framework.UI.Core.View>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Material>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Font>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Shader>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Sprite>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Screen>>();
             #endregion
 
             #region Function
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Object>();
+            
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Type>();
@@ -66,7 +70,6 @@ namespace Framework
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Reflection.ParameterInfo, System.Type>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Type, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Type>();
-            appdomain.DelegateManager.RegisterFunctionDelegate<System.Object>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.List<ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.List<ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.Collections.Generic.IEnumerable<ILRuntime.Runtime.Intepreter.ILTypeInstance>>();
             appdomain.DelegateManager.RegisterFunctionDelegate<float>();

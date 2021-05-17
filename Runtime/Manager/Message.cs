@@ -155,9 +155,10 @@ namespace Framework.MessageCenter
                     {
                         continue;
                     }
-                    var paras = method.GetParameters();
-                    string paraStr = string.Join(",", paras.Select((para => para.ParameterType)));
-                    events.Add(new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag));
+                    foreach (var tag in ((SubscriberAttribute) methodAttr[0]).Tags)
+                    {
+                        events.Add(new MessageEvent(method, val, tag));
+                    }
                 }
                 _classType2Methods[type] = events;
             }
@@ -178,8 +179,10 @@ namespace Framework.MessageCenter
                 Log.Error("必须要有",nameof(SubscriberAttribute),"的标签");  
                 return;
             }
-            var msgEvent = new MessageEvent(method, val, ((SubscriberAttribute) methodAttr[0]).Tag);
-            Register(msgEvent);
+            foreach (var tag in ((SubscriberAttribute) methodAttr[0]).Tags)
+            {
+                Register(new MessageEvent(method, val, tag));
+            }
         }
 
         private void Register(MessageEvent messageEvent)
@@ -198,15 +201,26 @@ namespace Framework.MessageCenter
             }
             paraTypeEvents.Add(messageEvent);
         }
+
+        public void Clear()
+        {
+            _subscribeInstance2Methods.Clear();
+            _classType2Methods.Clear();
+            _subscribeTag2Methods.Clear();
+        }
     }
     
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public class SubscriberAttribute : Attribute
     {
-        public string Tag { get; private set; }
-        public SubscriberAttribute(string tag)
+        public string[] Tags { get; }
+        public SubscriberAttribute(params string[] tags)
         {
-            Tag = tag ?? string.Empty;
+            if (tags.Length <= 0)
+            {
+                Log.Error("必须添加至少一个标签");
+            }
+            Tags = tags;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Framework.Execution;
 
 namespace Framework.Asynchronous
 {
@@ -34,7 +35,6 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IProgressResult<float> progressResult)
         {
-            progressResult.Callbackable().OnProgressCallback(f => RaiseOnProgressCallback(0));
             progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
         }
 
@@ -42,17 +42,15 @@ namespace Framework.Asynchronous
         {
             UpdateProgress();
             _callbackable?.RaiseOnProgressCallback(Progress);
-            if(Progress >= 1)
-                SetResult();
+            if (Progress >= 1)
+            {
+                GameLoop.Ins.Delay(() => SetResult());
+            }
         }
 
         protected override void RaiseOnCallback()
         {
             base.RaiseOnCallback();
-            _allProgress.ForEach((result =>
-            {
-                ((IPromise)result).SetResult(); 
-            }));
             _callbackable?.RaiseOnCallback();
         }
 
