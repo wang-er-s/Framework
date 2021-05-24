@@ -159,7 +159,8 @@ namespace Framework.Editor
 			{
 				foreach (var uiMark in uiMarks.Value)
 				{
-					strBuilder.AppendLine($"\t[TransformPath(\"{uiMarks.Key}\")]");
+					var transformPath = uiMark.transform == panelCodeInfo.PanelGo.transform ? "" :uiMarks.Key;
+					strBuilder.AppendLine($"\t[TransformPath(\"{transformPath}\")]");
 					var fieldName = uiMark.transform == panelCodeInfo.PanelGo.transform ? "self" : uiMark.fieldName;
 					strBuilder.AppendLine(
 						$"\tprivate {uiMark.component.GetType().Name} {fieldName};");

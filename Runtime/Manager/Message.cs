@@ -214,13 +214,20 @@ namespace Framework.MessageCenter
     public class SubscriberAttribute : Attribute
     {
         public string[] Tags { get; }
-        public SubscriberAttribute(params string[] tags)
+        
+        public SubscriberAttribute(string tag)
         {
-            if (tags.Length <= 0)
-            {
-                Log.Error("必须添加至少一个标签");
-            }
-            Tags = tags;
+            Tags = new[] {tag};
+        }
+        
+        public SubscriberAttribute(string tag1, string tag2)
+        {
+            Tags = new[] {tag1, tag2};
+        }
+        
+        public SubscriberAttribute(string tag1, string tag2, string tag3)
+        {
+            Tags = new[] {tag1, tag2, tag3};
         }
     }
 }

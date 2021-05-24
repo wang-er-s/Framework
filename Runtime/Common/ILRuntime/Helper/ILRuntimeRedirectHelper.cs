@@ -227,7 +227,7 @@ namespace Framework
                 ToDiagnosticString);
 
             args = new[] {typeof(Enum)};
-            appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
+            //appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
         }
 
         private static unsafe StackObject* BeginNavTo(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
@@ -235,8 +235,15 @@ namespace Framework
             AppDomain domain = intp.AppDomain;
             StackObject* ret = ILIntepreter.Minus(esp, 1);
             var ptr_msg1 = ILIntepreter.Minus(esp, 1);
-            ILTypeInstance obj = (ILTypeInstance)StackObject.ToObject(ptr_msg1, domain, mstack);
-            DomainManager.Ins.BeginNavTo(obj.Fields[0].Value);
+            try
+            {
+                ILTypeInstance obj = (ILTypeInstance)StackObject.ToObject(ptr_msg1, domain, mstack);
+                DomainManager.Ins.BeginNavTo(obj.Fields[0].Value);
+            }
+            catch (Exception e)
+            {
+                Log.Error(domain.DebugService.GetStackTrace(intp));
+            }
             intp.Free(ptr_msg1);
             return ret;
         }

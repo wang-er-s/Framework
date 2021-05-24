@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.Editor
+#if UNITY_EDITOR
+namespace Framework
 {
     public class DebugUILine : MonoBehaviour
     {
@@ -25,4 +26,4 @@ namespace Framework.Editor
         }
     }
 }
-
+#endif

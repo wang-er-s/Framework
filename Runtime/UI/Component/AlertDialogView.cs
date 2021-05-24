@@ -47,7 +47,7 @@ namespace Framework.Runtime.UI.Component
             catch (Exception) { }
             finally
             {
-                this.Hide();
+                this.Destroy();
             }
         }
 
