@@ -2,6 +2,13 @@
 
 [文档](https://www.yuque.com/books/share/2c4b21e9-f8e8-4841-92ff-e6fdb69b0e16?#)
 
+## 特别鸣谢
+
+感谢JetBrains公司提供的使用许可证！
+
+<p><a href="https://www.jetbrains.com/?from=Framework ">
+<img src="https://images.gitee.com/uploads/images/2020/0722/084147_cc1c0a4a_2253805.png" alt="JetBrains的Logo" width="20%" height="20%"></a></p>
+
 ```c#
 vm = ViewModel as SetupViewModel;
 if(binding == null)
