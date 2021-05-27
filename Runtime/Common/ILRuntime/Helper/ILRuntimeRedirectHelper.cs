@@ -32,6 +32,8 @@ namespace Framework
     /// object is ILTypeInstance 是热更实例
     ///
     /// 有返回值时，push的指针如果是ins则使用ins，否则使用esp
+    ///
+    /// 重定向时父类和子类都要把方法注册进去
     /// </summary>
     public static class ILRuntimeRedirectHelper
     {
@@ -350,7 +352,6 @@ namespace Framework
                     Log.Error(e, stackTrace);
                 }
             }
-
             return ret;
         }
 

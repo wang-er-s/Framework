@@ -68,6 +68,7 @@ namespace Framework.UI.Core
                     }
                     paths.Add(new Tuple<FieldInfo, string>(fieldInfo, ((TransformPath)attributes[0]).Path));
                 }
+                _type2TransPath[type] = paths;
             }
             foreach (var tuple in paths)
             {

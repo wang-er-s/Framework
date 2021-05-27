@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using ILRuntime.Reflection;
 using Tool;
 
 
@@ -913,7 +914,11 @@ namespace LitJson
                 return inst_string;
 
             if (newType.IsEnum)
+            {
+                if (newType is ILRuntimeType)
+                    return inst_int;
                 return Enum.Parse(newType, ToString());
+            }
 
 
             {
@@ -980,7 +985,7 @@ namespace LitJson
                             System.Reflection.FieldInfo filed = response.GetCLRType().GetField(element.Key);
                             if (filed != null)
                             {
-                                filed.SetValue(response, element.Value.ToObject(filed.FieldType));
+                                filed.SetValue(response, element.Value?.ToObject(filed.FieldType));
                             }
                         }
                     }

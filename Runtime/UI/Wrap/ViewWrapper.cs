@@ -69,17 +69,16 @@ namespace Framework.UI.Wrap
             var view = ReflectionHelper.CreateInstance(_item.GetCLRType()) as View;
             var go = Object.Instantiate(_template);
             go.transform.SetParent(_content);
-            go.transform.SetAsLastSibling();
+            go.transform.SetSiblingIndex(index + 1);
             go.ActiveShow();
             view.SetGameObject(go);
             view.SetVm(vm);
             view.Show();
-            _index = index;
         }
 
         private void RemoveItem(int index)
         {
-            Object.Destroy(_content.GetChild(index+1).gameObject);
+            Object.DestroyImmediate(_content.GetChild(index+1).gameObject);
         }
 
         private void ReplaceItem(int index, ViewModel vm)

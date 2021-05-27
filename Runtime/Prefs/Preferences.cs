@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Framework.Prefs
@@ -123,7 +124,7 @@ namespace Framework.Prefs
         /// <summary>
         /// The name of the preferences
         /// </summary>
-        public string Name { get; protected set; }
+        public string Name => _name;
 
         /// <summary>
         /// Load the preferences from the local file system.
@@ -435,7 +436,7 @@ namespace Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array.</returns>
-        public object[] GetArray(string key, Type type)
+        public IList GetArray(string key, Type type)
         {
             return GetArray(key, type, null);
         }
@@ -451,7 +452,7 @@ namespace Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array.</returns>
-        public abstract object[] GetArray(string key, Type type, object[] defaultValue);
+        public abstract IList GetArray(string key, Type type, IList defaultValue);
 
         /// <summary>
         /// Set an array in the preferences
@@ -460,7 +461,7 @@ namespace Framework.Prefs
         /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
         /// <param name="key">The name of the preference</param>
         /// <param name="values">The new value for the preference</param>
-        public abstract void SetArray(string key, object[] values);
+        public abstract void SetArray(string key, IList values);
 
         /// <summary>
         /// Retrieve the array value of T from the preferences. 
@@ -472,7 +473,7 @@ namespace Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array of T.</returns>
-        public T[] GetArray<T>(string key)
+        public List<T> GetArray<T>(string key)
         {
             return GetArray<T>(key, null);
         }
@@ -488,7 +489,7 @@ namespace Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array of T.</returns>
-        public abstract T[] GetArray<T>(string key, T[] defaultValue);
+        public abstract List<T> GetArray<T>(string key, List<T> defaultValue);
 
         /// <summary>
         /// Set an array value of T in the preferences

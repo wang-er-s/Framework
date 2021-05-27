@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -205,7 +206,7 @@ namespace Framework.Prefs
             }
         }
 
-        public override object[] GetArray(string key, Type type, object[] defaultValue)
+        public override IList GetArray(string key, Type type, IList defaultValue)
         {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
@@ -234,19 +235,19 @@ namespace Framework.Prefs
                 }
             }
 
-            return list.ToArray();
+            return list;
         }
 
-        public override void SetArray(string key, object[] values)
+        public override void SetArray(string key, IList values)
         {
             StringBuilder buf = new StringBuilder();
-            if (values != null && values.Length > 0)
+            if (values != null && values.Count > 0)
             {
-                for (int i = 0; i < values.Length; i++)
+                for (int i = 0; i < values.Count; i++)
                 {
                     var value = values[i];
                     buf.Append(Serializer.Serialize(value));
-                    if (i < values.Length - 1)
+                    if (i < values.Count - 1)
                         buf.Append(ARRAY_SEPARATOR);
                 }
             }
@@ -268,7 +269,7 @@ namespace Framework.Prefs
             }
         }
 
-        public override T[] GetArray<T>(string key, T[] defaultValue)
+        public override List<T> GetArray<T>(string key, List<T> defaultValue)
         {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
@@ -297,7 +298,7 @@ namespace Framework.Prefs
                 }
             }
 
-            return list.ToArray();
+            return list;
         }
 
         public override void SetArray<T>(string key, T[] values)

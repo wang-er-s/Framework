@@ -20,6 +20,7 @@ namespace Framework
             appdomain.DelegateManager.RegisterMethodDelegate<System.Object, System.Timers.ElapsedEventArgs>();
             appdomain.DelegateManager.RegisterMethodDelegate<System.Object[]>();
             appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean?>();
+            appdomain.DelegateManager.RegisterMethodDelegate<System.Reflection.MethodInfo>();
             appdomain.DelegateManager
                 .RegisterFunctionDelegate<ILTypeInstance, Boolean>();
             appdomain.DelegateManager.RegisterMethodDelegate<List<Object>>();
@@ -55,6 +56,7 @@ namespace Framework
             #region Function
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Object>();
             
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Reflection.MethodInfo, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Type>();

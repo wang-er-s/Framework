@@ -101,8 +101,9 @@ namespace Framework.Prefs
 
                         return encoder.Encode(value);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        Log.Error(e);
                     }
                 }
             }

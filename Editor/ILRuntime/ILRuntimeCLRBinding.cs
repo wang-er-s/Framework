@@ -43,13 +43,14 @@ namespace Framework.Editor
         {
             //这里需要注册所有热更DLL中用到的跨域继承Adapter，否则无法正确抓取引用
             var gameDll = AssemblyManager.GetAssembly(ConfigBase.Load<FrameworkEditorConfig>().GameDllName);
+            var para = new object[] {domain};
             foreach (var type in gameDll.GetTypes())
             {
                 ILRuntimeAdapterHelper.AddAdaptor(type);
                 if (type.GetCustomAttribute(typeof(HotfixInitAttribute), false) != null)
                 {
                     type.GetMethods().First(info => info.GetCustomAttribute(typeof(HotfixInitAttribute)) != null)
-                        .Invoke(null, new object[] {domain});
+                        .Invoke(null, para);
                 }
             }
             foreach (var type in typeof(ILRuntimeHelper).Assembly.GetTypes())
