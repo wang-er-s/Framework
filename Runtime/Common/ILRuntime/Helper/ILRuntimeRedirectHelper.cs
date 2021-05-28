@@ -229,7 +229,7 @@ namespace Framework
                 ToDiagnosticString);
 
             args = new[] {typeof(Enum)};
-            //appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
+            appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
         }
 
         private static unsafe StackObject* BeginNavTo(ILIntepreter intp, StackObject* esp, IList<object> mstack, CLRMethod method, bool isnewobj)
@@ -455,6 +455,100 @@ namespace Framework
             return ret;
         }
 
+              unsafe static StackObject* BindViewList(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            //CLR重定向的说明请看相关文档和教程，这里不多做解释
+            AppDomain __domain = __intp.AppDomain;
+
+            var ptr1 = ILIntepreter.Minus(__esp, 1);
+            var root = StackObject.ToObject(ptr1, __domain, __mStack);
+            var ptr2 = ILIntepreter.Minus(__esp, 2);
+            var list = StackObject.ToObject(ptr2, __domain, __mStack);
+            var ptr3 = ILIntepreter.Minus(__esp, 3);
+            var ins = StackObject.ToObject(ptr3, __domain, __mStack);
+            __intp.Free(ptr1);
+            __intp.Free(ptr2);
+            __intp.Free(ptr3);
+
+            var genericArgument = __method.GenericArguments;
+
+            if (genericArgument != null && genericArgument.Length == 2)
+            {
+                try
+                {
+                    var viewType = genericArgument[1];
+                    Type type = null;
+                    if (viewType is CLRType)
+                    {
+                        type = viewType.TypeForCLR;
+                    }
+                    else
+                    {
+                        type = viewType.ReflectionType;
+                    }
+                    ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
+                        (Transform) root, type);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = __domain.DebugService.GetStackTrace(__intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return __esp;
+        }
+
+        unsafe static StackObject* BindIpairs(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
+            CLRMethod __method, bool isNewObj)
+        {
+            //CLR重定向的说明请看相关文档和教程，这里不多做解释
+            AppDomain __domain = __intp.AppDomain;
+
+            var ptr1 = ILIntepreter.Minus(__esp, 1);
+            var pattern = StackObject.ToObject(ptr1, __domain, __mStack);
+            var ptr2 = ILIntepreter.Minus(__esp, 2);
+            var root = StackObject.ToObject(ptr2, __domain, __mStack);
+            var ptr3 = ILIntepreter.Minus(__esp, 3);
+            var list = StackObject.ToObject(ptr3, __domain, __mStack);
+            var ptr4 = ILIntepreter.Minus(__esp, 4);
+            var ins = StackObject.ToObject(ptr4, __domain, __mStack);
+            __intp.Free(ptr1);
+            __intp.Free(ptr2);
+            __intp.Free(ptr3);
+            __intp.Free(ptr4);
+
+            var genericArgument = __method.GenericArguments;
+
+            if (genericArgument != null && genericArgument.Length == 2)
+            {
+                try
+                {
+                    var viewType = genericArgument[1];
+                    Type type = null;
+                    if (viewType is CLRType)
+                    {
+                        type = viewType.TypeForCLR;
+                    }
+                    else
+                    {
+                        type = viewType.ReflectionType;
+                    }
+
+                    ((UIBindFactory) ins).BindIpairs((ObservableList<ViewModelAdapter.Adapter>) list, (Transform) root,
+                        (string) pattern, type);
+                }
+                catch (Exception e)
+                {
+                    string stackTrace = __domain.DebugService.GetStackTrace(__intp);
+                    Log.Error(e, stackTrace);
+                }
+            }
+
+            return __esp;
+        }
+        
         static unsafe StackObject* UIClose(ILIntepreter intp, StackObject* esp, IList<object> mStack, CLRMethod method,
             bool isNewObj)
         {
@@ -1105,100 +1199,7 @@ namespace Framework
         }
 
         #endregion
-
-        unsafe static StackObject* BindViewList(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
-            CLRMethod __method, bool isNewObj)
-        {
-            //CLR重定向的说明请看相关文档和教程，这里不多做解释
-            AppDomain __domain = __intp.AppDomain;
-
-            var ptr1 = ILIntepreter.Minus(__esp, 1);
-            var root = StackObject.ToObject(ptr1, __domain, __mStack);
-            var ptr2 = ILIntepreter.Minus(__esp, 2);
-            var list = StackObject.ToObject(ptr2, __domain, __mStack);
-            var ptr3 = ILIntepreter.Minus(__esp, 3);
-            var ins = StackObject.ToObject(ptr3, __domain, __mStack);
-            __intp.Free(ptr1);
-            __intp.Free(ptr2);
-            __intp.Free(ptr3);
-
-            var genericArgument = __method.GenericArguments;
-
-            if (genericArgument != null && genericArgument.Length == 2)
-            {
-                try
-                {
-                    var viewType = genericArgument[1];
-                    Type type = null;
-                    if (viewType is CLRType)
-                    {
-                        type = viewType.TypeForCLR;
-                    }
-                    else
-                    {
-                        type = viewType.ReflectionType;
-                    }
-                    ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
-                        (Transform) root, type);
-                }
-                catch (Exception e)
-                {
-                    string stackTrace = __domain.DebugService.GetStackTrace(__intp);
-                    Log.Error(e, stackTrace);
-                }
-            }
-
-            return __esp;
-        }
-
-        unsafe static StackObject* BindIpairs(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
-            CLRMethod __method, bool isNewObj)
-        {
-            //CLR重定向的说明请看相关文档和教程，这里不多做解释
-            AppDomain __domain = __intp.AppDomain;
-
-            var ptr1 = ILIntepreter.Minus(__esp, 1);
-            var pattern = StackObject.ToObject(ptr1, __domain, __mStack);
-            var ptr2 = ILIntepreter.Minus(__esp, 2);
-            var root = StackObject.ToObject(ptr2, __domain, __mStack);
-            var ptr3 = ILIntepreter.Minus(__esp, 3);
-            var list = StackObject.ToObject(ptr3, __domain, __mStack);
-            var ptr4 = ILIntepreter.Minus(__esp, 4);
-            var ins = StackObject.ToObject(ptr4, __domain, __mStack);
-            __intp.Free(ptr1);
-            __intp.Free(ptr2);
-            __intp.Free(ptr3);
-            __intp.Free(ptr4);
-
-            var genericArgument = __method.GenericArguments;
-
-            if (genericArgument != null && genericArgument.Length == 2)
-            {
-                try
-                {
-                    var viewType = genericArgument[1];
-                    Type type = null;
-                    if (viewType is CLRType)
-                    {
-                        type = viewType.TypeForCLR;
-                    }
-                    else
-                    {
-                        type = viewType.ReflectionType;
-                    }
-
-                    ((UIBindFactory) ins).BindIpairs((ObservableList<ViewModelAdapter.Adapter>) list, (Transform) root,
-                        (string) pattern, type);
-                }
-                catch (Exception e)
-                {
-                    string stackTrace = __domain.DebugService.GetStackTrace(__intp);
-                    Log.Error(e, stackTrace);
-                }
-            }
-
-            return __esp;
-        }
+        
 
         /// <summary>
         /// pb net 反序列化重定向
