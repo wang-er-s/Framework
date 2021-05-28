@@ -12,7 +12,22 @@ namespace Tool
 {
     public static class ReflectionHelper
     {
+        private static readonly bool useHotfix;
+        /// <summary>
+        /// 不使用ilruntime时，game@hotfix.asmdef的程序集
+        /// </summary>
+        private static Assembly curHotfixAssembly;
+        private static Assembly curGameAssembly;
         private const string IlRuntimeDllName = "ILRuntime";
+
+        static ReflectionHelper()
+        {
+            var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
+            useHotfix = runtimeConfig.ILRConfig.UseHotFix;
+            curHotfixAssembly = AssemblyManager.GetAssembly(runtimeConfig.ILRConfig.DllName);
+            curGameAssembly = AssemblyManager.GetAssembly(runtimeConfig.GameDllName);
+        }
+        
         public static T CreateInstance<T>(params object[] args)
         {
             var type = typeof(T).GetCLRType();
@@ -74,6 +89,16 @@ namespace Tool
                 return clrType.TypeForCLR;
             }
             return type.ReflectionType;
+        }
+
+        public static Type GetType(string type)
+        {
+            var result = useHotfix ? ILRuntimeHelper.GetType(type) : curHotfixAssembly.GetType(type);
+            if (result == null)
+            {
+                result = curGameAssembly.GetType(type);
+            }
+            return result;
         }
     }
 }

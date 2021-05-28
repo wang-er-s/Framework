@@ -1,74 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Framework.Assets;
+using Framework.Asynchronous;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    public sealed class AudioManager : Singleton<AudioManager>
+    public sealed class AudioManager : MonoSingleton<AudioManager>
     {
-        #region public
 
         /// <summary>
         /// 背景音乐优先级
         /// </summary>
-        public int BackgroundPriority = 0;
+        private int BackgroundPriority = 0;
 
         /// <summary>
         /// 单通道音效优先级
         /// </summary>
-        public int SinglePriority = 10;
+        private int SinglePriority = 10;
 
         /// <summary>
         /// 多通道音效优先级
         /// </summary>
-        public int MultiplePriority = 20;
+        private int MultiplePriority = 20;
 
         /// <summary>
         /// 世界音效优先级
         /// </summary>
-        public int WorldPriority = 30;
+        private int WorldPriority = 30;
 
+        private float _backgroundVolume = 0.6f;
         /// <summary>
         /// 背景音乐音量
         /// </summary>
-        public float BackgroundVolume = 0.6f;
-
+        private float BackgroundVolume
+        {
+            get => _backgroundVolume;
+            set
+            {
+                _backgroundVolume = value;
+                _backgroundAudio.volume = value;
+            }
+        }
         /// <summary>
-        /// 单通道音效音量
+        /// 音效音量
         /// </summary>
-        public float SingleVolume = 1;
-
-        /// <summary>
-        /// 多通道音效音量
-        /// </summary>
-        public float MultipleVolume = 1;
-
-        /// <summary>
-        /// 世界音效音量
-        /// </summary>
-        public float WorldVolume = 1;
-
-
-        #endregion
-
-        #region private
+        public float SoundEffectVolume = 1;
 
         private AudioSource _backgroundAudio;
         private AudioSource _singleAudio;
         private readonly List<AudioSourcePlayer> _multipleAudio = new List<AudioSourcePlayer>();
         private readonly Dictionary<GameObject, AudioSource> _worldAudio = new Dictionary<GameObject, AudioSource>();
         private bool _isMute;
-        private readonly GameObject _gameObject;
+        private IRes res;
 
-        public AudioManager(GameObject audioGameObject)
+        private void Awake()
         {
-            this._gameObject = audioGameObject;
+            _backgroundAudio = CreateAudioSource("BackgroundAudio", BackgroundPriority, BackgroundVolume);
+            _singleAudio = CreateAudioSource("SingleAudio", SinglePriority, SoundEffectVolume);
+            res = Res.Create();
         }
-
-        #endregion
-
+        
         private class AudioSourcePlayer : IDisposable
         {
             private AudioSource _audioSource;
@@ -138,13 +132,7 @@ namespace Framework
                 _audioSource = null;
             }
         }
-
-        public void Init()
-        {
-            _backgroundAudio = CreateAudioSource("BackgroundAudio", BackgroundPriority, BackgroundVolume);
-            _singleAudio = CreateAudioSource("SingleAudio", SinglePriority, SingleVolume);
-        }
-
+        
         /// <summary>
         /// 静音
         /// </summary>
@@ -171,8 +159,9 @@ namespace Framework
         /// <summary>
         /// 播放背景音乐
         /// </summary>
-        public void PlayBackgroundMusic(AudioClip clip, bool isLoop = true, float speed = 1)
+        public async void PlayBackgroundMusic(string clipName, bool isLoop = true, float speed = 1)
         {
+            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
             if (_backgroundAudio.isPlaying)
             {
                 _backgroundAudio.Stop();
@@ -231,8 +220,9 @@ namespace Framework
         /// <summary>
         /// 播放单通道音效
         /// </summary>
-        public void PlaySingleSound(AudioClip clip, bool isLoop = false, float speed = 1)
+        public async void PlaySingleSound(string clipName, bool isLoop = false, float speed = 1)
         {
+            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
             if (_singleAudio.isPlaying)
             {
                 _singleAudio.Stop();
@@ -269,11 +259,11 @@ namespace Framework
             if (!_singleAudio.isPlaying) return;
             if (isGradual)
             {
-                _singleAudio.DOFade(SingleVolume, 2);
+                _singleAudio.DOFade(SoundEffectVolume, 2);
             }
             else
             {
-                _singleAudio.volume = SingleVolume;
+                _singleAudio.volume = SoundEffectVolume;
             }
         }
 
@@ -291,8 +281,9 @@ namespace Framework
         /// <summary>
         /// 播放多通道音效
         /// </summary>
-        public void PlayMultipleSound(AudioClip clip, bool isLoop = false, float speed = 1)
+        public async void PlayMultipleSound(string clipName, bool isLoop = false, float speed = 1)
         {
+            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
             var audio = ExtractIdleMultipleAudioSource();
             audio.SetParams(clip, isLoop, speed);
             audio.Play();
@@ -345,8 +336,9 @@ namespace Framework
         /// <summary>
         /// 播放世界音效
         /// </summary>
-        public void PlayWorldSound(GameObject attachTarget, AudioClip clip, bool isLoop = false, float speed = 1)
+        public async void PlayWorldSound(GameObject attachTarget, string clipName, bool isLoop = false, float speed = 1)
         {
+            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
             if (_worldAudio.ContainsKey(attachTarget))
             {
                 AudioSource audio = _worldAudio[attachTarget];
@@ -363,7 +355,7 @@ namespace Framework
             }
             else
             {
-                AudioSource audio = AttachAudioSource(attachTarget, WorldPriority, WorldVolume);
+                AudioSource audio = AttachAudioSource(attachTarget, WorldPriority, SoundEffectVolume);
                 _worldAudio.Add(attachTarget, audio);
                 audio.clip = clip;
                 audio.loop = isLoop;
@@ -401,11 +393,11 @@ namespace Framework
             if (!audio.isPlaying) return;
             if (isGradual)
             {
-                audio.DOFade(WorldVolume, 2);
+                audio.DOFade(SoundEffectVolume, 2);
             }
             else
             {
-                audio.volume = WorldVolume;
+                audio.volume = SoundEffectVolume;
             }
         }
 
@@ -450,7 +442,7 @@ namespace Framework
         private AudioSource CreateAudioSource(string name, int priority, float volume)
         {
             GameObject audioObj = new GameObject(name);
-            audioObj.transform.SetParent(_gameObject.transform);
+            audioObj.transform.SetParent(gameObject.transform);
             audioObj.transform.localPosition = Vector3.zero;
             audioObj.transform.localRotation = Quaternion.identity;
             audioObj.transform.localScale = Vector3.one;
@@ -497,7 +489,7 @@ namespace Framework
                 }
             }
 
-            var audio = CreateAudioSourcePlayer("MultipleAudio", MultiplePriority, MultipleVolume);
+            var audio = CreateAudioSourcePlayer("MultipleAudio", MultiplePriority, SoundEffectVolume);
             _multipleAudio.Add(audio);
             return audio;
         }
@@ -508,6 +500,7 @@ namespace Framework
             StopSingleSound();
             StopAllMultipleSound();
             StopAllWorldSound();
+            res.Release();
         }
     }
 }

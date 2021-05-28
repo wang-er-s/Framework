@@ -15,6 +15,9 @@ namespace Framework
 		[InlinePropertyAttribute]
 		public ILRConfig ILRConfig = new ILRConfig();
 
+		[LabelText("主项目dll名字")]
+		public string GameDllName = "GamePlay";
+
 		public enum ResType
 		{
 			Resources,

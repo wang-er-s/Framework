@@ -22,9 +22,6 @@ namespace Framework.Editor
         [HideLabel]
         [InlinePropertyAttribute]
         public UIConfig UIConfig = new UIConfig();
-
-        [LabelText("游戏程序集")]
-        public string GameDllName;
     }
     
     [Serializable]

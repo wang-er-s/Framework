@@ -42,7 +42,7 @@ namespace Framework.Editor
         static void InitILRuntime(ILRuntime.Runtime.Enviorment.AppDomain domain)
         {
             //这里需要注册所有热更DLL中用到的跨域继承Adapter，否则无法正确抓取引用
-            var gameDll = AssemblyManager.GetAssembly(ConfigBase.Load<FrameworkEditorConfig>().GameDllName);
+            var gameDll = AssemblyManager.GetAssembly(ConfigBase.Load<FrameworkRuntimeConfig>().GameDllName);
             var para = new object[] {domain};
             foreach (var type in gameDll.GetTypes())
             {
