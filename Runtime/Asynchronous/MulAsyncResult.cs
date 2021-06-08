@@ -3,37 +3,36 @@ using Framework.Execution;
 
 namespace Framework.Asynchronous
 {
-    public class MulProgressResult : AsyncResult, IProgressResult<float>
+    public class MulAsyncResult : AsyncResult
     {
         public float Progress { get; private set;}
-        private ProgressCallbackable<float> _callbackable;
-        private List<IProgressResult<float>> _allProgress = new List<IProgressResult<float>>();
+        private Callbackable _callbackable;
+        private List<IAsyncResult> _allProgress = new List<IAsyncResult>();
 
-        public MulProgressResult(params IProgressResult<float>[] allProgress) : this(false, allProgress)
+        public MulAsyncResult(params IAsyncResult[] allProgress) : this(false, allProgress)
         {
         }
 
-        public MulProgressResult(bool cancelable, params IProgressResult<float>[] allProgress) : base(cancelable)
+        public MulAsyncResult(bool cancelable, params IAsyncResult[] allProgress) : base(cancelable)
         {
-            AddProgress(allProgress);
+            AddAsyncResult(allProgress);
         }
-        
-        
-        public void AddProgress(IProgressResult<float> progressResult)
+
+        public void AddAsyncResult(IAsyncResult progressResult)
         {
             _allProgress.Add(progressResult);
             SetSubProgressCb(progressResult);
         }
 
-        public void AddProgress(IEnumerable<IProgressResult<float>> progressResults)
+        public void AddAsyncResult(IEnumerable<IAsyncResult> progressResults)
         {
             foreach (var progressResult in progressResults)
             {
-                AddProgress(progressResult);
+                AddAsyncResult(progressResult);
             }
         }
 
-        private void SetSubProgressCb(IProgressResult<float> progressResult)
+        private void SetSubProgressCb(IAsyncResult progressResult)
         {
             progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
         }
@@ -41,7 +40,7 @@ namespace Framework.Asynchronous
         protected virtual void RaiseOnProgressCallback(float progress)
         {
             UpdateProgress();
-            _callbackable?.RaiseOnProgressCallback(Progress);
+            //延迟一帧 否则会比子任务提前完成
             if (Progress >= 1)
             {
                 GameLoop.Ins.Delay(() => SetResult());
@@ -63,19 +62,15 @@ namespace Framework.Asynchronous
                 {
                     totalProgress += 1;
                 }
-                else
-                {
-                    totalProgress += progressResult.Progress;
-                }
             }
             Progress = totalProgress / _allProgress.Count;
         }
         
-        public new virtual IProgressCallbackable<float> Callbackable()
+        public override ICallbackable Callbackable()
         {
             lock (Lock)
             {
-                return this._callbackable ?? (this._callbackable = new ProgressCallbackable<float>(this));
+                return this._callbackable ?? (this._callbackable = new Callbackable(this));
             }
         }
     }

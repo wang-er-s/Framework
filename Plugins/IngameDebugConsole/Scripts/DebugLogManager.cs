@@ -297,6 +297,12 @@ namespace IngameDebugConsole
 
 		private void Awake()
 		{
+#if UNITY_EDITOR
+			//在scene界面不让选中
+			UnityEditor.Tools.lockedLayers |= 1 << LayerMask.NameToLayer("SceneLocked");
+			//unlock
+			//UnityEditor.Tools.lockedLayers  &= ~(1 << LayerMask.NameToLayer("SceneLocked"));
+#endif
 			// Only one instance of debug console is allowed
 			if( !Instance )
 			{
@@ -311,7 +317,7 @@ namespace IngameDebugConsole
 				Destroy( gameObject );
 				return;
 			}
-
+			//gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
 			pooledLogEntries = new List<DebugLogEntry>( 16 );
 			pooledLogItems = new List<DebugLogItem>( 16 );
 			commandSuggestionInstances = new List<Text>( 8 );

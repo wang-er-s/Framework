@@ -9,12 +9,12 @@ using UnityEngine;
 public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
 {
     private object[] _objects = new object[1];
-    private MulProgressResult _progressResult;
+    private MulAsyncResult asyncResult;
     private Action _loadedCb;
     
     public override void Start()
     {
-        _progressResult = new MulProgressResult();
+        asyncResult = new MulAsyncResult();
         foreach (ClassData classData in GetAllClassDatas())
         {
             var path = (classData.Attribute as ConfigAttribute).Path;
@@ -25,12 +25,20 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
                 lock (_objects)
                 {
                     _objects[0] = result.Result.text;
-                    method.Invoke(null, _objects);
+                    try
+                    {
+                        method.Invoke(null, _objects);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("加载",method.DeclaringType,"出错");
+                        throw;
+                    }
                 }
             });
-            _progressResult.AddProgress(progress);
+            asyncResult.AddAsyncResult(progress);
         }
-        _progressResult.Callbackable().OnCallback(result =>
+        asyncResult.Callbackable().OnCallback(result =>
         {
             GameLoop.Ins.Delay(() => _loadedCb?.Invoke());
         });

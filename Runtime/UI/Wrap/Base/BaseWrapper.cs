@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework.UI.Wrap.Base
 {
-    public abstract class BaseWrapper<T> : IFieldChangeCb<bool> where T : class
+    public class BaseWrapper<T> : IFieldChangeCb<bool> where T : class
     {
         protected T Component;
         protected object Container;

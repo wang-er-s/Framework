@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Framework.UI.Core;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI.Wrap.Base
@@ -19,21 +20,25 @@ namespace Framework.UI.Wrap.Base
             {typeof(Image), typeof(ImageWrapper)},
             {typeof(Dropdown), typeof(DropdownWrapper)},
             {typeof(TextMeshProUGUI), typeof(TmpWrapper)},
-            {typeof(TMP_InputField), typeof(TMPInputFieldWrapper)}
+            {typeof(TMP_InputField), typeof(TMPInputFieldWrapper)},
         };
 
         private static readonly object[] args = new object[2];
+        private static ConstructorInfo defaultWrapperCon;
 
         public static object GetDefaultWrapper<T>(object container, T component)
         {
+            args[1] = container;
+            args[0] = component;
             foreach (var type in supportWrapperTypes)
                 if (type.Key.IsInstanceOfType(component))
                 {
-                    args[1] = container;
-                    args[0] = component;
                     return Activator.CreateInstance(type.Value, args);
                 }
-            return null;
+            if (defaultWrapperCon == null)
+                defaultWrapperCon = typeof(DefaultWrapper).GetConstructor(BindingFlags.Public | BindingFlags.Instance,
+                    null, new[] {typeof(object), typeof(object)}, null);
+            return defaultWrapperCon.Invoke(args);
         }
     }
 }

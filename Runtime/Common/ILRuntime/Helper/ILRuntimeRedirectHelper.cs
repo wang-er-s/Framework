@@ -376,11 +376,11 @@ namespace Framework
                     if (ins is ILTypeInstance typeInstance)
                     {
                         result = ((View) typeInstance.CLRInstance).AddSubView(genericArguments[0].ReflectionType,
-                            ((ILTypeInstance) vm).CLRInstance as ViewModel);
+                            vm == null ? null : ((ILTypeInstance) vm).CLRInstance as ViewModel);
                     }
                     else
                     {
-                        result = ((View) ins).AddSubView(genericArguments[0].TypeForCLR, vm as ViewModel);
+                        result = ((View) ins).AddSubView(genericArguments[0].TypeForCLR, vm == null ? null : vm as ViewModel);
                     }
                     return ILIntepreter.PushObject(ptr2, mstack, result);
                 }
@@ -753,7 +753,14 @@ namespace Framework
                 try
                 {
                     var t = genericArguments[0];
-                    ((Context) ins).Set(t.GetCLRType().Name, value);
+                    if (ins is ILTypeInstance typeInstance)
+                    {
+                        ((Context) typeInstance.CLRInstance).Set(t.GetCLRType().Name, value);
+                    }
+                    else
+                    {
+                        ((Context) ins).Set(t.GetCLRType().Name, value);
+                    }
                 }
                 catch (Exception e)
                 {

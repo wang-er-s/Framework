@@ -67,8 +67,7 @@ namespace Framework.UI.Wrap
         private void AddItem(int index, ViewModel vm)
         {
             var view = ReflectionHelper.CreateInstance(_item.GetCLRType()) as View;
-            var go = Object.Instantiate(_template);
-            go.transform.SetParent(_content);
+            var go = Object.Instantiate(_template, _content);
             go.transform.SetSiblingIndex(index + 1);
             go.ActiveShow();
             view.SetGameObject(go);

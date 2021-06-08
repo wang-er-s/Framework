@@ -1058,7 +1058,6 @@ public static class OOPExtension
     }
 }
 
-#if UNITY_EDITOR
 public class AssemblyManager
 {
     /// <summary>
@@ -1178,7 +1177,6 @@ public class AssemblyManager
         return GetAssembly(assemblyName).GetTypes();
     }
 }
-#endif
 
 public static class ReflectionExtension
 {

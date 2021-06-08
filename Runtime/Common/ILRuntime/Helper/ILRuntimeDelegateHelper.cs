@@ -51,11 +51,17 @@ namespace Framework
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Shader>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Sprite>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Screen>>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<Framework.ViewModelAdapter.Adapter, Framework.ViewModelAdapter.Adapter, System.Int32>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32, System.String>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Int64, System.Int64, System.String>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Int64, System.String>();
+
             #endregion
 
             #region Function
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Object>();
             
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Reflection.MethodInfo, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32>();
@@ -221,6 +227,15 @@ namespace Framework
                     return ((Func<System.Collections.Generic.KeyValuePair<System.String, ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.Boolean>)act)(obj);
                 });
             });
+
+            appdomain.DelegateManager.RegisterDelegateConvertor<System.Comparison<Framework.ViewModelAdapter.Adapter>>((act) =>
+            {
+                return new System.Comparison<Framework.ViewModelAdapter.Adapter>((x, y) =>
+                {
+                    return ((Func<Framework.ViewModelAdapter.Adapter, Framework.ViewModelAdapter.Adapter, System.Int32>)act)(x, y);
+                });
+            });
+
             #endregion
         }
     }

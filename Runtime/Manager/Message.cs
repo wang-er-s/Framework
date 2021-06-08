@@ -34,6 +34,21 @@ namespace Framework.MessageCenter
         private Dictionary<string, List<MessageEvent>> _subscribeTag2Methods = new Dictionary<string, List<MessageEvent>>(0);
         private Dictionary<object, List<MessageEvent>> _subscribeInstance2Methods = new Dictionary<object, List<MessageEvent>>();
         private Dictionary<Type, List<MessageEvent>> _classType2Methods = new Dictionary<Type, List<MessageEvent>>();
+        private List<List<MessageEvent>> executeEventLists = new List<List<MessageEvent>> {new List<MessageEvent>()};
+        private List<MessageEvent> getExecuteEventList
+        {
+            get
+            {
+                for (int i = 0; i < executeEventLists.Count; i++)
+                {
+                    if (executeEventLists[i].Count <= 0)
+                        return executeEventLists[i];
+                }
+                var newList = new List<MessageEvent>();
+                executeEventLists.Add(newList);
+                return newList;
+            }
+        }
 
         /// <summary>
         /// Default static JEvent
@@ -52,18 +67,25 @@ namespace Framework.MessageCenter
         {
             if (!_subscribeTag2Methods.TryGetValue(tag, out var todo)) return;
             if (todo.Count == 0) return;
+            var executeEvent = getExecuteEventList;
             foreach (var td in todo)
             {
                 if(td.Tag != tag) continue;
                 try
                 {
-                    td.Invoke(parameters);
+                    executeEvent.Add(td);
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex);
                 }
             }
+
+            foreach (var messageEvent in executeEvent)
+            {
+                messageEvent.Invoke(parameters);
+            }
+            executeEvent.Clear();
         }
 
         /// <summary>
@@ -173,8 +195,8 @@ namespace Framework.MessageCenter
         public void Register<T>(T val, MethodInfo method) where T : class
         {
             var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), false);
-            var HasAttr = methodAttr.Length > 0;
-            if (!HasAttr)
+            var hasAttr = methodAttr.Length > 0;
+            if (!hasAttr)
             {
                 Log.Error("必须要有",nameof(SubscriberAttribute),"的标签");  
                 return;

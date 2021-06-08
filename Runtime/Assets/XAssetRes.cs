@@ -138,7 +138,7 @@ namespace Framework.Assets
         {
             foreach (var loadable in _handles.Values)
             {
-                loadable.Release();
+                loadable?.Release();
             }
             _handles.Clear();
         }

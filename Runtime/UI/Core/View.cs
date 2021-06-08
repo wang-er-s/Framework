@@ -46,7 +46,6 @@ namespace Framework.UI.Core
             SetComponent();
             Start();
             GameLoop.Ins.OnUpdate += Update;
-            GameLoop.Ins.OnLateUpdate += LateUpdate;
         }
 
         private static Dictionary<Type, List<Tuple<FieldInfo, string>>> _type2TransPath =
@@ -114,10 +113,6 @@ namespace Framework.UI.Core
         {
         }
 
-        protected virtual void LateUpdate()
-        {
-        }
-
         public void Show()
         {
             Visible(true);
@@ -143,7 +138,6 @@ namespace Framework.UI.Core
             Hide();
             Res.Release();
             GameLoop.Ins.OnUpdate -= Update;
-            GameLoop.Ins.OnLateUpdate -= LateUpdate;
             _subViews.ForEach(subView => subView.Destroy());
             Object.Destroy(Go.gameObject);
             ViewModel?.OnViewDestroy();
@@ -171,8 +165,7 @@ namespace Framework.UI.Core
             progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
             return progressResult;
         }
-
-
+        
         public void AddSubView(View view)
         {
             view.Show();

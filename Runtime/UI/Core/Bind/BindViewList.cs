@@ -132,10 +132,9 @@ namespace Framework.UI.Core.Bind
             Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
             foreach (Transform child in root)
             {
-
                 var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
-                view.SetGameObject (child.gameObject);
                 Log.Assert(view != null, $"{child.name} must have view component", child);
+                view.SetGameObject (child.gameObject);
                 _views.Add(view);
             }
         }
@@ -173,10 +172,9 @@ namespace Framework.UI.Core.Bind
             Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
             foreach (Transform child in root)
             {
-
                 var view = ReflectionHelper.CreateInstance(_viewType) as View;
-                view.SetGameObject (child.gameObject);
                 Log.Assert(view != null, $"{child.name} must have view component", child);
+                view.SetGameObject (child.gameObject);
                 _views.Add(view);
             }
         }

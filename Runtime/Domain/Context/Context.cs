@@ -75,7 +75,8 @@ namespace Framework.Contexts
 
         public static void RemoveContext(string key)
         {
-            contexts.Remove(key);
+            if (contexts.ContainsKey(key))
+                contexts.Remove(key);
         }
         
         private bool _innerContainer;

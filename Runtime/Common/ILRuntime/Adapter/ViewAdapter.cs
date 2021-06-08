@@ -10,7 +10,6 @@ namespace Framework
     {
         static CrossBindingMethodInfo mStart_0 = new CrossBindingMethodInfo("Start");
         static CrossBindingMethodInfo mUpdate_1 = new CrossBindingMethodInfo("Update");
-        static CrossBindingMethodInfo mLateUpdate_2 = new CrossBindingMethodInfo("LateUpdate");
         static CrossBindingMethodInfo mOnShow_3 = new CrossBindingMethodInfo("OnShow");
         static CrossBindingMethodInfo mOnHide_4 = new CrossBindingMethodInfo("OnHide");
         static CrossBindingMethodInfo mOnVmChange_5 = new CrossBindingMethodInfo("OnVmChange");
@@ -69,14 +68,6 @@ namespace Framework
                     base.Update();
                 else
                     mUpdate_1.Invoke(this.instance);
-            }
-
-            protected override void LateUpdate()
-            {
-                if (mLateUpdate_2.CheckShouldInvokeBase(this.instance))
-                    base.LateUpdate();
-                else
-                    mLateUpdate_2.Invoke(this.instance);
             }
 
             protected override void OnShow()
