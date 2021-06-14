@@ -1,25 +1,35 @@
 using System;
 using System.Collections.Generic;
 using Framework.Asynchronous;
-using Framework.Pool.Factory;
 
 namespace Framework.Pool
 {
-    public abstract class Pool<T> : IPool<T>
+    public class Pool<T> : IPool<T>
     {
-        public int CurCount => CacheStack.Count;
-
-        protected IFactory<T> Factory;
-
+        protected Func<T> Factory;
         protected readonly Stack<T> CacheStack = new Stack<T>();
         protected Action<T> OnAlloc;
         protected Action<T> OnFree;
-        
-        protected Pool(IFactory<T> factory, Action<T> onAlloc, Action<T> onFree)
+        protected Action<T> OnDispose;
+        protected int InitCount;
+
+        protected Pool(Func<T> factory, int initCount = 1, Action<T> onAlloc = null, Action<T> onFree = null,
+            Action<T> onDispose = null)
         {
             Factory = factory;
             OnAlloc = onAlloc;
             OnFree = onFree;
+            OnDispose = onDispose;
+            InitCount = initCount;
+            Init();
+        }
+
+        private void Init()
+        {
+            for (int i = 0; i < InitCount; i++)
+            {
+                Free(Factory());
+            }
         }
 
         public virtual void Free(T obj)
@@ -31,22 +41,84 @@ namespace Framework.Pool
         public virtual T Allocate()
         {
             var obj = CacheStack.Count == 0 ?
-                Factory.Create() : CacheStack.Pop();
+                Factory() : CacheStack.Pop();
             OnAlloc?.Invoke(obj);
             return obj;
         }
+
+        public void Dispose()
+        {
+            while (CacheStack.Count > 0)
+            {
+                T item = CacheStack.Pop();
+                OnDispose?.Invoke(item);
+            }
+            CacheStack.Clear();
+        }
     }
     
-    public abstract class AsyncPool<T> : IAsyncPool<T>
+    public class PoolWithKey<TKey,T> : IPoolWithKey<TKey,T>
     {
-        public int CurCount => CacheStack.Count;
+        protected Func<TKey,T> Factory;
 
-        protected IAsyncFactory<T> Factory;
-
-        protected readonly Stack<T> CacheStack = new Stack<T>();
-
+        protected readonly Dictionary<TKey, Stack<T>> CacheStack = new Dictionary<TKey, Stack<T>>();
         protected Action<T> OnAlloc;
         protected Action<T> OnFree;
+        protected Action<T> OnDispose;
+
+        protected PoolWithKey(Func<TKey, T> factory, Action<T> onAlloc = null, Action<T> onFree = null,
+            Action<T> onDispose = null)
+        {
+            Factory = factory;
+            OnAlloc = onAlloc;
+            OnFree = onFree;
+            OnDispose = onDispose;
+        }
+
+        public void Dispose()
+        {
+            foreach (var stack in CacheStack.Values)
+            {
+                while (stack.Count > 0)
+                {
+                    var item = stack.Pop();
+                    OnDispose?.Invoke(item);
+                }
+            }
+            CacheStack.Clear();
+        }
+
+        public virtual T Allocate(TKey key)
+        {
+            T result;
+            if (!CacheStack.ContainsKey(key))
+            {
+                CacheStack[key] = new Stack<T>();
+                result = Factory(key);
+            }
+            else
+            {
+                result = CacheStack[key].Pop();
+            }
+
+            OnAlloc?.Invoke(result);
+            return result;
+        }
+
+        public virtual void Free(TKey key, T obj)
+        {
+            OnFree?.Invoke(obj);
+            CacheStack[key].Push(obj);
+        }
+    }
+    
+    public class AsyncPool<T> : IAsyncPool<T>
+    {
+        protected Func<AsyncResult<T>> Factory;
+        protected readonly Stack<T> CacheStack = new Stack<T>();
+        protected Action<T> OnAlloc;
+        protected Action<T> OnFree;
+        protected Action<T> OnDispose;
 
         public virtual void Free(T obj)
         {
@@ -54,19 +126,31 @@ namespace Framework.Pool
             CacheStack.Push(obj);
         }
 
-        protected AsyncPool(IAsyncFactory<T> factory, Action<T> onAlloc, Action<T> onFree)
+        protected AsyncPool(Func<AsyncResult<T>> factory, Action<T> onAlloc = null, Action<T> onFree = null,
+            Action<T> onDispose = null)
         {
             Factory = factory;
             OnAlloc = onAlloc;
             OnFree = onFree;
+            OnDispose = onDispose;
         }
-        
+
         public virtual AsyncResult<T> Allocate()
         {
-            var result = CacheStack.Count == 0 ? Factory.Create() : new AsyncResult<T>();
+            var result = CacheStack.Count == 0 ? Factory() : new AsyncResult<T>();
             result.Callbackable().OnCallback(asyncResult => OnAlloc?.Invoke(asyncResult.Result));
             result.SetResult(CacheStack.Pop());
             return result;
+        }
+
+        public void Dispose()
+        {
+            while (CacheStack.Count > 0)
+            {
+                T item = CacheStack.Pop();
+                OnDispose?.Invoke(item);
+            }
+            CacheStack.Clear();
         }
     }
 }
