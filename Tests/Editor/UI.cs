@@ -38,6 +38,12 @@ namespace Tests
         }
     }
 
+    public interface BindCommand
+    {
+        void Func();
+        void FuncWithPara();
+    }
+
     public class UI测试
     {
         [Test]
@@ -49,10 +55,11 @@ namespace Tests
 
             void Func()
             {
-                isTrigger = true;
+                isTrigger = !isTrigger;
             }
 
             factory.BindCommand(view, Func);
+            factory.Reset();
             view.GetComponentEvent().Invoke();
             Assert.IsTrue(isTrigger);
         }

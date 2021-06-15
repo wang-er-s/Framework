@@ -15,9 +15,14 @@ namespace Framework.UI.Core.Bind
         private object _defaultWrapper;
         private BindType _bindType;
 
-        public BindField(object container, TComponent component, ObservableProperty<TData> property, Action<TData> propChangeCb,
+        public BindField(object container) : base(container)
+        {
+        }
+
+        public void Reset(TComponent component, ObservableProperty<TData> property,
+            Action<TData> propChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
-            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap) : base(container)
+            Func<TData, TData> property2CpntWrap, Func<TData, TData> cpnt2PropWrap)
         {
             SetValue(component, property, propChangeCb, componentEvent, bindType, property2CpntWrap,
                 cpnt2PropWrap);
@@ -90,9 +95,9 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
-            _property.ClearListener();
+            _property.Clear();
             _componentEvent?.RemoveAllListeners();
         }
     }
@@ -106,8 +111,13 @@ namespace Framework.UI.Core.Bind
         private Func<TData1, TData2, TResult> _wrapFunc;
         private object _defaultWrapper;
 
-        public BindField(object container, TComponent component, ObservableProperty<TData1> property1, ObservableProperty<TData2> property2,
-            Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)  : base(container)
+        public BindField(object container)  : base(container)
+        {
+        }
+
+        public void Reset(TComponent component, ObservableProperty<TData1> property1,
+            ObservableProperty<TData2> property2,
+            Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb)
         {
             SetValue(component, property1, property2, wrapFunc, filedChangeCb);
             InitEvent();
@@ -149,10 +159,10 @@ namespace Framework.UI.Core.Bind
             _propertyChangeCb(_wrapFunc(_property1.Value, _property2.Value));
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
-            _property1.ClearListener();
-            _property2.ClearListener();
+            _property1.Clear();
+            _property2.Clear();
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableProperty<T>
+    public class ObservableProperty<T> : IClearable
     {
         public ObservableProperty(T value)
         {
@@ -45,7 +43,7 @@ namespace Framework.UI.Core.Bind
             OnValueChanged -= changeAction;
         }
 
-        public void ClearListener()
+        public void Clear()
         {
             OnValueChanged = null;
         }

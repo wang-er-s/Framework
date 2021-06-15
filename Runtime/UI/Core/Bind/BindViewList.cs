@@ -49,7 +49,7 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _list.ClearListener();
         }
@@ -102,7 +102,7 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _list.ClearListener();
         }
@@ -144,7 +144,7 @@ namespace Framework.UI.Core.Bind
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _list.ClearListener();
         }
@@ -184,7 +184,7 @@ namespace Framework.UI.Core.Bind
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _list.ClearListener();
         }

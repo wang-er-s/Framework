@@ -13,8 +13,13 @@ namespace Framework.UI.Core.Bind
         private object _defaultWrapper;
         private Func<Action, Action> _wrapFunc;
 
-        public BindCommand(object container, TComponent component, Action command, UnityEvent componentEvent = null,
-            Func<Action, Action> wrapFunc = null) : base(container)
+        public BindCommand(object container) : base(container)
+        {
+            Debug.Log("create new");
+        }
+
+        public void Reset(TComponent component, Action command, UnityEvent componentEvent,
+            Func<Action, Action> wrapFunc)
         {
             SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
@@ -41,7 +46,7 @@ namespace Framework.UI.Core.Bind
                 _componentEvent.AddListener(() => _wrapFunc(_command)());
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _componentEvent.RemoveAllListeners();
         }
@@ -55,13 +60,18 @@ namespace Framework.UI.Core.Bind
         private UnityEvent<TData> _componentEvent;
         private object _defaultWrapper;
 
-        public BindCommandWithPara(object container, TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
-            Func<Action<TData>, Action<TData>> wrapFunc = null) : base(container)
+        public BindCommandWithPara(object container) : base(container)
+        {
+            
+        }
+
+        public void Reset(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent,
+            Func<Action<TData>, Action<TData>> wrapFunc)
         {
             SetValue(component, command, componentEvent, wrapFunc);
             InitEvent();
         }
-
+        
         private void SetValue(TComponent component, Action<TData> command, UnityEvent<TData> componentEvent,
             Func<Action<TData>, Action<TData>> wrapFunc)
         {
@@ -91,7 +101,7 @@ namespace Framework.UI.Core.Bind
                 _componentEvent.AddListener((value) => _wrapFunc(_command)(value));
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _componentEvent.RemoveAllListeners();
         }

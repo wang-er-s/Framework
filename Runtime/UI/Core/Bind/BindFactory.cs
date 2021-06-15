@@ -8,8 +8,8 @@ namespace Framework.UI.Core.Bind
 {
     public class BindFactory
     {
-        protected List<BaseBind> Binds = new List<BaseBind>();
-
+        protected List<IClearable> clearables = new List<IClearable>();
+        protected Queue<BaseBind> CacheBinds = new Queue<BaseBind>();
         protected object Container;
 
         public BindFactory(object container)
@@ -22,9 +22,19 @@ namespace Framework.UI.Core.Bind
         (TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb = null,
             Func<TData, TData> prop2CpntWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(Container, component, property, fieldChangeCb, null, BindType.OnWay,
-                prop2CpntWrap, null);
-            Binds.Add(bind);
+            BindField<TComponent, TData> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindField<TComponent, TData>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindField<TComponent, TData>(Container);
+            }
+
+            bind.Reset(component, property, fieldChangeCb, null, BindType.OnWay, prop2CpntWrap, null);
+            clearables.Add(bind);
         }
 
         //反向绑定
@@ -33,10 +43,18 @@ namespace Framework.UI.Core.Bind
             UnityEvent<TData> componentEvent = null,
             Func<TData, TData> cpnt2PropWrap = null) where TComponent : class
         {
-            var bind = new BindField<TComponent, TData>(Container, component, property, null, componentEvent,
-                BindType.Revert,
-                null, cpnt2PropWrap);
-            Binds.Add(bind);
+            BindField<TComponent, TData> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindField<TComponent, TData>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindField<TComponent, TData>(Container);
+            }
+            bind.Reset(component, property, null, componentEvent, BindType.Revert, null, cpnt2PropWrap);
+            clearables.Add(bind);
         }
 
         //同类型双向绑定
@@ -56,9 +74,18 @@ namespace Framework.UI.Core.Bind
             ObservableProperty<TData> property, Func<TData, TResult> field2CpntConvert,
             Action<TResult> fieldChangeCb = null) where TComponent : class
         {
-            var bind = new ConvertBindField<TComponent, TData, TResult>(Container, component, property, fieldChangeCb,
-                field2CpntConvert, null, null);
-            Binds.Add(bind);
+            ConvertBindField<TComponent, TData, TResult> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (ConvertBindField<TComponent, TData, TResult>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new ConvertBindField<TComponent, TData, TResult>(Container);
+            }
+            bind.Reset(component, property, fieldChangeCb, field2CpntConvert, null, null);
+            clearables.Add(bind);
         }
 
         //wrap不同类型反向绑定
@@ -67,9 +94,18 @@ namespace Framework.UI.Core.Bind
             Func<TResult, TData> cpnt2FieldConvert,
             UnityEvent<TResult> componentEvent = null) where TComponent : class
         {
-            var bind = new ConvertBindField<TComponent, TData, TResult>(Container, component, property, null, null,
-                cpnt2FieldConvert, componentEvent);
-            Binds.Add(bind);
+            ConvertBindField<TComponent, TData, TResult> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (ConvertBindField<TComponent, TData, TResult>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new ConvertBindField<TComponent, TData, TResult>(Container);
+            }
+            bind.Reset(component, property, null, null, cpnt2FieldConvert, componentEvent);
+            clearables.Add(bind);
         }
 
         //不同类型双向绑定
@@ -89,13 +125,23 @@ namespace Framework.UI.Core.Bind
             Func<TData1, TData2, TResult> wrapFunc, Action<TResult> filedChangeCb = null)
             where TComponent : class
         {
-            var bind = new BindField<TComponent, TData1, TData2, TResult>(Container, component, property1, property2,
-                wrapFunc, filedChangeCb);
-            Binds.Add(bind);
+            BindField<TComponent, TData1, TData2, TResult> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindField<TComponent, TData1, TData2, TResult>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindField<TComponent, TData1, TData2, TResult>(Container);
+            }
+            bind.Reset(component, property1, property2, wrapFunc, filedChangeCb);
+            clearables.Add(bind);
         }
 
         public void BindData<TData>(ObservableProperty<TData> property, Action<TData> cb)
         {
+            clearables.Add(property);
             cb?.Invoke(property);
             property.AddListener(cb);
         }
@@ -105,8 +151,18 @@ namespace Framework.UI.Core.Bind
         (TComponent component, Action command, UnityEvent componentEvent = null,
             Func<Action, Action> wrapFunc = null) where TComponent : class
         {
-            var bind = new BindCommand<TComponent>(Container, component, command, componentEvent, wrapFunc);
-            Binds.Add(bind);
+            BindCommand<TComponent> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindCommand<TComponent>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindCommand<TComponent>(Container);
+            }
+            bind.Reset(component, command, componentEvent, wrapFunc);
+            clearables.Add(bind);
         }
 
         //绑定带参数的command
@@ -114,24 +170,48 @@ namespace Framework.UI.Core.Bind
         (TComponent component, Action<TData> command, UnityEvent<TData> componentEvent = null,
             Func<Action<TData>, Action<TData>> wrapFunc = null) where TComponent : class
         {
-            var bind = new BindCommandWithPara<TComponent, TData>(Container, component, command, componentEvent, wrapFunc);
-            Binds.Add(bind);
+            BindCommandWithPara<TComponent, TData> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindCommandWithPara<TComponent, TData>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindCommandWithPara<TComponent, TData>(Container);
+            }
+            bind.Reset(component, command, componentEvent, wrapFunc);
+            clearables.Add(bind);
         }
 
         public void BindList<TComponent, TData>(TComponent component, ObservableList<TData> property,
             Action<TComponent, TData> onShow = null, Action<TComponent, TData> onHide = null) where TComponent : Object
         {
-            var bind = new BindList<TComponent, TData>(Container, component, property, onShow, onHide);
-            Binds.Add(bind);
+            BindList<TComponent, TData> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindList<TComponent, TData>) CacheBinds.Dequeue();
+                
+            }
+            else
+            {
+                bind = new BindList<TComponent, TData>(Container);
+            }
+            bind.Reset(component, property, onShow, onHide);
+            clearables.Add(bind);
         }
 
         public void Reset()
         {
-            foreach (var bind in Binds)
+            foreach (var clearable in clearables)
             {
-                bind.ClearBind();
+                clearable.Clear();
+                if (clearable is BaseBind bind)
+                {
+                    CacheBinds.Enqueue(bind);
+                }
             }
-            Binds.Clear();
+            clearables.Clear();
         }
     }
 

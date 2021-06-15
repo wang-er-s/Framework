@@ -14,11 +14,15 @@ namespace Framework.UI.Core.Bind
         private ObservableProperty<TData> _property;
         private object _defaultWrapper;
 
-        public ConvertBindField(object container, TComponent component, ObservableProperty<TData> property,
+        public ConvertBindField(object container) : base(container)
+        {
+        }
+
+        public void Reset(TComponent component, ObservableProperty<TData> property,
             Action<TResult> propChangeCb,
             Func<TData, TResult> prop2CpntWrap,
             Func<TResult, TData> cpnt2PropWrap,
-            UnityEvent<TResult> componentEvent) : base(container)
+            UnityEvent<TResult> componentEvent)
         {
             SetValue(component, property, propChangeCb, prop2CpntWrap, cpnt2PropWrap, componentEvent);
             InitEvent();
@@ -56,10 +60,10 @@ namespace Framework.UI.Core.Bind
                 _componentEvent.AddListener((val) => _property.Value = _cpnt2PropWrap(val));
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _componentEvent.RemoveAllListeners();
-            _property.ClearListener();
+            _property.Clear();
         }
     }
 }

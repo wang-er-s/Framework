@@ -12,7 +12,7 @@ namespace Framework.UI.Core.Bind
         where TItemView : View
         {
             var bind = new BindViewList<TItemVm, TItemView>(list,root);
-            Binds.Add(bind);
+            clearables.Add(bind);
         }
         
         /// <summary>
@@ -21,7 +21,7 @@ namespace Framework.UI.Core.Bind
         public void BindViewList(ObservableList<ViewModelAdapter.Adapter> list,Transform root, Type view)
         {
             var bind = new BindViewList<ViewModelAdapter.Adapter>(list, root, view);
-            Binds.Add(bind);
+            clearables.Add(bind);
         }
 
         public void BindIpairs<TItemVm, TItemView>
@@ -29,14 +29,14 @@ namespace Framework.UI.Core.Bind
         where TItemView : View
         {
             var bind = new BindIpairsViewList<TItemVm, TItemView>(list, pattern, root);
-            Binds.Add(bind);
+            clearables.Add(bind);
         }
         
         public void BindIpairs<TItemVm>
             (ObservableList<TItemVm> list, Transform root, string pattern, Type view) where TItemVm : ViewModel
         {
             var bind = new BindIpairsViewList<TItemVm>(list, pattern, root, view);
-            Binds.Add(bind);
+            clearables.Add(bind);
         }
 
         public void BindDropDown(Dropdown dropdown, ObservableProperty<int> property,
