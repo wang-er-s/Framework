@@ -489,7 +489,17 @@ namespace LitJson
                                     ReadValue(prop_data.Type, reader),
                                     null);
                             else
-                                ReadValue(prop_data.Type, reader);
+                            {
+                                //单独适配proto的repeatedProperty
+                                if (typeof(IList).IsAssignableFrom(prop_data.Type))
+                                {
+                                    var sourceList = (IList) p_info.GetValue(instance);
+                                    foreach (var o in (IList) ReadValue(prop_data.Type, reader))
+                                    {
+                                        sourceList.Add(o);
+                                    }
+                                }
+                            }
                         }
 
                     }

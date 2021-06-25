@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Framework.Asynchronous;
+using UnityEngine;
 
 namespace Framework.Pool
 {
@@ -13,7 +14,7 @@ namespace Framework.Pool
         protected Action<T> OnDispose;
         protected int InitCount;
 
-        protected Pool(Func<T> factory, int initCount = 1, Action<T> onAlloc = null, Action<T> onFree = null,
+        public Pool(Func<T> factory, int initCount = 1, Action<T> onAlloc = null, Action<T> onFree = null,
             Action<T> onDispose = null)
         {
             Factory = factory;
@@ -46,7 +47,7 @@ namespace Framework.Pool
             return obj;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             while (CacheStack.Count > 0)
             {

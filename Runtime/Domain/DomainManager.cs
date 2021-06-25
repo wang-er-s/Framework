@@ -6,7 +6,6 @@ namespace Framework
     public class DomainManager : ManagerBase<DomainManager, DomainAttribute, int>
     {
         Dictionary<int, IDomain> _allDomains = new Dictionary<int, IDomain>();
-        private int _defaultScreenTag = 0;
         public IDomain CurrentDomain { get; private set; }
 
         public override void Init()
@@ -21,11 +20,6 @@ namespace Framework
                 t.GetProperty(nameof(IDomain.Name))?.SetValue(sv, attr.IntTag, null);
                 RegisterScreen(sv);
             }
-        }
-
-        public override void Start()
-        {
-            BeginNavTo(_defaultScreenTag);
         }
         
         private void RegisterScreen(IDomain domain)
@@ -52,12 +46,12 @@ namespace Framework
             return GetDomain(name.GetHashCode());
         }
 
-        public void BeginNavTo(Enum name)
+        public void BeginNavTo(Enum name, object data = null)
         {
-            BeginNavTo(name.GetHashCode());
+            BeginNavTo(name.GetHashCode(), data);
         }
 
-        public void BeginNavTo(int name)
+        public void BeginNavTo(int name, object data = null)
         {
             if (CurrentDomain != null && CurrentDomain.Name == name)
             {
@@ -67,7 +61,7 @@ namespace Framework
             
             if (_allDomains.TryGetValue(name, out var domain))
             {
-                domain.BeginEnter();
+                domain.BeginEnter(data);
                 CurrentDomain?.BeginExit();
                 CurrentDomain = domain;
             }

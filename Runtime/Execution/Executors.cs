@@ -273,7 +273,7 @@ namespace Framework.Execution
             return result.Synchronized().WaitForResult();
         }
 
-        internal static void StopCoroutine(Coroutine routine)
+        public static void StopCoroutine(Coroutine routine)
         {
             if (disposed || executor == null)
                 return;

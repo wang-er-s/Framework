@@ -58,6 +58,11 @@ namespace Tool
             return result;
         }
 
+        public static object CreateInstance(string type, params object[] args)
+        {
+            return CreateInstance(GetType(type), args);
+        }
+
         public static Type GetCLRType(this object obj)
         {
             //如果是继承了主项目的热更的类型

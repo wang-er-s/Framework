@@ -15,6 +15,7 @@ public class RefreshScrollRect : ScrollRect {
     //如果满足刷新条件 执行的方法
     public Action PageUp;
     public Action PageDown;
+    private RectTransform rect=>GetComponentInChildren<ContentSizeFitter>().GetComponent<RectTransform>();
  
     protected override void Awake()
     {
@@ -32,7 +33,6 @@ public class RefreshScrollRect : ScrollRect {
         if (!isDrag)
             return;
         //这个就是Content
-        RectTransform rect = GetComponentInChildren<ContentSizeFitter>().GetComponent<RectTransform>();
         //如果拖动的距离大于给定的值
         if (f > rect.rect.height * vector.y)
         {

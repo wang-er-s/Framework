@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Framework;
 using UnityEngine.Events;
@@ -1108,6 +1109,22 @@ public static class TransformExtension
         }
     }
 
+    /// <summary>
+    /// 递归获取所有子物体
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="result"></param>
+    public static void GetAllChildRecursion(this Transform parent, out List<Transform> result)
+    {
+        result = new List<Transform>();
+        foreach (Transform child in parent)
+        {
+            result.Add(child);
+            GetAllChildRecursion(child, out var childChild);
+            result.AddRange(childChild);
+        }
+    }
+    
     /// <summary>
     /// 递归遍历查找指定的名字的子物体
     /// </summary>

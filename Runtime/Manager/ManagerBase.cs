@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Sirenix.Utilities;
 using Tool;
+using UnityEngine;
 
 namespace Framework
 {
@@ -57,7 +58,7 @@ namespace Framework
         {
             var attrs = type.GetCustomAttributes(typeof(V), false);
             if(attrs.Length <= 0) return;
-            Log.Assert(attrs.Length == 1, $"{type.Name} has mul attribute {typeof(V)}");
+            Debug.Assert(attrs.Length == 1, $"{type.Name} has mul attribute {typeof(V)}");
             var attr = (V) attrs[0];
             if (attr != null)
             {

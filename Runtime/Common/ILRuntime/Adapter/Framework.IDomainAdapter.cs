@@ -11,7 +11,7 @@ namespace Framework
         static CrossBindingMethodInfo<System.Int32> mset_Name_0 = new CrossBindingMethodInfo<System.Int32>("set_Name");
         static CrossBindingFunctionInfo<System.Boolean> mget_IsLoad_1 = new CrossBindingFunctionInfo<System.Boolean>("get_IsLoad");
         static CrossBindingMethodInfo<System.Boolean> mgset_IsLoad_1 = new CrossBindingMethodInfo<System.Boolean>("set_IsLoad");
-        static CrossBindingMethodInfo mBeginEnter_2 = new CrossBindingMethodInfo("BeginEnter");
+        static CrossBindingMethodInfo<Object> mBeginEnter_2 = new CrossBindingMethodInfo<Object>("BeginEnter");
         static CrossBindingMethodInfo mBeginExit_3 = new CrossBindingMethodInfo("BeginExit");
         public override Type BaseCLRType
         {
@@ -52,9 +52,9 @@ namespace Framework
 
             public ILTypeInstance ILInstance { get { return instance; } }
 
-            public void BeginEnter()
+            public void BeginEnter(object data)
             {
-                mBeginEnter_2.Invoke(this.instance);
+                mBeginEnter_2.Invoke(this.instance, data);
             }
 
             public void BeginExit()

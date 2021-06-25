@@ -7,10 +7,13 @@ namespace Framework.Pool
 {
     public class PrefabPool<TComponent> : Pool<TComponent> where TComponent : Component
     {
+        private TComponent template;
         public PrefabPool(TComponent prefab, int initCount = 1, Action<TComponent> onAlloc = null,
             Action<TComponent> onFree = null, Action<TComponent> onDispose = null) : base(
             () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
         {
+            template = prefab;
+            template.gameObject.SetActive(false);
         }
 
         public override TComponent Allocate()
@@ -25,14 +28,24 @@ namespace Framework.Pool
             base.Free(obj);
             obj.gameObject.SetActive(false);
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Object.Destroy(template.gameObject);
+        }
     }
 
     public class PrefabPool : Pool<GameObject>
     {
+        private GameObject template;
+        
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
             Action<GameObject> onFree = null, Action<GameObject> onDispose = null) : base(
             () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
         {
+            template = prefab;
+            template.SetActive(false);
         }
 
         public override GameObject Allocate()
@@ -46,6 +59,12 @@ namespace Framework.Pool
         {
             base.Free(obj);
             obj.gameObject.SetActive(false);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            Object.Destroy(template);
         }
     }
 

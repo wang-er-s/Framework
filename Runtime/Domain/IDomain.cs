@@ -4,7 +4,7 @@ namespace Framework
     {
         int Name { get; }
         bool IsLoad { get;  }
-        void BeginEnter();
+        void BeginEnter(object data = null);
         void BeginExit();
     }
 }

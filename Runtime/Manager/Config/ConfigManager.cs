@@ -11,6 +11,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
     private object[] _objects = new object[1];
     private MulAsyncResult asyncResult;
     private Action _loadedCb;
+    public bool Loaded { get; private set; }
     
     public override void Start()
     {
@@ -40,7 +41,11 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         }
         asyncResult.Callbackable().OnCallback(result =>
         {
-            GameLoop.Ins.Delay(() => _loadedCb?.Invoke());
+            GameLoop.Ins.Delay(() =>
+            {
+                Loaded = true;
+                _loadedCb?.Invoke();
+            });
         });
     }
 
@@ -48,7 +53,6 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
     {
         _loadedCb += action;
     }
-    
 
 #if UNITY_EDITOR
     public void EditorLoad()

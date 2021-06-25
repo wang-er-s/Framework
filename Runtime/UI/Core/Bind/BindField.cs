@@ -1,5 +1,6 @@
 ﻿using System;
 using Framework.UI.Wrap.Base;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Framework.UI.Core.Bind
@@ -142,7 +143,7 @@ namespace Framework.UI.Core.Bind
                 }
                 _propertyChangeCb = changeCb?.GetFieldChangeCb();
             }
-            Log.Assert(_propertyChangeCb != null,
+            Debug.Assert(_propertyChangeCb != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TResult).Name}> interface");
             _property1.AddListener((data1) => _propertyChangeCb(_wrapFunc(data1, _property2.Value)));
             _property2.AddListener((data2) => _propertyChangeCb(_wrapFunc(_property1.Value, data2)));

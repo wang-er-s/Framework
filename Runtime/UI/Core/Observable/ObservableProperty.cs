@@ -37,6 +37,7 @@ namespace Framework.UI.Core.Bind
 
         public void AddListener(Action<T> changeAction)
         {
+            changeAction(_value);
             OnValueChanged += changeAction;
         }
 
