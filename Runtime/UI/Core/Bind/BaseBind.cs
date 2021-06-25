@@ -1,6 +1,6 @@
 namespace Framework.UI.Core.Bind
 {
-    public abstract class BaseBind
+    public abstract class BaseBind : IClearable
     {
         protected object Container;
 
@@ -8,6 +8,6 @@ namespace Framework.UI.Core.Bind
         {
             Container = container;
         }
-        public abstract void ClearBind();
+        public abstract void Clear();
     }
 }

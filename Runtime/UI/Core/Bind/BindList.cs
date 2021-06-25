@@ -12,11 +12,17 @@ namespace Framework.UI.Core.Bind
 {
     public class BindList<TComponent,TVm> : BaseBind where TComponent : UnityEngine.Object
     {
-        private readonly TComponent _component;
-        private readonly ObservableList<TVm> _list;
+        private TComponent _component;
+        private ObservableList<TVm> _list;
         private IBindList<TVm> _bindList;
 
-        public BindList(object container, TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide) : base(container)
+        public BindList(object container) : base(container)
+        {
+            
+        }
+
+        public void Reset(TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onShow,
+            Action<TComponent, TVm> onHide)
         {
             _component = component;
             this._list = list;
@@ -41,7 +47,7 @@ namespace Framework.UI.Core.Bind
             _list.AddListener(_bindList.GetBindListFunc());
         }
 
-        public override void ClearBind()
+        public override void Clear()
         {
             _list.ClearListener();
         }
