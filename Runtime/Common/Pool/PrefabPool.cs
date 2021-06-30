@@ -8,25 +8,29 @@ namespace Framework.Pool
     public class PrefabPool<TComponent> : Pool<TComponent> where TComponent : Component
     {
         private TComponent template;
+        private bool autoActive;
         public PrefabPool(TComponent prefab, int initCount = 1, Action<TComponent> onAlloc = null,
-            Action<TComponent> onFree = null, Action<TComponent> onDispose = null) : base(
-            () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
+            Action<TComponent> onFree = null, Action<TComponent> onDispose = null, bool autoActive = true) : base(
+            () => Object.Instantiate(prefab, prefab.transform.parent), initCount, onAlloc, onFree, onDispose)
         {
             template = prefab;
+            this.autoActive = autoActive;
             template.gameObject.SetActive(false);
         }
 
         public override TComponent Allocate()
         {
             var result = base.Allocate();
-            result.gameObject.SetActive(true);
+            if (autoActive)
+                result.gameObject.SetActive(true);
             return result;
         }
 
         public override void Free(TComponent obj)
         {
             base.Free(obj);
-            obj.gameObject.SetActive(false);
+            if (autoActive)
+                obj.gameObject.SetActive(false);
         }
 
         public override void Dispose()

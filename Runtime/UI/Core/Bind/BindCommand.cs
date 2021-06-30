@@ -15,7 +15,6 @@ namespace Framework.UI.Core.Bind
 
         public BindCommand(object container) : base(container)
         {
-            Debug.Log("create new");
         }
 
         public void Reset(TComponent component, Action command, UnityEvent componentEvent,
