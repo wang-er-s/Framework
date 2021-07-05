@@ -192,7 +192,7 @@ namespace Framework
             });
             appdomain.DelegateManager.RegisterDelegateConvertor<UnityAction>(act =>
             {
-                return new UnityAction(async () => { ((Action) act)(); });
+                return new UnityAction(() => {  ( (Action) act)(); });
             });
             appdomain.DelegateManager.RegisterDelegateConvertor<ThreadStart>(act =>
             {

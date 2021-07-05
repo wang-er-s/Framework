@@ -2,6 +2,7 @@
 using Framework.Assets;
 using Framework.Asynchronous;
 using Framework.UI.Wrap.Base;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -15,27 +16,45 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     private float doubleClickIntervalTime = 0.3f;
     [SerializeField] 
     private float longClickTime = 1;
-    private float _lastUpTime;
-    private float _lastDownTime;
-    private float _downTime;
-    private float _upTime;
+    private float lastUpTime;
+    private float lastDownTime;
+    private float downTime;
+    private float upTime;
 
-    private static Material _grayMat;
-    private Material _selfMat;
-    private CanvasRenderer _canvasRenderer;
+    private static Material grayMat;
+    private Material selfMat;
+    private CanvasRenderer canvasRenderer;
+    private Text textComponent;
+    private TextMeshProUGUI tmp;
+    public string Text
+    {
+        get
+        {
+            if (textComponent != null) return textComponent.text;
+            if (tmp != null) return tmp.text;
+            return String.Empty;
+        }
+        set
+        {
+            if (textComponent != null) textComponent.text = value;
+            if (tmp != null) tmp.text = value;
+        }
+    }
 
     protected override void Awake()
     {
         base.Awake();
-        _canvasRenderer = GetComponent<CanvasRenderer>();
-        _selfMat = targetGraphic.material;
+        canvasRenderer = GetComponent<CanvasRenderer>();
+        textComponent = GetComponentInChildren<Text>();
+        tmp = GetComponentInChildren<TextMeshProUGUI>();
+        selfMat = targetGraphic.material;
     }
 
     protected override async void Start()
     {
         base.Start();
-        if (_grayMat == null && Application.isPlaying)
-            await Res.Default.LoadAssetAsync<Material>("gray");
+        if (grayMat == null && Application.isPlaying)
+            grayMat = Resources.Load<Material>("ImageGrayMaterial");
     }
 
     public ButtonClickedEvent OnSingleClick { get; } = new ButtonClickedEvent(); 
@@ -46,19 +65,19 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     {
         base.OnPointerDown(eventData);
         if(!IsInteractable()) return;
-        _lastDownTime = _downTime;
-        _downTime = Time.time;
+        lastDownTime = downTime;
+        downTime = Time.time;
     }
 
     public void SetGray(bool interactable = true)
     {
-        targetGraphic.material = _grayMat;
+        targetGraphic.material = grayMat;
         this.interactable = interactable;
     }
 
     public void SetNormal()
     {
-        targetGraphic.material = _selfMat;
+        targetGraphic.material = selfMat;
         interactable = true;
     }
     
@@ -67,8 +86,8 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
         base.OnPointerUp(eventData);
         if(!IsInteractable()) return;
         var time = Time.time;
-        _lastUpTime = _upTime;
-        _upTime = time;
+        lastUpTime = upTime;
+        upTime = time;
         CheckDoubleClick();
         CheckSingleClick();
         CheckLongClick();
@@ -76,7 +95,7 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
 
     private bool CheckLongClick()
     {
-        var pressTime = _upTime - _downTime; 
+        var pressTime = upTime - downTime; 
         if (pressTime < longClickTime) return false;
         OnLongClick.Invoke();
         return true;
@@ -84,7 +103,7 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
 
     private bool CheckSingleClick()
     {
-        if(_upTime - _lastUpTime < singleClickIntervalTime) return false;
+        if(upTime - lastUpTime < singleClickIntervalTime) return false;
         onClick= OnSingleClick;
         return true;
     }
@@ -92,7 +111,7 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     private int _clickCount;
     private bool CheckDoubleClick()
     {
-        if (_upTime - _lastUpTime > doubleClickIntervalTime)
+        if (upTime - lastUpTime > doubleClickIntervalTime)
         {
             _clickCount = 1;
             return false;

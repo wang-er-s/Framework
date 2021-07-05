@@ -2,7 +2,7 @@
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableProperty<T> : IClearable
+    public class ObservableProperty<T> : IClearable , IObservable
     {
         public ObservableProperty(T value)
         {
@@ -42,6 +42,11 @@ namespace Framework.UI.Core.Bind
         public void RemoveListener(Action<T> changeAction)
         {
             OnValueChanged -= changeAction;
+        }
+
+        public void AddListener(Action<object> changeAction)
+        {
+            OnValueChanged += val => changeAction(val);
         }
 
         public void Clear()

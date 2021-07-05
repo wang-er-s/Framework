@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableList<T> : IList<T>
+    public class ObservableList<T> : IList<T> , IObservable
     {
         private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
@@ -53,6 +53,11 @@ namespace Framework.UI.Core.Bind
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
             AddItem(item);
+        }
+
+        public void AddListener(Action<object> changeAction)
+        {
+            ListUpdateChanged += changeAction;
         }
 
         public void Clear()

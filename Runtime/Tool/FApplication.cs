@@ -56,5 +56,56 @@ namespace Framework
             return "";
         }
         #endregion
+
+        /// <summary>
+        /// UnityWebRequest加载
+        /// StreamingAssets 下， mac要加file:///  安卓不能加
+        /// persistent下 都要加file:///
+        ///
+        /// File加载
+        /// StreamingAssets是打进压缩包，不能使用
+        /// persistent按正常文件加载
+        /// </summary>
+        public static string PathPrefix = "file:///";
+        
+        public static string streamingAssetsPath
+        {
+            get
+            {
+                if (Application.platform == RuntimePlatform.Android ||
+                    Application.platform == RuntimePlatform.IPhonePlayer)
+                {
+                    return Application.streamingAssetsPath;
+                }
+                if (Application.platform == RuntimePlatform.WindowsEditor ||
+                    Application.platform == RuntimePlatform.OSXEditor)
+                {
+                    return PathPrefix + Application.streamingAssetsPath;
+                }
+                return Application.streamingAssetsPath;
+            }
+        }
+        
+        public static string persistentDataPath
+        {
+            get
+            {
+                if (Application.platform == RuntimePlatform.Android ||
+                    Application.platform == RuntimePlatform.IPhonePlayer ||
+                    Application.platform == RuntimePlatform.WindowsEditor ||
+                    Application.platform == RuntimePlatform.OSXEditor)
+                {
+                    return PathPrefix + Application.persistentDataPath;
+                }
+                return Application.persistentDataPath;
+            }
+        }
+
+        public static bool IsMobile => Application.platform == RuntimePlatform.Android ||
+                                       Application.platform == RuntimePlatform.IPhonePlayer;
+
+        public static bool IsEditor => Application.platform == RuntimePlatform.WindowsEditor ||
+                                       Application.platform == RuntimePlatform.LinuxEditor ||
+                                       Application.platform == RuntimePlatform.OSXEditor;
     }
 }

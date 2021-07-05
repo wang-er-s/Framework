@@ -30,7 +30,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
                     {
                         method.Invoke(null, _objects);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Log.Error("加载",method.DeclaringType,"出错");
                         throw;

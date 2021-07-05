@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Framework.Net
 {
@@ -151,6 +152,11 @@ namespace Framework.Net
                 default:
                     return _speed;
             }
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

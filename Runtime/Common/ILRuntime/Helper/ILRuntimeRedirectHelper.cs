@@ -228,7 +228,7 @@ namespace Framework
             appdomain.RegisterCLRMethodRedirection(JsonFormatter.GetMethod("ToDiagnosticString"),
                 ToDiagnosticString);
 
-            args = new[] {typeof(Enum)};
+            args = new[] {typeof(Enum), typeof(object)};
             appdomain.RegisterCLRMethodRedirection(typeof(DomainManager).GetMethod("BeginNavTo", args), BeginNavTo);
         }
 
@@ -236,17 +236,18 @@ namespace Framework
         {
             AppDomain domain = intp.AppDomain;
             StackObject* ret = ILIntepreter.Minus(esp, 1);
-            var ptr_msg1 = ILIntepreter.Minus(esp, 1);
+            StackObject* ptr2 = ILIntepreter.Minus(esp, 2);
             try
             {
-                ILTypeInstance obj = (ILTypeInstance)StackObject.ToObject(ptr_msg1, domain, mstack);
-                DomainManager.Ins.BeginNavTo(obj.Fields[0].Value);
+                ILTypeInstance enumValue = (ILTypeInstance)StackObject.ToObject(ptr2, domain, mstack);
+                object data = StackObject.ToObject(ret, domain, mstack);
+                DomainManager.Ins.BeginNavTo(enumValue.Fields[0].Value, data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Log.Error(domain.DebugService.GetStackTrace(intp));
             }
-            intp.Free(ptr_msg1);
+            intp.Free(ptr2);
             return ret;
         }
 

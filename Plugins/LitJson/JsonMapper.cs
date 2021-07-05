@@ -389,7 +389,7 @@ namespace LitJson
 
                 // Maybe it's an enum
                 if (vt.IsEnum)
-                    return Enum.ToObject (vt, reader.Value);
+                    return Enum.Parse (vt, reader.Value.ToString());
 
                 // Try using an implicit conversion operator
                 MethodInfo conv_op = GetConvOp (vt, json_type);

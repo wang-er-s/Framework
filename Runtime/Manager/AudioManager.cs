@@ -284,6 +284,14 @@ namespace Framework
         public async void PlayMultipleSound(string clipName, bool isLoop = false, float speed = 1)
         {
             var clip = await res.LoadAssetAsync<AudioClip>(clipName);
+            PlayMultipleSound(clip, isLoop, speed);
+        }
+        
+        /// <summary>
+        /// 播放多通道音效
+        /// </summary>
+        public async void PlayMultipleSound(AudioClip clip, bool isLoop = false, float speed = 1)
+        {
             var audio = ExtractIdleMultipleAudioSource();
             audio.SetParams(clip, isLoop, speed);
             audio.Play();

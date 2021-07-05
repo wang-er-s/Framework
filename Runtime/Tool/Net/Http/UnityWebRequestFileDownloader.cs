@@ -22,37 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE.
  #1#
-
+*/
 using System;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
 using Framework.Asynchronous;
+using UnityEngine;
 
 namespace Framework.Net
 {
     public class UnityWebRequestFileDownloader : FileDownloaderBase
     {
-
-        public UnityWebRequestFileDownloader(Uri baseUri) : base(baseUri)
-        {
-        }
-        
-        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, FileInfo fileInfo)
+        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo)
         {
             return Execution.Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) =>
                 DoDownloadFileAsync(path, fileInfo, promise));
         }
 
-        protected virtual IEnumerator DoDownloadFileAsync(Uri path, FileInfo fileInfo,
+        protected virtual IEnumerator DoDownloadFileAsync(string path, FileInfo fileInfo,
             IProgressPromise<ProgressInfo> promise)
         {
             if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
-
             ProgressInfo progressInfo = new ProgressInfo {TotalCount = 1};
-            using (UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri))
+            using (UnityWebRequest www = new UnityWebRequest(path))
             {
                 www.downloadHandler = new DownloadFileHandler(fileInfo);
                 www.SendWebRequest();
@@ -69,12 +64,12 @@ namespace Framework.Net
                     yield return null;
                 }
 
-                if (www.isNetworkError)
+                if(www.isNetworkError || www.isHttpError)
                 {
                     promise.SetException(www.error);
                     yield break;
                 }
-
+                
                 progressInfo.CompletedCount = 1;
                 progressInfo.CompletedSize = progressInfo.TotalSize;
                 promise.UpdateProgress(progressInfo);
@@ -105,7 +100,7 @@ namespace Framework.Net
                     }
                     else
                     {
-                        using (UnityWebRequest www = UnityWebRequest.Head(this.GetAbsoluteUri(info.Path).AbsoluteUri))
+                        using (UnityWebRequest www = UnityWebRequest.Head(info.Path))
                         {
                             yield return www.SendWebRequest();
                             string contentLength = www.GetResponseHeader("Content-Length");
@@ -136,12 +131,12 @@ namespace Framework.Net
             for (int i = 0; i < downloadList.Count; i++)
             {
                 ResourceInfo info = downloadList[i];
-                Uri path = info.Path;
+                var path = info.Path;
                 FileInfo fileInfo = info.FileInfo;
                 if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                     fileInfo.Directory.Create();
 
-                UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri);
+                UnityWebRequest www = new UnityWebRequest(path);
                 www.downloadHandler = new DownloadFileHandler(fileInfo);
 
                 www.SendWebRequest();
@@ -170,7 +165,7 @@ namespace Framework.Net
                         {
                             promise.SetException(new Exception(_www.error));
                             Log.Error(
-                                $"Downloads file '{_info.FileInfo.FullName}' failure from the address '{GetAbsoluteUri(_info.Path)}'.Reason:{_www.error}");
+                                $"Downloads file '{_info.FileInfo.FullName}' failure from the address '{(_info.Path)}'.Reason:{_www.error}");
                             _www.Dispose();
 
                             try
@@ -198,8 +193,5 @@ namespace Framework.Net
 
             promise.SetResult(infos);
         }
-
-        
     }
 }
-*/

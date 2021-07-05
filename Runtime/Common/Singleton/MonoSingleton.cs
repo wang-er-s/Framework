@@ -23,11 +23,5 @@ namespace Framework
 				return instance;
 			}
 		}
-
-		public static void Dispose()
-		{
-			Destroy ( instance.gameObject );
-			instance = null;
-		}
 	}
 }
