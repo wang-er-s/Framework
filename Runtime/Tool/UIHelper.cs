@@ -1,6 +1,7 @@
 ﻿using System;
 using Framework.Execution;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
@@ -57,6 +58,16 @@ namespace Framework.Helper
             Log.Warning("Texture2D 不能为空！");
 
             return null;
+        }
+
+        public static bool TouchInUI()
+        {
+            #if IPHONE || ANDROID
+            			if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return true;
+            #else
+                    if (EventSystem.current.IsPointerOverGameObject()) return true;
+            #endif
+            return false;
         }
     }
 }

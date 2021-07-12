@@ -47,7 +47,7 @@ namespace Framework.Net
         public virtual IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, string fileName)
         {
             if (fileName.StartsWith(FApplication.PathPrefix))
-                fileName.RemoveString(FApplication.PathPrefix);
+                fileName = fileName.RemoveString(FApplication.PathPrefix);
             return DownloadFileAsync(path, new FileInfo(fileName));
         }
 

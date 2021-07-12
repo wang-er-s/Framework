@@ -1,8 +1,15 @@
 using System.Collections.Generic;
 using Framework.Execution;
+using UnityEngine;
 
 namespace Framework.Asynchronous
 {
+    public interface IMulProgress
+    {
+        float Current { get; }
+        float Total { get; }
+    }
+    
     public class MulAsyncResult : AsyncResult
     {
         public float Progress { get; private set;}
@@ -72,6 +79,116 @@ namespace Framework.Asynchronous
             {
                 return this._callbackable ?? (this._callbackable = new Callbackable(this));
             }
+        }
+    }
+    
+    public class MulProgressResult<TProgress> : ProgressResult<float> where TProgress : IMulProgress
+    {
+        private List<IProgressResult<TProgress>> _allProgress = new List<IProgressResult<TProgress>>();
+
+        public MulProgressResult(params IProgressResult<TProgress>[] allProgress) : this(false, allProgress)
+        {
+        }
+
+        public MulProgressResult(bool cancelable, params IProgressResult<TProgress>[] allProgress) : base(cancelable)
+        {
+            AddAsyncResult(allProgress);
+        }
+
+        public void AddAsyncResult(IProgressResult<TProgress> progressResult)
+        {
+            _allProgress.Add(progressResult);
+            SetSubProgressCb(progressResult);
+        }
+
+        public void AddAsyncResult(IEnumerable<IProgressResult<TProgress>> progressResults)
+        {
+            foreach (var progressResult in progressResults)
+            {
+                AddAsyncResult(progressResult);
+            }
+        }
+
+        private void SetSubProgressCb(IProgressResult<TProgress> progressResult)
+        {
+            progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
+        }
+
+        protected override void RaiseOnProgressCallback(float progress)
+        {
+            UpdateProgress();
+            base.RaiseOnProgressCallback(Progress);
+            //延迟一帧 否则会比子任务提前完成
+            if (Progress >= 1)
+            {
+                GameLoop.Ins.Delay(() => SetResult());
+            }
+        }
+
+        private void UpdateProgress()
+        {
+            float totalProgress = 0;
+            float current = 0;
+            foreach (var progressResult in _allProgress)
+            {
+                totalProgress += progressResult.Progress.Total;
+                current += progressResult.Progress.Current;
+            }
+            Progress = current / totalProgress;
+        }
+    }
+    
+    public class MulProgressResult : ProgressResult<float>
+    {
+        private List<IProgressResult<float>> _allProgress = new List<IProgressResult<float>>();
+
+        public MulProgressResult(params IProgressResult<float>[] allProgress) : this(false, allProgress)
+        {
+        }
+
+        public MulProgressResult(bool cancelable, params IProgressResult<float>[] allProgress) : base(cancelable)
+        {
+            AddAsyncResult(allProgress);
+        }
+
+        public void AddAsyncResult(IProgressResult<float> progressResult)
+        {
+            _allProgress.Add(progressResult);
+            SetSubProgressCb(progressResult);
+        }
+
+        public void AddAsyncResult(IEnumerable<IProgressResult<float>> progressResults)
+        {
+            foreach (var progressResult in progressResults)
+            {
+                AddAsyncResult(progressResult);
+            }
+        }
+
+        private void SetSubProgressCb(IProgressResult<float> progressResult)
+        {
+            progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
+        }
+
+        protected override void RaiseOnProgressCallback(float progress)
+        {
+            UpdateProgress();
+            base.RaiseOnProgressCallback(Progress);
+            //延迟一帧 否则会比子任务提前完成
+            if (Progress >= 1)
+            {
+                GameLoop.Ins.Delay(() => SetResult());
+            }
+        }
+
+        private void UpdateProgress()
+        {
+            float totalProgress = 0;
+            foreach (var progressResult in _allProgress)
+            {
+                totalProgress += progressResult.Progress;
+            }
+            Progress = totalProgress / _allProgress.Count;
         }
     }
 }

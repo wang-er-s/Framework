@@ -7,24 +7,13 @@ using System.Linq;
 
 namespace Framework.UI.Core.Bind
 {
-    public class ObservableDictionary<TKey,TValue>  : IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged
+    public class ObservableDictionary<TKey,TValue>  : IDictionary<TKey, TValue>, IDictionary , IObservable
     {
         
-        private readonly object _collectionChangedLock = new object();
-        private NotifyCollectionChangedEventHandler _collectionChanged;
+        private event Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey,TValue>> CollectionChanged;
+        private event Action<Dictionary<TKey, TValue>> dicChanged; 
 
         protected Dictionary<TKey, TValue> Dictionary;
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged
-        {
-            add { lock (_collectionChangedLock) { this._collectionChanged += value; } }
-            remove { lock (_collectionChangedLock) { this._collectionChanged -= value; } }
-        }
-
-        public void ClearListener()
-        {
-            _collectionChanged = null;
-        }
 
         public ObservableDictionary()
         {
@@ -81,8 +70,8 @@ namespace Framework.UI.Core.Bind
             var removed = Dictionary.Remove(key);
             if (removed)
             {
-                if (this._collectionChanged != null)
-                    OnCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<TKey, TValue>(key, value));
+                OnCollectionChanged(NotifyCollectionChangedAction.Remove, default,
+                    new KeyValuePair<TKey, TValue>(key, value));
             }
 
             return removed;
@@ -103,13 +92,40 @@ namespace Framework.UI.Core.Bind
             Insert(item.Key, item.Value, true);
         }
 
+        public void AddListener(
+            Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)
+        {
+            CollectionChanged += changeCb;
+        }
+
+        public void AddListener(Action<Dictionary<TKey, TValue>> changeCb)
+        {
+            dicChanged += changeCb;
+        }
+        
+        public void RemoveListener(
+            Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)
+        {
+            CollectionChanged -= changeCb;
+        }
+
+        public void RemoveListener(Action<Dictionary<TKey, TValue>> changeCb)
+        {
+            dicChanged -= changeCb;
+        }
+
+        public void ClearListener()
+        {
+            CollectionChanged = null;
+            dicChanged = null;
+        }
+        
         public void Clear()
         {
             if (Dictionary.Count > 0)
             {
                 Dictionary.Clear();
-                if (this._collectionChanged != null)
-                    OnCollectionChanged();
+                OnCollectionChanged(NotifyCollectionChangedAction.Reset, default, default);
             }
         }
 
@@ -164,8 +180,10 @@ namespace Framework.UI.Core.Bind
                     this.Dictionary = new Dictionary<TKey, TValue>(items);
                 }
 
-                if (this._collectionChanged != null)
-                    OnCollectionChanged(NotifyCollectionChangedAction.Add, items.ToArray());
+                foreach (var value in items)
+                {
+                    OnCollectionChanged(NotifyCollectionChangedAction.Add, value, default);
+                }
             }
         }
 
@@ -183,36 +201,22 @@ namespace Framework.UI.Core.Bind
                     return;
 
                 Dictionary[key] = value;
-                if (this._collectionChanged != null)
-                    OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
+                OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
             }
             else
             {
                 Dictionary[key] = value;
-                if (this._collectionChanged != null)
-                    OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value));
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value), default);
             }
         }
         
-        private void OnCollectionChanged()
-        {
-            _collectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> changedItem)
-        {
-            _collectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(action, changedItem));
-        }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> newItem, KeyValuePair<TKey, TValue> oldItem)
         {
-            _collectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(action, newItem, oldItem));
+            CollectionChanged?.Invoke(action, newItem, oldItem);
+            dicChanged?.Invoke(Dictionary);
         }
-
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList newItems)
-        {
-            _collectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(action, newItems));
-        }
+        
 
         object IDictionary.this[object key]
         {
@@ -254,5 +258,23 @@ namespace Framework.UI.Core.Bind
         object ICollection.SyncRoot => ((IDictionary)this.Dictionary).SyncRoot;
 
         bool ICollection.IsSynchronized => ((IDictionary)this.Dictionary).IsSynchronized;
+        
+        public static implicit operator Dictionary<TKey, TValue>(ObservableDictionary<TKey, TValue> self)
+        {
+            return self.Dictionary;
+        }
+
+        void IObservable.AddListener(Action<object> listener)
+        {
+            dicChanged += listener;
+        }
+
+        object IObservable.RawValue => Dictionary;
+        
+        Type IObservable.RawType => Dictionary.GetType();
+        void IObservable.InitValueWithoutCb(object val)
+        {
+            Dictionary = (Dictionary<TKey,TValue>)val;
+        }
     }
 }

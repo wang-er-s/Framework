@@ -104,7 +104,8 @@ namespace Framework.Net
                         {
                             yield return www.SendWebRequest();
                             string contentLength = www.GetResponseHeader("Content-Length");
-                            info.FileSize = long.Parse(contentLength);
+                            if (!string.IsNullOrEmpty(contentLength))
+                                info.FileSize = long.Parse(contentLength);
                         }
                     }
                 }

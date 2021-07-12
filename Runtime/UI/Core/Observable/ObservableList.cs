@@ -9,11 +9,11 @@ namespace Framework.UI.Core.Bind
     {
         private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
-        private IList<T> _items;
+        private List<T> _items;
         private readonly object _locker = new object();
-        private event Action<ObservableList<T>> ListUpdateChanged;
+        private event Action<List<T>> ListUpdateChanged;
         public int Count => _items.Count;
-        public bool IsReadOnly => _items.IsReadOnly;
+        public bool IsReadOnly => false;
 
         public ObservableList()
         {
@@ -53,11 +53,6 @@ namespace Framework.UI.Core.Bind
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
             AddItem(item);
-        }
-
-        public void AddListener(Action<object> changeAction)
-        {
-            ListUpdateChanged += changeAction;
         }
 
         public void Clear()
@@ -183,7 +178,7 @@ namespace Framework.UI.Core.Bind
             if (CollectionChanged != null) CollectionChanged -= listener;
         }
 
-        public void AddListener(Action<ObservableList<T>> listener)
+        public void AddListener(Action<List<T>> listener)
         {
             ListUpdateChanged += listener;
         }
@@ -198,6 +193,23 @@ namespace Framework.UI.Core.Bind
         {
             ListUpdateChanged = null;
             CollectionChanged = null;
+        }
+        
+        public static implicit operator List<T>(ObservableList<T> self)
+        {
+            return self._items;
+        }
+
+        void IObservable.AddListener(Action<object> listener)
+        {
+            ListUpdateChanged += listener;
+        }
+        
+        object IObservable.RawValue => _items;
+        Type IObservable.RawType => _items.GetType();
+        void IObservable.InitValueWithoutCb(object val)
+        {
+            _items = (List<T>)val;
         }
     }
 }

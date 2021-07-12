@@ -24,6 +24,7 @@
 
 using System;
 using System.Globalization;
+using Framework.Asynchronous;
 
 namespace Framework.Net
 {
@@ -35,7 +36,7 @@ namespace Framework.Net
         GB
     }
 
-    public class ProgressInfo
+    public class ProgressInfo : IMulProgress
     {
         private long _totalSize = 0;
         private long _completedSize = 0;
@@ -98,7 +99,7 @@ namespace Framework.Net
             _speed = (this._completedSize - this._lastValue2) / dt;
         }
 
-        public virtual float Value
+        public virtual float Progress
         {
             get
             {
@@ -156,7 +157,10 @@ namespace Framework.Net
 
         public override string ToString()
         {
-            return Value.ToString(CultureInfo.InvariantCulture);
+            return $"{GetCompletedSize()} / {GetTotalSize()} ";
         }
+
+        public float Current => _completedSize;
+        public float Total => _totalSize;
     }
 }

@@ -44,11 +44,6 @@ namespace Framework.UI.Core.Bind
             OnValueChanged -= changeAction;
         }
 
-        public void AddListener(Action<object> changeAction)
-        {
-            OnValueChanged += val => changeAction(val);
-        }
-
         public void Clear()
         {
             OnValueChanged = null;
@@ -57,6 +52,19 @@ namespace Framework.UI.Core.Bind
         public override string ToString()
         {
             return _value != null ? _value.ToString() : "null";
+        }
+
+        void IObservable.AddListener(Action<object> listener)
+        {
+            OnValueChanged += obj => listener(obj);
+        }
+        
+        object IObservable.RawValue => _value;
+        Type IObservable.RawType => _value.GetType();
+
+        void IObservable.InitValueWithoutCb(object val)
+        {
+            _value = (T)val;
         }
 
         public static implicit operator T(ObservableProperty<T> property)

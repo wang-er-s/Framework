@@ -748,7 +748,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 55
 --- !u!114 &11452418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3105,6 +3105,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!1 &1023677686285356
 GameObject:
   m_ObjectHideFlags: 0
@@ -3576,6 +3577,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!1 &1316062289193744
 GameObject:
   m_ObjectHideFlags: 0

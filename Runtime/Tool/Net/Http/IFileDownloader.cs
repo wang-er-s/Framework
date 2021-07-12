@@ -45,6 +45,13 @@ namespace Framework.Net
             this.FileInfo = fileInfo;
             this.FileSize = fileSize;
         }
+        
+        public ResourceInfo(string path, string filePath, long fileSize = -1)
+        {
+            this.Path = path;
+            this.FileInfo = new FileInfo(filePath);
+            this.FileSize = fileSize;
+        }
 
         public string Path { get; private set; }
 
