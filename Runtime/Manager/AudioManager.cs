@@ -290,7 +290,7 @@ namespace Framework
         /// <summary>
         /// 播放多通道音效
         /// </summary>
-        public async void PlayMultipleSound(AudioClip clip, bool isLoop = false, float speed = 1)
+        public void PlayMultipleSound(AudioClip clip, bool isLoop = false, float speed = 1)
         {
             var audio = ExtractIdleMultipleAudioSource();
             audio.SetParams(clip, isLoop, speed);

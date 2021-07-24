@@ -34,7 +34,7 @@ namespace Framework.UI.Core.Bind
             item.SetVm(itemsVm[index]);
         }
 
-        private void OnListChanged(ObservableList<TVm> list)
+        private void OnListChanged(List<TVm> list)
         {
             loopScrollRect.totalCount = list.Count;
             loopScrollRect.RefillCells();
