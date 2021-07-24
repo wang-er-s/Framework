@@ -26,7 +26,6 @@ namespace Framework.UI.Core.Bind
             if (CacheBinds.Count > 0)
             {
                 bind = (BindField<TComponent, TData>) CacheBinds.Dequeue();
-                
             }
             else
             {

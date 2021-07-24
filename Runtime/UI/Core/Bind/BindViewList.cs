@@ -13,10 +13,14 @@ namespace Framework.UI.Core.Bind
     {
         private Transform _content;
         private List<View> _views;
-        private readonly ObservableList<TVm> _list;
+        private ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
 
-        public BindViewList(ObservableList<TVm> list, Transform root)  : base(null)
+        public BindViewList()  : base(null)
+        {
+        }
+
+        public void Reset(ObservableList<TVm> list, Transform root)
         {
             _views = new List<View>();
             _content = root;
@@ -59,11 +63,15 @@ namespace Framework.UI.Core.Bind
     {
         private Transform _content;
         private List<View> _views;
-        private readonly ObservableList<TVm> _list;
+        private ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
         private Type _viewType;
 
-        public BindViewList(ObservableList<TVm> list, Transform root, Type view): base(null)
+        public BindViewList(): base(null)
+        {
+        }
+
+        public void Reset(ObservableList<TVm> list, Transform root, Type view)
         {
             if (!view.IsSubclassOf(typeof(View)))
             {
@@ -113,7 +121,11 @@ namespace Framework.UI.Core.Bind
         private ObservableList<TVm> _list;
         private List<View> _views;
 
-        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root) : base(null)
+        public BindIpairsViewList() : base(null)
+        {
+        }
+
+        public void Reset(ObservableList<TVm> list, string itemName, Transform root)
         {
             SetValue(list, itemName, root);
         }
@@ -156,14 +168,17 @@ namespace Framework.UI.Core.Bind
         private List<View> _views;
         private Type _viewType;
 
-        public BindIpairsViewList(ObservableList<TVm> list, string itemName, Transform root, Type view) : base(null)
+        public BindIpairsViewList() : base(null)
+        {
+        }
+
+        public void Reset(ObservableList<TVm> list, string itemName, Transform root, Type view)
         {
             _viewType = view;
             this._list = list;
             ParseItems(itemName, root);
             InitEvent();
         }
-        
 
         private void ParseItems(string itemName, Transform root)
         {

@@ -177,6 +177,11 @@ namespace Framework.UI.Core.Bind
         {
             if (CollectionChanged != null) CollectionChanged -= listener;
         }
+        
+        public void RemoveListener(Action<ObservableList<T>> listener)
+        {
+            ListUpdateChanged -= listener;
+        }
 
         public void AddListener(Action<List<T>> listener)
         {
