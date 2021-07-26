@@ -344,12 +344,17 @@ public static class IEnumerableExtension
     /// <typeparam name="T">元素类型</typeparam>
     /// <param name="list">列表</param>
     /// <returns></returns>
-    public static T GetRandomItem<T>(this List<T> list)
+    public static T GetRandomItem<T>(this IList<T> list)
     {
         return list[list.GetRandomIndex()];
     }
 
-    public static int GetRandomIndex(this ICollection list)
+    public static int GetRandomIndex<T>(this ICollection<T> list)
+    {
+        return UnityEngine.Random.Range(0, list.Count);
+    }
+    
+    public static int GetRandomIndex(this IList list)
     {
         return UnityEngine.Random.Range(0, list.Count);
     }

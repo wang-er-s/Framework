@@ -107,13 +107,13 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;
@@ -177,13 +177,13 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                 }
             }
         }
@@ -203,7 +203,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;
@@ -248,13 +248,13 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                 }
                 finally
                 {
@@ -282,13 +282,13 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                 }
             }
         }
@@ -308,7 +308,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;
@@ -333,7 +333,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;
@@ -414,13 +414,13 @@ namespace Framework.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                            Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                    Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                 }
             }
         }
@@ -440,7 +440,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;
@@ -465,7 +465,7 @@ namespace Framework.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Class[{GetType()}] callback exception.Error:{e}");
+                        Log.Error($"Class[{GetType()}] callback exception.Error:{e}");
                     }
 
                     return;

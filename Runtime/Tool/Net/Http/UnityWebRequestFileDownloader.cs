@@ -35,22 +35,24 @@ namespace Framework.Net
 {
     public class UnityWebRequestFileDownloader : FileDownloaderBase
     {
-        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo)
+        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo, float overtimeTime = 50)
         {
             return Execution.Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) =>
-                DoDownloadFileAsync(path, fileInfo, promise));
+                DoDownloadFileAsync(path, fileInfo, promise, overtimeTime));
         }
 
         protected virtual IEnumerator DoDownloadFileAsync(string path, FileInfo fileInfo,
-            IProgressPromise<ProgressInfo> promise)
+            IProgressPromise<ProgressInfo> promise, float overtimeTime)
         {
             if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
             ProgressInfo progressInfo = new ProgressInfo {TotalCount = 1};
             using (UnityWebRequest www = new UnityWebRequest(path))
             {
-                www.downloadHandler = new DownloadFileHandler(fileInfo);
+                var downloadFileHandler = new DownloadFileHandler(fileInfo);
+                www.downloadHandler = downloadFileHandler;
                 www.SendWebRequest();
+                float timer = 0;
                 while (!www.isDone)
                 {
                     if (www.downloadProgress >= 0)
@@ -60,10 +62,26 @@ namespace Framework.Net
                         progressInfo.CompletedSize = (long) www.downloadedBytes;
                         promise.UpdateProgress(progressInfo);
                     }
-
+                    timer += Time.deltaTime;
+                    if (timer > overtimeTime)
+                    {
+                        promise.SetException(new TimeoutException());
+                        break;
+                    }
                     yield return null;
                 }
 
+                while (!downloadFileHandler.WriteFinish)
+                {
+                    timer += Time.deltaTime;
+                    if (timer > overtimeTime)
+                    {
+                        promise.SetException(new TimeoutException());
+                        break;
+                    }
+                    yield return null;
+                }
+                
                 if(www.isNetworkError || www.isHttpError)
                 {
                     promise.SetException(www.error);

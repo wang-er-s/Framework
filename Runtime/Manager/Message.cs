@@ -16,7 +16,14 @@ namespace Framework.MessageCenter
 
             public void Invoke(params object[] para)
             {
-                MethodInfo.Invoke(Instance, para);
+                try
+                {
+                    MethodInfo.Invoke(Instance, para);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("执行方法出错", MethodInfo.DeclaringType.Name, MethodInfo.Name, e);
+                }
             }
 
             public MessageEvent(MessageEvent messageEvent) : this(messageEvent.MethodInfo, messageEvent.Instance, messageEvent.Tag)

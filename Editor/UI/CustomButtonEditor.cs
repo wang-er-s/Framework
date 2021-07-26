@@ -12,6 +12,7 @@ namespace Framework.Editor
         private SerializedProperty singleClickIntervalTime;
         private SerializedProperty doubleClickIntervalTime;
         private SerializedProperty longClickTime;
+        private SerializedProperty longPressIntervalTime;
         
         GUIStyle m_caption;
         GUIStyle caption 
@@ -40,6 +41,7 @@ namespace Framework.Editor
             base.OnEnable();
             singleClickIntervalTime = serializedObject.FindProperty("singleClickIntervalTime");
             doubleClickIntervalTime = serializedObject.FindProperty("doubleClickIntervalTime");
+            longPressIntervalTime = serializedObject.FindProperty("longPressIntervalTime");
             longClickTime = serializedObject.FindProperty("longClickTime");
         }
 
@@ -50,6 +52,7 @@ namespace Framework.Editor
             EditorGUILayout.PropertyField(singleClickIntervalTime,new GUIContent("单击间隔时间(s)"));
             EditorGUILayout.PropertyField(doubleClickIntervalTime,new GUIContent("多少秒内算双击(s)"));
             EditorGUILayout.PropertyField(longClickTime,new GUIContent("超过多久算长按(s)"));
+            EditorGUILayout.PropertyField(longPressIntervalTime,new GUIContent("按下状态,多久触发一次OnLongPress(s)"));
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("<b><color=white>For original ScrollRect</color></b>", caption);
             base.OnInspectorGUI();

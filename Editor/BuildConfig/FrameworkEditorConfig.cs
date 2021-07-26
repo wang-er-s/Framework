@@ -18,6 +18,10 @@ namespace Framework.Editor
         [InlinePropertyAttribute]
         public IosConfig IosConfig =new IosConfig();
 
+        [FolderPath]
+        [LabelText("打包输出路径")]
+        public string OutputPath;
+        
         [FoldoutGroup("UI设置", expanded: true)]
         [HideLabel]
         [InlinePropertyAttribute]
@@ -36,9 +40,6 @@ namespace Framework.Editor
         public string KeyAliasName;
         [LabelText("keyalias密码")]
         public string KeyAliasPwd;
-        [FolderPath]
-        [LabelText("输出路径")]
-        public string OutputPath;
     }
 
     [Serializable]

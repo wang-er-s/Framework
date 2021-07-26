@@ -96,13 +96,13 @@ namespace Framework
 
             #region Convertor
             
-            appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.TweenCallback>((act) =>
-            {
-                return new DG.Tweening.TweenCallback(() =>
-                {
-                    ((Action)act)();
-                });
-            });
+            //appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.TweenCallback>((act) =>
+            //{
+            //    return new DG.Tweening.TweenCallback(() =>
+            //    {
+            //        ((Action)act)();
+            //    });
+            //});
             
             appdomain.DelegateManager.RegisterDelegateConvertor<System.Threading.ParameterizedThreadStart>((act) =>
             {

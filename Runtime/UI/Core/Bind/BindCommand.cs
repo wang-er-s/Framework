@@ -38,7 +38,7 @@ namespace Framework.UI.Core.Bind
             _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             _componentEvent = _componentEvent ?? (_component as IComponentEvent)?.GetComponentEvent() ??
                 (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
-            Log.Assert(_componentEvent != null, "componentEvent can not be null");
+            Debug.Assert(_componentEvent != null, "componentEvent can not be null");
             if (_wrapFunc == null)
                 _componentEvent.AddListener(() => _command());
             else
@@ -92,7 +92,7 @@ namespace Framework.UI.Core.Bind
                 }
                 _componentEvent = changeCb?.GetComponentEvent();
             }
-            Log.Assert(_componentEvent != null,
+            Debug.Assert(_componentEvent != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IComponentEvent<{typeof(TData).Name}> interface");
             if (_wrapFunc == null)
                 _componentEvent.AddListener((value) => _command(value));

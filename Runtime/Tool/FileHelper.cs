@@ -55,57 +55,15 @@ namespace Framework.Helper
             if (currentPath == null)
                 throw new ArgumentNullException(nameof(currentPath));
 
-            bool isRooted = (Path.IsPathRooted(fromDirectory) && Path.IsPathRooted(currentPath));
+            if (!currentPath.Contains(fromDirectory))
+                throw new Exception($"路径出错 {currentPath}   {fromDirectory}");
 
-            if (isRooted)
+            var result = currentPath.RemoveString(fromDirectory);
+            if (result.StartsWith("/") || result.StartsWith("\\"))
             {
-                bool isDifferentRoot = (String.Compare(Path.GetPathRoot(fromDirectory), Path.GetPathRoot(currentPath), StringComparison.OrdinalIgnoreCase) != 0);
-
-                if (isDifferentRoot)
-                    return currentPath;
+                result = result.Remove(0,1);
             }
-
-            List<string> relativePath = new List<string>();
-            string[] fromDirectories = fromDirectory.Split(Path.DirectorySeparatorChar);
-
-            string[] toDirectories = currentPath.Split(Path.DirectorySeparatorChar);
-
-            int length = Math.Min(fromDirectories.Length, toDirectories.Length);
-
-            int lastCommonRoot = -1;
-
-            // find common root
-            for (int x = 0; x < length; x++)
-            {
-                if (String.Compare(fromDirectories[x], toDirectories[x], StringComparison.OrdinalIgnoreCase) != 0)
-                    break;
-
-                lastCommonRoot = x;
-            }
-
-            if (lastCommonRoot == -1)
-                return currentPath;
-
-            // add relative folders in from path
-            for (int x = lastCommonRoot + 1; x < fromDirectories.Length; x++)
-            {
-                if (fromDirectories[x].Length > 0)
-                    relativePath.Add("..");
-            }
-
-            // add to folders to path
-            for (int x = lastCommonRoot + 1; x < toDirectories.Length; x++)
-            {
-                relativePath.Add(toDirectories[x]);
-            }
-
-            // create relative path
-            string[] relativeParts = new string[relativePath.Count];
-            relativePath.CopyTo(relativeParts, 0);
-
-            string newPath = string.Join(Path.DirectorySeparatorChar.ToString(), relativeParts);
-
-            return newPath;
+            return result;
         }
     }
 }

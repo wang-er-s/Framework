@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -47,8 +48,8 @@ namespace IngameDebugConsole
 		public delegate bool ParseFunction( string input, out object output );
 
 		// All the commands
-		private static readonly List<ConsoleMethodInfo> methods = new List<ConsoleMethodInfo>();
-		private static readonly List<ConsoleMethodInfo> matchingMethods = new List<ConsoleMethodInfo>( 4 );
+		public static readonly List<ConsoleMethodInfo> Methods = new List<ConsoleMethodInfo>();
+		public static event Action<NotifyCollectionChangedAction, ConsoleMethodInfo> OnCommandChanged; 
 
 		// All the parse functions
 		private static readonly Dictionary<Type, ParseFunction> parseFunctions = new Dictionary<Type, ParseFunction>()
@@ -89,9 +90,9 @@ namespace IngameDebugConsole
 		private static readonly Dictionary<Type, string> typeReadableNames = new Dictionary<Type, string>()
 		{
 			{ typeof( string ), "String" },
-			{ typeof( bool ), "Boolean" },
-			{ typeof( int ), "Integer" },
-			{ typeof( uint ), "Unsigned Integer" },
+			{ typeof( bool ), "Bool" },
+			{ typeof( int ), "Int" },
+			{ typeof( uint ), "Unsigned Int" },
 			{ typeof( long ), "Long" },
 			{ typeof( ulong ), "Unsigned Long" },
 			{ typeof( byte ), "Byte" },
@@ -137,35 +138,8 @@ namespace IngameDebugConsole
 				}
 			}
 #endif
-
-			AddCommand( "help", "Prints all commands", LogAllCommands );
+			
 			AddCommand( "sysinfo", "Prints system information", LogSystemInfo );
-		}
-
-		// Logs the list of available commands
-		public static void LogAllCommands()
-		{
-			int length = 25;
-			for( int i = 0; i < methods.Count; i++ )
-			{
-				if( methods[i].IsValid() )
-					length += 3 + methods[i].signature.Length;
-			}
-
-			StringBuilder stringBuilder = new StringBuilder( length );
-			stringBuilder.Append( "Available commands:" );
-
-			for( int i = 0; i < methods.Count; i++ )
-			{
-				if( methods[i].IsValid() )
-					stringBuilder.Append( "\n- " ).Append( methods[i].signature );
-			}
-
-			Debug.Log( stringBuilder.Append( "\n" ).ToString() );
-
-			// After typing help, the log that lists all the commands should automatically be expanded for better UX
-			if( DebugLogManager.Instance )
-				DebugLogManager.Instance.ExpandLatestPendingLog();
 		}
 
 		// Logs system information
@@ -331,8 +305,6 @@ namespace IngameDebugConsole
 
 			// Fetch the parameters of the class
 			ParameterInfo[] parameters = method.GetParameters();
-			if( parameters == null )
-				parameters = new ParameterInfo[0];
 
 			// Store the parameter types in an array
 			Type[] parameterTypes = new Type[parameters.Length];
@@ -362,15 +334,15 @@ namespace IngameDebugConsole
 				int commandFirstIndex = commandIndex;
 				int commandLastIndex = commandIndex;
 
-				while( commandFirstIndex > 0 && methods[commandFirstIndex - 1].command == command )
+				while( commandFirstIndex > 0 && Methods[commandFirstIndex - 1].command == command )
 					commandFirstIndex--;
-				while( commandLastIndex < methods.Count - 1 && methods[commandLastIndex + 1].command == command )
+				while( commandLastIndex < Methods.Count - 1 && Methods[commandLastIndex + 1].command == command )
 					commandLastIndex++;
 
 				commandIndex = commandFirstIndex;
 				for( int i = commandFirstIndex; i <= commandLastIndex; i++ )
 				{
-					int parameterCountDiff = methods[i].parameterTypes.Length - parameterTypes.Length;
+					int parameterCountDiff = Methods[i].parameterTypes.Length - parameterTypes.Length;
 					if( parameterCountDiff <= 0 )
 					{
 						// We are sorting the commands in 2 steps:
@@ -382,14 +354,16 @@ namespace IngameDebugConsole
 						if( parameterCountDiff == 0 )
 						{
 							int j = 0;
-							while( j < parameterTypes.Length && parameterTypes[j] == methods[i].parameterTypes[j] )
+							while( j < parameterTypes.Length && parameterTypes[j] == Methods[i].parameterTypes[j] )
 								j++;
 
 							if( j >= parameterTypes.Length )
 							{
 								commandIndex = i;
 								commandLastIndex--;
-								methods.RemoveAt( i-- );
+								var remove = Methods[i - 1];
+								OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
+								Methods.RemoveAt( i-- );
 
 								continue;
 							}
@@ -399,23 +373,27 @@ namespace IngameDebugConsole
 			}
 
 			// Check if this command has been registered before and if it is, overwrite that command
-			for( int i = methods.Count - 1; i >= 0; i-- )
+			for( int i = Methods.Count - 1; i >= 0; i-- )
 			{
-				if( !methods[i].IsValid() )
+				if( !Methods[i].IsValid() )
 				{
-					methods.RemoveAt( i );
+					var remove = Methods[i];
+					OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
+					Methods.RemoveAt( i );
 					continue;
 				}
 
-				if( methods[i].command == command && methods[i].parameterTypes.Length == parameterTypes.Length )
+				if( Methods[i].command == command && Methods[i].parameterTypes.Length == parameterTypes.Length )
 				{
 					int j = 0;
-					while( j < parameterTypes.Length && parameterTypes[j] == methods[i].parameterTypes[j] )
+					while( j < parameterTypes.Length && parameterTypes[j] == Methods[i].parameterTypes[j] )
 						j++;
 
 					if( j >= parameterTypes.Length )
 					{
-						methods.RemoveAt( i );
+						Methods.RemoveAt( i );
+						var remove = Methods[i];
+						OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
 						break;
 					}
 				}
@@ -448,8 +426,10 @@ namespace IngameDebugConsole
 			Type returnType = method.ReturnType;
 			if( returnType != typeof( void ) )
 				methodSignature.Append( " : " ).Append( GetTypeReadableName( returnType ) );
-
-			methods.Insert( commandIndex, new ConsoleMethodInfo( method, parameterTypes, instance, command, methodSignature.ToString(), parameterSignatures ) );
+			var methodInfo = new ConsoleMethodInfo(method, parameterTypes, instance, command,
+				methodSignature.ToString(), parameterSignatures);
+			Methods.Insert( commandIndex, methodInfo);
+			OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Add, methodInfo);
 		}
 
 		// Remove all commands with the matching command name from the console
@@ -457,10 +437,14 @@ namespace IngameDebugConsole
 		{
 			if( !string.IsNullOrEmpty( command ) )
 			{
-				for( int i = methods.Count - 1; i >= 0; i-- )
+				for( int i = Methods.Count - 1; i >= 0; i-- )
 				{
-					if( methods[i].command == command )
-						methods.RemoveAt( i );
+					if (Methods[i].command == command)
+					{
+						var remove = Methods[i];
+						OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
+						Methods.RemoveAt(i);
+					}
 				}
 			}
 		}
@@ -482,35 +466,20 @@ namespace IngameDebugConsole
 		{
 			if( method != null )
 			{
-				for( int i = methods.Count - 1; i >= 0; i-- )
+				for( int i = Methods.Count - 1; i >= 0; i-- )
 				{
-					if( methods[i].method == method )
-						methods.RemoveAt( i );
+					if (Methods[i].method == method)
+					{
+						var remove = Methods[i];
+						OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
+						Methods.RemoveAt(i);
+					}
 				}
 			}
 		}
-
-		// Returns the first command that starts with the entered argument
-		public static string GetAutoCompleteCommand( string commandStart )
-		{
-			int commandIndex = FindCommandIndex( commandStart );
-			if( commandIndex < 0 )
-				commandIndex = ~commandIndex;
-
-			string result = null;
-			for( int i = commandIndex; i >= 0 && methods[i].command.StartsWith( commandStart ); i-- )
-				result = methods[i].command;
-
-			if( result == null )
-			{
-				for( int i = commandIndex + 1; i < methods.Count && methods[i].command.StartsWith( commandStart ); i++ )
-					result = methods[i].command;
-			}
-
-			return result;
-		}
-
-		// Parse the command and try to execute it
+		
+		static List<ConsoleMethodInfo> matchingMethods = new List<ConsoleMethodInfo>();
+		
 		public static void ExecuteCommand( string command )
 		{
 			if( command == null )
@@ -534,23 +503,25 @@ namespace IngameDebugConsole
 				string _command = commandArguments[0];
 
 				int commandLastIndex = commandIndex;
-				while( commandIndex > 0 && methods[commandIndex - 1].command == _command )
+				while( commandIndex > 0 && Methods[commandIndex - 1].command == _command )
 					commandIndex--;
-				while( commandLastIndex < methods.Count - 1 && methods[commandLastIndex + 1].command == _command )
+				while( commandLastIndex < Methods.Count - 1 && Methods[commandLastIndex + 1].command == _command )
 					commandLastIndex++;
 
 				while( commandIndex <= commandLastIndex )
 				{
-					if( !methods[commandIndex].IsValid() )
+					if( !Methods[commandIndex].IsValid() )
 					{
-						methods.RemoveAt( commandIndex );
+						var remove = Methods[commandIndex];
+						OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Remove, remove);
+						Methods.RemoveAt( commandIndex );
 						commandLastIndex--;
 					}
 					else
 					{
 						// Check if number of parameters match
-						if( methods[commandIndex].parameterTypes.Length == commandArguments.Count - 1 )
-							matchingMethods.Add( methods[commandIndex] );
+						if( Methods[commandIndex].parameterTypes.Length == commandArguments.Count - 1 )
+							matchingMethods.Add( Methods[commandIndex] );
 						else
 							parameterCountMismatch = true;
 
@@ -648,101 +619,6 @@ namespace IngameDebugConsole
 			}
 		}
 
-		// Finds all commands that have a matching signature with command
-		// - caretIndexIncrements: indices inside "string command" that separate two arguments in the command. This is used to
-		//   figure out which argument the caret is standing on
-		// - commandName: command's name (first argument)
-		internal static void GetCommandSuggestions( string command, List<ConsoleMethodInfo> matchingCommands, List<int> caretIndexIncrements, ref string commandName, out int numberOfParameters )
-		{
-			bool commandNameCalculated = false;
-			bool commandNameFullyTyped = false;
-			numberOfParameters = -1;
-			for( int i = 0; i < command.Length; i++ )
-			{
-				if( char.IsWhiteSpace( command[i] ) )
-					continue;
-
-				int delimiterIndex = IndexOfDelimiterGroup( command[i] );
-				if( delimiterIndex >= 0 )
-				{
-					int endIndex = IndexOfDelimiterGroupEnd( command, delimiterIndex, i + 1 );
-					if( !commandNameCalculated )
-					{
-						commandNameCalculated = true;
-						commandNameFullyTyped = command.Length > endIndex;
-
-						int commandNameLength = endIndex - i - 1;
-						if( commandName == null || commandNameLength == 0 || commandName.Length != commandNameLength || command.IndexOf( commandName, i + 1, commandNameLength ) != i + 1 )
-							commandName = command.Substring( i + 1, commandNameLength );
-					}
-
-					i = ( endIndex < command.Length - 1 && command[endIndex + 1] == ',' ) ? endIndex + 1 : endIndex;
-					caretIndexIncrements.Add( i + 1 );
-				}
-				else
-				{
-					int endIndex = IndexOfChar( command, ' ', i + 1 );
-					if( !commandNameCalculated )
-					{
-						commandNameCalculated = true;
-						commandNameFullyTyped = command.Length > endIndex;
-
-						int commandNameLength = command[endIndex - 1] == ',' ? endIndex - 1 - i : endIndex - i;
-						if( commandName == null || commandNameLength == 0 || commandName.Length != commandNameLength || command.IndexOf( commandName, i, commandNameLength ) != i )
-							commandName = command.Substring( i, commandNameLength );
-					}
-
-					i = endIndex;
-					caretIndexIncrements.Add( i );
-				}
-
-				numberOfParameters++;
-			}
-
-			if( !commandNameCalculated )
-				commandName = string.Empty;
-
-			if( !string.IsNullOrEmpty( commandName ) )
-			{
-				int commandIndex = FindCommandIndex( commandName );
-				if( commandIndex < 0 )
-					commandIndex = ~commandIndex;
-
-				int commandLastIndex = commandIndex;
-				if( !commandNameFullyTyped )
-				{
-					// Match all commands that start with commandName
-					if( commandIndex < methods.Count && methods[commandIndex].command.StartsWith( commandName ) )
-					{
-						while( commandIndex > 0 && methods[commandIndex - 1].command.StartsWith( commandName ) )
-							commandIndex--;
-						while( commandLastIndex < methods.Count - 1 && methods[commandLastIndex + 1].command.StartsWith( commandName ) )
-							commandLastIndex++;
-					}
-					else
-						commandLastIndex = -1;
-				}
-				else
-				{
-					// Match only the commands that are equal to commandName
-					if( commandIndex < methods.Count && methods[commandIndex].command == commandName )
-					{
-						while( commandIndex > 0 && methods[commandIndex - 1].command == commandName )
-							commandIndex--;
-						while( commandLastIndex < methods.Count - 1 && methods[commandLastIndex + 1].command == commandName )
-							commandLastIndex++;
-					}
-					else
-						commandLastIndex = -1;
-				}
-
-				for( ; commandIndex <= commandLastIndex; commandIndex++ )
-				{
-					if( methods[commandIndex].parameterTypes.Length >= numberOfParameters )
-						matchingCommands.Add( methods[commandIndex] );
-				}
-			}
-		}
 
 		// Find the index of the delimiter group that 'c' belongs to
 		private static int IndexOfDelimiterGroup( char c )
@@ -790,11 +666,11 @@ namespace IngameDebugConsole
 		private static int FindCommandIndex( string command )
 		{
 			int min = 0;
-			int max = methods.Count - 1;
+			int max = Methods.Count - 1;
 			while( min <= max )
 			{
 				int mid = ( min + max ) / 2;
-				int comparison = command.CompareTo( methods[mid].command );
+				int comparison = command.CompareTo( Methods[mid].command );
 				if( comparison == 0 )
 					return mid;
 				else if( comparison < 0 )

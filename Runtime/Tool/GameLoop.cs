@@ -8,6 +8,8 @@ namespace Framework
         public event Action OnLateUpdate;
         public event Action OnFixedUpdate;
         public event Action OnApplicationQuitEvent;
+        public event Action<bool> OnApplicationFocusEvent; 
+        public event Action<bool> OnApplicationPauseEvent; 
 
         private void Update()
         {
@@ -28,5 +30,15 @@ namespace Framework
 		{
             OnApplicationQuitEvent?.Invoke();
 		}
-	}
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            OnApplicationFocusEvent?.Invoke(hasFocus);
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            OnApplicationPauseEvent?.Invoke(pauseStatus);
+        }
+    }
 }

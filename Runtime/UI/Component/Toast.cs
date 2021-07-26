@@ -18,14 +18,14 @@ namespace Framework.Runtime.UI.Component
             return UIManager.Ins;
         }
 
-        public static async Task<Toast> Show(string text, float duration = 2f, Action callback = null)
+        public static async Task<Toast> Show(string text,float fontSize = 36, float duration = 2f, Action callback = null)
         {
             UIManager locator = GetUIViewLocator();
             ToastView view = (await locator.OpenAsync<ToastView>()) as ToastView;
             if (view == null)
                 throw new FileNotFoundException("Not found the \"ToastView\".");
 
-            Toast toast = new Toast(view, text, duration);
+            Toast toast = new Toast(view, text, fontSize, duration);
             toast.Show();
             return toast;
         }
@@ -35,9 +35,11 @@ namespace Framework.Runtime.UI.Component
         private readonly ToastView view;
         private readonly Action callback;
         private readonly bool autoHide;
+        private readonly float fontSize;
         
-        protected Toast(ToastView view, string text, float duration = 3, Action callback = null, bool autoHide = true)
+        protected Toast(ToastView view, string text, float fontSize = 36, float duration = 3, Action callback = null, bool autoHide = true)
         {
+            this.fontSize = fontSize;
             this.view = view;
             this.text = text;
             this.duration = duration;
@@ -63,6 +65,7 @@ namespace Framework.Runtime.UI.Component
         {
             this.view.Show();
             this.view.Text.text = this.text;
+            view.Text.fontSize = fontSize;
             if (autoHide)
                 Executors.RunOnCoroutineNoReturn(DelayDismiss(duration));
         }

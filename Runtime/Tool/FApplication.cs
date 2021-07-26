@@ -11,7 +11,7 @@ namespace Framework
     public static class FApplication
     {
         #region 路径相关
-
+#if UNITY_EDITOR
         static  FApplication()
         {
             Init();
@@ -25,7 +25,7 @@ namespace Framework
         }
         /// <summary>
         /// 项目根目录
-        /// Assets的上层目录
+        /// Assets的同级目录
         /// </summary>
         public static string ProjectRoot { get; private set; }
         public static string AssetsRoot { get; private set; }
@@ -33,7 +33,24 @@ namespace Framework
         /// Library
         /// </summary>
         public static string Library { get; private set; }
+        
+        public static string GetPlatformPath(UnityEditor.BuildTarget platform)
+        {
+            switch (platform)
+            {
+                case UnityEditor.BuildTarget.StandaloneOSX:
+                    return "OSX";
+                case UnityEditor.BuildTarget.StandaloneWindows:
+                    return "Windows";
+                case UnityEditor.BuildTarget.Android:
+                    return "Android";
+                case UnityEditor.BuildTarget.iOS:
+                    return "iOS";
+            }
 
+            return "";
+        }
+#endif
         /// <summary>
         /// 平台资源的父路径
         /// </summary>
@@ -55,11 +72,13 @@ namespace Framework
 
             return "";
         }
+        
+       
         #endregion
 
         /// <summary>
         /// UnityWebRequest加载
-        /// StreamingAssets 下， mac要加file:///  安卓不能加
+        /// StreamingAssets 下， mac/win要加file:///  安卓不能加
         /// persistent下 都要加file:///
         ///
         /// File加载

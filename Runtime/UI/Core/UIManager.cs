@@ -186,26 +186,23 @@ namespace Framework.UI.Core
         {
             var viewTransform = view.Go.transform;
             Transform lastTrans = null;
-            int index = 0;
-            foreach (UILevel level in (UILevel[]) Enum.GetValues(typeof(UILevel)))
+            int index = Int32.MaxValue;
+            foreach (View openedView in _openedViews.Values)
             {
-                if (level > view.UILevel)
-                    break;
-                var views = _sortViews[level];
-                for (int i = 0; i < views.Count; i++)
+                if(openedView.UILevel <= view.UILevel)
+                    continue;
+                if (openedView.Go.transform.GetSiblingIndex() < index)
                 {
-                    if (views[i].Go != null)
-                    {
-                        lastTrans = views[i].Go.transform;
-                        continue;
-                    }
-                    views.RemoveAt(i);
-                    i--;
+                    lastTrans = openedView.Go.transform;
+                    index = lastTrans.GetSiblingIndex();
                 }
             }
-            index = lastTrans == null ? Canvas.transform.childCount : lastTrans.GetSiblingIndex() + 1;
+            
             viewTransform.SetParent(Canvas.transform, false);
-            viewTransform.SetSiblingIndex(index);
+            if (lastTrans == null)
+                viewTransform.SetAsLastSibling();
+            else
+                viewTransform.SetSiblingIndex(index);
             _sortViews[view.UILevel].Add(view);
         }
 

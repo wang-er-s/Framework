@@ -23,6 +23,7 @@
  #1#
 */
 using System.IO;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Framework.Net
@@ -34,6 +35,7 @@ namespace Framework.Net
         private readonly FileInfo _fileInfo;
         private readonly FileInfo _tmpFileInfo;
         private FileStream _fileStream;
+        public bool WriteFinish { get; private set; }
 
         public DownloadFileHandler(string fileName) : this(new FileInfo(fileName))
         {
@@ -87,6 +89,7 @@ namespace Framework.Net
                 _fileInfo.Delete();
 
             _tmpFileInfo.MoveTo(_fileInfo.FullName);
+            WriteFinish = true;
         }
 
         protected override void ReceiveContentLengthHeader(ulong contentLength)

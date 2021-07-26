@@ -30,9 +30,9 @@ namespace Framework.Net
 {
     public interface IFileDownloader
     {
-        IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, string fileName);
+        IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, string fileName, float overtimeTime);
 
-        IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo);
+        IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo, float overtimeTime);
 
         IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos);
     }

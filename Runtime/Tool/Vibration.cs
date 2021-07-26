@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Runtime.InteropServices.ComTypes;
+using Framework;
 using UnityEngine;
 
 #if UNITY_IOS
@@ -131,8 +132,6 @@ public static class Vibration
             }
 #elif UNITY_IOS
         Handheld.Vibrate();
-#else
-        Handheld.Vibrate ();
 #endif
 #endif
         }
@@ -157,8 +156,6 @@ public static class Vibration
             }
 #elif UNITY_IOS
         Handheld.Vibrate();
-#else
-        Handheld.Vibrate ();
 #endif
         }
     }
@@ -203,9 +200,9 @@ public static class Vibration
 
     public static void Vibrate ()
     {
-        if ( Application.isMobilePlatform ) {
-            Handheld.Vibrate ();
-        }
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate ();
+#endif
     }
 
     public static int AndroidVersion {

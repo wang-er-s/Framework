@@ -1,6 +1,4 @@
 ﻿using System;
-using Framework.Assets;
-using Framework.Asynchronous;
 using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine;
@@ -8,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
+public class CustomButton : Button, IComponentEvent ,IFieldChangeCb<bool>
 {
     [SerializeField]
     private float singleClickIntervalTime = 0.3f;
@@ -16,6 +14,11 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     private float doubleClickIntervalTime = 0.3f;
     [SerializeField] 
     private float longClickTime = 1;
+    [SerializeField]
+    private float longPressIntervalTime = 0.3f;
+    private bool isPointDown=false;
+    private float lastInvokeTime;
+    
     private float lastUpTime;
     private float lastDownTime;
     private float downTime;
@@ -61,12 +64,25 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     public ButtonClickedEvent OnDoubleClick { get; } = new ButtonClickedEvent(); 
     public UnityEvent OnLongClick { get; } = new UnityEvent();
     
+    public UnityEvent OnLongPress  { get; } =new UnityEvent();
+    public UnityEvent OnDown  { get; } =new UnityEvent();
+    public UnityEvent OnUp  { get; } =new UnityEvent();
+
     public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
         if(!IsInteractable()) return;
         lastDownTime = downTime;
         downTime = Time.time;
+        OnDown.Invoke();
+        isPointDown = true;
+        lastInvokeTime = downTime;
+    }
+
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        base.OnPointerExit(eventData);
+        isPointDown = false;
     }
 
     public void SetGray(bool interactable = true)
@@ -82,15 +98,17 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     }
     
     public override void OnPointerUp(PointerEventData eventData)
-    {
+    {  
         base.OnPointerUp(eventData);
         if(!IsInteractable()) return;
         var time = Time.time;
         lastUpTime = upTime;
         upTime = time;
-        CheckDoubleClick();
+        OnUp.Invoke();
         CheckSingleClick();
+        CheckDoubleClick();
         CheckLongClick();
+        isPointDown = false;
     }
 
     private bool CheckLongClick()
@@ -100,7 +118,6 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
         OnLongClick.Invoke();
         return true;
     }
-
     private bool CheckSingleClick()
     {
         if(upTime - lastUpTime < singleClickIntervalTime) return false;
@@ -108,19 +125,20 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
         return true;
     }
 
-    private int _clickCount;
+    private int clickCount;
     private bool CheckDoubleClick()
     {
+        
         if (upTime - lastUpTime > doubleClickIntervalTime)
         {
-            _clickCount = 1;
+            clickCount = 1;
             return false;
         }
-        _clickCount++;
-        if (_clickCount >= 2)
+        clickCount++;
+        if (clickCount >= 2)
         {
             OnDoubleClick.Invoke();
-            _clickCount = 0;
+            clickCount = 0;
             return true;
         }
         return false;
@@ -134,5 +152,16 @@ public class CustomButton : Button , IComponentEvent ,IFieldChangeCb<bool>
     public Action<bool> GetFieldChangeCb()
     {
         return value => gameObject.SetActive(value);
+    }
+
+    void Update()
+    {
+        if (!isPointDown) return;
+        if (!(Time.time - downTime >= longClickTime)) return;
+        if (Time.time - lastInvokeTime > longPressIntervalTime)
+        {
+            OnLongPress.Invoke();
+            lastInvokeTime = Time.time;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Framework.Execution;
 using UnityEngine;
@@ -88,6 +89,7 @@ namespace Framework.Asynchronous
 
         public MulProgressResult(params IProgressResult<TProgress>[] allProgress) : this(false, allProgress)
         {
+            AddAsyncResult(allProgress);
         }
 
         public MulProgressResult(bool cancelable, params IProgressResult<TProgress>[] allProgress) : base(cancelable)
@@ -111,18 +113,37 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IProgressResult<TProgress> progressResult)
         {
-            progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
+            progressResult.Callbackable().OnProgressCallback((progress => RaiseOnProgressCallback(0)));
+            progressResult.Callbackable().OnCallback(progress => CheckAllFinish());
         }
 
         protected override void RaiseOnProgressCallback(float progress)
         {
             UpdateProgress();
             base.RaiseOnProgressCallback(Progress);
-            //延迟一帧 否则会比子任务提前完成
-            if (Progress >= 1)
+        }
+
+        private void CheckAllFinish()
+        {
+            Exception exception = null;
+            foreach (var progressResult in _allProgress)
             {
-                GameLoop.Ins.Delay(() => SetResult());
+                if (progressResult.Exception != null)
+                {
+                    exception = progressResult.Exception;
+                    break;
+                }
+                if(!progressResult.IsDone) return;
             }
+            
+            //延迟一帧 否则会比子任务提前完成
+            GameLoop.Ins.Delay(() =>
+            {
+                if (exception != null)
+                    SetException(exception);
+                else
+                    SetResult();
+            });
         }
 
         private void UpdateProgress()
@@ -144,6 +165,7 @@ namespace Framework.Asynchronous
 
         public MulProgressResult(params IProgressResult<float>[] allProgress) : this(false, allProgress)
         {
+            AddAsyncResult(allProgress);
         }
 
         public MulProgressResult(bool cancelable, params IProgressResult<float>[] allProgress) : base(cancelable)
@@ -167,18 +189,24 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IProgressResult<float> progressResult)
         {
-            progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
+            progressResult.Callbackable().OnProgressCallback((progress => RaiseOnProgressCallback(0)));
+            progressResult.Callbackable().OnCallback(progress => CheckAllFinish());
         }
 
         protected override void RaiseOnProgressCallback(float progress)
         {
             UpdateProgress();
             base.RaiseOnProgressCallback(Progress);
-            //延迟一帧 否则会比子任务提前完成
-            if (Progress >= 1)
+        }
+
+        private void CheckAllFinish()
+        {
+            foreach (var progressResult in _allProgress)
             {
-                GameLoop.Ins.Delay(() => SetResult());
+                if(!progressResult.IsDone) return;
             }
+            //延迟一帧 否则会比子任务提前完成
+            GameLoop.Ins.Delay(() => SetResult());
         }
 
         private void UpdateProgress()

@@ -44,14 +44,14 @@ namespace Framework.Net
             set => this._maxTaskCount = Mathf.Max(value > 0 ? value : SystemInfo.processorCount * 2, 1);
         }
 
-        public virtual IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, string fileName)
+        public virtual IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, string fileName, float overtimeTime = 50)
         {
             if (fileName.StartsWith(FApplication.PathPrefix))
                 fileName = fileName.RemoveString(FApplication.PathPrefix);
-            return DownloadFileAsync(path, new FileInfo(fileName));
+            return DownloadFileAsync(path, new FileInfo(fileName), overtimeTime);
         }
 
-        public abstract IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo);
+        public abstract IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo, float overtimeTime = 50);
 
         public abstract IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos);
     }
