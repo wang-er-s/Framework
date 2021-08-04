@@ -9,6 +9,7 @@ namespace Framework.Assets
 {
     public interface IRes
     {
+        string DownloadURL { get; set; }
         IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object;
 
         IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
@@ -30,9 +31,9 @@ namespace Framework.Assets
         Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
 
         void Release();
-        [Obsolete("仅做展示，暂时不使用同步加载")]
+        
         GameObject Instantiate(string key, Transform parent = null, bool instantiateInWorldSpace = false);
-        [Obsolete("仅做展示，暂时不使用同步加载")]
+        
         T LoadAsset<T>(string key) where T : Object;
     }
 }

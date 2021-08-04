@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using Framework.Execution;
+using Framework.Runtime.UI.Component;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VEngine;
@@ -19,11 +20,18 @@ namespace Framework.Assets
         private List<DownloadInfo> _needDownloadRes;
         private Dictionary<string, Loadable> _handles = new Dictionary<string, Loadable>();
 
+        public override string DownloadURL
+        {
+            get => Versions.DownloadURL;
+            set => Versions.DownloadURL = value;
+        }
+
         public override async Task<string> CheckDownloadSize(string key)
         {
             _preDownloadKey = key;
             var update = Versions.UpdateAsync(key);
             await update;
+            
             var check = Versions.GetDownloadSizeAsync();
             await check;
             // 判断是否有内容需要更新
@@ -34,6 +42,26 @@ namespace Framework.Assets
             _needDownloadRes = check.result;
             return Utility.FormatBytes(check.totalSize);
         }
+
+        // public IAsyncResult<string> CheckDownloadSize2(string key)
+        // {
+        //     AsyncResult<string> result = new AsyncResult<string>();
+        //     CheckDownloadSize2(key,result);
+        //     return result;
+        // }
+        //
+        // async void CheckDownloadSize2(string key, IPromise<string> promise)
+        // {
+        //     var update = Versions.UpdateAsync(key);
+        //     await update;
+        //     if (update.status == OperationStatus.Failed)
+        //     {
+        //        promise.SetException(update.error);
+        //        return;
+        //     }
+        //     var check = Versions.GetDownloadSizeAsync(update);
+        //     await check;
+        // }
         
         public override async Task<IProgressResult<DownloadProgress>> DownloadAssets(string key)
         {
@@ -106,34 +134,6 @@ namespace Framework.Assets
             _handles[key] = asset;
         }
 
-        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null, bool instantiateInWorldSpace = false) 
-        {
-            return instantiateAsync(key, go => go.transform.SetParent(parent, instantiateInWorldSpace));
-        }
-
-        private IProgressResult<float, GameObject> instantiateAsync(string key, Action<GameObject> dealGo)
-        {
-            ProgressResult<float, GameObject> progressResult = new ProgressResult<float, GameObject>();
-            var asset = Asset.LoadAsync(key, typeof(GameObject), result =>
-            {
-                if (result.status == LoadableStatus.SuccessToLoad)
-                {
-                    var go = Object.Instantiate(result.asset as GameObject);
-                    dealGo(go);
-                    progressResult.SetResult(go);
-                }
-                else
-                {
-                    Log.Error("load", key, "error", result.error);
-                    progressResult.SetException(result.error);   
-                }
-                result.Release();
-            });
-            _handles[key] = asset;
-            return progressResult;
-        }
-        
-
         public override void Release()
         {
             foreach (var loadable in _handles.Values)
@@ -143,26 +143,9 @@ namespace Framework.Assets
             _handles.Clear();
         }
 
-        [Obsolete("仅做展示，暂时不使用同步加载")]
-        public override GameObject Instantiate(string key, Transform parent = null, bool instantiateInWorldSpace = false)
-        {
-            return Object.Instantiate(Asset.Load(key, typeof(GameObject)).asset as GameObject);
-        }
-
-        [Obsolete("仅做展示，暂时不使用同步加载")]
         public override T LoadAsset<T>(string key)
         {
             return Asset.Load(key, typeof(T)).asset as T;
-        }
-
-        public override IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position, Quaternion rotation, Transform parent = null)
-        {
-            return instantiateAsync(key, go =>
-            {
-                go.transform.SetParent(parent);
-                go.transform.position = position;
-                go.transform.rotation = rotation;
-            });
         }
     }
 }

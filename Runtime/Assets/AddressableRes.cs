@@ -17,6 +17,8 @@ namespace Framework.Assets
     {
         private static bool initialized = false;
 
+        public override string DownloadURL { get; set; }
+
         static IEnumerator Download(IProgressPromise<DownloadProgress> promise, AsyncOperationHandle handle)
         {
             while (!handle.IsDone)

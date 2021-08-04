@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using Framework.Assets;
 using Framework.Asynchronous;
 using UnityEngine;
@@ -180,11 +179,11 @@ namespace Framework
         public void PauseBackgroundMusic(bool isGradual = true)
         {
             if (!_backgroundAudio.isPlaying) return;
-            if (isGradual)
-            {
-                _backgroundAudio.DOFade(0, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     _backgroundAudio.DOFade(0, 2);
+            // }
+            // else
             {
                 _backgroundAudio.volume = 0;
             }
@@ -196,11 +195,11 @@ namespace Framework
         public void UnPauseBackgroundMusic(bool isGradual = true)
         {
             if (!_backgroundAudio.isPlaying) return;
-            if (isGradual)
-            {
-                _backgroundAudio.DOFade(BackgroundVolume, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     _backgroundAudio.DOFade(BackgroundVolume, 2);
+            // }
+            // else
             {
                 _backgroundAudio.volume = BackgroundVolume;
             }
@@ -241,11 +240,11 @@ namespace Framework
         public void PauseSingleSound(bool isGradual = true)
         {
             if (!_singleAudio.isPlaying) return;
-            if (isGradual)
-            {
-                _singleAudio.DOFade(0, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     _singleAudio.DOFade(0, 2);
+            // }
+            // else
             {
                 _singleAudio.volume = 0;
             }
@@ -257,11 +256,11 @@ namespace Framework
         public void UnPauseSingleSound(bool isGradual = true)
         {
             if (!_singleAudio.isPlaying) return;
-            if (isGradual)
-            {
-                _singleAudio.DOFade(SoundEffectVolume, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     _singleAudio.DOFade(SoundEffectVolume, 2);
+            // }
+            // else
             {
                 _singleAudio.volume = SoundEffectVolume;
             }
@@ -381,11 +380,11 @@ namespace Framework
             if (!_worldAudio.ContainsKey(attachTarget)) return;
             AudioSource audio = _worldAudio[attachTarget];
             if (!audio.isPlaying) return;
-            if (isGradual)
-            {
-                audio.DOFade(0, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     audio.DOFade(0, 2);
+            // }
+            // else
             {
                 audio.volume = 0;
             }
@@ -399,11 +398,11 @@ namespace Framework
             if (!_worldAudio.ContainsKey(attachTarget)) return;
             AudioSource audio = _worldAudio[attachTarget];
             if (!audio.isPlaying) return;
-            if (isGradual)
-            {
-                audio.DOFade(SoundEffectVolume, 2);
-            }
-            else
+            // if (isGradual)
+            // {
+            //     audio.DOFade(SoundEffectVolume, 2);
+            // }
+            // else
             {
                 audio.volume = SoundEffectVolume;
             }

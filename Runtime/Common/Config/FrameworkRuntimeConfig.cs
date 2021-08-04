@@ -27,6 +27,9 @@ namespace Framework
 #if XASSET
 			XAsset,
 #endif
+#if UNITY_EDITOR
+			Editor,
+#endif
 		}
 	}
 

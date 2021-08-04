@@ -7,16 +7,15 @@ using UnityEngine.SceneManagement;
 
 public class SimpleBind : MonoBehaviour
 {
-
+    public GameObject view;
     // Use this for initialization
     private void Start()
     {
         var vm = new SetupViewModel();
         vm.Visible = new ObservableProperty<bool>(true);
         vm.Name = new ObservableProperty<string>("JJ");
-        var go = (GameObject) Instantiate(Resources.Load("SimpleBind"), GameObject.Find("UIRoot").transform);
         var setup = new SetupView();
-        setup.SetGameObject(go);
+        setup.SetGameObject(view);
         setup.SetVm(vm);
     }
 }

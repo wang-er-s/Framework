@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
@@ -26,6 +25,7 @@ namespace Framework.Assets
     public abstract class Res : IRes
     {
         private static IRes @default;
+        public abstract string DownloadURL { get; set; }
 
         public static IRes Default => @default ?? (@default = Create());
 
@@ -50,9 +50,22 @@ namespace Framework.Assets
                     result = new XAssetRes();
                     break;
 #endif
+#if UNITY_EDITOR
+                case FrameworkRuntimeConfig.ResType.Editor:
+                    result = new EditorRes();
+                    break;
+#endif
             }
             return result;
         }
+        
+        public abstract T LoadAsset<T>(string key) where T : Object;
+        protected abstract void LoadScene(IProgressPromise<float, Scene> promise, string path,
+            LoadSceneMode loadSceneMode);
+        public abstract Task<string> CheckDownloadSize(string key);
+        public abstract Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
+        protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
+        public abstract void Release();
         
         public IProgressResult<float,Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
@@ -60,12 +73,6 @@ namespace Framework.Assets
             LoadScene(progressResult, path, loadSceneMode);
             return progressResult;
         }
-
-        protected abstract void LoadScene(IProgressPromise<float, Scene> promise, string path,
-            LoadSceneMode loadSceneMode);
-        
-        public abstract Task<string> CheckDownloadSize(string key);
-        public abstract Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
         
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
         {
@@ -73,9 +80,7 @@ namespace Framework.Assets
             loadAssetAsync(key, progressResult);
             return progressResult;
         }
-
-        protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
-
+        
         public IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
             bool instantiateInWorldSpace = false) where T : Component
         {
@@ -96,21 +101,45 @@ namespace Framework.Assets
             return result;
         }
 
-        public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false);
+        public IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
+            bool instantiateInWorldSpace = false)
+        {
+            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>();
+            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>();
+            loadProgress.Callbackable().OnCallback((result =>
+            {
+                var go = Object.Instantiate(result.Result);
+                go.transform.SetParent(parent, instantiateInWorldSpace);
+                resultProgress.SetResult(go);
+            }));
+            loadAssetAsync(key, loadProgress);
+            return resultProgress;
+        }
 
-        public abstract IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
+        public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
             Quaternion rotation,
-            Transform parent = null);
+            Transform parent = null)
+        {
+            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>();
+            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>();
+            loadProgress.Callbackable().OnCallback((result =>
+            {
+                var trans = Object.Instantiate(result.Result).transform;
+                trans.SetParent(parent);
+                trans.localPosition = position;
+                trans.localRotation = rotation;
+                resultProgress.SetResult(trans.gameObject);
+            }));
+            loadAssetAsync(key, loadProgress);
+            return resultProgress;
+        }
 
-        public abstract void Release();
-
-        [Obsolete("仅做展示，暂时不使用同步加载")]
-        public abstract GameObject Instantiate(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false);
-
-
-        [Obsolete("仅做展示，暂时不使用同步加载")]
-        public abstract T LoadAsset<T>(string key) where T : Object;
+        public GameObject Instantiate(string key, Transform parent = null,
+            bool instantiateInWorldSpace = false)
+        {
+            var trans = Object.Instantiate(LoadAsset<GameObject>(key)).transform;
+            trans.SetParent(parent, instantiateInWorldSpace);
+            return trans.gameObject;
+        }
     }
 }
