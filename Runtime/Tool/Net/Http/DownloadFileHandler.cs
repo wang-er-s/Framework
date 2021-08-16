@@ -23,6 +23,7 @@
  #1#
 */
 using System.IO;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -79,17 +80,20 @@ namespace Framework.Net
 
         protected override void CompleteContent()
         {
-            if (_fileStream != null)
+            ThreadPool.QueueUserWorkItem((obj) =>
             {
-                _fileStream.Dispose();
-                _fileStream = null;
-            }
+                if (_fileStream != null)
+                {
+                    _fileStream.Dispose();
+                    _fileStream = null;
+                }
 
-            if (_fileInfo.Exists)
-                _fileInfo.Delete();
+                if (_fileInfo.Exists)
+                    _fileInfo.Delete();
 
-            _tmpFileInfo.MoveTo(_fileInfo.FullName);
-            WriteFinish = true;
+                _tmpFileInfo.MoveTo(_fileInfo.FullName);
+                WriteFinish = true;
+            });
         }
 
         protected override void ReceiveContentLengthHeader(ulong contentLength)

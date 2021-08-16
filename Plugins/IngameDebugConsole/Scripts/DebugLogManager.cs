@@ -164,6 +164,8 @@ namespace IngameDebugConsole
 		private Text warningEntryCountText;
 		[SerializeField]
 		private Text errorEntryCountText;
+		[SerializeField]
+		private Text fpsText;
 
 		[SerializeField]
 		private RectTransform searchbar;
@@ -238,6 +240,9 @@ namespace IngameDebugConsole
 		private DynamicCircularBuffer<QueuedDebugLogEntry> queuedLogEntries;
 		private object logEntriesLock;
 		private int pendingLogToAutoExpand;
+		private float fps;
+		private float fpsTick = 0.5f;
+		private float fpsTimer;
 
 		// Pools for memory efficiency
 		private List<DebugLogEntry> pooledLogEntries;
@@ -455,6 +460,13 @@ namespace IngameDebugConsole
 					else
 						ShowLogWindow();
 				}
+			}
+			fpsTimer += Time.deltaTime;
+			if (fpsTimer >= fpsTick)
+			{
+				fps = 1 / Time.deltaTime;
+				fpsTimer = 0;
+				fpsText.text = $"fps:{fps:.0}";
 			}
 		}
 
