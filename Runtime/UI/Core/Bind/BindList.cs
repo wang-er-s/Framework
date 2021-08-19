@@ -21,12 +21,12 @@ namespace Framework.UI.Core.Bind
             
         }
 
-        public void Reset(TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onShow,
-            Action<TComponent, TVm> onHide)
+        public void Reset(TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onCreate,
+            Action<TComponent, TVm> onDestroy)
         {
             _component = component;
             this._list = list;
-            InitEvent(onShow, onHide);
+            InitEvent(onCreate, onDestroy);
             InitCpntValue();
         }
 
@@ -39,10 +39,10 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        private void InitEvent(Action<TComponent, TVm> onShow, Action<TComponent, TVm> onHide)
+        private void InitEvent(Action<TComponent, TVm> onCreate, Action<TComponent, TVm> onDestroy)
         {
             _bindList = _bindList ?? _component as IBindList<TVm> ??
-                DefaultBindList<Component, TVm>.Create(_component, onShow, onHide);
+                DefaultBindList<Component, TVm>.Create(_component, onCreate, onDestroy);
             Log.Assert(_bindList != null, $"can not find IBindList of {_component}");
             _list.AddListener(_bindList.GetBindListFunc());
         }

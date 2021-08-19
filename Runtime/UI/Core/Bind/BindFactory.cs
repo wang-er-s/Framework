@@ -144,6 +144,15 @@ namespace Framework.UI.Core.Bind
             cb?.Invoke(property);
             property.AddListener(cb);
         }
+        
+        public void BindData<TData1,TData2>(ObservableProperty<TData1> property,ObservableProperty<TData2> property2, Action<TData1, TData2> cb)
+        {
+            clearables.Add(property);
+            clearables.Add(property2);
+            cb?.Invoke(property, property2);
+            property.AddListener((data1) => cb?.Invoke(data1, property2));
+            property2.AddListener((data2) => cb?.Invoke(property, data2));
+        }
 
         //绑定command
         public void BindCommand<TComponent>
@@ -184,7 +193,7 @@ namespace Framework.UI.Core.Bind
         }
 
         public void BindList<TComponent, TData>(TComponent component, ObservableList<TData> property,
-            Action<TComponent, TData> onShow = null, Action<TComponent, TData> onHide = null) where TComponent : Object
+            Action<TComponent, TData> onCreate = null, Action<TComponent, TData> onDestroy = null) where TComponent : Object
         {
             BindList<TComponent, TData> bind;
             if (CacheBinds.Count > 0)
@@ -196,7 +205,7 @@ namespace Framework.UI.Core.Bind
             {
                 bind = new BindList<TComponent, TData>(Container);
             }
-            bind.Reset(component, property, onShow, onHide);
+            bind.Reset(component, property, onCreate, onDestroy);
             clearables.Add(bind);
         }
 
