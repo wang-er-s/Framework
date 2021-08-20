@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using Framework;
 using Framework.UI.Core;
+#if ILRUNTIME
 using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Reflection;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
+#endif
 
 namespace Tool
 {
@@ -32,11 +34,13 @@ namespace Tool
         {
             var type = typeof(T).GetCLRType();
             T result;
+#if ILRUNTIME
             if (type.Assembly.GetName().Name == IlRuntimeDllName)
             {
                 result = ILRuntimeHelper.Appdomain.Instantiate<T>(type.FullName, args);
             }
             else
+#endif
             {
                 result = (T)Activator.CreateInstance(type, args);
             }
@@ -46,15 +50,14 @@ namespace Tool
         public static object CreateInstance(Type type, params object[] args)
         {
             object result;
+#if ILRUNTIME
             if (type.Assembly.GetName().Name == IlRuntimeDllName)
             {
                 ILTypeInstance ins = ILRuntimeHelper.Appdomain.Instantiate(type.FullName, args);
                 return ins.CLRInstance;
             }
-            else
-            {
-                result = Activator.CreateInstance(type, args);
-            }
+#endif
+            result = Activator.CreateInstance(type, args);
             return result;
         }
 
@@ -65,6 +68,7 @@ namespace Tool
 
         public static Type GetCLRType(this object obj)
         {
+#if ILRUNTIME
             //如果是继承了主项目的热更的类型
             if (obj is CrossBindingAdaptorType adaptor)
             {
@@ -75,18 +79,22 @@ namespace Tool
             {
                 return ilInstance.Type.ReflectionType;
             }
+#endif
             return obj.GetType();
         }
 
         public static Type GetCLRType(this Type type)
         {
+#if ILRUNTIME
             if (type is ILRuntimeType runtimeType)
                 return runtimeType.ILType.ReflectionType;
             if (type is ILRuntimeWrapperType wrapperType)
                 return wrapperType.RealType;
+#endif
             return type;
         }
 
+#if ILRUNTIME
         public static Type GetCLRType(this IType type)
         {
             if (type is CLRType clrType)
@@ -95,10 +103,14 @@ namespace Tool
             }
             return type.ReflectionType;
         }
-
+#endif
+        
         public static Type GetType(string type)
         {
-            var result = useHotfix ? ILRuntimeHelper.GetType(type) : curHotfixAssembly.GetType(type);
+            Type result = null;
+#if ILRUNTIME
+            result = useHotfix ? ILRuntimeHelper.GetType(type) : curHotfixAssembly.GetType(type);
+#endif
             if (result == null)
             {
                 result = curGameAssembly.GetType(type);

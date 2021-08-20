@@ -16,10 +16,12 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Google.Protobuf;
+#if ILRUNTIME
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
 using ILRuntime.CLR.Method;
 using ILRuntime.CLR.Utils;
+#endif
 
 namespace LitJson
 {
@@ -176,7 +178,7 @@ namespace LitJson
 
             if (type.GetInterface ("System.Collections.IList") != null)
                 data.IsList = true;
-
+#if ILRUNTIME
             if (type is ILRuntime.Reflection.ILRuntimeWrapperType)
             {
                 var wt = (ILRuntime.Reflection.ILRuntimeWrapperType)type;
@@ -190,6 +192,7 @@ namespace LitJson
                 }
             }
             else
+#endif
             {
                 foreach (PropertyInfo p_info in type.GetProperties())
                 {
@@ -234,11 +237,13 @@ namespace LitJson
 
                     if (parameters[0].ParameterType == typeof(string))
                     {
+#if ILRUNTIME
                         if (type is ILRuntime.Reflection.ILRuntimeWrapperType)
                         {
                             data.ElementType = ((ILRuntime.Reflection.ILRuntimeWrapperType)type).CLRType.GenericArguments[1].Value.ReflectionType;
                         }
                         else
+#endif
                             data.ElementType = p_info.PropertyType;
                     }
 
@@ -356,15 +361,20 @@ namespace LitJson
                 reader.Token == JsonToken.Boolean) {
 
                 Type json_type = reader.Value.GetType();
-                var vt = value_type is ILRuntime.Reflection.ILRuntimeWrapperType ? ((ILRuntime.Reflection.ILRuntimeWrapperType)value_type).CLRType.TypeForCLR : value_type;
-
+                var vt = value_type;
+#if ILRUNTIME
+                if (value_type is ILRuntime.Reflection.ILRuntimeWrapperType)
+                    vt = ((ILRuntime.Reflection.ILRuntimeWrapperType)value_type).CLRType.TypeForCLR;
+#endif
                 if (vt.IsAssignableFrom(json_type))
                     return reader.Value;
+#if ILRUNTIME
                 if (vt is ILRuntime.Reflection.ILRuntimeType && ((ILRuntime.Reflection.ILRuntimeType)vt).ILType.IsEnum)
                 {
                     if (json_type == typeof(int) || json_type == typeof(long) || json_type == typeof(short) || json_type == typeof(byte))
                         return reader.Value;
                 }
+#endif
                 // If there's a custom importer that fits, use it
                 if (custom_importers_table.ContainsKey (json_type) &&
                     custom_importers_table[json_type].ContainsKey (
@@ -431,16 +441,22 @@ namespace LitJson
                     object item = ReadValue (elem_type, reader);
                     if (item == null && reader.Token == JsonToken.ArrayEnd)
                         break;
-                    var rt = elem_type is ILRuntime.Reflection.ILRuntimeWrapperType ? ((ILRuntime.Reflection.ILRuntimeWrapperType)elem_type).RealType : elem_type;
-                    rt = elem_type is ILRuntime.Reflection.ILRuntimeType ? ((ILRuntime.Reflection.ILRuntimeType)elem_type).ILType.TypeForCLR : elem_type;
+#if ILRUNTIME
+                    var rt = elem_type;
+                    if (elem_type is ILRuntime.Reflection.ILRuntimeType)
+                        rt = ((ILRuntime.Reflection.ILRuntimeType)elem_type).ILType.TypeForCLR;
                     item = rt.CheckCLRTypes(item);
+#endif
                     list.Add (item);
                 }
 
                 if (t_data.IsArray) {
                     int n = list.Count;
-                    var rt = elem_type is ILRuntime.Reflection.ILRuntimeWrapperType ? ((ILRuntime.Reflection.ILRuntimeWrapperType)elem_type).RealType : elem_type;
-                    rt = elem_type is ILRuntime.Reflection.ILRuntimeType ? ((ILRuntime.Reflection.ILRuntimeType)elem_type).ILType.TypeForCLR : elem_type;
+                    var rt = elem_type;
+#if ILRUNTIME
+                    if (elem_type is ILRuntime.Reflection.ILRuntimeType)
+                        rt = ((ILRuntime.Reflection.ILRuntimeType)elem_type).ILType.TypeForCLR;
+#endif
                     instance = Array.CreateInstance (rt, n);
 
                     for (int i = 0; i < n; i++)
@@ -451,12 +467,16 @@ namespace LitJson
             } else if (reader.Token == JsonToken.ObjectStart) {
                 AddObjectMetadata (value_type);
                 ObjectMetadata t_data = object_metadata[value_type];
+#if ILRUNTIME
                 if (value_type is ILRuntime.Reflection.ILRuntimeType)
                     instance = ((ILRuntime.Reflection.ILRuntimeType)value_type).ILType.Instantiate();
                 else
+#endif
                 {
+#if ILRUNTIME
                     if (value_type is ILRuntime.Reflection.ILRuntimeWrapperType)
                         value_type = ((ILRuntime.Reflection.ILRuntimeWrapperType)value_type).RealType;
+#endif
                     instance = Activator.CreateInstance(value_type);
                 }
                 while (true)
@@ -533,11 +553,15 @@ namespace LitJson
                             }
                         }
 
-                        var rt = t_data.ElementType is ILRuntime.Reflection.ILRuntimeWrapperType
-                            ? ((ILRuntime.Reflection.ILRuntimeWrapperType) t_data.ElementType).RealType
-                            : t_data.ElementType;
+                        var rt = t_data.ElementType;
+#if ILRUNTIME
+                        if (t_data.ElementType is ILRuntime.Reflection.ILRuntimeWrapperType)
+                            rt = ((ILRuntime.Reflection.ILRuntimeWrapperType)t_data.ElementType).RealType;
                         ((IDictionary) instance).Add(property,
                             rt.CheckCLRTypes(ReadValue(t_data.ElementType, reader)));
+#else
+                        ((IDictionary)instance).Add(property, ReadValue(t_data.ElementType, reader));
+#endif
                     }
 
                 }
@@ -879,6 +903,7 @@ namespace LitJson
             }
 
             Type obj_type;
+#if ILRUNTIME
             if (obj is ILRuntime.Runtime.Intepreter.ILTypeInstance)
             {
                 obj_type = ((ILRuntime.Runtime.Intepreter.ILTypeInstance)obj).Type.ReflectionType;
@@ -888,6 +913,7 @@ namespace LitJson
                 obj_type = ((ILRuntime.Runtime.Enviorment.CrossBindingAdaptorType)obj).ILInstance.Type.ReflectionType;
             }
             else
+#endif
                 obj_type = obj.GetType();
 
             // See if there's a custom exporter for the object
@@ -1066,7 +1092,7 @@ namespace LitJson
         {
             custom_importers_table.Clear ();
         }
-
+#if ILRUNTIME
         public static unsafe void RegisterILRuntimeCLRRedirection(ILRuntime.Runtime.Enviorment.AppDomain appdomain)
         {
             foreach(var i in typeof(JsonMapper).GetMethods())
@@ -1131,5 +1157,6 @@ namespace LitJson
 
             return ILIntepreter.PushObject(__ret, mStack, result_of_this_method);
         }
+#endif
     }
 }

@@ -10,9 +10,11 @@
 
         private static void ILRuntimeAutoCompile()
         {
+#if ILRUNTIME
             var config = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
             if(!config.UseHotFix || !config.AutoCompile) return;
             ILRuntimeBuildDll.DebugBuild();
+#endif
         }   
     }
 }

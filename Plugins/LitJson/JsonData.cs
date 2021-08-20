@@ -15,7 +15,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+#if ILRUNTIME
 using ILRuntime.Reflection;
+#endif
 using Tool;
 
 
@@ -864,10 +866,12 @@ namespace LitJson
         public object ToObject(Type oldType)
         {
             Type newType = oldType;
+#if ILRUNTIME
             if (newType is ILRuntime.Reflection.ILRuntimeWrapperType wrapper)
             {
                 newType = wrapper.CLRType.TypeForCLR;
             }
+#endif
             if (newType.IsArray)
             {
                 if (newType.IsGenericType)
@@ -915,8 +919,10 @@ namespace LitJson
 
             if (newType.IsEnum)
             {
+#if ILRUNTIME
                 if (newType is ILRuntimeType)
                     return inst_int;
+#endif
                 return Enum.Parse(newType, ToString());
             }
 
@@ -936,11 +942,13 @@ namespace LitJson
                 var dictionary_element_type = oldType;
                 if (newType.IsGenericType && newType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
+#if ILRUNTIME
                     if (dictionary_element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
                     {
                         dictionary_element_type = wrapperType.CLRType.GenericArguments[1].Value.ReflectionType;
                     }
                     else
+#endif
                     {
                         dictionary_element_type = dictionary_element_type.GetGenericArguments()[1];
                     }
@@ -957,11 +965,13 @@ namespace LitJson
                 }
                 else if(newType.IsGenericType && typeof(IList).IsAssignableFrom(newType.GetGenericTypeDefinition()))
                 {
+#if ILRUNTIME
                     if (dictionary_element_type is ILRuntime.Reflection.ILRuntimeWrapperType wrapperType)
                     {
                         dictionary_element_type = wrapperType.CLRType.GenericArguments[0].Value.ReflectionType;
                     }
                     else
+#endif
                     {
                         dictionary_element_type = dictionary_element_type.GetGenericArguments()[0];
                     }
