@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Framework.UI.Wrap
 {
-    public class ButtonWrapper : BaseWrapper<Button>, IComponentEvent , IFieldChangeCb<string>
+    public class ButtonWrapper : BaseWrapper<Button>, IComponentEvent , IFieldChangeCb<string> , IFieldChangeCb<int> , IFieldChangeCb<float> , IFieldChangeCb<long> , IFieldChangeCb<double>
     {
         private Text text;
         private TextMeshProUGUI tmpText;
@@ -30,6 +30,50 @@ namespace Framework.UI.Wrap
                     text.text = val;
                 if (tmpText)
                     tmpText.text = val;
+            };
+        }
+
+        Action<int> IFieldChangeCb<int>.GetFieldChangeCb()
+        {
+            return val =>
+            {
+                if (text)
+                    text.text = val.ToString();
+                if (tmpText)
+                    tmpText.text = val.ToString();
+            };
+        }
+
+        Action<float> IFieldChangeCb<float>.GetFieldChangeCb()
+        {
+            return val =>
+            {
+                if (text)
+                    text.text = val.ToString();
+                if (tmpText)
+                    tmpText.text = val.ToString();
+            };
+        }
+
+        Action<long> IFieldChangeCb<long>.GetFieldChangeCb()
+        {
+            return val =>
+            {
+                if (text)
+                    text.text = val.ToString();
+                if (tmpText)
+                    tmpText.text = val.ToString();
+            };
+        }
+
+        Action<double> IFieldChangeCb<double>.GetFieldChangeCb()
+        {
+            return val =>
+            {
+                if (text)
+                    text.text = val.ToString();
+                if (tmpText)
+                    tmpText.text = val.ToString();
             };
         }
     }

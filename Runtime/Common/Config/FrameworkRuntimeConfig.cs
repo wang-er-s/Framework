@@ -52,7 +52,7 @@ namespace Framework
 		[LabelText("生成适配器地址")]
 		public string AdaptorPath;
 
-		[HideInInspector]
+		[ReadOnly]
 		public bool ReleaseBuild = false;
 	}
 }

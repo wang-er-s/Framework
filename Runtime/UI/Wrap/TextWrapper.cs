@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Framework.UI.Wrap
 {
     public class TextWrapper : BaseWrapper<Text>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>,
-        IFieldChangeCb<double>
+        IFieldChangeCb<double>, IFieldChangeCb<long>
     {
 
         Action<string> IFieldChangeCb<string>.GetFieldChangeCb()
@@ -29,6 +29,12 @@ namespace Framework.UI.Wrap
         {
             return value => Component.text = value.ToString(CultureInfo.InvariantCulture);
         }
+
+        Action<long> IFieldChangeCb<long>.GetFieldChangeCb()
+        {
+            return value => Component.text = value.ToString(CultureInfo.InvariantCulture);
+        }
+
 
         public TextWrapper(Text component, View view) : base(component, view)
         {

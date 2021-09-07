@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using Framework.Assets;
 using Framework.Asynchronous;
@@ -16,6 +17,7 @@ namespace Framework.UI.Wrap
         private readonly Transform _content;
         private readonly View _item;
         private readonly GameObject _template;
+        private List<View> existViews = new List<View>();
         private int _tag;
         private int _index;
 
@@ -73,17 +75,18 @@ namespace Framework.UI.Wrap
             view.SetGameObject(go);
             view.SetVm(vm);
             view.Show();
+            existViews.Insert(index, view);
         }
 
         private void RemoveItem(int index)
         {
             Object.DestroyImmediate(_content.GetChild(index+1).gameObject);
+            existViews.RemoveAt(index);
         }
 
         private void ReplaceItem(int index, ViewModel vm)
         {
-            RemoveItem(index);
-            AddItem(index, vm);
+            existViews[index].SetVm(vm);
         }
 
         private void Clear(int itemCount)
@@ -92,6 +95,7 @@ namespace Framework.UI.Wrap
             {
                 RemoveItem(--itemCount);
             }
+            existViews.Clear();
         }
 
         private static int GetTag(ViewModel vm)

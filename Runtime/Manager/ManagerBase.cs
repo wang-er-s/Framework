@@ -69,8 +69,8 @@ namespace Framework
                 ClassDataMap[(I)_indexProperty.GetValue(attr)] = new ClassData {Attribute = attr, Type = type};
             }
         }
-        
-        public ClassData GetClassData(I tag)
+
+        private ClassData GetClassData(I tag)
         {
             this.ClassDataMap.TryGetValue(tag, out var classData);
             return classData;
