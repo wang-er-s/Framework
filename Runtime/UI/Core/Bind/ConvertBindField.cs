@@ -62,7 +62,7 @@ namespace Framework.UI.Core.Bind
 
         public override void Clear()
         {
-            _componentEvent.RemoveAllListeners();
+            _componentEvent?.RemoveAllListeners();
             _property.Clear();
         }
     }

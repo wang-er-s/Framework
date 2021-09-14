@@ -67,6 +67,11 @@ namespace Framework.UI.Core.Bind
             _value = (T)val;
         }
 
+        void IObservable.ForceTrigger()
+        {
+            OnValueChanged?.Invoke(_value);
+        }
+
         public static implicit operator T(ObservableProperty<T> property)
         {
             return property._value;

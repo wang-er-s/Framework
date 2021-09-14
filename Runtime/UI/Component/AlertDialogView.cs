@@ -1,4 +1,7 @@
 using System;
+using DG.Tweening;
+using DG.Tweening.Core;
+using Framework.Asynchronous;
 using Framework.UI.Core;
 using TMPro;
 using UnityEngine;
@@ -10,13 +13,10 @@ namespace Framework.Runtime.UI.Component
     public class AlertDialogView : View
     {
         [TransformPath("Panel/Title")]
-        private TextMeshProUGUI Title;
-
-        [TransformPath("Panel/Content/Message")]
-        private TextMeshProUGUI Message;
+        private Text Title;
 
         [TransformPath("Panel/Content")]
-        private GameObject Content;
+        private Text Message;
 
         [TransformPath("Panel/ButtonGroup/Confirm")]
         private Button ConfirmButton;
@@ -33,12 +33,24 @@ namespace Framework.Runtime.UI.Component
         public bool CanceledOnTouchOutside { get; set; }
 
         private View contentView;
-
+        
         private AlertDialogVM vm;
+
+        private ABSAnimationComponent tween;
+
+        protected override void Start()
+        {
+            tween = Go.GetComponentInChildren<ABSAnimationComponent>();
+        }
+
+        protected override void OnShow()
+        {
+            tween.DOPlay();
+        }
 
         public override UILevel UILevel { get; } = UILevel.Pop;
 
-        protected virtual void Button_OnClick(int which)
+        protected virtual async void Button_OnClick(int which)
         {
             try
             {
@@ -47,6 +59,8 @@ namespace Framework.Runtime.UI.Component
             catch (Exception) { }
             finally
             {
+                tween.DOPlayBackwards();
+                await new WaitForSeconds(tween.tween.Duration());
                 this.Destroy();
             }
         }

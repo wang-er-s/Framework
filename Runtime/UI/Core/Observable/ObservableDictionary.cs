@@ -276,5 +276,9 @@ namespace Framework.UI.Core.Bind
         {
             Dictionary = (Dictionary<TKey,TValue>)val;
         }
+        void IObservable.ForceTrigger()
+        {
+            throw new NotSupportedException("Dic not support force trigger");
+        }
     }
 }

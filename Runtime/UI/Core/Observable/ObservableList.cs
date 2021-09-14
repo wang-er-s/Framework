@@ -216,5 +216,9 @@ namespace Framework.UI.Core.Bind
         {
             _items = (List<T>)val;
         }
+        void IObservable.ForceTrigger()
+        {
+            throw new NotSupportedException("List not support force trigger");
+        }
     }
 }

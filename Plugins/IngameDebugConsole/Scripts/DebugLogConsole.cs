@@ -22,15 +22,17 @@ namespace IngameDebugConsole
 
 		public readonly string command;
 		public readonly string signature;
+		public readonly string description;
 		public readonly string[] parameters;
 
-		public ConsoleMethodInfo( MethodInfo method, Type[] parameterTypes, object instance, string command, string signature, string[] parameters )
+		public ConsoleMethodInfo( MethodInfo method, Type[] parameterTypes, object instance, string command, string signature, string description,string[] parameters )
 		{
 			this.method = method;
 			this.parameterTypes = parameterTypes;
 			this.instance = instance;
 			this.command = command;
 			this.signature = signature;
+			this.description = description;
 			this.parameters = parameters;
 		}
 
@@ -427,7 +429,7 @@ namespace IngameDebugConsole
 			if( returnType != typeof( void ) )
 				methodSignature.Append( " : " ).Append( GetTypeReadableName( returnType ) );
 			var methodInfo = new ConsoleMethodInfo(method, parameterTypes, instance, command,
-				methodSignature.ToString(), parameterSignatures);
+				methodSignature.ToString(),description, parameterSignatures);
 			Methods.Insert( commandIndex, methodInfo);
 			OnCommandChanged?.Invoke(NotifyCollectionChangedAction.Add, methodInfo);
 		}
@@ -532,10 +534,11 @@ namespace IngameDebugConsole
 
 			if( matchingMethods.Count == 0 )
 			{
-				if( parameterCountMismatch )
-					Debug.LogWarning( string.Concat( "ERROR: ", commandArguments[0], " doesn't take ", commandArguments.Count - 1, " parameter(s)" ) );
+				if (parameterCountMismatch)
+					DebugLogTips.ShowTips(string.Concat("ERROR: ", commandArguments[0], " doesn't take ",
+						commandArguments.Count - 1, " parameter(s)"));
 				else
-					Debug.LogWarning( "ERROR: can't find command: " + commandArguments[0] );
+					DebugLogTips.ShowTips( "ERROR: can't find command: " + commandArguments[0] );
 
 				return;
 			}
@@ -577,11 +580,11 @@ namespace IngameDebugConsole
 			}
 
 			if( methodToExecute == null )
-				Debug.LogWarning( !string.IsNullOrEmpty( errorMessage ) ? errorMessage : "ERROR: something went wrong" );
+				DebugLogTips.ShowTips( !string.IsNullOrEmpty( errorMessage ) ? errorMessage : "ERROR: something went wrong" );
 			else
 			{
 				var paraStr = string.Join(",",parameters.Select((o => o.ToString())));
-				Debug.Log("Executing command: " + commandArguments[0] + " " + paraStr);
+				DebugLogTips.ShowTips("Executing command: " + commandArguments[0] + " " + paraStr);
 
 				// Execute the method associated with the command
 				object result = methodToExecute.method.Invoke( methodToExecute.instance, parameters );
@@ -589,9 +592,9 @@ namespace IngameDebugConsole
 				{
 					// Print the returned value to the console
 					if( result == null || result.Equals( null ) )
-						Debug.Log( "Value returned: null" );
+						DebugLogTips.ShowTips( "Value returned: null" );
 					else
-						Debug.Log( "Value returned: " + result.ToString() );
+						DebugLogTips.ShowTips( "Value returned: " + result.ToString() );
 				}
 			}
 		}

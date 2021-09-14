@@ -30,6 +30,7 @@ namespace Framework.UI.Core
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
+        protected event Action OnDestroy;
         public IRes Res { get; }
 
         public View()
@@ -139,6 +140,8 @@ namespace Framework.UI.Core
             Res.Release();
             GameLoop.Ins.OnUpdate -= Update;
             _subViews.ForEach(subView => subView.Destroy());
+            Binding.Reset();
+            OnDestroy?.Invoke();
             Object.Destroy(Go.gameObject);
             ViewModel?.OnViewDestroy();
         }
@@ -165,10 +168,15 @@ namespace Framework.UI.Core
             progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
             return progressResult;
         }
+
+        public void RemoveSubView(View view)
+        {
+            _subViews.TryRemove(view);
+        }
         
         public void AddSubView(View view)
         {
-            view.Show();
+            view.OnDestroy += () => RemoveSubView(view);
             view.Go.transform.SetParent(Go.transform, false);
             _subViews.Add(view);
         }

@@ -8,5 +8,6 @@ namespace Framework.UI.Core.Bind
         object RawValue { get; }
         Type RawType { get; }
         void InitValueWithoutCb(object val);
+        void ForceTrigger();
     }
 }

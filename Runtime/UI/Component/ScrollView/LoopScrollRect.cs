@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 namespace Framework.UI
 {
-    [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup

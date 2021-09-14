@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
-using Framework.Contexts;
 using Framework.Execution;
 using Framework.UI.Core;
 using UnityEngine;
@@ -18,40 +17,49 @@ namespace Framework.Runtime.UI.Component
             return UIManager.Ins;
         }
 
-        public static async Task<Toast> Show(string text,float fontSize = 36, float duration = 2f, Action callback = null)
+        private static ToastContent toastContent;
+        
+        public static async Task<IAsyncResult<View>> Show(string text,int fontSize = 36, float duration = 3f,bool fly = true, Action callback = null)
         {
-            UIManager locator = GetUIViewLocator();
-            ToastView view = (await locator.OpenAsync<ToastView>()) as ToastView;
-            if (view == null)
-                throw new FileNotFoundException("Not found the \"ToastView\".");
-
-            Toast toast = new Toast(view, text, fontSize, duration);
-            toast.Show();
-            return toast;
+            if (toastContent == null)
+            {
+                toastContent = await UIManager.Ins.OpenAsync<ToastContent>() as ToastContent;
+            }
+            var result = toastContent.AddSubView<ToastView>();
+            result.Callbackable().OnCallback(progressResult =>
+            {
+                ToastView view = progressResult.Result as ToastView;
+                if (view == null)
+                    throw new FileNotFoundException("Not found the \"ToastView\".");
+            
+                Toast toast = new Toast(view, text, fontSize, duration, fly, callback);
+                toast.Show();
+            });
+            return result;
         }
 
-        private readonly float duration;
-        private readonly string text;
-        private readonly ToastView view;
-        private readonly Action callback;
-        private readonly bool autoHide;
-        private readonly float fontSize;
-        
-        protected Toast(ToastView view, string text, float fontSize = 36, float duration = 3, Action callback = null, bool autoHide = true)
+        private float duration;
+        private string text;
+        private ToastView view;
+        private CanvasGroup canvasGroup;
+        private Action callback;
+        private bool autoHide;
+        private int fontSize;
+        private bool fly;
+
+        private Toast(ToastView view, string text, int fontSize, float duration,bool fly,  Action callback = null, bool autoHide = true)
         {
             this.fontSize = fontSize;
             this.view = view;
             this.text = text;
+            this.fly = fly;
             this.duration = duration;
             this.callback = callback;
             this.autoHide = autoHide;
         }
 
-        public float Duration => this.duration;
-
-        public string Text => this.text;
-
-        public ToastView View => this.view;
+        private const float flyTime = 1;
+        private const float flyDis = 500;
 
         public void Cancel()
         {
@@ -61,8 +69,9 @@ namespace Framework.Runtime.UI.Component
             this.DoCallback();
         }
 
-        public void Show()
+        private void Show()
         {
+            canvasGroup = view.Go.GetComponent<CanvasGroup>();
             this.view.Show();
             this.view.Text.text = this.text;
             view.Text.fontSize = fontSize;
@@ -70,9 +79,23 @@ namespace Framework.Runtime.UI.Component
                 Executors.RunOnCoroutineNoReturn(DelayDismiss(duration));
         }
 
-        protected IEnumerator DelayDismiss(float duration)
+        IEnumerator DelayDismiss(float duration)
         {
             yield return new WaitForSeconds(duration);
+            float time = 0;
+            float oldPosY = view.Go.transform.position.y;
+            view.LayoutElement.ignoreLayout = true;
+            if (fly)
+            {
+                while (time < flyTime)
+                {
+                    time += Time.deltaTime;
+                    var delta = time / flyTime;
+                    canvasGroup.alpha = 1 - delta;
+                    view.Go.transform.PositionY(oldPosY + delta * flyDis);
+                    yield return null;
+                }
+            }
             this.Cancel();
         }
 
