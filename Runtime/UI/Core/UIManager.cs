@@ -152,7 +152,7 @@ namespace Framework.UI.Core
             return view;
         }
 
-        public void Close<T>()
+        public void Close<T>() where T : View
         {
             Close(typeof(T));
         }
@@ -177,8 +177,7 @@ namespace Framework.UI.Core
             if (!_openedViews.TryGetValue(type, out var view))
                 return;
             _openedViews.Remove(type);
-            //view.Hide();
-            view.Destroy();
+            view.Dispose();
             //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
         }
 
@@ -191,11 +190,20 @@ namespace Framework.UI.Core
             {
                 if(openedView.UILevel <= view.UILevel)
                     continue;
-                if (openedView.Go.transform.GetSiblingIndex() < index)
+                try
                 {
-                    lastTrans = openedView.Go.transform;
-                    index = lastTrans.GetSiblingIndex();
+                    if (openedView.Go.transform.GetSiblingIndex() < index)
+                    {
+                        lastTrans = openedView.Go.transform;
+                        index = lastTrans.GetSiblingIndex();
+                    }
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+               
             }
             
             viewTransform.SetParent(Canvas.transform, false);
@@ -215,7 +223,7 @@ namespace Framework.UI.Core
             {
                 if (waitDestroyView.Value <= nowTime)
                 {
-                    waitDestroyView.Key.Destroy();
+                    waitDestroyView.Key.Dispose();
                     _needDestroyViews.Add(waitDestroyView.Key);
                 }
             }

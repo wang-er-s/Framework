@@ -61,11 +61,11 @@ namespace Framework.Runtime.UI.Component
         private const float flyTime = 1;
         private const float flyDis = 500;
 
-        public void Cancel()
+        private void Cancel()
         {
             if (this.view == null)
                 return;
-            view.Destroy();
+            UIManager.Ins.Close<ToastView>();
             this.DoCallback();
         }
 

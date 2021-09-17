@@ -134,16 +134,8 @@ namespace Framework.UI.Core
         {
         }
 
-        public virtual void Destroy()
+        protected virtual void OnClose()
         {
-            Hide();
-            Res.Release();
-            GameLoop.Ins.OnUpdate -= Update;
-            _subViews.ForEach(subView => subView.Destroy());
-            Binding.Reset();
-            OnDestroy?.Invoke();
-            Object.Destroy(Go.gameObject);
-            ViewModel?.OnViewDestroy();
         }
 
         public void Visible(bool visible)
@@ -191,9 +183,24 @@ namespace Framework.UI.Core
             return null;
         }
 
-        public void Close()
+        protected void Close()
         {
             UIManager.Ins.Close(this.GetCLRType());
+        }
+
+        public void Dispose()
+        {
+            Hide();
+            Res.Release();
+            GameLoop.Ins.OnUpdate -= Update;
+            for (int i = 0; i < _subViews.Count; i++)
+            {
+                _subViews[i].OnClose();
+            }
+            Binding.Reset();
+            OnDestroy?.Invoke();
+            ViewModel?.OnViewDestroy();
+            Object.Destroy(Go.gameObject);
         }
 
         protected abstract void OnVmChange();

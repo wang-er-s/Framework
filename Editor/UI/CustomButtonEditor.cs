@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
@@ -28,9 +29,11 @@ namespace Framework.Editor
         }
 
         [MenuItem("GameObject/UI/CustomButton", false, -10)]
-        private static void Create()
+        private static void Create(MenuCommand menuCommand)
         {
-            EditorApplication.ExecuteMenuItem("GameObject/UI/Button - TextMeshPro");
+            var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
+            var createBtn = menuOptions.GetMethod("AddButton", BindingFlags.Static | BindingFlags.Public);
+            createBtn.Invoke(null, new object[] { menuCommand });
             var obj = Selection.activeGameObject;
             DestroyImmediate(obj.GetComponent<Button>());
             obj.AddComponent<CustomButton>();

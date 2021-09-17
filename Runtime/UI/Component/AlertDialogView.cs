@@ -61,7 +61,7 @@ namespace Framework.Runtime.UI.Component
             {
                 tween.DOPlayBackwards();
                 await new WaitForSeconds(tween.tween.Duration());
-                this.Destroy();
+                this.Close();
             }
         }
 

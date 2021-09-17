@@ -17,6 +17,8 @@ namespace Framework.Asynchronous
         private Callbackable _callbackable;
         private List<IAsyncResult> _allProgress = new List<IAsyncResult>();
 
+        public override bool IsDone => _allProgress.Count <= 0 || base.IsDone;
+
         public MulAsyncResult(params IAsyncResult[] allProgress) : this(false, allProgress)
         {
         }
@@ -86,6 +88,8 @@ namespace Framework.Asynchronous
     public class MulProgressResult<TProgress> : ProgressResult<float> where TProgress : IMulProgress
     {
         private List<IProgressResult<TProgress>> _allProgress = new List<IProgressResult<TProgress>>();
+        
+        public override bool IsDone => _allProgress.Count <= 0 || base.IsDone;
 
         public MulProgressResult(params IProgressResult<TProgress>[] allProgress) : this(false, allProgress)
         {
@@ -125,6 +129,7 @@ namespace Framework.Asynchronous
 
         private void CheckAllFinish()
         {
+            RaiseOnProgressCallback(0);
             Exception exception = null;
             foreach (var progressResult in _allProgress)
             {
@@ -153,7 +158,14 @@ namespace Framework.Asynchronous
             foreach (var progressResult in _allProgress)
             {
                 totalProgress += progressResult.Progress.Total;
-                current += progressResult.Progress.Current;
+                if (progressResult.IsDone)
+                {
+                    current += progressResult.Progress.Total;
+                }
+                else
+                {
+                    current += progressResult.Progress.Current;
+                }
             }
             Progress = current / totalProgress;
         }
@@ -162,6 +174,8 @@ namespace Framework.Asynchronous
     public class MulProgressResult : ProgressResult<float>
     {
         private List<IProgressResult<float>> _allProgress = new List<IProgressResult<float>>();
+
+        public override bool IsDone => _allProgress.Count <= 0 || base.IsDone;
 
         public MulProgressResult(params IProgressResult<float>[] allProgress) : this(false, allProgress)
         {
@@ -201,6 +215,7 @@ namespace Framework.Asynchronous
 
         private void CheckAllFinish()
         {
+            RaiseOnProgressCallback(0);
             foreach (var progressResult in _allProgress)
             {
                 if(!progressResult.IsDone) return;
@@ -214,7 +229,14 @@ namespace Framework.Asynchronous
             float totalProgress = 0;
             foreach (var progressResult in _allProgress)
             {
-                totalProgress += progressResult.Progress;
+                if (progressResult.IsDone)
+                {
+                    totalProgress += 1;
+                }
+                else
+                {
+                    totalProgress += progressResult.Progress;
+                }
             }
             Progress = totalProgress / _allProgress.Count;
         }

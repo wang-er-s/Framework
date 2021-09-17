@@ -101,8 +101,6 @@ namespace Framework.Asynchronous
 
         public virtual void SetResult(object result = null)
         {
-            
-            
             lock (Lock)
             {
                 if (this._done)
@@ -185,6 +183,22 @@ namespace Framework.Asynchronous
         public virtual object WaitForDone()
         {
             return Executors.WaitWhile(() => !IsDone);
+        }
+        
+        private static IProgressResult<float> voidResult;
+        /// <summary>
+        /// 返回一个完成的IProgressResult<float>
+        /// </summary>
+        /// <returns></returns>
+        public static IProgressResult<float> Void()
+        {
+            if (voidResult == null)
+            {
+                var result = new ProgressResult<float>();
+                result.SetResult();
+                voidResult = result;
+            }
+            return voidResult;
         }
     }
 

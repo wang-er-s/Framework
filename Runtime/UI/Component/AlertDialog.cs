@@ -42,30 +42,6 @@ namespace Framework.Runtime.UI.Component
         }
 
         /// <summary>
-        /// Displays information to the user.
-        /// </summary>
-        /// <param name="message">The message to be shown to the user.</param>
-        /// <param name="title">The title of the dialog box. This may be null.</param>
-        /// <param name="confirmButtonText">The text shown in the "confirm" button
-        /// in the dialog box. If left null, the button will be invisible.</param>
-        /// <param name="cancelButtonText">The text shown in the "cancel" button
-        /// in the dialog box. If left null, the button will be invisible.</param>
-        /// <param name="clickCallback">A callback that should be executed after
-        /// the dialog box is closed by the user. The callback method will get a boolean
-        /// parameter indicating if the "confirm" button (true) or the "cancel" button
-        /// (false) was pressed by the user.</param>
-        /// <returns>A AlertDialog.</returns>
-        public static async Task<AlertDialog> ShowMessage(
-            string message,
-            string title,
-            string confirmButtonText,
-            string cancelButtonText,
-            Action<int> clickCallback)
-        {
-            return await ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, clickCallback);
-        }
-
-        /// <summary>
         /// Displays information to the user. 
         /// </summary>
         /// <param name="message">The message to be shown to the user.</param>
@@ -126,9 +102,9 @@ namespace Framework.Runtime.UI.Component
         public static async Task<AlertDialogView> ShowMessage(
             View contentView,
             string title,
-            string confirmButtonText,
             string neutralButtonText,
             string cancelButtonText,
+            string confirmButtonText,
             bool canceledOnTouchOutside,
             Action<int> clickCallback)
         {
@@ -168,7 +144,7 @@ namespace Framework.Runtime.UI.Component
             catch (Exception e)
             {
                 if (view != null)
-                    view.Destroy();
+                    UIManager.Ins.Close<AlertDialogView>();
                 Log.Error(e);
                 throw;
             }
