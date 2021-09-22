@@ -26,7 +26,6 @@ namespace Framework.UI.Core.Bind
         {
             SetValue(component, property, propChangeCb, prop2CpntWrap, cpnt2PropWrap, componentEvent);
             InitEvent();
-            InitCpntValue();
         }
 
         private void SetValue(TComponent component, ObservableProperty<TData> property,
@@ -41,11 +40,6 @@ namespace Framework.UI.Core.Bind
             this._property = property;
             this._prop2CpntWrap = prop2CpntWrap;
             this._cpnt2PropWrap = cpnt2PropWrap;
-        }
-
-        private void InitCpntValue()
-        {
-            if (_prop2CpntWrap != null) _propChangeCb(_prop2CpntWrap(_property.Value));
         }
 
         private void InitEvent()

@@ -144,7 +144,7 @@ namespace Framework.Runtime.UI.Component
             catch (Exception e)
             {
                 if (view != null)
-                    UIManager.Ins.Close<AlertDialogView>();
+                    UIManager.Ins.Close(view);
                 Log.Error(e);
                 throw;
             }

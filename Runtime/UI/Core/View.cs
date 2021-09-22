@@ -30,7 +30,7 @@ namespace Framework.UI.Core
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
-        protected event Action OnDestroy;
+        private event Action OnDestroy;
         public IRes Res { get; }
 
         public View()
@@ -109,7 +109,8 @@ namespace Framework.UI.Core
         {
             
         }
-
+        
+        //这里要删除，需要update用协程代替
         protected virtual void Update()
         {
         }
@@ -161,7 +162,7 @@ namespace Framework.UI.Core
             return progressResult;
         }
 
-        public void RemoveSubView(View view)
+        protected void RemoveSubView(View view)
         {
             _subViews.TryRemove(view);
         }
@@ -185,7 +186,7 @@ namespace Framework.UI.Core
 
         protected void Close()
         {
-            UIManager.Ins.Close(this.GetCLRType());
+            UIManager.Ins.Close(this);
         }
 
         public void Dispose()
@@ -193,6 +194,7 @@ namespace Framework.UI.Core
             Hide();
             Res.Release();
             GameLoop.Ins.OnUpdate -= Update;
+            OnClose();
             for (int i = 0; i < _subViews.Count; i++)
             {
                 _subViews[i].OnClose();

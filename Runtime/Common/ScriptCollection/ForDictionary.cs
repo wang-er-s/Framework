@@ -121,27 +121,30 @@ namespace Framework
         int ICollection<KeyValuePair<TKey, TValue>>.Count => dic.Count;
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
-        public void For(Action<TKey, TValue> action)
+        public void Foreach(Action<TKey, TValue> action, Func<bool> breakFunc = null)
         {
             for (int i = 0; i < Count; i++)
             {
+                if(breakFunc != null && breakFunc()) break;
                 var key = keyList[i];
                 action(key, dic[key]);
             }
         }
 
-        public void ForKey(Action<TKey> action)
+        public void ForeachKey(Action<TKey> action, Func<bool> breakFunc = null)
         {
             for (int i = 0; i < Count; i++)
             {
+                if(breakFunc != null && breakFunc()) break;
                 action(keyList[i]);
             }
         }
 
-        public void ForValue(Action<TValue> action)
+        public void ForeachValue(Action<TValue> action, Func<bool> breakFunc = null)
         {
             for (int i = 0; i < Count; i++)
             {
+                if(breakFunc != null && breakFunc()) break;
                 action(dic[keyList[i]]);
             }
         }

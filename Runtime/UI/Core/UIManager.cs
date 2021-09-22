@@ -21,11 +21,6 @@ namespace Framework.UI.Core
         {
             Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
             Object.DontDestroyOnLoad(Canvas);
-            foreach (UILevel level in (UILevel[]) Enum.GetValues(typeof(UILevel)))
-            {
-                _sortViews[level] = new List<View>();
-            }
-
             _res = Res.Create();
             GameLoop.Ins.OnUpdate += Update;
         }
@@ -43,9 +38,9 @@ namespace Framework.UI.Core
         }
 
         private const int ViewDestroyTime = 5;
-        private Dictionary<View,DateTime> _waitDestroyViews = new Dictionary<View, DateTime>();
-        private Dictionary<Type, View> _openedViews = new Dictionary<Type, View>();
-        private Dictionary<UILevel, List<View>> _sortViews = new Dictionary<UILevel, List<View>>();
+        private Dictionary<View,DateTime> waitDestroyViews = new Dictionary<View, DateTime>();
+        private List<View> openedViews = new List<View>();
+        private Dictionary<Type, View> openedSingleViews = new Dictionary<Type, View>();
 
         public IProgressResult<float, View> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
@@ -68,10 +63,11 @@ namespace Framework.UI.Core
                 var _view = progressResult.Result;
                 Sort(_view);
                 _view.Show();
+                openedViews.Add(_view);
                 if (_view.IsSingle)
-                    _openedViews[type] = _view;
+                    openedSingleViews[type] = _view;
             });
-            if (_openedViews.TryGetValue(type, out var view))
+            if (openedSingleViews.TryGetValue(type, out var view))
             {
                 promise.UpdateProgress(1);
                 promise.SetResult(view);
@@ -123,6 +119,7 @@ namespace Framework.UI.Core
             promise.UpdateProgress(1f);
             promise.SetResult(view);
         }
+        
 #if UNITY_EDITOR
         public async void EditorCreateView(View view, ViewModel viewModel,string path)
         {
@@ -152,31 +149,69 @@ namespace Framework.UI.Core
             return view;
         }
 
+        /// <summary>
+        /// close isSingle=true的窗口
+        /// </summary>
         public void Close<T>() where T : View
         {
             Close(typeof(T));
         }
 
+        public void Close(View view)
+        {
+            if (view.IsSingle)
+            {
+                Close(view.GetType());
+                return;
+            }
+            for (int i = 0; i < openedViews.Count; i++)
+            {
+                if (view == openedViews[i])
+                {
+                    openedViews.RemoveAt(i);
+                    view.Dispose();
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// get isSingle=true的窗口
+        /// </summary>
         public T Get<T>() where T : View
         {
             var view = Get(typeof(T));
             return view as T;
         }
 
+        /// <summary>
+        /// get isSingle=true的窗口
+        /// </summary>
         public View Get(Type type)
         {
-            if (_openedViews.TryGetValue(type, out var view))
+            if (openedSingleViews.TryGetValue(type, out var view))
             {
                 return view;
             }
             return null;
         }
 
+        /// <summary>
+        /// close isSingle=true的窗口
+        /// </summary>
         public void Close(Type type)
         {
-            if (!_openedViews.TryGetValue(type, out var view))
+            if (!openedSingleViews.TryGetValue(type, out var view))
                 return;
-            _openedViews.Remove(type);
+            openedSingleViews.Remove(type);
+            for (int i = 0; i < openedViews.Count; i++)
+            {
+                if (view == openedViews[i])
+                {
+                    openedViews.RemoveAt(i);
+                    break;
+                }
+            }
             view.Dispose();
             //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
         }
@@ -186,7 +221,7 @@ namespace Framework.UI.Core
             var viewTransform = view.Go.transform;
             Transform lastTrans = null;
             int index = Int32.MaxValue;
-            foreach (View openedView in _openedViews.Values)
+            foreach (View openedView in openedViews)
             {
                 if(openedView.UILevel <= view.UILevel)
                     continue;
@@ -211,15 +246,14 @@ namespace Framework.UI.Core
                 viewTransform.SetAsLastSibling();
             else
                 viewTransform.SetSiblingIndex(index);
-            _sortViews[view.UILevel].Add(view);
         }
 
         private List<View> _needDestroyViews = new List<View>();
         private void Update()
         {
-            if(_waitDestroyViews.Count <= 0) return;
+            if(waitDestroyViews.Count <= 0) return;
             var nowTime = DateTime.Now;
-            foreach (var waitDestroyView in _waitDestroyViews)
+            foreach (var waitDestroyView in waitDestroyViews)
             {
                 if (waitDestroyView.Value <= nowTime)
                 {
@@ -229,7 +263,7 @@ namespace Framework.UI.Core
             }
             foreach (var view in _needDestroyViews)
             {
-                _waitDestroyViews.Remove(view);
+                waitDestroyViews.Remove(view);
             }
             _needDestroyViews.Clear();
         }

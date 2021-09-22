@@ -45,7 +45,8 @@ namespace Framework.Runtime.UI.Component
 
         protected override void OnShow()
         {
-            tween.DOPlay();
+            if (tween)
+                tween.DOPlay();
         }
 
         public override UILevel UILevel { get; } = UILevel.Pop;
@@ -59,8 +60,11 @@ namespace Framework.Runtime.UI.Component
             catch (Exception) { }
             finally
             {
-                tween.DOPlayBackwards();
-                await new WaitForSeconds(tween.tween.Duration());
+                if (tween)
+                {
+                    tween.DOPlayBackwards();
+                    await new WaitForSeconds(tween.tween.Duration());
+                }
                 this.Close();
             }
         }
@@ -101,7 +105,7 @@ namespace Framework.Runtime.UI.Component
                 {
                     this.ConfirmButton.gameObject.SetActive(true);
                     this.ConfirmButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_POSITIVE); });
-                    TextMeshProUGUI text = this.ConfirmButton.GetComponentInChildren<TextMeshProUGUI>();
+                    Text text = this.ConfirmButton.GetComponentInChildren<Text>();
                     if (text != null)
                         text.text = this.vm.ConfirmButtonText;
                 }
@@ -117,7 +121,7 @@ namespace Framework.Runtime.UI.Component
                 {
                     this.CancelButton.gameObject.SetActive(true);
                     this.CancelButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEGATIVE); });
-                    TextMeshProUGUI text = this.CancelButton.GetComponentInChildren<TextMeshProUGUI>();
+                    Text text = this.CancelButton.GetComponentInChildren<Text>();
                     if (text != null)
                         text.text = this.vm.CancelButtonText;
                 }
@@ -133,7 +137,7 @@ namespace Framework.Runtime.UI.Component
                 {
                     this.NeutralButton.gameObject.SetActive(true);
                     this.NeutralButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEUTRAL); });
-                    TextMeshProUGUI text = this.NeutralButton.GetComponentInChildren<TextMeshProUGUI>();
+                    Text text = this.NeutralButton.GetComponentInChildren<Text>();
                     if (text != null)
                         text.text = this.vm.NeutralButtonText;
                 }

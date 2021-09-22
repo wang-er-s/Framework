@@ -28,7 +28,6 @@ namespace Framework.UI.Core.Bind
             SetValue(component, property, propChangeCb, componentEvent, bindType, property2CpntWrap,
                 cpnt2PropWrap);
             InitEvent();
-            InitCpntValue();
         }
 
         private void SetValue(TComponent component, ObservableProperty<TData> property, Action<TData> propChangeCb,
@@ -43,16 +42,7 @@ namespace Framework.UI.Core.Bind
             _propChangeCb = propChangeCb;
             this._componentEvent = componentEvent;
         }
-
-        /// <summary>
-        /// 将field的值初始化给component显示
-        /// </summary>
-        private void InitCpntValue()
-        {
-            if (_bindType != BindType.OnWay) return;
-            _propChangeCb(_prop2CpntWrap == null ? _property.Value : _prop2CpntWrap(_property.Value));
-        }
-
+        
         private void InitEvent()
         {
             if (_propChangeCb == null || _componentEvent == null)
@@ -72,7 +62,7 @@ namespace Framework.UI.Core.Bind
                         }
                         _propChangeCb = changeCb?.GetFieldChangeCb();
                     }
-                    Log.Assert(_propChangeCb != null,
+                    Debug.Assert(_propChangeCb != null,
                         $"_propChangeCb != null , can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TData).Name}> interface");
                     _property.AddListener((value) =>
                         _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
@@ -122,7 +112,6 @@ namespace Framework.UI.Core.Bind
         {
             SetValue(component, property1, property2, wrapFunc, filedChangeCb);
             InitEvent();
-            InitCpntValue();
         }
         
         private void SetValue(TComponent component, ObservableProperty<TData1> property1,
@@ -134,11 +123,6 @@ namespace Framework.UI.Core.Bind
             this._property2 = property2;
             this._wrapFunc = wrapFunc;
             this._propertyChangeCb = propertyChangeCb;
-        }
-
-        private void InitCpntValue()
-        {
-            _propertyChangeCb(_wrapFunc(_property1.Value, _property2.Value));
         }
 
         private void InitEvent()
