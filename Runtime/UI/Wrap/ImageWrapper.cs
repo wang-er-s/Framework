@@ -27,8 +27,11 @@ namespace Framework.UI.Wrap
                 res.LoadAssetAsync<Sprite>(path).Callbackable()
                     .OnCallback(result =>
                     {
+                        if(result.IsCancelled) return;
                         if (Component != null)
+                        {
                             Component.sprite = result.Result;
+                        }
                     });
             };
         }

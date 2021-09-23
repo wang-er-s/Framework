@@ -16,7 +16,7 @@ namespace Framework.UI.Core.Bind
         {
             Container = container;
         }
-
+        
         //单向绑定
         public void Bind<TComponent, TData>
         (TComponent component, ObservableProperty<TData> property, Action<TData> fieldChangeCb = null,
@@ -33,7 +33,7 @@ namespace Framework.UI.Core.Bind
             }
 
             bind.Reset(component, property, fieldChangeCb, null, BindType.OnWay, prop2CpntWrap, null);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         //反向绑定
@@ -53,7 +53,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindField<TComponent, TData>(Container);
             }
             bind.Reset(component, property, null, componentEvent, BindType.Revert, null, cpnt2PropWrap);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         //同类型双向绑定
@@ -84,7 +84,7 @@ namespace Framework.UI.Core.Bind
                 bind = new ConvertBindField<TComponent, TData, TResult>(Container);
             }
             bind.Reset(component, property, fieldChangeCb, field2CpntConvert, null, null);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         //wrap不同类型反向绑定
@@ -104,7 +104,7 @@ namespace Framework.UI.Core.Bind
                 bind = new ConvertBindField<TComponent, TData, TResult>(Container);
             }
             bind.Reset(component, property, null, null, cpnt2FieldConvert, componentEvent);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         //不同类型双向绑定
@@ -135,23 +135,23 @@ namespace Framework.UI.Core.Bind
                 bind = new BindField<TComponent, TData1, TData2, TResult>(Container);
             }
             bind.Reset(component, property1, property2, wrapFunc, filedChangeCb);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         public void BindData<TData>(ObservableProperty<TData> property, Action<TData> cb)
         {
-            clearables.Add(property);
             cb?.Invoke(property);
             property.AddListener(cb);
+            AddClearable(property);
         }
         
         public void BindData<TData1,TData2>(ObservableProperty<TData1> property,ObservableProperty<TData2> property2, Action<TData1, TData2> cb)
         {
-            clearables.Add(property);
-            clearables.Add(property2);
             cb?.Invoke(property, property2);
             property.AddListener((data1) => cb?.Invoke(data1, property2));
             property2.AddListener((data2) => cb?.Invoke(property, data2));
+            AddClearable(property);
+            AddClearable(property2);
         }
 
         //绑定command
@@ -170,7 +170,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindCommand<TComponent>(Container);
             }
             bind.Reset(component, command, componentEvent, wrapFunc);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         //绑定带参数的command
@@ -189,7 +189,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindCommandWithPara<TComponent, TData>(Container);
             }
             bind.Reset(component, command, componentEvent, wrapFunc);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         public void BindList<TComponent, TData>(TComponent component, ObservableList<TData> property,
@@ -206,20 +206,27 @@ namespace Framework.UI.Core.Bind
                 bind = new BindList<TComponent, TData>(Container);
             }
             bind.Reset(component, property, onCreate, onDestroy);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         public void Reset()
         {
             foreach (var clearable in clearables)
             {
-                clearable.Clear();
+                clearable.ClearView();
+                clearable.ClearModel();
                 if (clearable is BaseBind bind)
                 {
                     CacheBinds.Enqueue(bind);
                 }
             }
             clearables.Clear();
+        }
+
+        protected void AddClearable(IClearable clearable)
+        {
+            //viewModel.OnClearModelBinding += clearable.ClearModel;
+            clearables.Add(clearable);
         }
     }
 

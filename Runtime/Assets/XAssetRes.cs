@@ -19,6 +19,7 @@ namespace Framework.Assets
         private string _preDownloadKey;
         private List<DownloadInfo> _needDownloadRes;
         private Dictionary<string, Loadable> _handles = new Dictionary<string, Loadable>();
+        private List<IProgressPromise<float>> loadProgress = new List<IProgressPromise<float>>();
 
         public override string DownloadURL
         {
@@ -104,6 +105,7 @@ namespace Framework.Assets
         
         protected override async void LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path, LoadSceneMode loadSceneMode)
         {
+            loadProgress.Add(promise);
             var loader = Scene.LoadAsync(path, additive: loadSceneMode == LoadSceneMode.Additive);
             while (!loader.isDone)
             {
@@ -117,6 +119,8 @@ namespace Framework.Assets
 
         protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
+            Debug.Log($"load {key}");
+            loadProgress.Add(promise);
             var asset = Asset.LoadAsync(key, typeof(T), result =>
             {
                 if (result.status == LoadableStatus.SuccessToLoad)
@@ -140,6 +144,12 @@ namespace Framework.Assets
             {
                 loadable?.Release();
             }
+            foreach (var promise in loadProgress)
+            {
+                if(!promise.IsDone)
+                    promise.SetCancelled();
+            }
+            loadProgress.Clear();
             _handles.Clear();
         }
 

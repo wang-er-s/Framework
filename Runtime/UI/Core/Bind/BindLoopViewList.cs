@@ -40,11 +40,15 @@ namespace Framework.UI.Core.Bind
             loopScrollRect.RefillCells();
         }
 
-        public override void Clear()
+        public override void ClearView()
         {
-            itemsVm.RemoveListener(OnListChanged);
             loopScrollRect.OnItemShow -= OnItemChanged;
             itemTrans2View.Clear();
+        }
+
+        public override void ClearModel()
+        {
+            itemsVm.RemoveListener(OnListChanged);
         }
     }
 }

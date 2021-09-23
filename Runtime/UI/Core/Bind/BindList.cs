@@ -46,10 +46,15 @@ namespace Framework.UI.Core.Bind
             Log.Assert(_bindList != null, $"can not find IBindList of {_component}");
             _list.AddListener(_bindList.GetBindListFunc());
         }
-
-        public override void Clear()
+        
+        public override void ClearView()
         {
-            _list.ClearListener();
+            
+        }
+
+        public override void ClearModel()
+        {
+            _list.RemoveListener(_bindList.GetBindListFunc());
         }
     }
 }

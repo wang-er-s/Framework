@@ -97,6 +97,7 @@ namespace Framework.UI.Core
             if (vm == null || ViewModel == vm) return;
             ViewModel = vm;
             Binding.Reset();
+            Res.Release();
             if (ViewModel != null)
             {
                 OnVmChange();

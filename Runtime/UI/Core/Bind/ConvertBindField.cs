@@ -1,5 +1,6 @@
 using System;
 using Framework.UI.Wrap.Base;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Framework.UI.Core.Bind
@@ -47,17 +48,43 @@ namespace Framework.UI.Core.Bind
             _defaultWrapper = BindTool.GetDefaultWrapper(Container, _component);
             _componentEvent = _componentEvent ?? (_component as IComponentEvent<TResult>)?.GetComponentEvent() ?? (_defaultWrapper as IComponentEvent<TResult>)?.GetComponentEvent();
             _propChangeCb = _propChangeCb ?? (_component as IFieldChangeCb<TResult>)?.GetFieldChangeCb() ?? (_defaultWrapper as IFieldChangeCb<TResult>)?.GetFieldChangeCb();
-            Log.Assert(_prop2CpntWrap != null || _cpnt2PropWrap != null);
+            Debug.Assert(_prop2CpntWrap != null || _cpnt2PropWrap != null, "至少有一个wrapper");
             if (_prop2CpntWrap != null)
-                _property.AddListener((value) => _propChangeCb(_prop2CpntWrap(value)));
+            {
+                Debug.Assert(_propChangeCb != null, "_propChangeCb 不能为空");
+                _property.AddListener(PropertyListener);
+            }
             if (_cpnt2PropWrap != null)
-                _componentEvent.AddListener((val) => _property.Value = _cpnt2PropWrap(val));
+            {
+                Debug.Assert(_componentEvent != null, "_componentEvent 不能为空");
+                _componentEvent.AddListener(ComponentListener);
+            }
         }
 
-        public override void Clear()
+        private void ComponentListener(TResult val)
         {
-            _componentEvent?.RemoveAllListeners();
-            _property.Clear();
+            _property.Value = _cpnt2PropWrap(val);
+        }
+
+        private void PropertyListener(TData data)
+        {
+            _propChangeCb(_prop2CpntWrap(data));
+        }
+
+        public override void ClearView()
+        {
+            if (_cpnt2PropWrap != null)
+            {
+                _componentEvent.RemoveListener(ComponentListener);
+            }
+        }
+
+        public override void ClearModel()
+        {
+            if (_prop2CpntWrap != null)
+            {
+                _property.RemoveListener(PropertyListener);
+            }
         }
     }
 }

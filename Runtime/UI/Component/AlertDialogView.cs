@@ -1,10 +1,5 @@
 using System;
-using DG.Tweening;
-using DG.Tweening.Core;
-using Framework.Asynchronous;
 using Framework.UI.Core;
-using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.Runtime.UI.Component
@@ -36,19 +31,6 @@ namespace Framework.Runtime.UI.Component
         
         private AlertDialogVM vm;
 
-        private ABSAnimationComponent tween;
-
-        protected override void Start()
-        {
-            tween = Go.GetComponentInChildren<ABSAnimationComponent>();
-        }
-
-        protected override void OnShow()
-        {
-            if (tween)
-                tween.DOPlay();
-        }
-
         public override UILevel UILevel { get; } = UILevel.Pop;
 
         protected virtual async void Button_OnClick(int which)
@@ -60,11 +42,6 @@ namespace Framework.Runtime.UI.Component
             catch (Exception) { }
             finally
             {
-                if (tween)
-                {
-                    tween.DOPlayBackwards();
-                    await new WaitForSeconds(tween.tween.Duration());
-                }
                 this.Close();
             }
         }

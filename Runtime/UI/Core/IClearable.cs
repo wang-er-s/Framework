@@ -2,6 +2,7 @@
 {
     public interface IClearable
     {
-        void Clear();
+        void ClearView();
+        void ClearModel();
     }
 }

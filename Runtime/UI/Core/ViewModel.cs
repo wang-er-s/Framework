@@ -1,4 +1,4 @@
-using Framework.UI.Core.Bind;
+using System;
 
 namespace Framework.UI.Core
 {
@@ -7,12 +7,5 @@ namespace Framework.UI.Core
         public virtual void OnViewDestroy()
         {
         }
-    }
-
-    public enum ViewState
-    {
-        Show,
-        Hide,
-        Destroy
     }
 }

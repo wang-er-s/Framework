@@ -64,8 +64,7 @@ namespace Framework.UI.Core.Bind
                     }
                     Debug.Assert(_propChangeCb != null,
                         $"_propChangeCb != null , can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TData).Name}> interface");
-                    _property.AddListener((value) =>
-                        _propChangeCb(_prop2CpntWrap == null ? value : _prop2CpntWrap(value)));
+                    _property.AddListener(PropertyListener);
                     break;
                 case BindType.Revert:
 
@@ -78,18 +77,31 @@ namespace Framework.UI.Core.Bind
                         }
                         _componentEvent = changeCb?.GetComponentEvent();
                     }
-                    Log.Assert(_componentEvent != null,
+                    Debug.Assert(_componentEvent != null,
                         $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IComponentEvent<{typeof(TData).Name}> interface");
-                    _componentEvent.AddListener((data) =>
-                        _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data));
+                    _componentEvent.AddListener(ComponentListener);
                     break;
             }
         }
 
-        public override void Clear()
+        private void PropertyListener(TData data)
         {
-            _property.Clear();
-            _componentEvent?.RemoveAllListeners();
+            _propChangeCb(_prop2CpntWrap == null ? data : _prop2CpntWrap(data));
+        }
+
+        private void ComponentListener(TData data)
+        {
+            _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data);
+        }
+
+        public override void ClearView()
+        {
+            _componentEvent?.RemoveListener(ComponentListener);
+        }
+
+        public override void ClearModel()
+        {
+            _property?.RemoveListener(PropertyListener);
         }
     }
 
@@ -139,15 +151,30 @@ namespace Framework.UI.Core.Bind
             }
             Debug.Assert(_propertyChangeCb != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IFieldChangeCb<{typeof(TResult).Name}> interface");
-            _property1.AddListener((data1) => _propertyChangeCb(_wrapFunc(data1, _property2.Value)));
-            _property2.AddListener((data2) => _propertyChangeCb(_wrapFunc(_property1.Value, data2)));
+            _property1.AddListener(Property1Listener);
+            _property2.AddListener(Property2Listener);
             _propertyChangeCb(_wrapFunc(_property1.Value, _property2.Value));
         }
+        
 
-        public override void Clear()
+        private void Property1Listener(TData1 data1)
         {
-            _property1.Clear();
-            _property2.Clear();
+            _propertyChangeCb(_wrapFunc(data1, _property2.Value));
+        }
+        
+        private void Property2Listener(TData2 data2)
+        {
+            _propertyChangeCb(_wrapFunc(_property1.Value, data2));
+        }
+
+        public override void ClearView()
+        {
+        }
+
+        public override void ClearModel()
+        {
+            _property1.RemoveListener(Property1Listener);
+            _property2.RemoveListener(Property2Listener);
         }
     }
 }

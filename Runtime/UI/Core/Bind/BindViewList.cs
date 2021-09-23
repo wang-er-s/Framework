@@ -52,10 +52,18 @@ namespace Framework.UI.Core.Bind
                 _wrappers.Add(wrapper);
             }
         }
-
-        public override void Clear()
+        
+        public override void ClearView()
         {
-            _list.ClearListener();
+            
+        }
+
+        public override void ClearModel()
+        {
+            foreach (var wrapper in _wrappers)
+            {
+                _list.RemoveListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
+            }
         }
     }
     
@@ -110,9 +118,17 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public override void Clear()
+        public override void ClearView()
         {
-            _list.ClearListener();
+            
+        }
+
+        public override void ClearModel()
+        {
+            foreach (var wrapper in _wrappers)
+            {
+                _list.RemoveListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
+            }
         }
     }
 
@@ -156,9 +172,12 @@ namespace Framework.UI.Core.Bind
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
         }
 
-        public override void Clear()
+        public override void ClearView()
         {
-            _list.ClearListener();
+        }
+
+        public override void ClearModel()
+        {
         }
     }
     
@@ -198,10 +217,14 @@ namespace Framework.UI.Core.Bind
         {
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
         }
-
-        public override void Clear()
+        
+        public override void ClearView()
         {
-            _list.ClearListener();
+            
+        }
+
+        public override void ClearModel()
+        {
         }
     }
 }

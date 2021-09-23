@@ -21,7 +21,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindViewList<TItemVm, TItemView>();
             }
             bind.Reset(list, root);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
         
         public void BindViewList<TItemVm, TItemView>
@@ -38,7 +38,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindLoopViewList<TItemVm, TItemView>();
             }
             bind.Reset(list, root);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
         
 #if ILRUNTIME
@@ -57,7 +57,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindViewList<ViewModelAdapter.Adapter>();
             }
             bind.Reset(list, root, view);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 #endif
         
@@ -75,7 +75,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindIpairsViewList<TItemVm, TItemView>();
             }
             bind.Reset(list, pattern, root);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
         
         public void BindIpairs<TItemVm>
@@ -91,7 +91,7 @@ namespace Framework.UI.Core.Bind
                 bind = new BindIpairsViewList<TItemVm>();
             }
             bind.Reset(list, pattern, root, view);
-            clearables.Add(bind);
+            AddClearable(bind);
         }
 
         public void BindDropDown(Dropdown dropdown, ObservableProperty<int> property,

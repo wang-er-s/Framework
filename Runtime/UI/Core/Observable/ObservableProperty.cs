@@ -76,5 +76,15 @@ namespace Framework.UI.Core.Bind
         {
             return property._value;
         }
+
+        public void ClearView()
+        {
+            
+        }
+
+        public void ClearModel()
+        {
+            OnValueChanged = null;
+        }
     }
 }

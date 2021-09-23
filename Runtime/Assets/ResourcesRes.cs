@@ -12,7 +12,8 @@ namespace Framework.Assets
     {
 
         private List<Object> _handles = new List<Object>();
-        
+        private List<ResourceRequest> requests = new List<ResourceRequest>();
+
         public override string DownloadURL { get; set; }
         
         protected override void LoadScene(IProgressPromise<float, Scene> promise, string path, LoadSceneMode loadSceneMode)
@@ -39,6 +40,7 @@ namespace Framework.Assets
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
             var operation = Resources.LoadAsync<T>(key);
+            requests.Add(operation);
             while (!operation.isDone)
             {
                 promise.UpdateProgress(operation.progress);

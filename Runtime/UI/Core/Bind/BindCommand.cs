@@ -39,15 +39,25 @@ namespace Framework.UI.Core.Bind
             _componentEvent = _componentEvent ?? (_component as IComponentEvent)?.GetComponentEvent() ??
                 (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
             Debug.Assert(_componentEvent != null, "componentEvent can not be null");
-            if (_wrapFunc == null)
-                _componentEvent.AddListener(() => _command());
+            _componentEvent.AddListener(Listener);
+        }
+        
+        private void Listener()
+        {
+            if (_wrapFunc != null)
+                _wrapFunc(_command)();
             else
-                _componentEvent.AddListener(() => _wrapFunc(_command)());
+                _command();
         }
 
-        public override void Clear()
+        public override void ClearView()
         {
-            _componentEvent.RemoveAllListeners();
+            _componentEvent.RemoveListener(Listener);
+        }
+
+        public override void ClearModel()
+        {
+            
         }
     }
 
@@ -94,15 +104,25 @@ namespace Framework.UI.Core.Bind
             }
             Debug.Assert(_componentEvent != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IComponentEvent<{typeof(TData).Name}> interface");
-            if (_wrapFunc == null)
-                _componentEvent.AddListener((value) => _command(value));
-            else
-                _componentEvent.AddListener((value) => _wrapFunc(_command)(value));
+            _componentEvent.AddListener(Listener);
         }
 
-        public override void Clear()
+        private void Listener(TData data)
         {
-            _componentEvent.RemoveAllListeners();
+            if (_wrapFunc != null)
+                _wrapFunc(_command)(data);
+            else
+                _command(data);
+        }
+
+        public override void ClearView()
+        {
+            _componentEvent.RemoveListener(Listener);
+        }
+
+        public override void ClearModel()
+        {
+
         }
     }
 }
