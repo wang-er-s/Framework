@@ -85,6 +85,11 @@ namespace Tool
 
         public static Type GetCLRType(this Type type)
         {
+            return GetCLRTypeFunc(type);
+        }
+        
+        public static Type GetCLRTypeFunc(Type type)
+        {
 #if ILRUNTIME
             if (type is ILRuntimeType runtimeType)
                 return runtimeType.ILType.ReflectionType;

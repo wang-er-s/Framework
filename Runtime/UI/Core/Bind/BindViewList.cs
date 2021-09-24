@@ -15,9 +15,11 @@ namespace Framework.UI.Core.Bind
         private List<View> _views;
         private ObservableList<TVm> _list;
         private List<ViewWrapper> _wrappers;
+        private Type viewType;
 
         public BindViewList()  : base(null)
         {
+            viewType = typeof(TView);
         }
 
         public void Reset(ObservableList<TVm> list, Transform root)
@@ -27,6 +29,11 @@ namespace Framework.UI.Core.Bind
             _list = list;
             InitEvent();
             InitCpntValue(); 
+        }
+
+        public void SetViewType(Type type)
+        {
+            viewType = type;
         }
 
         private void InitCpntValue()
@@ -45,7 +52,7 @@ namespace Framework.UI.Core.Bind
             _wrappers = new List<ViewWrapper>(childCount);
             for (int i = 0; i < childCount; i++)
             {
-                var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+                var view = ReflectionHelper.CreateInstance(viewType) as View;
                 var wrapper = new ViewWrapper(view, _content,i);
                 wrapper.SetTag(i);
                 _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
@@ -66,79 +73,21 @@ namespace Framework.UI.Core.Bind
             }
         }
     }
-    
-    public class BindViewList<TVm> : BaseBind where TVm : ViewModel
-    {
-        private Transform _content;
-        private List<View> _views;
-        private ObservableList<TVm> _list;
-        private List<ViewWrapper> _wrappers;
-        private Type _viewType;
-
-        public BindViewList(): base(null)
-        {
-        }
-
-        public void Reset(ObservableList<TVm> list, Transform root, Type view)
-        {
-            if (!view.IsSubclassOf(typeof(View)))
-            {
-                Log.Error(view,"no subclass of View");
-                return;
-            }
-            _viewType = view;
-            _views = new List<View>();
-            _content = root;
-            _list = list;
-            InitEvent();
-            InitCpntValue(); 
-        }
-
-        private void InitCpntValue()
-        {
-            for (var i = 0; i < _list.Count; i++)
-            {
-                var vm = _list[i];
-                _wrappers.ForEach((wrapper) =>
-                    ((IBindList<ViewModel>) wrapper).GetBindListFunc()(NotifyCollectionChangedAction.Add, vm, i));
-            }
-        }
-
-        private void InitEvent()
-        {
-            int childCount = _content.childCount;
-            _wrappers = new List<ViewWrapper>(childCount);
-            for (int i = 0; i < childCount; i++)
-            {
-                var view = ReflectionHelper.CreateInstance(_viewType) as View;
-                var wrapper = new ViewWrapper(view, _content,i);
-                wrapper.SetTag(i);
-                _list.AddListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
-                _wrappers.Add(wrapper);
-            }
-        }
-
-        public override void ClearView()
-        {
-            
-        }
-
-        public override void ClearModel()
-        {
-            foreach (var wrapper in _wrappers)
-            {
-                _list.RemoveListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
-            }
-        }
-    }
 
     public class BindIpairsViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {
         private ObservableList<TVm> _list;
         private List<View> _views;
-
+        private Type viewType;
+        
         public BindIpairsViewList() : base(null)
         {
+            viewType = typeof(TView);
+        }
+        
+        public void SetViewType(Type type)
+        {
+            viewType = type;
         }
 
         public void Reset(ObservableList<TVm> list, string itemName, Transform root)
@@ -160,7 +109,7 @@ namespace Framework.UI.Core.Bind
             Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
             foreach (Transform child in root)
             {
-                var view = ReflectionHelper.CreateInstance(typeof(TView)) as View;
+                var view = ReflectionHelper.CreateInstance(viewType) as View;
                 Log.Assert(view != null, $"{child.name} must have view component", child);
                 view.SetGameObject (child.gameObject);
                 _views.Add(view);
@@ -174,53 +123,6 @@ namespace Framework.UI.Core.Bind
 
         public override void ClearView()
         {
-        }
-
-        public override void ClearModel()
-        {
-        }
-    }
-    
-    public class BindIpairsViewList<TVm> : BaseBind where TVm : ViewModel
-    {
-        private ObservableList<TVm> _list;
-        private List<View> _views;
-        private Type _viewType;
-
-        public BindIpairsViewList() : base(null)
-        {
-        }
-
-        public void Reset(ObservableList<TVm> list, string itemName, Transform root, Type view)
-        {
-            _viewType = view;
-            this._list = list;
-            ParseItems(itemName, root);
-            InitEvent();
-        }
-
-        private void ParseItems(string itemName, Transform root)
-        {
-            _views = new List<View>();
-            var regex = new Regex(@"[/w ]*?(?<=\[)[?](?=\])");
-            Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
-            foreach (Transform child in root)
-            {
-                var view = ReflectionHelper.CreateInstance(_viewType) as View;
-                Log.Assert(view != null, $"{child.name} must have view component", child);
-                view.SetGameObject (child.gameObject);
-                _views.Add(view);
-            }
-        }
-
-        private void InitEvent()
-        {
-            for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
-        }
-        
-        public override void ClearView()
-        {
-            
         }
 
         public override void ClearModel()

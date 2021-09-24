@@ -161,7 +161,7 @@ namespace Framework.UI.Core
         {
             if (view.IsSingle)
             {
-                Close(view.GetType());
+                Close(view.GetCLRType());
                 return;
             }
             for (int i = 0; i < openedViews.Count; i++)

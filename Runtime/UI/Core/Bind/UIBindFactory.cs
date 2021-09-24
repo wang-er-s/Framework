@@ -45,20 +45,58 @@ namespace Framework.UI.Core.Bind
         /// <summary>
         /// 用在热更的BindView
         /// </summary>
-        public void BindViewList(ObservableList<ViewModelAdapter.Adapter> list,Transform root, Type view)
+        public void BindViewList(ObservableList<ViewModelAdapter.Adapter> list,LoopScrollRect root, Type view)
         {
-            BindViewList<ViewModelAdapter.Adapter> bind;
+            BindLoopViewList<ViewModelAdapter.Adapter,ViewAdapter.Adapter> bind;
             if (CacheBinds.Count > 0)
             {
-                bind = (BindViewList<ViewModelAdapter.Adapter>) CacheBinds.Dequeue();
+                bind = (BindLoopViewList<ViewModelAdapter.Adapter,ViewAdapter.Adapter>) CacheBinds.Dequeue();
             }
             else
             {
-                bind = new BindViewList<ViewModelAdapter.Adapter>();
+                bind = new BindLoopViewList<ViewModelAdapter.Adapter,ViewAdapter.Adapter>();
             }
-            bind.Reset(list, root, view);
+            bind.SetViewType(view);
+            bind.Reset(list, root);
             AddClearable(bind);
         }
+        
+        /// <summary>
+        /// 用在热更的BindView
+        /// </summary>
+        public void BindViewList(ObservableList<ViewModelAdapter.Adapter> list,Transform root, Type view)
+        {
+            BindViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter>) CacheBinds.Dequeue();
+            }
+            else
+            {
+                bind = new BindViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter>();
+            }
+            bind.SetViewType(view);
+            bind.Reset(list, root);
+            AddClearable(bind);
+        }
+        
+        public void BindIpairs
+            (ObservableList<ViewModelAdapter.Adapter> list, Transform root, string pattern, Type view)
+        {
+            BindIpairsViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindIpairsViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter>) CacheBinds.Dequeue();
+            }
+            else
+            {
+                bind = new BindIpairsViewList<ViewModelAdapter.Adapter, ViewAdapter.Adapter>();
+            }
+            bind.SetViewType(view);
+            bind.Reset(list, pattern, root);
+            AddClearable(bind);
+        }
+
 #endif
         
         public void BindIpairs<TItemVm, TItemView>
@@ -75,22 +113,6 @@ namespace Framework.UI.Core.Bind
                 bind = new BindIpairsViewList<TItemVm, TItemView>();
             }
             bind.Reset(list, pattern, root);
-            AddClearable(bind);
-        }
-        
-        public void BindIpairs<TItemVm>
-            (ObservableList<TItemVm> list, Transform root, string pattern, Type view) where TItemVm : ViewModel
-        {
-            BindIpairsViewList<TItemVm> bind;
-            if (CacheBinds.Count > 0)
-            {
-                bind = (BindIpairsViewList<TItemVm>) CacheBinds.Dequeue();
-            }
-            else
-            {
-                bind = new BindIpairsViewList<TItemVm>();
-            }
-            bind.Reset(list, pattern, root, view);
             AddClearable(bind);
         }
 

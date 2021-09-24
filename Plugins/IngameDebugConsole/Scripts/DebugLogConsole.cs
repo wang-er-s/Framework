@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Tool;
 using Object = UnityEngine.Object;
 
 // Manages the console commands, parses console input and handles execution of commands
@@ -318,7 +319,7 @@ namespace IngameDebugConsole
 					return;
 				}
 
-				Type parameterType = parameters[i].ParameterType;
+				Type parameterType = ReflectionHelper.GetCLRTypeFunc(parameters[i].ParameterType);
 				if( parseFunctions.ContainsKey( parameterType ) || typeof( Component ).IsAssignableFrom( parameterType ) || parameterType.IsEnum || IsSupportedArrayType( parameterType ) )
 					parameterTypes[i] = parameterType;
 				else

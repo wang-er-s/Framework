@@ -1,20 +1,29 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Framework.Execution;
+using Tool;
 using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
     public class BindLoopViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View , new()
     {
-        private Dictionary<Transform, TView> itemTrans2View = new Dictionary<Transform, TView>();
+        private Dictionary<Transform, View> itemTrans2View = new Dictionary<Transform, View>();
         private ObservableList<TVm> itemsVm;
         private LoopScrollRect loopScrollRect;
+        private Type viewType;
         
         public BindLoopViewList()  : base(null)
         {
+            viewType = typeof(TView);
         }
 
+        public void SetViewType(Type type)
+        {
+            viewType = type;
+        }
+        
         public void Reset(ObservableList<TVm> items, LoopScrollRect loopScrollRect)
         {
             itemsVm = items;
@@ -29,7 +38,7 @@ namespace Framework.UI.Core.Bind
         {
             if (!itemTrans2View.TryGetValue(itemTrans, out var item))
             {
-                item = new TView();
+                item = ReflectionHelper.CreateInstance(viewType) as View;
                 itemTrans2View[itemTrans] = item;
                 item.SetGameObject(itemTrans.gameObject);
             }

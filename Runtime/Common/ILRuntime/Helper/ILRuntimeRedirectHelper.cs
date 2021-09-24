@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Framework.Contexts;
+using Framework.UI;
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using Google.Protobuf;
@@ -474,7 +475,7 @@ namespace Framework
             return ret;
         }
 
-              unsafe static StackObject* BindViewList(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
+        unsafe static StackObject* BindViewList(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack,
             CLRMethod __method, bool isNewObj)
         {
             //CLR重定向的说明请看相关文档和教程，这里不多做解释
@@ -506,8 +507,16 @@ namespace Framework
                     {
                         type = viewType.ReflectionType;
                     }
-                    ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
-                        (Transform) root, type);
+                    if (root is Transform trans)
+                    {
+                        ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
+                            trans, type);
+                    }
+                    if (root is LoopScrollRect loopScrollRect)
+                    {
+                        ((UIBindFactory) ins).BindViewList((ObservableList<ViewModelAdapter.Adapter>) list,
+                            loopScrollRect, type);
+                    }
                 }
                 catch (Exception e)
                 {

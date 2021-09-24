@@ -51,16 +51,19 @@ namespace Framework
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Shader>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Sprite>>();
             appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, UnityEngine.Screen>>();
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single>>();
             appdomain.DelegateManager.RegisterFunctionDelegate<Framework.ViewModelAdapter.Adapter, Framework.ViewModelAdapter.Adapter, System.Int32>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, System.Int32, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Int64, System.Int64, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.String, System.Int64, System.String>();
-
+            appdomain.DelegateManager.RegisterMethodDelegate<Framework.Asynchronous.IProgressResult<System.Single, Framework.MonoBehaviourAdapter.Adaptor>>();
+            
             #endregion
 
             #region Function
-            appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Object>();
             
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Object, System.Object>();
+            appdomain.DelegateManager.RegisterFunctionDelegate<System.Single, System.Single, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Reflection.MethodInfo, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean, System.String>();
@@ -90,7 +93,7 @@ namespace Framework
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.KeyValuePair<System.String, ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.Boolean>();
             appdomain.DelegateManager.RegisterFunctionDelegate<System.Collections.Generic.KeyValuePair<System.String, ILRuntime.Runtime.Intepreter.ILTypeInstance>, System.String>();
             appdomain.DelegateManager.RegisterFunctionDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance, Framework.MonoBehaviourAdapter.Adaptor>();
-            
+            appdomain.DelegateManager.RegisterFunctionDelegate<Framework.Asynchronous.IProgressResult<System.Single>>();
 
             #endregion
 
