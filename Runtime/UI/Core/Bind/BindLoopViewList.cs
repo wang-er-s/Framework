@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Framework.Execution;
 using UnityEngine;
 
 namespace Framework.UI.Core.Bind
@@ -34,10 +36,22 @@ namespace Framework.UI.Core.Bind
             item.SetVm(itemsVm[index]);
         }
 
+        private Coroutine delayRefreshCoroutine;
         private void OnListChanged(List<TVm> list)
         {
-            loopScrollRect.totalCount = list.Count;
-            loopScrollRect.RefillCells();
+            //加一个延迟协程，防止一阵内多次修改list，造成频繁计算，一帧内修改完后，下一帧再计算一次就可以了
+            if (delayRefreshCoroutine == null)
+            {
+                delayRefreshCoroutine = Executors.RunOnCoroutineReturn(DelayRefreshList());
+            }
+        }
+        
+        IEnumerator DelayRefreshList()
+        {
+            yield return null;
+            loopScrollRect.totalCount = itemsVm.Count;
+            loopScrollRect.RefreshCells();
+            delayRefreshCoroutine = null;
         }
 
         public override void ClearView()

@@ -119,7 +119,6 @@ namespace Framework.Assets
 
         protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
-            Debug.Log($"load {key}");
             loadProgress.Add(promise);
             var asset = Asset.LoadAsync(key, typeof(T), result =>
             {
