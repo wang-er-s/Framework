@@ -140,18 +140,20 @@ namespace Framework.UI.Core.Bind
 
         public void BindData<TData>(ObservableProperty<TData> property, Action<TData> cb)
         {
-            cb?.Invoke(property);
-            property.AddListener(cb);
-            AddClearable(property);
+            AddClearable(property.AddListener(cb));
         }
         
         public void BindData<TData1,TData2>(ObservableProperty<TData1> property,ObservableProperty<TData2> property2, Action<TData1, TData2> cb)
         {
-            cb?.Invoke(property, property2);
-            property.AddListener((data1) => cb?.Invoke(data1, property2));
-            property2.AddListener((data2) => cb?.Invoke(property, data2));
-            AddClearable(property);
-            AddClearable(property2);
+            AddClearable(property.AddListener(data1 => cb?.Invoke(data1, property2)));
+            AddClearable(property2.AddListener(data2 => cb?.Invoke(property, data2)));
+        }
+        
+        public void BindData<TData1,TData2,TData3>(ObservableProperty<TData1> property,ObservableProperty<TData2> property2,ObservableProperty<TData3> property3, Action<TData1, TData2, TData3> cb)
+        {
+            AddClearable(property.AddListener((data1) =>  cb?.Invoke(data1, property2, property3)));
+            AddClearable(property2.AddListener((data2) =>  cb?.Invoke(property, data2, property3)));
+            AddClearable(property3.AddListener((data3) =>  cb?.Invoke(property, property2, data3)));
         }
 
         //绑定command

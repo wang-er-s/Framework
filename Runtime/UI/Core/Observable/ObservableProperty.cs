@@ -33,10 +33,12 @@ namespace Framework.UI.Core.Bind
             OnValueChanged?.Invoke(newValue);
         }
 
-        public void AddListener(Action<T> changeAction)
+        public UnRegister AddListener(Action<T> changeAction)
         {
             changeAction(_value);
             OnValueChanged += changeAction;
+            UnRegister result = new UnRegister(() => RemoveListener(changeAction));
+            return result;
         }
 
         public void RemoveListener(Action<T> changeAction)

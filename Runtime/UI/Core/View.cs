@@ -30,7 +30,7 @@ namespace Framework.UI.Core
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
-        private event Action OnDestroy;
+        internal event Action OnDestroy;
         public IRes Res { get; }
 
         public View()

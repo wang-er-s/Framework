@@ -29,6 +29,7 @@ public class CustomButton : Button, IComponentEvent ,IFieldChangeCb<bool>
     private CanvasRenderer canvasRenderer;
     private Text textComponent;
     private TextMeshProUGUI tmp;
+    private string text;
     public string Text
     {
         get
@@ -41,6 +42,8 @@ public class CustomButton : Button, IComponentEvent ,IFieldChangeCb<bool>
         {
             if (textComponent != null) textComponent.text = value;
             if (tmp != null) tmp.text = value;
+            //缓存一下，避免awake没执行
+            text = value;
         }
     }
 
@@ -50,6 +53,8 @@ public class CustomButton : Button, IComponentEvent ,IFieldChangeCb<bool>
         canvasRenderer = GetComponent<CanvasRenderer>();
         textComponent = GetComponentInChildren<Text>();
         tmp = GetComponentInChildren<TextMeshProUGUI>();
+        if (textComponent != null) textComponent.text = text;
+        if (tmp != null) tmp.text = text;
         selfMat = targetGraphic.material;
     }
 

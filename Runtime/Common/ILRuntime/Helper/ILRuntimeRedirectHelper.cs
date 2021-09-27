@@ -362,7 +362,8 @@ namespace Framework
                     }
                     else
                     {
-                        var result = UIManager.Ins.OpenAsync(t.TypeForCLR, (ViewModel) vm);
+                        var result = UIManager.Ins.OpenAsync(t.TypeForCLR, 
+                            (ViewModel)((ILTypeInstance)vm)?.CLRInstance);
                         return ILIntepreter.PushObject(ret, mStack, result);
                     }
                 }

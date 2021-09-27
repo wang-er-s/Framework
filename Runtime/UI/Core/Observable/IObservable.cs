@@ -10,4 +10,24 @@ namespace Framework.UI.Core.Bind
         void InitValueWithoutCb(object val);
         void ForceTrigger();
     }
+
+    public struct UnRegister : IClearable
+    {
+        private Action action;
+
+        public UnRegister(Action action)
+        {
+            this.action = action;
+        }
+        
+        public void ClearView()
+        {
+            
+        }
+
+        public void ClearModel()
+        {
+            action();
+        }
+    }
 }
