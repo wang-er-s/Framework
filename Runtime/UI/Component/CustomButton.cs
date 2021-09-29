@@ -53,8 +53,11 @@ public class CustomButton : Button, IComponentEvent ,IFieldChangeCb<bool>
         canvasRenderer = GetComponent<CanvasRenderer>();
         textComponent = GetComponentInChildren<Text>();
         tmp = GetComponentInChildren<TextMeshProUGUI>();
-        if (textComponent != null) textComponent.text = text;
-        if (tmp != null) tmp.text = text;
+        if (!string.IsNullOrEmpty(text))
+        {
+            if (textComponent != null) textComponent.text = text;
+            if (tmp != null) tmp.text = text;
+        }
         selfMat = targetGraphic.material;
     }
 
