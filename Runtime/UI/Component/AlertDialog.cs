@@ -152,7 +152,7 @@ namespace Framework.Runtime.UI.Component
 
         public AlertDialogView View { get; private set; }
         private View contentView;
-        private AlertDialogVM viewModel;
+        public AlertDialogVM ViewModel { get; private set; }
 
         public AlertDialog(AlertDialogView view, AlertDialogVM viewModel) : this(view, null, viewModel)
         {
@@ -162,17 +162,17 @@ namespace Framework.Runtime.UI.Component
         {
             this.View = view;
             this.contentView = contentView;
-            this.viewModel = viewModel;
+            this.ViewModel = viewModel;
         }
 
         public virtual object WaitForClosed()
         {
-            return Executors.WaitWhile(() => !this.viewModel.Closed);
+            return Executors.WaitWhile(() => !this.ViewModel.Closed);
         }
 
         public void Show()
         {
-            this.View.SetVm(viewModel);
+            this.View.SetVm(ViewModel);
             if (this.contentView != null)
                 contentView.AddSubView(View);
             this.View.Show();

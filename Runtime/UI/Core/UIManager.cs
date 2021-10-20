@@ -215,6 +215,16 @@ namespace Framework.UI.Core
             view.Dispose();
             //_waitDestroyViews[view] = DateTime.Now.AddSeconds(ViewDestroyTime);
         }
+        
+        public void CloseAll()
+        {
+            foreach (var openedView in openedViews)
+            {
+                openedView.Dispose();
+            }
+            openedViews.Clear();
+            openedSingleViews.Clear();
+        }
 
         private void Sort(View view)
         {

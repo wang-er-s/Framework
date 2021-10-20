@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +11,9 @@ public class UIMark : MonoBehaviour
     public string FieldName;
 
     [ValueDropdown("Components")]
-    public Component CurComponent;
+    public Object CurComponent;
 
-    private List<Component> Components;
+    private List<Object> Components;
 
     public bool IgnoreSelf;
 
@@ -20,8 +21,7 @@ public class UIMark : MonoBehaviour
 
     private void Awake()
     {
-        Components = new List<Component>();
-        gameObject.GetComponents(typeof(Component), Components);
+        RefreshComponent();
         if (!string.IsNullOrEmpty(FieldName)) return;
         FieldName = gameObject.name;
         foreach (var component in Components)
@@ -36,9 +36,15 @@ public class UIMark : MonoBehaviour
 
     private void Update()
     {
-        gameObject.GetComponents(typeof(Component), Components);
+        RefreshComponent();
     }
-    
+
+    private void RefreshComponent()
+    {
+        Components = gameObject.GetComponents<Component>().Select((component => (Object)component)).ToList();
+        Components.Add(gameObject);
+    }
+
     private Component DefaultComponent
     {
         get
