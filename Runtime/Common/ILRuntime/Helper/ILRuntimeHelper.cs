@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Framework.Assets;
 using Framework.Asynchronous;
 using ILRuntime.Mono.Cecil.Pdb;
 using UnityEngine;
@@ -25,33 +26,26 @@ namespace Framework
 	        //开发模式
 	        if (ilrConfig.UseHotFix)
 	        {
-		        string prefix = String.Empty;
-		        if (Application.platform == RuntimePlatform.OSXEditor ||
-		            Application.platform == RuntimePlatform.WindowsEditor)
+		        var dllPath = $"{ilrConfig.DllName}.dll";
+		        var pdbPath = $"{ilrConfig.DllName}.pdb";
+		        var dllText = Res.Default.LoadAssetAsync<TextAsset>(dllPath);
+		        await dllText;
+		        if (dllText.Exception != null)
 		        {
-			        prefix = "file:///";
+			        Log.Error(dllText.Exception);
 		        }
-
-		        var dllPath = $"{prefix}{Application.streamingAssetsPath}/{ilrConfig.DllName}.dll";
-		        var pdbPath = $"{prefix}{Application.streamingAssetsPath}/{ilrConfig.DllName}.pdb";
-		        UnityWebRequest www = UnityWebRequest.Get(dllPath);
-		        await www.SendWebRequest();
-		        if (www.isHttpError | www.isNetworkError)
-		        {
-			        Log.Error(www.error);
-		        }
-		        fs = new MemoryStream(www.downloadHandler.data);
+		        fs = new MemoryStream(dllText.Result.bytes);
 		        if (ilrConfig.UsePbd && File.Exists(pdbPath))
 		        {
-			        www = UnityWebRequest.Get(pdbPath);
-			        await www.SendWebRequest();
-			        if (www.isHttpError | www.isNetworkError)
+			        var pdbText = Res.Default.LoadAssetAsync<TextAsset>(dllPath);
+			        await pdbText;
+			        if (pdbText.Exception != null)
 			        {
-				        Log.Error(www.error);
+				        Log.Error(pdbText.Exception);
 			        }
 			        else
 			        {
-				        pdb = new MemoryStream(www.downloadHandler.data);
+				        pdb = new MemoryStream(pdbText.Result.bytes);
 			        }
 		        }
 	        }

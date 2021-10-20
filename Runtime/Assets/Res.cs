@@ -25,6 +25,8 @@ namespace Framework.Assets
     public abstract class Res : IRes
     {
         private static IRes @default;
+        public abstract IAsyncResult Init();
+
         public abstract string DownloadURL { get; set; }
 
         public static IRes Default => @default ?? (@default = Create());
@@ -50,11 +52,6 @@ namespace Framework.Assets
                     result = new XAssetRes();
                     break;
 #endif
-#if UNITY_EDITOR
-                case FrameworkRuntimeConfig.ResType.Editor:
-                    result = new EditorRes();
-                    break;
-#endif
             }
             return result;
         }
@@ -62,8 +59,8 @@ namespace Framework.Assets
         public abstract T LoadAsset<T>(string key) where T : Object;
         protected abstract void LoadScene(IProgressPromise<float, Scene> promise, string path,
             LoadSceneMode loadSceneMode);
-        public abstract Task<string> CheckDownloadSize(string key);
-        public abstract Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
+        public abstract IProgressResult<float,string> CheckDownloadSize();
+        public abstract IProgressResult<DownloadProgress> DownloadAssets();
         protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
         public abstract void Release();
         

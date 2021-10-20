@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
@@ -14,6 +15,11 @@ namespace Framework.Assets
         private List<Object> _handles = new List<Object>();
         private List<ResourceRequest> requests = new List<ResourceRequest>();
 
+        public override IAsyncResult Init()
+        {
+            return AsyncResult.Void();   
+        }
+
         public override string DownloadURL { get; set; }
         
         protected override void LoadScene(IProgressPromise<float, Scene> promise, string path, LoadSceneMode loadSceneMode)
@@ -21,20 +27,14 @@ namespace Framework.Assets
             throw new NotImplementedException();
         }
 
-#pragma warning disable 1998
-        public override async Task<string> CheckDownloadSize(string key)
-#pragma warning restore 1998
+        public override IProgressResult<float,string> CheckDownloadSize()
         {
-            return "";
+            return ProgressResult<float,string>.Void();
         }
-
-#pragma warning disable 1998
-        public override async Task<IProgressResult<DownloadProgress>> DownloadAssets(string key)
-#pragma warning restore 1998
+        
+        public override IProgressResult<DownloadProgress> DownloadAssets()
         {
-            ProgressResult<DownloadProgress> progressResult = new ProgressResult<DownloadProgress>();
-            progressResult.SetResult();
-            return progressResult;
+            return ProgressResult<DownloadProgress>.Void();
         }
 
         protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
@@ -57,7 +57,7 @@ namespace Framework.Assets
             _handles.Add(obj);
             return obj;
         }
-        
+
         public override void Release()
         {
             foreach (var handle in _handles)

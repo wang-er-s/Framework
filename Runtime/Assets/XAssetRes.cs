@@ -2,24 +2,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using Framework.Execution;
-using Framework.Runtime.UI.Component;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VEngine;
-using Object = UnityEngine.Object;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
+using Logger = VEngine.Logger;
 using Scene = VEngine.Scene;
 
 namespace Framework.Assets
 {
     public class XAssetRes : Res
     {
-        private string _preDownloadKey;
-        private List<DownloadInfo> _needDownloadRes;
-        private Dictionary<string, Loadable> _handles = new Dictionary<string, Loadable>();
+        private List<DownloadInfo> needDownloadRes;
+        private Dictionary<string, Loadable> handles = new Dictionary<string, Loadable>();
         private List<IProgressPromise<float>> loadProgress = new List<IProgressPromise<float>>();
+        private InitializeVersions initializeVersions;
+
+        public override IAsyncResult Init()
+        {
+            return Executors.RunOnCoroutine(init);
+        }
+
+        private IEnumerator init(IPromise promise)
+        {
+            Logger.Loggable = false;
+            Versions.customLoadPath = Path.GetFileNameWithoutExtension;
+            initializeVersions = Versions.InitializeAsync();
+            yield return initializeVersions;
+            var update = Versions.UpdateAsync(initializeVersions.manifests);
+            yield return update;
+            if (update.status == OperationStatus.Success)
+            {
+                update.Override();
+                Log.Msg($"Success to update versions with version: {Versions.ManifestsVersion}");
+            }
+            if (!string.IsNullOrEmpty(update.error))
+                promise.SetException(update.error);
+            else
+                promise.SetResult();
+        }
 
         public override string DownloadURL
         {
@@ -27,60 +52,53 @@ namespace Framework.Assets
             set => Versions.DownloadURL = value;
         }
 
-        public override async Task<string> CheckDownloadSize(string key)
+        public override IProgressResult<float,string> CheckDownloadSize()
         {
-            _preDownloadKey = key;
-            var update = Versions.UpdateAsync(key);
-            await update;
-            
-            var check = Versions.GetDownloadSizeAsync();
-            await check;
-            // 判断是否有内容需要更新
-            if (check.result.Count <= 0)
-            {
-                return String.Empty;
-            }
-            _needDownloadRes = check.result;
-            return Utility.FormatBytes(check.totalSize);
+            return Executors.RunOnCoroutine<float,string>(checkDownloadSize);
         }
 
-        // public IAsyncResult<string> CheckDownloadSize2(string key)
-        // {
-        //     AsyncResult<string> result = new AsyncResult<string>();
-        //     CheckDownloadSize2(key,result);
-        //     return result;
-        // }
-        //
-        // async void CheckDownloadSize2(string key, IPromise<string> promise)
-        // {
-        //     var update = Versions.UpdateAsync(key);
-        //     await update;
-        //     if (update.status == OperationStatus.Failed)
-        //     {
-        //        promise.SetException(update.error);
-        //        return;
-        //     }
-        //     var check = Versions.GetDownloadSizeAsync(update);
-        //     await check;
-        // }
-        
-        public override async Task<IProgressResult<DownloadProgress>> DownloadAssets(string key)
+        private IEnumerator checkDownloadSize(IProgressPromise<float,string> promise)
         {
-            if (_preDownloadKey != key)
-                await CheckDownloadSize(key);
-            ProgressResult<DownloadProgress> progressResult = new ProgressResult<DownloadProgress>();
-            Executors.RunOnCoroutineNoReturn(Download(progressResult));
-            return progressResult;
+            List<string> assets = new List<string>();
+            foreach (var manifest in Versions.Manifests)
+            {
+                foreach (var manifestBundle in manifest.bundles)
+                {
+                    assets.AddRange(manifestBundle.assets);
+                }
+            }
+            var downloadInfos = Versions.GetDownloadSizeAsync(assets.ToArray());
+            while (!downloadInfos.isDone)
+            {
+                promise.UpdateProgress(downloadInfos.progress);
+                yield return null;
+            }
+            if (downloadInfos.status != OperationStatus.Success)
+            {
+                promise.SetException(downloadInfos.error);
+                yield break;
+            }
+            // 判断是否有内容需要更新
+            if (downloadInfos.result.Count <= 0)
+            {
+                promise.SetResult(String.Empty);
+            }
+            needDownloadRes = downloadInfos.result;
+            promise.SetResult(Utility.FormatBytes(downloadInfos.totalSize));
+        }
+
+        public override IProgressResult<DownloadProgress> DownloadAssets()
+        {
+            return Executors.RunOnCoroutine<DownloadProgress>(Download);
         }
 
         private IEnumerator Download(IProgressPromise<DownloadProgress> promise)
         {
-            // 这里省略了请求下载的逻辑，直接启动更新
-            var download = Versions.DownloadAsync(_needDownloadRes.ToArray());
-// 采样时间，推荐每秒采样一次
-            const float sampleTime = 1f;
-// 上次采样的进度，用来计算下载速度
-            var lastDownloadedBytes = 0UL;
+            var download = Versions.DownloadAsync(needDownloadRes);
+            // 采样时间，推荐每秒采样一次
+            float sampleTime = 0.5f;
+            // 上次采样的进度，用来计算下载速度
+            long lastDownloadedBytes = 0;
             var lastSampleTime = 0f;
             while (!download.isDone)
             {
@@ -92,7 +110,7 @@ namespace Framework.Assets
                     var max = Utility.FormatBytes(download.totalSize);
                     // 计算速度
                     var amount = lastDownloadedBytes - download.downloadedBytes;
-                    var speed = Utility.FormatBytes((ulong) (amount / sampleTime));
+                    var speed = Utility.FormatBytes(amount * (long)(1 / sampleTime));
                     lastDownloadedBytes = download.downloadedBytes;
                     lastSampleTime = Time.realtimeSinceStartup;
                     promise.UpdateProgress(new DownloadProgress(now, max, speed, download.progress));
@@ -100,7 +118,14 @@ namespace Framework.Assets
 
                 yield return null;
             }
-            promise.SetResult();
+            if (download.status != OperationStatus.Success)
+            {
+                promise.SetException(download.error);
+            }
+            else
+            {
+                promise.SetResult();
+            }
         }
         
         protected override async void LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path, LoadSceneMode loadSceneMode)
@@ -113,7 +138,7 @@ namespace Framework.Assets
                 promise.UpdateProgress(loader.progress);
             }
 
-            _handles[path] = loader;
+            handles[path] = loader;
             promise.SetResult();
         }
 
@@ -134,12 +159,12 @@ namespace Framework.Assets
                 //TODO  考虑一下怎么release asset。。 
                 //result.Release();
             });
-            _handles[key] = asset;
+            handles[key] = asset;
         }
 
         public override void Release()
         {
-            foreach (var loadable in _handles.Values)
+            foreach (var loadable in handles.Values)
             {
                 loadable?.Release();
             }
@@ -149,7 +174,7 @@ namespace Framework.Assets
                     promise.SetCancelled();
             }
             loadProgress.Clear();
-            _handles.Clear();
+            handles.Clear();
         }
 
         public override T LoadAsset<T>(string key)

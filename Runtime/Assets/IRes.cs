@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
 {
     public interface IRes
     {
+        IAsyncResult Init();
         string DownloadURL { get; set; }
         IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object;
 
@@ -26,9 +28,9 @@ namespace Framework.Assets
             bool instantiateInWorldSpace = false);
 
         IProgressResult<float, Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single);
-        
-        Task<string> CheckDownloadSize(string key);
-        Task<IProgressResult<DownloadProgress>> DownloadAssets(string key);
+
+        IProgressResult<float, string> CheckDownloadSize();
+        IProgressResult<DownloadProgress> DownloadAssets();
 
         void Release();
         
