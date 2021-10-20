@@ -37,22 +37,17 @@ namespace Framework.Editor
         
         private static void BuildDLL(bool isDebug)
         {
-            var config = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
+            var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
+            var config = runtimeConfig.ILRConfig;
             config.ReleaseBuild = !isDebug;
+            EditorUtility.SetDirty(runtimeConfig);
             AssetDatabase.SaveAssets();
             usePdb = config.UsePbd;
             var dllName = config.DllName;
-                string codeSource = Application.dataPath + "/_scripts@hotfix";
-            string outPath = Application.streamingAssetsPath + $"/{dllName}.dll";
+            string codeSource = Application.dataPath + "/_scripts@hotfix";
+            string outPath = config.DllGenPath + $"/{dllName}.dll";
             List<string> allDll = new List<string>();
             var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
-            if (!usePdb)
-            {
-                //删除pdb文件
-                var pdbPath = Path.ChangeExtension(outPath, "pdb");
-                if(File.Exists(pdbPath))
-                    File.Delete(pdbPath);
-            }
             try
             {
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
@@ -164,7 +159,7 @@ namespace Framework.Editor
                 }
                 output = output.Replace("\\", "/");
             }
-
+            
             //添加语法树
             List<Microsoft.CodeAnalysis.SyntaxTree> codes = new List<Microsoft.CodeAnalysis.SyntaxTree>();
             var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
@@ -177,7 +172,7 @@ namespace Framework.Editor
                 var syntaxTree = CSharpSyntaxTree.ParseText(content, opa, cs, Encoding.UTF8);
                 codes.Add(syntaxTree);
             }
-            
+
             //添加dll
             List<MetadataReference> assemblies = new List<MetadataReference>();
             foreach (var dll in dlls)
@@ -211,20 +206,21 @@ namespace Framework.Editor
             var assemblyname = Path.GetFileNameWithoutExtension(output);
             var compilation = CSharpCompilation.Create(assemblyname, codes, assemblies, option);
             EmitResult result = null;
-            if (!usePdb)
+
+            var pdbPath = Path.ChangeExtension(output, "pdb");
+            
+            var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb,
+                pdbFilePath: pdbPath);
+            using (var dllStream = new MemoryStream())
+            using (var pdbStream = new MemoryStream())
             {
-                result = compilation.Emit(output);
-            }
-            else
-            {
-                var pdbPath = Path.ChangeExtension(output, "pdb");
-                var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb,
-                    pdbFilePath: pdbPath);
-                using (var dllStream = new MemoryStream())
-                using (var pdbStream = new MemoryStream())
+                result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
+                File.WriteAllBytes(output + ".bytes", dllStream.GetBuffer());
+                pdbPath += ".bytes";
+                if(File.Exists(pdbPath))
+                    File.Delete(pdbPath);
+                if (usePdb)
                 {
-                    result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
-                    File.WriteAllBytes(output, dllStream.GetBuffer());
                     File.WriteAllBytes(pdbPath, pdbStream.GetBuffer());
                 }
             }

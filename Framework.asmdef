@@ -3,7 +3,8 @@
     "references": [
         "Unity.ResourceManager",
         "Unity.TextMeshPro",
-        "ILRuntime"
+        "ILRuntime",
+        "XAsset"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

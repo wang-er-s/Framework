@@ -163,7 +163,7 @@ namespace Framework.Editor
                     strBuilder.AppendLine($"\t[TransformPath(\"{transformPath}\")]");
                     var fieldName = uiMark.transform == panelCodeInfo.PanelGo.transform ? "self" : uiMark.fieldName;
                     strBuilder.AppendLine(
-                        $"\tprotected {uiMark.component.GetType().Name} {fieldName};");
+                        $"\tprotected {uiMark.component.GetType().FullName} {fieldName};");
                 }
             }
             var markStr = strBuilder.ToString() + "\t";
@@ -268,9 +268,9 @@ namespace Framework.Editor
         class _uiMark
         {
             public string fieldName;
-            public Component component;
+            public Object component;
             public Transform transform;
-            public _uiMark(string fieldName, Component component, Transform transform)
+            public _uiMark(string fieldName, Object component, Transform transform)
             {
                 this.fieldName = fieldName;
                 this.component = component;

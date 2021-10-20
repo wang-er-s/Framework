@@ -1,9 +1,4 @@
-using UnityEngine;
-using UnityEngine.UI;
-using Framework;
 using Framework.UI.Core;
-using Framework.UI.Core.Bind;
-using TMPro;
 
 [UI("#PrefabPath")]
 public class #ClassName : View
