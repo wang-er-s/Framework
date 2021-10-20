@@ -13,7 +13,6 @@ namespace Framework.Asynchronous
 
         public SequenceProgress(params Func<IProgressResult<float>>[] allProgress) : this(false, allProgress)
         {
-            AddAsyncResult(allProgress);
         }
 
         public SequenceProgress(IProgressResult<float> progress, params Func<IProgressResult<float>>[] allProgress) : this(false, allProgress)
@@ -30,6 +29,7 @@ namespace Framework.Asynchronous
 
         public void AddAsyncResult(Func<IProgressResult<float>> progressResult)
         {
+            if(progressResult == null) return;
             progressQueue.Enqueue(progressResult);
             if (currentProgress == null)
             {

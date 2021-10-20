@@ -65,6 +65,23 @@ namespace Framework.Asynchronous
             Progress = progress;
             RaiseOnProgressCallback(progress);
         }
+        
+        private static IProgressResult<TProgress> voidResult;
+        
+        /// <summary>
+        /// 返回一个完成的IProgressResult<float>
+        /// </summary>
+        /// <returns></returns>
+        public new static IProgressResult<TProgress> Void()
+        {
+            if (voidResult == null)
+            {
+                var result = new ProgressResult<TProgress>();
+                result.SetResult();
+                voidResult = result;
+            }
+            return voidResult;
+        }
     }
 
     public class ProgressResult<TProgress, TResult> : ProgressResult<TProgress>, IProgressResult<TProgress, TResult>,
@@ -135,6 +152,23 @@ namespace Framework.Asynchronous
             {
                 return this._callbackable ?? (this._callbackable = new Callbackable<TResult>(this));
             }
+        }
+        
+        private static IProgressResult<TProgress, TResult> voidResult;
+        
+        /// <summary>
+        /// 返回一个完成的IProgressResult<float>
+        /// </summary>
+        /// <returns></returns>
+        public new static IProgressResult<TProgress, TResult> Void()
+        {
+            if (voidResult == null)
+            {
+                var result = new ProgressResult<TProgress, TResult>();
+                result.SetResult();
+                voidResult = result;
+            }
+            return voidResult;
         }
     }
 }

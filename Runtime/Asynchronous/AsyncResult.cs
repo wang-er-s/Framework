@@ -185,21 +185,23 @@ namespace Framework.Asynchronous
             return Executors.WaitWhile(() => !IsDone);
         }
         
-        private static IProgressResult<float> voidResult;
+        private static IAsyncResult voidResult;
+        
         /// <summary>
         /// 返回一个完成的IProgressResult<float>
         /// </summary>
         /// <returns></returns>
-        public static IProgressResult<float> Void()
+        public static IAsyncResult Void()
         {
             if (voidResult == null)
             {
-                var result = new ProgressResult<float>();
+                var result = new AsyncResult();
                 result.SetResult();
                 voidResult = result;
             }
             return voidResult;
         }
+
     }
 
     public class AsyncResult<TResult> : AsyncResult, IAsyncResult<TResult>, IPromise<TResult>
@@ -254,6 +256,23 @@ namespace Framework.Asynchronous
             {
                 return this._synchronizable ?? (this._synchronizable = new Synchronizable<TResult>(this, this.Lock));
             }
+        }
+        
+        private static IAsyncResult<TResult> voidResult;
+        
+        /// <summary>
+        /// 返回一个完成的IProgressResult<float>
+        /// </summary>
+        /// <returns></returns>
+        public new static IAsyncResult<TResult> Void()
+        {
+            if (voidResult == null)
+            {
+                var result = new AsyncResult<TResult>();
+                result.SetResult();
+                voidResult = result;
+            }
+            return voidResult;
         }
     }
 }

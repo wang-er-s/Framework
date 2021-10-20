@@ -30,6 +30,7 @@ namespace Framework.Asynchronous
 
         public void AddAsyncResult(IAsyncResult progressResult)
         {
+            if (progressResult == null) return;
             _allProgress.Add(progressResult);
             SetSubProgressCb(progressResult);
         }
@@ -44,6 +45,7 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IAsyncResult progressResult)
         {
+            if (progressResult.IsDone) return;
             progressResult.Callbackable().OnCallback(f => RaiseOnProgressCallback(0));
         }
 
@@ -93,7 +95,6 @@ namespace Framework.Asynchronous
 
         public MulProgressResult(params IProgressResult<TProgress>[] allProgress) : this(false, allProgress)
         {
-            AddAsyncResult(allProgress);
         }
 
         public MulProgressResult(bool cancelable, params IProgressResult<TProgress>[] allProgress) : base(cancelable)
@@ -103,6 +104,7 @@ namespace Framework.Asynchronous
 
         public void AddAsyncResult(IProgressResult<TProgress> progressResult)
         {
+            if (progressResult == null) return;
             _allProgress.Add(progressResult);
             SetSubProgressCb(progressResult);
         }
@@ -117,6 +119,7 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IProgressResult<TProgress> progressResult)
         {
+            if (progressResult.IsDone) return;
             progressResult.Callbackable().OnProgressCallback((progress => RaiseOnProgressCallback(0)));
             progressResult.Callbackable().OnCallback(progress => CheckAllFinish());
         }
@@ -179,7 +182,6 @@ namespace Framework.Asynchronous
 
         public MulProgressResult(params IProgressResult<float>[] allProgress) : this(false, allProgress)
         {
-            AddAsyncResult(allProgress);
         }
 
         public MulProgressResult(bool cancelable, params IProgressResult<float>[] allProgress) : base(cancelable)
@@ -189,6 +191,7 @@ namespace Framework.Asynchronous
 
         public void AddAsyncResult(IProgressResult<float> progressResult)
         {
+            if (progressResult == null) return;
             _allProgress.Add(progressResult);
             SetSubProgressCb(progressResult);
         }
@@ -203,6 +206,7 @@ namespace Framework.Asynchronous
 
         private void SetSubProgressCb(IProgressResult<float> progressResult)
         {
+            if (progressResult.IsDone) return;
             progressResult.Callbackable().OnProgressCallback((progress => RaiseOnProgressCallback(0)));
             progressResult.Callbackable().OnCallback(progress => CheckAllFinish());
         }

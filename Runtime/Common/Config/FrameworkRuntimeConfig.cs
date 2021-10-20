@@ -27,9 +27,6 @@ namespace Framework
 #if XASSET
 			XAsset,
 #endif
-#if UNITY_EDITOR
-			Editor,
-#endif
 		}
 	}
 
@@ -42,6 +39,10 @@ namespace Framework
 		[LabelText("是否使用pbd")]
 		public bool UsePbd = true;
 
+		[FolderPath(AbsolutePath = false)]
+		[LabelText("Dll生成位置")]
+		public string DllGenPath;
+		
 		[LabelText("热更dll名字")]
 		public string DllName = "Game@hotfix";
 
@@ -54,5 +55,6 @@ namespace Framework
 
 		[ReadOnly]
 		public bool ReleaseBuild = false;
+		
 	}
 }
