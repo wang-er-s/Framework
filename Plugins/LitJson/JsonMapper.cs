@@ -16,6 +16,10 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Google.Protobuf;
+using ILRuntime.CLR.Method;
+using ILRuntime.CLR.Utils;
+using ILRuntime.Runtime.Intepreter;
+using ILRuntime.Runtime.Stack;
 #if ILRUNTIME
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
@@ -1092,7 +1096,7 @@ namespace LitJson
         {
             custom_importers_table.Clear ();
         }
-#if ILRUNTIME
+
         public static unsafe void RegisterILRuntimeCLRRedirection(ILRuntime.Runtime.Enviorment.AppDomain appdomain)
         {
             foreach(var i in typeof(JsonMapper).GetMethods())
@@ -1157,6 +1161,5 @@ namespace LitJson
 
             return ILIntepreter.PushObject(__ret, mStack, result_of_this_method);
         }
-#endif
     }
 }

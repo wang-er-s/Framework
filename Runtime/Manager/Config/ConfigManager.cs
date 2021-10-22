@@ -54,7 +54,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         _loadedCb += action;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && ILRUNTIME
     public void EditorLoad()
     {
         List<Type> allTypes = new List<Type>();

@@ -9,7 +9,10 @@ namespace Framework
 	{
 		[LabelText("资源加载类型")]
 		public ResType LoadType = ResType.Resources;
-
+		
+#if !ILRUNTIME
+		[HideInInspector]
+#endif
 		[FoldoutGroup("热更设置", expanded: true)]
 		[HideLabel]
 		[InlinePropertyAttribute]
@@ -29,7 +32,7 @@ namespace Framework
 #endif
 		}
 	}
-
+	
 	[Serializable]
 	public class ILRConfig
 	{
@@ -37,7 +40,7 @@ namespace Framework
 		public bool UseHotFix = false;
 
 		[LabelText("是否使用pbd")]
-		public bool UsePbd = true;
+		public bool UsePbd = false;
 
 		[FolderPath(AbsolutePath = false)]
 		[LabelText("Dll生成位置")]

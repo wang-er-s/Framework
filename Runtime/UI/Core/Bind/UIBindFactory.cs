@@ -41,7 +41,6 @@ namespace Framework.UI.Core.Bind
             AddClearable(bind);
         }
         
-#if ILRUNTIME
         /// <summary>
         /// 用在热更的BindView
         /// </summary>
@@ -97,8 +96,6 @@ namespace Framework.UI.Core.Bind
             AddClearable(bind);
         }
 
-#endif
-        
         public void BindIpairs<TItemVm, TItemView>
             (ObservableList<TItemVm> list, Transform root, string pattern) where TItemVm : ViewModel
         where TItemView : View

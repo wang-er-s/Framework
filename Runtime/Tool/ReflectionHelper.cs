@@ -25,8 +25,10 @@ namespace Tool
         static ReflectionHelper()
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
+#if ILRUNTIME
             useHotfix = runtimeConfig.ILRConfig.UseHotFix;
             curHotfixAssembly = AssemblyManager.GetAssembly(runtimeConfig.ILRConfig.DllName);
+#endif
             curGameAssembly = AssemblyManager.GetAssembly(runtimeConfig.GameDllName);
         }
         
