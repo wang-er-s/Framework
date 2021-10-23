@@ -7,9 +7,7 @@ namespace Framework
 	[ShowOdinSerializedPropertiesInInspector]
 	public class FrameworkRuntimeConfig : ConfigBase
 	{
-		[LabelText("资源加载类型")]
-		public ResType LoadType = ResType.Resources;
-		
+
 #if !ILRUNTIME
 		[HideInInspector]
 #endif
@@ -20,17 +18,6 @@ namespace Framework
 
 		[LabelText("主项目dll名字")]
 		public string GameDllName = "GamePlay";
-
-		public enum ResType
-		{
-			Resources,
-#if ADDRESSABLE
-			Addressable,
-#endif
-#if XASSET
-			XAsset,
-#endif
-		}
 	}
 	
 	[Serializable]

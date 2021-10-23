@@ -1,7 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
 namespace Framework.Assets
@@ -26,34 +28,13 @@ namespace Framework.Assets
     {
         private static IRes @default;
         public abstract IAsyncResult Init();
-
+        public static Type DefaultResType = typeof(ResourcesRes);
         public abstract string DownloadURL { get; set; }
-
         public static IRes Default => @default ?? (@default = Create());
 
-        public static IRes Create(FrameworkRuntimeConfig.ResType? loadType = null)
+        public static IRes Create()
         {
-            var config = ConfigBase.Load<FrameworkRuntimeConfig>();
-            if (loadType == null)
-                loadType = config.LoadType;
-            IRes result = null;
-            switch (loadType)
-            {
-                case FrameworkRuntimeConfig.ResType.Resources:
-                    result = new ResourcesRes();
-                    break;
-#if ADDRESSABLE
-                case FrameworkRuntimeConfig.ResType.Addressable:
-                    result = new AddressableRes();
-                    break;
-#endif
-#if XASSET
-                case FrameworkRuntimeConfig.ResType.XAsset:
-                    result = new XAssetRes();
-                    break;
-#endif
-            }
-            return result;
+            return Activator.CreateInstance(DefaultResType) as IRes;
         }
         
         public abstract T LoadAsset<T>(string key) where T : Object;

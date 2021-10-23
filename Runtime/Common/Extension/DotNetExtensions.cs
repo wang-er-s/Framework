@@ -1058,11 +1058,11 @@ public class AssemblyManager
     /// 编辑器默认的程序集Assembly-CSharp.dll
     /// </summary>
     private static Assembly defaultCSharpAssembly;
-    
-        /// <summary>
-        /// 程序集缓存
-        /// </summary>
-        private static Dictionary<string, Assembly> assemblyCache = new Dictionary<string, Assembly> ();
+
+    /// <summary>
+    /// 程序集缓存
+    /// </summary>
+    private static Dictionary<string, Assembly> assemblyCache = new Dictionary<string, Assembly>();
 
 
     /// <summary>
