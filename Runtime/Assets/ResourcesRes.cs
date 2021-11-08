@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
+using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
@@ -37,14 +39,19 @@ namespace Framework.Assets
             return ProgressResult<DownloadProgress>.Void();
         }
 
-        protected override async void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
+        protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
+        {
+            Executors.RunOnCoroutineNoReturn(loadAsync(key, promise));
+        }
+        
+        private IEnumerator loadAsync<T>(string key,IProgressPromise<float,T> promise) where T : Object
         {
             var operation = Resources.LoadAsync<T>(key);
             requests.Add(operation);
             while (!operation.isDone)
             {
                 promise.UpdateProgress(operation.progress);
-                await Task.Yield();
+                yield return null;
             }
             promise.UpdateProgress(1);
             promise.SetResult(operation.asset as T);

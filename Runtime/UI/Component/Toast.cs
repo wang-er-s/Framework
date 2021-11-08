@@ -25,6 +25,10 @@ namespace Framework.Runtime.UI.Component
             {
                 toastContent = await UIManager.Ins.OpenAsync<ToastContent>() as ToastContent;
             }
+            else if (toastContent.Go == null)
+            {
+                toastContent = await UIManager.Ins.OpenAsync<ToastContent>() as ToastContent;
+            }
             var result = toastContent.AddSubView<ToastView>();
             result.Callbackable().OnCallback(progressResult =>
             {
