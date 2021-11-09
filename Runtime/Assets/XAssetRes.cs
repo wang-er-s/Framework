@@ -160,6 +160,16 @@ namespace Framework.Assets
                 //result.Release();
             });
             handles[key] = asset;
+            Executors.RunOnCoroutineNoReturn(LoadProgress(asset, promise));
+        }
+        
+        private IEnumerator LoadProgress(Asset asset, IProgressPromise<float> promise)
+        {
+            while (!asset.isDone)
+            {
+                promise.UpdateProgress(asset.progress);
+                yield return null;
+            }
         }
 
         public override void Release()
