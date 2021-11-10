@@ -53,7 +53,7 @@ namespace Framework.Editor
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
                 FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
-                BuildByRoslyn(allDll, allCsFiles, outPath, isDebug);
+                BuildByRoslyn(allDll, allCsFiles, outPath);
             }
             finally
             {
@@ -145,7 +145,7 @@ namespace Framework.Editor
         /// </summary>
         /// <param name="rootpaths"></param>
         /// <param name="output"></param>
-        private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output, bool isdebug = true)
+        private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output)
         {
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
@@ -188,19 +188,9 @@ namespace Framework.Editor
             var dir = Path.GetDirectoryName(output);
             Directory.CreateDirectory(dir);
             //编译参数
-            CSharpCompilationOptions option = null;
-            if (isdebug)
-            {
-                option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: OptimizationLevel.Debug, warningLevel: 4,
-                    allowUnsafe: true);
-            }
-            else
-            {
-                option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
+            CSharpCompilationOptions option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                     optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
                     allowUnsafe: true);
-            }
 
             //创建编译器代理
             var assemblyname = Path.GetFileNameWithoutExtension(output);
