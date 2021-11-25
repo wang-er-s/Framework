@@ -61,6 +61,32 @@ namespace Framework.Editor
                 AssetDatabase.Refresh();
             }
         }
+        
+        public static void BuildDLL(string codeSource,string outPath,bool isDebug)
+        {
+            var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
+            var config = runtimeConfig.ILRConfig;
+            config.ReleaseBuild = !isDebug;
+            EditorUtility.SetDirty(runtimeConfig);
+            AssetDatabase.SaveAssets();
+            usePdb = config.UsePbd;
+            //string codeSource = Application.dataPath + "/_scripts@hotfix";
+            //string outPath = config.DllGenPath + $"/{dllName}.dll";
+            List<string> allDll = new List<string>();
+            var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
+            try
+            {
+                EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
+                FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
+                EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
+                BuildByRoslyn(allDll, allCsFiles, outPath);
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+                AssetDatabase.Refresh();
+            }
+        }
 
         /// <summary>
         /// 解析project中的dll

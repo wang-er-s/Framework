@@ -14,6 +14,8 @@ namespace Framework.Editor
     {
         private static FrameworkEditorConfig _config;
 
+        public static Func<string, string> CustomLoadPath;
+
         [MenuItem("Assets/@Create UICode")]
         public static void CreateUiCode()
         {
@@ -221,10 +223,14 @@ namespace Framework.Editor
 		
         private static string GetPanelPath(PanelCodeInfo panelCodeInfo)
         {
+            if (CustomLoadPath != null)
+            {
+                return CustomLoadPath(panelCodeInfo.PanelPath);
+            }
             var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath);
             return path;
         }
-	
+
         private static string PathToParent(Transform trans, Transform parent)
         {
             var retValue = new StringBuilder(trans.name);

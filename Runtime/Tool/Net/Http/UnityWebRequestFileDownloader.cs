@@ -180,7 +180,7 @@ namespace Framework.Net
                         progressInfo.CompletedCount += 1;
                         tasks.RemoveAt(j);
                         downloadedSize += _info.FileSize;
-                        if (_www.isNetworkError)
+                        if (_www.isNetworkError || _www.isHttpError)
                         {
                             promise.SetException(new Exception(_www.error));
                             Log.Error(

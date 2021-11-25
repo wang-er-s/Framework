@@ -33,7 +33,7 @@ namespace Framework.Runtime.UI.Component
 
         public override UILevel UILevel { get; } = UILevel.Pop;
 
-        protected virtual async void Button_OnClick(int which)
+        protected virtual void Button_OnClick(int which)
         {
             try
             {

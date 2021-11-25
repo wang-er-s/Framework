@@ -66,6 +66,53 @@ namespace Framework
 	        GameLoop.Ins.OnApplicationQuitEvent += Dispose;
         }
 
+        public static async Task LoadILRuntime(string dllPath, string pdbPath)
+        {
+	        Appdomain = new AppDomain();
+			
+	        pdb = null;
+	        var ilrConfig = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
+	        //开发模式
+	        if (ilrConfig.UseHotFix)
+	        {
+		        var dllText = Res.Default.LoadAssetAsync<TextAsset>(dllPath);
+		        await dllText;
+		        if (dllText.Exception != null)
+		        {
+			        Log.Error(dllText.Exception);
+		        }
+		        fs = new MemoryStream(dllText.Result.bytes);
+		        if (ilrConfig.UsePbd && !string.IsNullOrEmpty(pdbPath))
+		        {
+			        var pdbText = Res.Default.LoadAssetAsync<TextAsset>(dllPath);
+			        await pdbText;
+			        if (pdbText.Exception != null)
+			        {
+				        Log.Error(pdbText.Exception);
+			        }
+			        else
+			        {
+				        pdb = new MemoryStream(pdbText.Result.bytes);
+			        }
+		        }
+	        }
+
+	        try
+	        {
+		        Appdomain.LoadAssembly(fs, ilrConfig.UsePbd ? pdb : null, new PdbReaderProvider());
+	        }
+	        catch (Exception e)
+	        {
+		        Log.Error("加载热更DLL错误：\n" , e.Message);
+	        }
+
+#if UNITY_EDITOR
+	        Appdomain.DebugService.StartDebugService(56000);
+#endif
+
+	        GameLoop.Ins.OnApplicationQuitEvent += Dispose;
+        }
+        
         public static void InitializeILRuntime(AppDomain appDomain)
         {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
@@ -115,6 +162,8 @@ namespace Framework
             fs?.Dispose();
             pdb?.Close();
             pdb?.Dispose();
+            hotfixType = null;
+            Appdomain = null;
         }
     }
 }

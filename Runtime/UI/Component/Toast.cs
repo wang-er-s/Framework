@@ -6,6 +6,7 @@ using Framework.Asynchronous;
 using Framework.Execution;
 using Framework.UI.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.Runtime.UI.Component
 {
@@ -69,7 +70,7 @@ namespace Framework.Runtime.UI.Component
         {
             if (this.view == null)
                 return;
-            UIManager.Ins.Close<ToastView>();
+            Object.Destroy(view.Go);
             this.DoCallback();
         }
 

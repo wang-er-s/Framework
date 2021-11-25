@@ -7,7 +7,6 @@ namespace Framework
 	[ShowOdinSerializedPropertiesInInspector]
 	public class FrameworkRuntimeConfig : ConfigBase
 	{
-
 #if !ILRUNTIME
 		[HideInInspector]
 #endif
