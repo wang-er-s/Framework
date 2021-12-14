@@ -126,5 +126,8 @@ namespace Framework
         public static bool IsEditor => Application.platform == RuntimePlatform.WindowsEditor ||
                                        Application.platform == RuntimePlatform.LinuxEditor ||
                                        Application.platform == RuntimePlatform.OSXEditor;
+
+        public static bool IsPC => Application.platform == RuntimePlatform.WindowsPlayer ||
+                                   Application.platform == RuntimePlatform.OSXPlayer;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using Framework;
 using Framework.Assets;
 using Framework.Asynchronous;
@@ -12,6 +13,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
     private MulAsyncResult asyncResult;
     private Action _loadedCb;
     public bool Loaded { get; private set; }
+    public static Func<string, string> CustomLoadPath;
     
     public override void Start()
     {
@@ -19,6 +21,8 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         foreach (ClassData classData in GetAllClassDatas())
         {
             var path = (classData.Attribute as ConfigAttribute).Path;
+            if (CustomLoadPath != null)
+                path = CustomLoadPath(path);
             var method = classData.Type.GetMethod("Load", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             var progress = Res.Default.LoadAssetAsync<TextAsset>(path);
             progress.Callbackable().OnCallback(result =>
@@ -47,6 +51,19 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
                 _loadedCb?.Invoke();
             });
         });
+    }
+
+    public async Task AddConfig(Type type)
+    {
+        var configAttribute = type.GetCustomAttribute(typeof(ConfigAttribute), false);
+        if(configAttribute == null) return;
+        var path = (configAttribute as ConfigAttribute).Path;
+        if (CustomLoadPath != null)
+            path = CustomLoadPath(path);
+        var method = type.GetMethod("Load", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+        var content = (await Res.Default.LoadAssetAsync<TextAsset>(path)).text;
+        _objects[0] = content;
+        method.Invoke(null, _objects);
     }
 
     public void AddLoadedCallback(Action action)

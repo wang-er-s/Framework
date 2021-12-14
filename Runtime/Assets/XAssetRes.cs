@@ -30,7 +30,7 @@ namespace Framework.Assets
         private IEnumerator init(IPromise promise)
         {
             Logger.Loggable = false;
-            Versions.customLoadPath = Path.GetFileNameWithoutExtension;
+            //Versions.customLoadPath = Path.GetFileNameWithoutExtension;
             initializeVersions = Versions.InitializeAsync();
             yield return initializeVersions;
             var update = Versions.UpdateAsync(initializeVersions.manifests);

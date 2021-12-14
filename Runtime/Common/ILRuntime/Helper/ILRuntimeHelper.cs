@@ -158,12 +158,12 @@ namespace Framework
 
         public static void Dispose()
         {
+            hotfixType = null;
+            Appdomain = null;
 	        fs?.Close();
             fs?.Dispose();
             pdb?.Close();
             pdb?.Dispose();
-            hotfixType = null;
-            Appdomain = null;
         }
     }
 }

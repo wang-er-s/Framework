@@ -82,7 +82,7 @@ namespace Framework
             ((ICollection<KeyValuePair<TKey, TValue>>)dic).Add(item);
         }
 
-        void IDictionary.Clear()
+        public void Clear()
         {
             dic.Clear();
             keyList.Clear();
@@ -121,30 +121,64 @@ namespace Framework
         int ICollection<KeyValuePair<TKey, TValue>>.Count => dic.Count;
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
-        public void Foreach(Action<TKey, TValue> action, Func<bool> breakFunc = null)
+        public void Foreach(Action<TKey, TValue> action)
         {
             for (int i = 0; i < Count; i++)
             {
-                if(breakFunc != null && breakFunc()) break;
                 var key = keyList[i];
                 action(key, dic[key]);
             }
         }
-
-        public void ForeachKey(Action<TKey> action, Func<bool> breakFunc = null)
+        
+        /// <summary>
+        /// 返回值为true的时候会跳出循环
+        /// </summary>
+        /// <param name="action"></param>
+        public void Foreach(Func<TKey, TValue, bool> action)
         {
             for (int i = 0; i < Count; i++)
             {
-                if(breakFunc != null && breakFunc()) break;
+                var key = keyList[i];
+                if(action(key, dic[key])) break;
+            }
+        }
+
+        /// <summary>
+        /// 返回值为true的时候会跳出循环
+        /// </summary>
+        /// <param name="action"></param>
+        public void ForeachKey(Func<TKey,bool> action)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if(action(keyList[i])) break;
+            }
+        }
+        
+        public void ForeachKey(Action<TKey> action)
+        {
+            for (int i = 0; i < Count; i++)
+            {
                 action(keyList[i]);
             }
         }
 
-        public void ForeachValue(Action<TValue> action, Func<bool> breakFunc = null)
+        /// <summary>
+        /// 返回值为true的时候会跳出循环
+        /// </summary>
+        /// <param name="action"></param>
+        public void ForeachValue(Func<TValue,bool> action)
         {
             for (int i = 0; i < Count; i++)
             {
-                if(breakFunc != null && breakFunc()) break;
+                action(dic[keyList[i]]);
+            }
+        }
+        
+        public void ForeachValue(Action<TValue> action)
+        {
+            for (int i = 0; i < Count; i++)
+            {
                 action(dic[keyList[i]]);
             }
         }

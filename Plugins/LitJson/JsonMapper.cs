@@ -20,6 +20,8 @@ using ILRuntime.CLR.Method;
 using ILRuntime.CLR.Utils;
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
+using UnityEngine;
+using Object = System.Object;
 #if ILRUNTIME
 using ILRuntime.Runtime.Intepreter;
 using ILRuntime.Runtime.Stack;
@@ -879,6 +881,48 @@ namespace LitJson
 
                 writer.WriteArrayEnd ();
 
+                return;
+            }
+
+            if (obj is Vector3)
+            {
+                writer.WriteObjectStart();
+                var val = (Vector3)obj;
+                writer.WritePropertyName("x");
+                WriteValue(val.x, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("y");
+                WriteValue(val.y, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("z");
+                WriteValue(val.z, writer, writer_is_private, depth + 1);
+                writer.WriteObjectEnd();
+                return;
+            }
+            
+            if (obj is Vector4)
+            {
+                writer.WriteObjectStart();
+                var val = (Vector4)obj;
+                writer.WritePropertyName("x");
+                WriteValue(val.x, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("y");
+                WriteValue(val.y, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("z");
+                WriteValue(val.z, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("w");
+                WriteValue(val.w, writer, writer_is_private, depth + 1);
+                writer.WriteObjectEnd();
+                return;
+            }
+            
+            if (obj is Vector2)
+            {
+                writer.WriteObjectStart();
+                var val = (Vector2)obj;
+                writer.WritePropertyName("x");
+                WriteValue(val.x, writer, writer_is_private, depth + 1);
+                writer.WritePropertyName("y");
+                WriteValue(val.y, writer, writer_is_private, depth + 1);
+                writer.WriteObjectEnd();
                 return;
             }
 

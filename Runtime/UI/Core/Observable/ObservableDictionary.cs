@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Framework.Execution;
+using UnityEngine;
 
 namespace Framework.UI.Core.Bind
 {
@@ -19,6 +21,7 @@ namespace Framework.UI.Core.Bind
         {
             this.Dictionary = new Dictionary<TKey, TValue>();
         }
+
         public ObservableDictionary(IDictionary<TKey, TValue> dictionary)
         {
             this.Dictionary = new Dictionary<TKey, TValue>(dictionary);
@@ -100,9 +103,9 @@ namespace Framework.UI.Core.Bind
 
         public void AddListener(Action<Dictionary<TKey, TValue>> changeCb)
         {
-            dicChanged += changeCb;
+            //dicChanged += changeCb;
         }
-        
+
         public void RemoveListener(
             Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)
         {

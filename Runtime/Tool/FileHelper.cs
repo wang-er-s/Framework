@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Framework.Helper
 {
-    public class FileHelper
+    public static class FileHelper
     {
         public static void DeepSearchDirFiles(string dirPath, Action<FileInfo> action, string pattern = "*")
         {
