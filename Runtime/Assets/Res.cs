@@ -54,7 +54,7 @@ namespace Framework.Assets
         
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
         {
-            ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
+            ProgressResult<float, T> progressResult = new ProgressResult<float, T>(true);
             loadAssetAsync(key, progressResult);
             return progressResult;
         }
@@ -63,7 +63,7 @@ namespace Framework.Assets
             bool instantiateInWorldSpace = false) where T : Component
         {
             var progress = InstantiateAsync(key, parent, instantiateInWorldSpace);
-            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            ProgressResult<float, T> result = new ProgressResult<float, T>(true);
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
             return result;
@@ -73,7 +73,7 @@ namespace Framework.Assets
             Transform parent = null) where T : Component
         {
             var progress = InstantiateAsync(key, position, rotation, parent);
-            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            ProgressResult<float, T> result = new ProgressResult<float, T>(true);
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
             return result;
@@ -82,8 +82,8 @@ namespace Framework.Assets
         public IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
-            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>();
-            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>();
+            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>(true);
+            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
                 var go = Object.Instantiate(result.Result);
@@ -98,8 +98,8 @@ namespace Framework.Assets
             Quaternion rotation,
             Transform parent = null)
         {
-            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>();
-            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>();
+            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>(true);
+            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
                 var trans = Object.Instantiate(result.Result).transform;

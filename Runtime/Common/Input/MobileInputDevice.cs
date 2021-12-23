@@ -61,46 +61,51 @@ namespace Framework
             }
             return false;
         }
-        
-        private Vector2 startPos;
-        protected override float Horizontal()
+
+        protected override float MouseXDistance()
+        {
+            return HorizontalDistance();
+        }
+
+        protected override float MouseYDistance()
+        {
+            return VerticalDistance();
+        }
+
+        private Vector2 horizontalStartPos;
+        protected override float HorizontalDistance()
         {
             if (Input.touchCount != 1) return 0;
             var touch = Input.GetTouch(0);
             switch(touch.phase)
             {
                 case TouchPhase.Began:
-                    startPos = touch.position;
+                    horizontalStartPos = touch.position;
                     break;
                 case TouchPhase.Moved:
-                    return startPos.x - touch.position.x;
+                    var result = touch.position.x - horizontalStartPos.x;
+                    horizontalStartPos = touch.position;
+                    return result;
             }
             return 0;
         }
 
-        protected override float Vertical()
+        private Vector2 verticalStartPos;
+        protected override float VerticalDistance()
         {
             if (Input.touchCount != 1) return 0;
             var touch = Input.GetTouch(0);
             switch(touch.phase)
             {
                 case TouchPhase.Began:
-                    startPos = touch.position;
+                    verticalStartPos = touch.position;
                     break;
                 case TouchPhase.Moved:
-                    return startPos.y - touch.position.y;
+                    var result = touch.position.y - verticalStartPos.y;
+                    verticalStartPos = touch.position;
+                    return result;
             }
             return 0;
-        }
-
-        protected override float MouseX()
-        {
-            return Horizontal();
-        }
-
-        protected override float MouseY()
-        {
-            return Vertical();
         }
 
         private float startDistance;

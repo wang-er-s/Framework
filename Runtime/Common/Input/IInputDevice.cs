@@ -9,5 +9,6 @@ namespace Framework
         bool GetButtonDown(string name);
         bool GetButtonUp(string name);
         float GetAxis(string name, bool b);
+        void Update();
     }
 }

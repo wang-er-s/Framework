@@ -77,6 +77,8 @@ namespace Framework
             }
             return false;
         }
+        
+        
 
         public float GetAxis(string name, bool raw)
         {
@@ -84,20 +86,32 @@ namespace Framework
             switch (name)
             {
                 case InputAxisType.MouseX:
-                    result = MouseX();
+                    result = MouseXDistance();
                     break;
                 case InputAxisType.MouseY:
-                    result = MouseY();
-                    break;
+                    result = MouseYDistance();
+                   break;
                 case InputAxisType.MouseScrollWheel:
                     result = MouseScrollWheel();
                     break;
                 case InputAxisType.Horizontal:
-                    result = Horizontal();
+                    result = HorizontalDistance();
                     break;
                 case InputAxisType.Vertical:
-                    result = Vertical();
+                    result = VerticalDistance();
                     break;
+                case InputAxisType.MouseXDistance:
+                    result = MouseXDistance();
+                    return result;
+                case InputAxisType.MouseYDistance:
+                    result = MouseYDistance();
+                    return result;
+                case InputAxisType.HorizontalDistance:
+                    result = HorizontalDistance();
+                    return result;
+                case InputAxisType.VerticalDistance:
+                    result = VerticalDistance();
+                    return result;
             }
             result = Mathf.Clamp(result, -1, 1);
             if (raw)
@@ -105,30 +119,23 @@ namespace Framework
             return result;
         }
 
-        protected virtual float MouseX()
+        public virtual void Update()
         {
-            return Input.GetAxis("Mouse X");
+            
         }
-        
-        protected virtual float MouseY()
-        {
-            return Input.GetAxis("Mouse Y");
-        }
+
+        protected abstract float MouseXDistance();
+
+        protected abstract float MouseYDistance();
 
         protected virtual float MouseScrollWheel()
         {
             return Input.GetAxis("Mouse ScrollWheel");
         }
 
-        protected virtual float Horizontal()
-        {
-            return Input.GetAxis("Horizontal");
-        }
+        protected abstract float HorizontalDistance();
 
-        protected virtual float Vertical()
-        {
-            return Input.GetAxis("Vertical");
-        }
+        protected abstract float VerticalDistance();
     }
     
 
@@ -159,6 +166,14 @@ namespace Framework
         /// </summary>
         public const string MouseY = "MouseY";
         /// <summary>
+        /// 鼠标X轴移动
+        /// </summary>
+        public const string MouseXDistance = "MouseXDistance";
+        /// <summary>
+        /// 鼠标Y轴移动
+        /// </summary>
+        public const string MouseYDistance = "MouseYDistance";
+        /// <summary>
         /// 鼠标滚轮滚动
         /// </summary>
         public const string MouseScrollWheel = "MouseScrollWheel";
@@ -170,5 +185,13 @@ namespace Framework
         /// 键盘垂直输入
         /// </summary>
         public const string Vertical = "Vertical";
+        /// <summary>
+        /// 键盘水平输入
+        /// </summary>
+        public const string HorizontalDistance = "HorizontalDistance";
+        /// <summary>
+        /// 键盘垂直输入
+        /// </summary>
+        public const string VerticalDistance = "VerticalDistance";
     }
 }
