@@ -8,10 +8,10 @@ using Framework.Asynchronous;
 using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using VEngine;
+using xasset;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
-using Logger = VEngine.Logger;
-using Scene = VEngine.Scene;
+using Logger = xasset.Logger;
+using Scene = xasset.Scene;
 
 namespace Framework.Assets
 {
@@ -20,7 +20,6 @@ namespace Framework.Assets
         private List<DownloadInfo> needDownloadRes;
         private Dictionary<string, Loadable> handles = new Dictionary<string, Loadable>();
         private List<IProgressPromise<float>> loadProgress = new List<IProgressPromise<float>>();
-        private InitializeVersions initializeVersions;
 
         public override IAsyncResult Init()
         {
@@ -31,25 +30,14 @@ namespace Framework.Assets
         {
             Logger.Loggable = false;
             //Versions.customLoadPath = Path.GetFileNameWithoutExtension;
-            initializeVersions = Versions.InitializeAsync();
-            yield return initializeVersions;
-            var update = Versions.UpdateAsync(initializeVersions.manifests);
-            yield return update;
-            if (update.status == OperationStatus.Success)
-            {
-                update.Override();
-                Log.Msg($"Success to update versions with version: {Versions.ManifestsVersion}");
-            }
-            if (!string.IsNullOrEmpty(update.error))
-                promise.SetException(update.error);
-            else
-                promise.SetResult();
+            yield return Versions.InitializeAsync();
+            promise.SetResult();
         }
 
         public override string DownloadURL
         {
-            get => Versions.DownloadURL;
-            set => Versions.DownloadURL = value;
+            get => Downloader.DownloadURL;
+            set => Downloader.DownloadURL = value;
         }
 
         public override IProgressResult<float,string> CheckDownloadSize()
@@ -57,34 +45,24 @@ namespace Framework.Assets
             return Executors.RunOnCoroutine<float,string>(checkDownloadSize);
         }
 
+        private CheckUpdate checking;
         private IEnumerator checkDownloadSize(IProgressPromise<float,string> promise)
         {
-            List<string> assets = new List<string>();
-            foreach (var manifest in Versions.Manifests)
+            checking = Versions.CheckUpdateAsync();
+            yield return checking;
+            if (checking.status == OperationStatus.Failed)
             {
-                foreach (var manifestBundle in manifest.bundles)
-                {
-                    assets.AddRange(manifestBundle.assets);
-                }
-            }
-            var downloadInfos = Versions.GetDownloadSizeAsync(assets.ToArray());
-            while (!downloadInfos.isDone)
-            {
-                promise.UpdateProgress(downloadInfos.progress);
-                yield return null;
-            }
-            if (downloadInfos.status != OperationStatus.Success)
-            {
-                promise.SetException(downloadInfos.error);
+                promise.SetException(checking.error);
                 yield break;
             }
-            // 判断是否有内容需要更新
-            if (downloadInfos.result.Count <= 0)
+            if (checking.downloadSize <= 0)
             {
-                promise.SetResult(String.Empty);
+                promise.SetResult(string.Empty);   
             }
-            needDownloadRes = downloadInfos.result;
-            promise.SetResult(Utility.FormatBytes(downloadInfos.totalSize));
+            else
+            {
+                promise.SetResult(Utility.FormatBytes(checking.downloadSize));
+            }
         }
 
         public override IProgressResult<DownloadProgress> DownloadAssets()
@@ -94,7 +72,7 @@ namespace Framework.Assets
 
         private IEnumerator Download(IProgressPromise<DownloadProgress> promise)
         {
-            var download = Versions.DownloadAsync(needDownloadRes);
+            var download = checking.DownloadAsync();
             // 采样时间，推荐每秒采样一次
             float sampleTime = 0.5f;
             // 上次采样的进度，用来计算下载速度
@@ -156,8 +134,6 @@ namespace Framework.Assets
                     Log.Error("load", key, "error", result.error);
                     promise.SetException(result.error);   
                 }
-                //TODO  考虑一下怎么release asset。。 
-                //result.Release();
             });
             handles[key] = asset;
             Executors.RunOnCoroutineNoReturn(LoadProgress(asset, promise));

@@ -1,18 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Framework.Execution;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Framework
 {
-    public class InputManager : MonoSingleton<InputManager>
+    public class InputManager
     {
-        private IInputDevice currentDevice;
+        private static IInputDevice currentDevice;
 
-        private List<IInputDevice> devices;
-
-        private void Awake()
+        static InputManager()
         {
-            devices = new List<IInputDevice>()
+            if(!Application.isPlaying) return;
+            var devices = new List<IInputDevice>()
             {
                 new MobileInputDevice(),
                 new StandardInputDevice(),
@@ -25,11 +27,17 @@ namespace Framework
                     break;
                 }
             }
+            Executors.RunOnCoroutineNoReturn(Update());
         }
 
-        public bool GetButton(string name)
+        public static bool GetButton(string name)
         {
             return currentDevice.GetButton(name);
+        }
+        
+        public static bool TouchedUI()
+        {
+            return EventSystem.current.IsPointerOverGameObject();
         }
 
         /// <summary>
@@ -37,7 +45,7 @@ namespace Framework
         /// </summary>
         /// <param name="name">按钮名称</param>
         /// <returns>是否按下</returns>
-        public bool GetButtonDown(string name)
+        public static bool GetButtonDown(string name)
         {
             return currentDevice.GetButtonDown(name);
         }
@@ -47,12 +55,12 @@ namespace Framework
         /// </summary>
         /// <param name="name">按钮名称</param>
         /// <returns>是否抬起</returns>
-        public bool GetButtonUp(string name)
+        public static bool GetButtonUp(string name)
         {
             return currentDevice.GetButtonUp(name);
         }
 
-        public float GetAxis(string name)
+        public static float GetAxis(string name)
         {
             return currentDevice.GetAxis(name, false);
         }
@@ -62,14 +70,18 @@ namespace Framework
         /// </summary>
         /// <param name="name">轴线名称</param>
         /// <returns>值</returns>
-        public float GetAxisRaw(string name)
+        public static float GetAxisRaw(string name)
         {
             return currentDevice.GetAxis(name, true);
         }
 
-        private void Update()
+        static IEnumerator Update()
         {
-            currentDevice.Update();
+            while (true)
+            {
+                currentDevice.Update();
+                yield return null;
+            }
         }
     }
 }

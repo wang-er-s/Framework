@@ -15,12 +15,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButton(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return false;
                 case InputAxisType.MouseMiddle:
                     return false;
-                    break;
                 case InputAxisType.MouseLeftDoubleClick:
                     MouseLeftDoubleClick();
                     break;
@@ -34,13 +32,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButtonDown(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return false;
-                    break;
                 case InputAxisType.MouseMiddle:
                     return false;
-                    break;
             }
             return false;
         }
@@ -51,13 +46,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButtonUp(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return false;
-                    break;
                 case InputAxisType.MouseMiddle:
                     return false;
-                    break;
             }
             return false;
         }

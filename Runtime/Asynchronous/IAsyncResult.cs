@@ -84,7 +84,7 @@ namespace Framework.Asynchronous
         object WaitForDone();
 
     }
-
+    
     /// <summary>
     /// IAsyncResult
     /// </summary>

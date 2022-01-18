@@ -11,13 +11,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButton(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return Input.GetMouseButton(1);
-                    break;
                 case InputAxisType.MouseMiddle:
                     return Input.GetMouseButton(2);
-                    break;
                 case InputAxisType.MouseLeftDoubleClick:
                     MouseLeftDoubleClick();
                     break;
@@ -50,13 +47,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButtonDown(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return Input.GetMouseButtonDown(1);
-                    break;
                 case InputAxisType.MouseMiddle:
                     return Input.GetMouseButtonDown(2);
-                    break;
             }
             return false;
         }
@@ -67,13 +61,10 @@ namespace Framework
             {
                 case InputAxisType.MouseLeft:
                     return Input.GetMouseButtonUp(0);
-                    break;
                 case InputAxisType.MouseRight:
                     return Input.GetMouseButtonUp(1);
-                    break;
                 case InputAxisType.MouseMiddle:
                     return Input.GetMouseButtonUp(2);
-                    break;
             }
             return false;
         }

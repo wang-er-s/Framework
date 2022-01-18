@@ -227,8 +227,7 @@ namespace Framework.Editor
             {
                 return CustomLoadPath(panelCodeInfo.PanelPath);
             }
-            var path = Path.GetFileNameWithoutExtension(panelCodeInfo.PanelPath);
-            return path;
+            return panelCodeInfo.PanelPath;
         }
 
         private static string PathToParent(Transform trans, Transform parent)
