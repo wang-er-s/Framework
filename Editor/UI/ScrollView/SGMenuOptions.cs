@@ -135,14 +135,14 @@ namespace Framework.Editor.UI
         }
         #endregion
         
-        [MenuItem("GameObject/UI/Loop Horizontal Scroll Rect", false, 2151)]
+        [MenuItem("GameObject/CustomUI/Loop Horizontal Scroll Rect", false, 2151)]
         static public void AddLoopHorizontalScrollRect(MenuCommand menuCommand)
         {
             GameObject go = SGDefaultControls.CreateLoopHorizontalScrollRect(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Loop Vertical Scroll Rect", false, 2152)]
+        [MenuItem("GameObject/CustomUI/Loop Vertical Scroll Rect", false, 2152)]
         static public void AddLoopVerticalScrollRect(MenuCommand menuCommand)
         {
             GameObject go = SGDefaultControls.CreateLoopVerticalScrollRect(GetStandardResources());

@@ -5,6 +5,7 @@ using System.Reflection;
 using Sirenix.OdinInspector;
 using UnityEditor;
 
+#if ILRUNTIME
 namespace Framework.Editor
 {
     [Serializable]
@@ -61,3 +62,4 @@ namespace Framework.Editor
         }
     }
 }
+#endif

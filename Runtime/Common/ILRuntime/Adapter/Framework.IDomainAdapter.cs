@@ -1,3 +1,4 @@
+#if ILRUNTIME
 using System;
 using ILRuntime.CLR.Method;
 using ILRuntime.Runtime.Enviorment;
@@ -87,4 +88,4 @@ namespace Framework
         }
     }
 }
-
+#endif

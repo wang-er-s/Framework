@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ILRUNTIME
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ILRuntime.CLR.Method;
@@ -160,3 +161,4 @@ namespace Framework
         }
     }
 }
+#endif

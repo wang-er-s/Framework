@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if ILRUNTIME
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Reflection;
@@ -360,3 +361,4 @@ namespace Framework
         }
     }
 }
+#endif

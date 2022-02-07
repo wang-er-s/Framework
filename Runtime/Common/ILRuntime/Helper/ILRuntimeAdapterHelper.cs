@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ILRUNTIME
+using System;
 using System.Collections.Generic;
 using ILRuntime.Runtime.Enviorment;
 using Tool;
@@ -27,3 +28,4 @@ namespace Framework
         }
     }
 }
+#endif

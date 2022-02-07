@@ -1,4 +1,5 @@
-﻿using ILRuntime.Runtime.Enviorment;
+﻿#if ILRUNTIME
+using ILRuntime.Runtime.Enviorment;
 using UnityEngine;
 
 namespace Framework
@@ -13,3 +14,4 @@ namespace Framework
         }
     }
 }
+#endif

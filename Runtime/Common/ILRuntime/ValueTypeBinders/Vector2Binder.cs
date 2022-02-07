@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if ILRUNTIME
+using UnityEngine;
 using System.Collections.Generic;
 using ILRuntime.Other;
 using System;
@@ -481,3 +482,4 @@ namespace Framework
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ILRUNTIME
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using ILRuntime.Runtime.Intepreter;
@@ -243,3 +244,4 @@ namespace Framework
         }
     }
 }
+#endif

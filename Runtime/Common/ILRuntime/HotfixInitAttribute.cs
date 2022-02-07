@@ -1,3 +1,4 @@
+#if ILRUNTIME
 using System;
 
 namespace Framework
@@ -13,3 +14,4 @@ namespace Framework
         
     }
 }
+#endif

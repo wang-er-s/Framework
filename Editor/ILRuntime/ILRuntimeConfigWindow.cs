@@ -3,6 +3,7 @@ using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 
+#if ILRUNTIME
 namespace Framework.Editor
 {
     public class ILRuntimeConfigWindow : OdinEditorWindow
@@ -31,3 +32,4 @@ namespace Framework.Editor
 
     }
 }
+#endif

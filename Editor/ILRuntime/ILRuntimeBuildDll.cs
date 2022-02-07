@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
+#if ILRUNTIME
 namespace Framework.Editor
 {
     [Serializable]
@@ -261,4 +262,4 @@ namespace Framework.Editor
         }
     }
 }
- 
+#endif

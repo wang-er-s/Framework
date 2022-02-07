@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using Framework.UIComponent;
+using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
@@ -28,16 +30,24 @@ namespace Framework.Editor
             }
         }
 
-        [MenuItem("GameObject/UI/CustomButton", false, -10)]
+        [MenuItem("GameObject/CustomUI/Button", false, -10)]
         private static void Create(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
             var createBtn = menuOptions.GetMethod("AddButton", BindingFlags.Static | BindingFlags.Public);
             createBtn.Invoke(null, new object[] { menuCommand });
             var obj = Selection.activeGameObject;
-            DestroyImmediate(obj.GetComponent<Button>());
-            obj.AddComponent<CustomButton>();
+            CustomComponentEditor.ReplaceComponent(obj);
         }
+        
+        [MenuItem("GameObject/CustomUI/Button-TMP", false, -10)]
+        private static void CreateTMP(MenuCommand menuCommand)
+        {
+            TMPro_CreateObjectMenu.AddButton(menuCommand);
+            var obj = Selection.activeGameObject;
+            CustomComponentEditor.ReplaceComponent(obj);
+        }
+        
         
         protected override void OnEnable()
         {
