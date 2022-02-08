@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Execution;
@@ -29,10 +28,25 @@ namespace Framework
             }
             Executors.RunOnCoroutineNoReturn(Update());
         }
+        
+        private const float doubleClickTime = 0.3f;
+        private static float mouseLeftClickTime;
 
-        public static bool GetButton(string name)
+        public static bool MouseLeftDoubleClick()
         {
-            return currentDevice.GetButton(name);
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (Time.time - mouseLeftClickTime < doubleClickTime)
+                {
+                    mouseLeftClickTime = 0;
+                    return true;
+                }
+                else
+                {
+                    mouseLeftClickTime = Time.time;
+                }
+            }
+            return false;
         }
         
         public static bool TouchedUI()
@@ -40,29 +54,19 @@ namespace Framework
             return EventSystem.current.IsPointerOverGameObject();
         }
 
-        /// <summary>
-        /// 按钮按下
-        /// </summary>
-        /// <param name="name">按钮名称</param>
-        /// <returns>是否按下</returns>
-        public static bool GetButtonDown(string name)
-        {
-            return currentDevice.GetButtonDown(name);
-        }
-
-        /// <summary>
-        /// 按钮抬起
-        /// </summary>
-        /// <param name="name">按钮名称</param>
-        /// <returns>是否抬起</returns>
-        public static bool GetButtonUp(string name)
-        {
-            return currentDevice.GetButtonUp(name);
-        }
-
         public static float GetAxis(string name)
         {
-            return currentDevice.GetAxis(name, false);
+            return currentDevice.GetAxis(name);
+        }
+
+        /// <summary>
+        /// 限制到-1 1之间
+        /// </summary>
+        public static float GetAxisClamp(string name)
+        {
+            var result = currentDevice.GetAxis(name);
+            result = Mathf.Clamp(result, -1, 1);
+            return result;
         }
 
         /// <summary>
@@ -72,7 +76,9 @@ namespace Framework
         /// <returns>值</returns>
         public static float GetAxisRaw(string name)
         {
-            return currentDevice.GetAxis(name, true);
+            var result = currentDevice.GetAxis(name);
+            result = result == 0 ? 0 : Mathf.Sign(result);
+            return result;
         }
 
         static IEnumerator Update()

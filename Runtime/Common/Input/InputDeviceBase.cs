@@ -5,108 +5,28 @@ namespace Framework
     public abstract class InputDeviceBase : IInputDevice
     {
         public abstract bool CanUse();
-        public virtual bool GetButton(string name)
-        {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButton(0);
-                case InputAxisType.MouseRight:
-                    return Input.GetMouseButton(1);
-                case InputAxisType.MouseMiddle:
-                    return Input.GetMouseButton(2);
-                case InputAxisType.MouseLeftDoubleClick:
-                    MouseLeftDoubleClick();
-                    break;
-            }
-            return false;
-        }
-
-        private float mouseLeftClickTime;
-        private const float doubleClickTime = 0.3f;
-        protected bool MouseLeftDoubleClick()
-        {
-            if (GetButton(InputAxisType.MouseLeft))
-            {
-                if (Time.time - mouseLeftClickTime < doubleClickTime)
-                {
-                    mouseLeftClickTime = 0;
-                    return true;
-                }
-                else
-                {
-                    mouseLeftClickTime = Time.time;
-                }
-            }
-            return false;
-        }
-        
-        public virtual bool GetButtonDown(string name)
-        {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButtonDown(0);
-                case InputAxisType.MouseRight:
-                    return Input.GetMouseButtonDown(1);
-                case InputAxisType.MouseMiddle:
-                    return Input.GetMouseButtonDown(2);
-            }
-            return false;
-        }
-
-        public virtual bool GetButtonUp(string name)
-        {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButtonUp(0);
-                case InputAxisType.MouseRight:
-                    return Input.GetMouseButtonUp(1);
-                case InputAxisType.MouseMiddle:
-                    return Input.GetMouseButtonUp(2);
-            }
-            return false;
-        }
-        
-        
-
-        public float GetAxis(string name, bool raw)
+ 
+        public float GetAxis(string name)
         {
             float result = 0;
             switch (name)
             {
                 case InputAxisType.MouseX:
-                    result = MouseXDistance();
+                    result = MouseX();
                     break;
                 case InputAxisType.MouseY:
-                    result = MouseYDistance();
+                    result = MouseY();
                    break;
                 case InputAxisType.MouseScrollWheel:
                     result = MouseScrollWheel();
                     break;
                 case InputAxisType.Horizontal:
-                    result = HorizontalDistance();
+                    result = Horizontal();
                     break;
                 case InputAxisType.Vertical:
-                    result = VerticalDistance();
+                    result = Vertical();
                     break;
-                case InputAxisType.MouseXDistance:
-                    result = MouseXDistance();
-                    return result;
-                case InputAxisType.MouseYDistance:
-                    result = MouseYDistance();
-                    return result;
-                case InputAxisType.HorizontalDistance:
-                    result = HorizontalDistance();
-                    return result;
-                case InputAxisType.VerticalDistance:
-                    result = VerticalDistance();
-                    return result;
             }
-            result = Mathf.Clamp(result, -1, 1);
-            if (raw)
-                result = result == 0 ? 0 : Mathf.Sign(result);
             return result;
         }
 
@@ -115,39 +35,20 @@ namespace Framework
             
         }
 
-        protected abstract float MouseXDistance();
+        protected abstract float MouseX();
 
-        protected abstract float MouseYDistance();
+        protected abstract float MouseY();
 
-        protected virtual float MouseScrollWheel()
-        {
-            return Input.GetAxis("Mouse ScrollWheel");
-        }
+        protected abstract float MouseScrollWheel();
 
-        protected abstract float HorizontalDistance();
+        protected abstract float Horizontal();
 
-        protected abstract float VerticalDistance();
+        protected abstract float Vertical();
     }
     
 
     public static class InputAxisType
     {
-        /// <summary>
-        /// 鼠标左键
-        /// </summary>
-        public const string MouseLeft = "MouseLeft";
-        /// <summary>
-        /// 鼠标右键
-        /// </summary>
-        public const string MouseRight = "MouseRight";
-        /// <summary>
-        /// 鼠标中键
-        /// </summary>
-        public const string MouseMiddle = "MouseMiddle";
-        /// <summary>
-        /// 鼠标左键双击
-        /// </summary>
-        public const string MouseLeftDoubleClick = "MouseLeftDoubleClick";
         /// <summary>
         /// 鼠标X轴移动
         /// </summary>
@@ -157,32 +58,16 @@ namespace Framework
         /// </summary>
         public const string MouseY = "MouseY";
         /// <summary>
-        /// 鼠标X轴移动
-        /// </summary>
-        public const string MouseXDistance = "MouseXDistance";
-        /// <summary>
-        /// 鼠标Y轴移动
-        /// </summary>
-        public const string MouseYDistance = "MouseYDistance";
-        /// <summary>
         /// 鼠标滚轮滚动
         /// </summary>
         public const string MouseScrollWheel = "MouseScrollWheel";
         /// <summary>
-        /// 键盘水平输入
+        /// 电脑上跟Horizontal一致，手机上是点击屏幕左右滑动
         /// </summary>
         public const string Horizontal = "Horizontal";
         /// <summary>
-        /// 键盘垂直输入
+        /// 电脑上跟Vertical一致，手机上是点击屏幕上下滑动
         /// </summary>
         public const string Vertical = "Vertical";
-        /// <summary>
-        /// 键盘水平输入
-        /// </summary>
-        public const string HorizontalDistance = "HorizontalDistance";
-        /// <summary>
-        /// 键盘垂直输入
-        /// </summary>
-        public const string VerticalDistance = "VerticalDistance";
     }
 }

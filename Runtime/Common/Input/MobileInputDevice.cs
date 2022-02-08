@@ -8,64 +8,19 @@ namespace Framework
         {
             return FApplication.IsMobile;
         }
-
-        public override bool GetButton(string name)
+        
+        protected override float MouseX()
         {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButton(0);
-                case InputAxisType.MouseRight:
-                    return false;
-                case InputAxisType.MouseMiddle:
-                    return false;
-                case InputAxisType.MouseLeftDoubleClick:
-                    MouseLeftDoubleClick();
-                    break;
-            }
-            return false;
+            return Horizontal();
         }
 
-        public override bool GetButtonDown(string name)
+        protected override float MouseY()
         {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButtonDown(0);
-                case InputAxisType.MouseRight:
-                    return false;
-                case InputAxisType.MouseMiddle:
-                    return false;
-            }
-            return false;
-        }
-
-        public override bool GetButtonUp(string name)
-        {
-            switch (name)
-            {
-                case InputAxisType.MouseLeft:
-                    return Input.GetMouseButtonUp(0);
-                case InputAxisType.MouseRight:
-                    return false;
-                case InputAxisType.MouseMiddle:
-                    return false;
-            }
-            return false;
-        }
-
-        protected override float MouseXDistance()
-        {
-            return HorizontalDistance();
-        }
-
-        protected override float MouseYDistance()
-        {
-            return VerticalDistance();
+            return Vertical();
         }
 
         private Vector2 horizontalStartPos;
-        protected override float HorizontalDistance()
+        protected override float Horizontal()
         {
             if (Input.touchCount != 1) return 0;
             var touch = Input.GetTouch(0);
@@ -83,7 +38,7 @@ namespace Framework
         }
 
         private Vector2 verticalStartPos;
-        protected override float VerticalDistance()
+        protected override float Vertical()
         {
             if (Input.touchCount != 1) return 0;
             var touch = Input.GetTouch(0);

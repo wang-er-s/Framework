@@ -10,36 +10,30 @@ namespace Framework
         }
 
         private Vector2 mousePosDelta;
-        protected override float MouseXDistance()
+        protected override float MouseX()
         {
             return mousePosDelta.x;
         }
         
-        protected override float MouseYDistance()
+        protected override float MouseY()
         {
             return mousePosDelta.y;
         }
 
-        private Vector2 horizontalStartPos;
-        protected override float HorizontalDistance()
+        protected override float MouseScrollWheel()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                horizontalStartPos = Input.mousePosition;
-            }
-            if (Input.GetMouseButton(0))
-            {
-                var result = Input.mousePosition.x - horizontalStartPos.x;
-                horizontalStartPos = Input.mousePosition;
-                return result;
-            }
-            return 0;
+            return Input.GetAxis("Mouse ScrollWheel");
+        }
+
+        protected override float Horizontal()
+        {
+            return Input.GetAxis("Horizontal");
         }
 
         public StandardInputDevice()
         {
+            mousePosDelta = Vector2.zero;
             lastMousePos = Input.mousePosition;
-            mousePosDelta = lastMousePos - Input.mousePosition;
         }
 
         private Vector3 lastMousePos;
@@ -49,20 +43,9 @@ namespace Framework
             lastMousePos = Input.mousePosition;
         }
         
-        private Vector2 verticalStartPos;
-        protected override float VerticalDistance()
+        protected override float Vertical()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                verticalStartPos = Input.mousePosition;
-            }
-            if (Input.GetMouseButton(0))
-            {
-                var result = Input.mousePosition.y - verticalStartPos.y;
-                verticalStartPos = Input.mousePosition;
-                return result;
-            }
-            return 0;
+            return Input.GetAxis("Vertical");
         }
     }
 }
