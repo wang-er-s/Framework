@@ -83,7 +83,7 @@ namespace Framework.Asynchronous
             if (currentProgress.IsDone && progressQueue.Count <= 0)
             {
                 //延迟一帧 否则会比子任务提前完成
-                GameLoop.Ins.Delay(() => SetResult());
+                Timer.RegisterFrame(() => SetResult());
                 return true;
             }
             return false;

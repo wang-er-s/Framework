@@ -45,7 +45,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         }
         asyncResult.Callbackable().OnCallback(result =>
         {
-            GameLoop.Ins.Delay(() =>
+            Timer.RegisterFrame(() =>
             {
                 Loaded = true;
                 _loadedCb?.Invoke();

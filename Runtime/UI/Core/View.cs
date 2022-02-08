@@ -46,7 +46,6 @@ namespace Framework.UI.Core
             _canvasGroup = Go.GetOrAddComponent<CanvasGroup>();
             SetComponent();
             Start();
-            GameLoop.Ins.OnUpdate += Update;
         }
 
         private static Dictionary<Type, List<Tuple<FieldInfo, string>>> _type2TransPath =
@@ -109,11 +108,6 @@ namespace Framework.UI.Core
         protected virtual void Start()
         {
             
-        }
-        
-        //这里要删除，需要update用协程代替
-        protected virtual void Update()
-        {
         }
 
         public void Show()
@@ -194,7 +188,6 @@ namespace Framework.UI.Core
         {
             Hide();
             Res.Release();
-            GameLoop.Ins.OnUpdate -= Update;
             OnClose();
             for (int i = 0; i < _subViews.Count; i++)
             {

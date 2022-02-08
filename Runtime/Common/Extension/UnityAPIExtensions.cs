@@ -134,43 +134,7 @@ public static class GameObjectExtension
         boxCollider.Layer("Default");
         transform.Layer("Default");
     }
-
-    /// <summary>
-    /// time单位是秒
-    /// withMono为true时，如果gameObject销毁则不会执行
-    /// </summary>
-    public static void Delay(this MonoBehaviour obj, float time, Action action, bool withMono = false)
-    {
-        if (obj == null)
-        {
-            Log.Warning("obj is null, not call delay");
-            return;
-        }
-        obj.StartCoroutine(delay(time, action, obj.gameObject, withMono));
-    }
     
-    /// <summary>
-    /// 延迟一帧执行
-    /// </summary>
-    public static void Delay(this MonoBehaviour obj, Action action, bool withMono = false)
-    {
-        Delay(obj, -1, action, withMono);
-    }
-
-    private static IEnumerator delay(float time, Action action, GameObject go, bool withMono)
-    {
-        if (time <= 0)
-        {
-            yield return null;
-        }
-        else
-        {
-            yield return new WaitForSeconds(time);
-        }
-        if(withMono && go == null) yield break;
-        action?.Invoke();
-    }
-
     #region CEGO001 Show
 
     public static GameObject ActiveShow(this GameObject selfObj)

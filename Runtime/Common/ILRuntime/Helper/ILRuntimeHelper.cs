@@ -64,7 +64,6 @@ namespace Framework
 	        Appdomain.DebugService.StartDebugService(56000);
 #endif
 
-	        GameLoop.Ins.OnApplicationQuitEvent += Dispose;
         }
 
         public static async Task LoadILRuntime(string dllPath, string pdbPath)
@@ -111,7 +110,6 @@ namespace Framework
 	        Appdomain.DebugService.StartDebugService(56000);
 #endif
 
-	        GameLoop.Ins.OnApplicationQuitEvent += Dispose;
         }
         
         public static void InitializeILRuntime(AppDomain appDomain)

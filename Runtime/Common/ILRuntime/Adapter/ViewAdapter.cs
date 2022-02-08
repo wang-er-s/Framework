@@ -10,7 +10,6 @@ namespace Framework
     public class ViewAdapter : CrossBindingAdaptor
     {
         static CrossBindingMethodInfo mStart_0 = new CrossBindingMethodInfo("Start");
-        static CrossBindingMethodInfo mUpdate_1 = new CrossBindingMethodInfo("Update");
         static CrossBindingMethodInfo mOnShow_3 = new CrossBindingMethodInfo("OnShow");
         static CrossBindingMethodInfo mOnHide_4 = new CrossBindingMethodInfo("OnHide");
         static CrossBindingMethodInfo mOnVmChange_5 = new CrossBindingMethodInfo("OnVmChange");
@@ -61,14 +60,6 @@ namespace Framework
                     base.Start();
                 else
                     mStart_0.Invoke(this.instance);
-            }
-
-            protected override void Update()
-            {
-                if (mUpdate_1.CheckShouldInvokeBase(this.instance))
-                    base.Update();
-                else
-                    mUpdate_1.Invoke(this.instance);
             }
 
             protected override void OnShow()

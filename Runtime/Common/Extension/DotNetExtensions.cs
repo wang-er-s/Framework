@@ -1102,7 +1102,8 @@ public class AssemblyManager
     {
         foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            if (assembly.GetName().Name == name)
+            if (assembly.FullName.StartsWith("JetBrains")) continue;
+            if (assembly.GetName().Name.Equals(name))
             {
                 return assembly;
             }

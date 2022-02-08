@@ -77,7 +77,7 @@ namespace Framework.Asynchronous
             //延迟一帧 否则会比子任务提前完成
             if (Progress >= 1)
             {
-                GameLoop.Ins.Delay(() => SetResult());
+                Timer.RegisterFrame(() => SetResult());
             }
         }
 
@@ -175,7 +175,7 @@ namespace Framework.Asynchronous
                 sb.AppendLine(progressResult.Exception.ToString());
             }
             //延迟一帧 否则会比子任务提前完成
-            GameLoop.Ins.Delay(() =>
+            Timer.RegisterFrame(() =>
             {
                 if (sb != null)
                 {
@@ -288,7 +288,7 @@ namespace Framework.Asynchronous
                 sb.AppendLine(progressResult.Exception.ToString());
             }
             //延迟一帧 否则会比子任务提前完成
-            GameLoop.Ins.Delay(() =>
+            Timer.RegisterFrame(() =>
             {
                 if (sb != null)
                 {

@@ -9,7 +9,10 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Framework.Asynchronous;
+using Framework.Pool;
 using JetBrains.Annotations;
+using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
 namespace Framework
@@ -67,6 +70,8 @@ namespace Framework
 
         #region Public Static Methods
 
+        private static Pool<Timer> pool;
+
         /// <summary>
         /// Register a new timer that should fire an event after a certain amount of time
         /// has elapsed.
@@ -88,23 +93,66 @@ namespace Framework
         public static Timer Register(float duration, Action onComplete, Action<float> onUpdate = null,
             bool isLooped = false, bool useRealTime = false, MonoBehaviour autoDestroyOwner = null)
         {
-            // create a manager object to update all the timers if one does not already exist.
-            if (Timer._manager == null)
-            {
-                TimerManager managerInScene = Object.FindObjectOfType<TimerManager>();
-                if (managerInScene != null)
-                {
-                    Timer._manager = managerInScene;
-                }
-                else
-                {
-                    GameObject managerObject = new GameObject {name = "TimerManager"};
-                    Timer._manager = managerObject.AddComponent<TimerManager>();
-                }
-            }
-            Timer timer = new Timer(duration, onComplete, onUpdate, isLooped, useRealTime, autoDestroyOwner);
+            Timer timer = pool.Allocate();
+            timer.Init(duration, onComplete, onUpdate, isLooped, useRealTime, autoDestroyOwner);
             Timer._manager.RegisterTimer(timer);
             return timer;
+        }
+        
+        public static Timer RegisterFrame(Action onComplete)
+        {
+            Timer timer = pool.Allocate();
+            timer.Init(0.001f, onComplete, null, false, false, null);
+            Timer._manager.RegisterTimer(timer);
+            return timer;
+        }
+
+        static Timer()
+        {
+            TimerManager managerInScene = Object.FindObjectOfType<TimerManager>();
+            if (managerInScene != null)
+            {
+                Timer._manager = managerInScene;
+            }
+            else
+            {
+                GameObject managerObject = new GameObject {name = "TimerManager"};
+                Timer._manager = managerObject.AddComponent<TimerManager>();
+            }
+            pool = new Pool<Timer>(() => new Timer(), onFree: timer =>
+            {
+                timer.Reset();
+            });
+        }
+
+        /// <summary>
+        /// 等待多久
+        /// </summary>
+        /// <param name="duration">单位s</param>
+        /// <returns></returns>
+        public static IAsyncResult WaitAsync(float duration)
+        {
+            AsyncResult result = new AsyncResult(true);
+            Timer timer = pool.Allocate();
+            timer.Init(duration, onComplete: () => result.SetResult(), null, false, false, null);
+            Timer._manager.RegisterTimer(timer);
+            return result;
+        }
+        
+        /// <summary>
+        /// 等到什么时候
+        /// </summary>
+        /// <param name="duration">时间戳</param>
+        /// <returns></returns>
+        public static IAsyncResult WaitTillAsync(long duration)
+        {
+            var waitTime = (TimeHelper.ServerNow() - duration) / 10000000;
+            return WaitAsync(waitTime);
+        }
+
+        public static IAsyncResult WaitFrameAsync()
+        {
+            return WaitAsync(0.001f);
         }
 
         /// <summary>
@@ -286,8 +334,8 @@ namespace Framework
             get { return this._hasAutoDestroyOwner && this._autoDestroyOwner == null; }
         }
 
-        private readonly Action _onComplete;
-        private readonly Action<float> _onUpdate;
+        private Action _onComplete;
+        private Action<float> _onUpdate;
         private float _startTime;
         private float _lastUpdateTime;
 
@@ -301,14 +349,14 @@ namespace Framework
         // after the auto destroy owner is destroyed, the timer will expire
         // this way you don't run into any annoying bugs with timers running and accessing objects
         // after they have been destroyed
-        private readonly MonoBehaviour _autoDestroyOwner;
-        private readonly bool _hasAutoDestroyOwner;
+        private MonoBehaviour _autoDestroyOwner;
+        private bool _hasAutoDestroyOwner;
 
         #endregion
 
         #region Private Constructor (use static Register method to create new timer)
 
-        private Timer(float duration, Action onComplete, Action<float> onUpdate,
+        private void Init(float duration, Action onComplete, Action<float> onUpdate,
             bool isLooped, bool usesRealTime, MonoBehaviour autoDestroyOwner)
         {
             this.duration = duration;
@@ -320,6 +368,19 @@ namespace Framework
             this._hasAutoDestroyOwner = autoDestroyOwner != null;
             this._startTime = this.GetWorldTime();
             this._lastUpdateTime = this._startTime;
+        }
+
+        private void Reset()
+        {
+            this.duration = 0;
+            this._onComplete = null;
+            this._onUpdate = null;
+            this.isLooped = false;
+            this.usesRealTime = false;
+            this._autoDestroyOwner = null;
+            this._hasAutoDestroyOwner = false;
+            this._startTime = 0;
+            this._lastUpdateTime = 0;
         }
 
         #endregion
@@ -440,7 +501,16 @@ namespace Framework
                 {
                     timer.Update();
                 }
-                this._timers.RemoveAll(t => t.isDone);
+                for (int i = 0; i < _timers.Count; i++)
+                {
+                    var timer = _timers[i];
+                    if (timer.isDone)
+                    {
+                        _timers.RemoveAt(i);
+                        i--;
+                        pool.Free(timer);
+                    }
+                }
             }
         }
 
