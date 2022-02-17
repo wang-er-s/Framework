@@ -45,12 +45,7 @@ namespace Framework.UI.Core.Bind
         {
             OnValueChanged -= changeAction;
         }
-
-        public void Clear()
-        {
-            OnValueChanged = null;
-        }
-
+        
         public override string ToString()
         {
             return _value != null ? _value.ToString() : "null";
@@ -78,13 +73,8 @@ namespace Framework.UI.Core.Bind
         {
             return property._value;
         }
-
-        public void ClearView()
-        {
-            
-        }
-
-        public void ClearModel()
+        
+        public void Clear()
         {
             OnValueChanged = null;
         }

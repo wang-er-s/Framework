@@ -65,7 +65,7 @@ namespace Framework.UI.Core.Bind
             
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             foreach (var wrapper in _wrappers)
             {
@@ -125,7 +125,7 @@ namespace Framework.UI.Core.Bind
         {
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
         }
     }

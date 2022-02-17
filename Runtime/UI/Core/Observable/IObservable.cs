@@ -25,7 +25,7 @@ namespace Framework.UI.Core.Bind
             
         }
 
-        public void ClearModel()
+        public void Clear()
         {
             action();
         }

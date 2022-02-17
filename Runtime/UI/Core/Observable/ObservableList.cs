@@ -168,9 +168,10 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public void AddListener(Action<NotifyCollectionChangedAction, T, int> listener)
+        public UnRegister AddListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
             CollectionChanged += listener;
+            return new UnRegister(() => CollectionChanged -= listener);
         }
 
         public void RemoveListener(Action<NotifyCollectionChangedAction, T, int> listener)
@@ -183,9 +184,11 @@ namespace Framework.UI.Core.Bind
             ListUpdateChanged -= listener;
         }
 
-        public void AddListener(Action<List<T>> listener)
+        public UnRegister AddListener(Action<List<T>> listener)
         {
+            listener(_items);
             ListUpdateChanged += listener;
+            return new UnRegister(() => ListUpdateChanged -= listener);
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction type, T item, int index)

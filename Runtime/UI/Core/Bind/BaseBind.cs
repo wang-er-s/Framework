@@ -11,7 +11,7 @@ namespace Framework.UI.Core.Bind
 
         public abstract void ClearView();
 
-        public abstract void ClearModel();
+        public abstract void Clear();
 
     }
 }

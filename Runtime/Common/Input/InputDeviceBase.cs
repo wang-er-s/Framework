@@ -26,6 +26,12 @@ namespace Framework
                 case InputAxisType.Vertical:
                     result = Vertical();
                     break;
+                case InputAxisType.HorizontalConst:
+                    result = HorizontalConst();
+                    break;
+                case InputAxisType.VerticalConst:
+                    result = VerticalConst();
+                    break;
             }
             return result;
         }
@@ -42,8 +48,10 @@ namespace Framework
         protected abstract float MouseScrollWheel();
 
         protected abstract float Horizontal();
+        protected abstract float HorizontalConst();
 
         protected abstract float Vertical();
+        protected abstract float VerticalConst();
     }
     
 
@@ -66,8 +74,16 @@ namespace Framework
         /// </summary>
         public const string Horizontal = "Horizontal";
         /// <summary>
+        /// 电脑上跟Horizontal一致，手机上是根据初次点击的点，和当前的位置返回x
+        /// </summary>
+        public const string HorizontalConst = "HorizontalConst";
+        /// <summary>
         /// 电脑上跟Vertical一致，手机上是点击屏幕上下滑动
         /// </summary>
         public const string Vertical = "Vertical";
+        /// <summary>
+        /// 电脑上跟Vertical一致，手机上是根据初次点击的点，和当前的位置返回y
+        /// </summary>
+        public const string VerticalConst = "VerticalConst";
     }
 }

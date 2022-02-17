@@ -47,8 +47,8 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         {
             Timer.RegisterFrame(() =>
             {
-                Loaded = true;
                 _loadedCb?.Invoke();
+                Loaded = true;
             });
         });
     }

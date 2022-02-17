@@ -99,7 +99,7 @@ namespace Framework.UI.Core.Bind
             _componentEvent?.RemoveListener(ComponentListener);
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             _property?.RemoveListener(PropertyListener);
         }
@@ -171,7 +171,7 @@ namespace Framework.UI.Core.Bind
         {
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             _property1.RemoveListener(Property1Listener);
             _property2.RemoveListener(Property2Listener);

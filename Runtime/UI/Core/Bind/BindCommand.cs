@@ -55,7 +55,7 @@ namespace Framework.UI.Core.Bind
             _componentEvent.RemoveListener(Listener);
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             
         }
@@ -120,7 +120,7 @@ namespace Framework.UI.Core.Bind
             _componentEvent.RemoveListener(Listener);
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
 
         }

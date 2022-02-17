@@ -30,6 +30,11 @@ namespace Framework
             return Input.GetAxis("Horizontal");
         }
 
+        protected override float HorizontalConst()
+        {
+            return Horizontal();
+        }
+
         public StandardInputDevice()
         {
             mousePosDelta = Vector2.zero;
@@ -46,6 +51,11 @@ namespace Framework
         protected override float Vertical()
         {
             return Input.GetAxis("Vertical");
+        }
+
+        protected override float VerticalConst()
+        {
+            return Vertical();
         }
     }
 }

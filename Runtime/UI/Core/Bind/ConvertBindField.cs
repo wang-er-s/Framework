@@ -79,7 +79,7 @@ namespace Framework.UI.Core.Bind
             }
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             if (_prop2CpntWrap != null)
             {

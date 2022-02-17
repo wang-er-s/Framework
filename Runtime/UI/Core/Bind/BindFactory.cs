@@ -215,8 +215,7 @@ namespace Framework.UI.Core.Bind
         {
             foreach (var clearable in clearables)
             {
-                clearable.ClearView();
-                clearable.ClearModel();
+                clearable.Clear();
                 if (clearable is BaseBind bind)
                 {
                     CacheBinds.Enqueue(bind);

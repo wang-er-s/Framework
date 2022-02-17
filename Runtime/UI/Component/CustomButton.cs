@@ -86,7 +86,7 @@ namespace Framework.UIComponent
             isPointDown = true;
             lastInvokeTime = downTime;
         }
-
+        
         public override void OnPointerExit(PointerEventData eventData)
         {
             base.OnPointerExit(eventData);

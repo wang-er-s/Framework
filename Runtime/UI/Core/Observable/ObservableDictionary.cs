@@ -101,9 +101,11 @@ namespace Framework.UI.Core.Bind
             CollectionChanged += changeCb;
         }
 
-        public void AddListener(Action<Dictionary<TKey, TValue>> changeCb)
+        public UnRegister AddListener(Action<Dictionary<TKey, TValue>> changeCb)
         {
-            //dicChanged += changeCb;
+            changeCb(Dictionary);
+            dicChanged += changeCb;
+            return new UnRegister(() => dicChanged -= changeCb);
         }
 
         public void RemoveListener(
@@ -269,7 +271,7 @@ namespace Framework.UI.Core.Bind
 
         void IObservable.AddListener(Action<object> listener)
         {
-            dicChanged += listener;
+            dicChanged += dic => listener(dic);
         }
 
         object IObservable.RawValue => Dictionary;

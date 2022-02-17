@@ -381,6 +381,9 @@ namespace Framework
             this._hasAutoDestroyOwner = false;
             this._startTime = 0;
             this._lastUpdateTime = 0;
+            this.isCompleted = false;
+            this._timeElapsedBeforeCancel = null;
+            this._timeElapsedBeforePause = null;
         }
 
         #endregion

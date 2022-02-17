@@ -52,7 +52,7 @@ namespace Framework.UI.Core.Bind
             
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             _list.RemoveListener(_bindList.GetBindListFunc());
         }

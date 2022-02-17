@@ -69,7 +69,7 @@ namespace Framework.UI.Core.Bind
             itemTrans2View.Clear();
         }
 
-        public override void ClearModel()
+        public override void Clear()
         {
             itemsVm.RemoveListener(OnListChanged);
         }
