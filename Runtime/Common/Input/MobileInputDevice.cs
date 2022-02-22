@@ -48,6 +48,7 @@ namespace Framework
                     horizontalFirstPressPos = touch.position;
                     break;
                 case TouchPhase.Moved:
+                case TouchPhase.Stationary:
                     var result = touch.position.x - horizontalFirstPressPos.x;
                     return result;
             }
@@ -83,6 +84,7 @@ namespace Framework
                     verticalFirstPressPos = touch.position;
                     break;
                 case TouchPhase.Moved:
+                case TouchPhase.Stationary:
                     var result = touch.position.y - verticalFirstPressPos.y;
                     return result;
             }
