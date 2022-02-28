@@ -110,9 +110,10 @@ namespace Framework.Assets
         {
             loadProgress.Add(promise);
             var loader = Scene.LoadAsync(path, additive: loadSceneMode == LoadSceneMode.Additive);
+            var waitEnd = new WaitForEndOfFrame();
             while (!loader.isDone)
             {
-                await Task.Yield();
+                await waitEnd;
                 promise.UpdateProgress(loader.progress);
             }
 
