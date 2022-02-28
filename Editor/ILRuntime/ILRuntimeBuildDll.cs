@@ -40,7 +40,6 @@ namespace Framework.Editor
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
             var config = runtimeConfig.ILRConfig;
-            config.ReleaseBuild = !isDebug;
             EditorUtility.SetDirty(runtimeConfig);
             AssetDatabase.SaveAssets();
             usePdb = config.UsePbd;
@@ -67,7 +66,6 @@ namespace Framework.Editor
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
             var config = runtimeConfig.ILRConfig;
-            config.ReleaseBuild = !isDebug;
             EditorUtility.SetDirty(runtimeConfig);
             AssetDatabase.SaveAssets();
             usePdb = config.UsePbd;
