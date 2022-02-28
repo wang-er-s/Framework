@@ -126,10 +126,11 @@ namespace Framework
 	        LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appDomain);
 
 	        //初始化CLR绑定请放在初始化的最后一步！！
-	        //请在生成了绑定代码后解除下面这行的注释
-	        var ilrConfig = ConfigBase.Load<FrameworkRuntimeConfig>().ILRConfig;
-	        if (ilrConfig.ReleaseBuild)
-		        ILRuntime.Runtime.CLRBinding.CLRBindingUtils.Initialize(appDomain);
+	        Type t = Type.GetType("ILRuntime.Runtime.Generated.CLRBindings");
+	        if (t != null)
+	        {
+		        t.GetMethod("Initialize")?.Invoke(null, new object[] { appDomain });
+	        }
         }
 
         private static Dictionary<string,Type> hotfixType = null;

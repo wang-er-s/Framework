@@ -39,6 +39,13 @@ namespace Framework.Editor
             FindAndReplace<InputField, CustomInputField>(gameObject);
             FindAndReplace<TMP_InputField, CustomInputFieldTMP>(gameObject);
 
+            var txt = gameObject.GetComponent<CustomText>();
+            if (txt)
+            {
+                txt.color = Color.black;
+                txt.text = "说点什么..";
+            }
+
             var btn = gameObject.GetComponent<CustomButton>();
             if (btn)
             {

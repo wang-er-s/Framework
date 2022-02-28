@@ -42,8 +42,5 @@ namespace Framework
 		[LabelText("生成适配器地址")]
 		public string AdaptorPath;
 
-		[ReadOnly]
-		public bool ReleaseBuild = false;
-		
 	}
 }

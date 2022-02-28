@@ -444,7 +444,7 @@ namespace IngameDebugConsole
 		{
 			screenDimensionsChanged = true;
 		}
-
+		private int frames = 0;
 		private void Update()
 		{
 			// Toggling the console with toggleKey is handled in Update instead of LateUpdate because
@@ -461,11 +461,16 @@ namespace IngameDebugConsole
 						ShowLogWindow();
 				}
 			}
-			fpsTimer += Time.deltaTime;
-			if (fpsTimer >= fpsTick)
+			
+			++frames;
+			if (Time.realtimeSinceStartup > fpsTimer + 0.5f)
 			{
-				fps = 1 / Time.deltaTime;
-				fpsTimer = 0;
+				fps = frames / (Time.realtimeSinceStartup - fpsTimer);
+
+				frames = 0;
+
+				fpsTimer = Time.realtimeSinceStartup;
+				
 				fpsText.text = $"fps:{fps:.0}";
 			}
 		}

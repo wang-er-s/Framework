@@ -364,7 +364,7 @@ public static class ComponentExtension
         foreach (Transform child in self)
         {
             if (child.childCount > 0) GetAllChild(child, action);
-            action.InvokeGracefully(child);
+            action?.Invoke(child);
         }
     }
 }
@@ -457,7 +457,7 @@ public static class ObjectExtension
 
     public static T ApplySelfTo<T>(this T selfObj, System.Action<T> toFunction) where T : Object
     {
-        toFunction.InvokeGracefully(selfObj);
+        toFunction?.Invoke(selfObj);
         return selfObj;
     }
 
@@ -1194,64 +1194,10 @@ public static class TransformExtension
 
 public static class UnityActionExtension
 {
-    public static void Example()
+    public static void AddOnlyOneListener(this UnityEvent self, UnityAction action)
     {
-        UnityAction action = () => { };
-        UnityAction<int> actionWithInt = num => { };
-        UnityAction<int, string> actionWithIntString = (num, str) => { };
-
-        action.InvokeGracefully();
-        actionWithInt.InvokeGracefully(1);
-        actionWithIntString.InvokeGracefully(1, "str");
-    }
-
-    /// <summary>
-    /// Call action
-    /// </summary>
-    /// <param name="selfAction"></param>
-    /// <returns> call succeed</returns>
-    public static bool InvokeGracefully(this UnityAction selfAction)
-    {
-        if (null != selfAction)
-        {
-            selfAction();
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Call action
-    /// </summary>
-    /// <param name="selfAction"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static bool InvokeGracefully<T>(this UnityAction<T> selfAction, T t)
-    {
-        if (null != selfAction)
-        {
-            selfAction(t);
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Call action
-    /// </summary>
-    /// <param name="selfAction"></param>
-    /// <returns> call succeed</returns>
-    public static bool InvokeGracefully<T, K>(this UnityAction<T, K> selfAction, T t, K k)
-    {
-        if (null != selfAction)
-        {
-            selfAction(t, k);
-            return true;
-        }
-
-        return false;
+        self.RemoveAllListeners();
+        self.AddListener(action);
     }
 }
 
