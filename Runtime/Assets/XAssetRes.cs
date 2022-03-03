@@ -105,20 +105,25 @@ namespace Framework.Assets
                 promise.SetResult();
             }
         }
-        
-        protected override async void LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path, LoadSceneMode loadSceneMode)
+
+        protected override async void LoadScene(IProgressPromise<float, string> promise, string path,
+            LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
         {
             loadProgress.Add(promise);
-            var loader = Scene.LoadAsync(path, additive: loadSceneMode == LoadSceneMode.Additive);
+            var loader = Scene.LoadAsync(path, s =>
+            {
+                var sceneName = Path.GetFileNameWithoutExtension(path);
+                promise.SetResult(sceneName);
+            }, loadSceneMode == LoadSceneMode.Additive);
+            handles[path] = loader;
+            await new WaitUntil(() => loader.load != null);
+            loader.load.allowSceneActivation = allowSceneActivation;
             var waitEnd = new WaitForEndOfFrame();
             while (!loader.isDone)
             {
                 await waitEnd;
                 promise.UpdateProgress(loader.progress);
             }
-
-            handles[path] = loader;
-            promise.SetResult();
         }
 
         protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)

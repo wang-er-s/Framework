@@ -27,7 +27,7 @@ namespace Framework.Assets
         IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
             bool instantiateInWorldSpace = false);
 
-        IProgressResult<float, Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single);
+        IProgressResult<float, string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true);
 
         IProgressResult<float, string> CheckDownloadSize();
         IProgressResult<DownloadProgress> DownloadAssets();

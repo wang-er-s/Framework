@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
 using Framework.Execution;
@@ -24,9 +25,17 @@ namespace Framework.Assets
 
         public override string DownloadURL { get; set; }
         
-        protected override void LoadScene(IProgressPromise<float, Scene> promise, string path, LoadSceneMode loadSceneMode)
+        protected override async void LoadScene(IProgressPromise<float, string> promise, string path, LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
         {
-            throw new NotImplementedException();
+            var operation = SceneManager.LoadSceneAsync(path, loadSceneMode);
+            operation.allowSceneActivation = allowSceneActivation;
+            var waitEnd = new WaitForEndOfFrame();
+            while (!operation.isDone)
+            {
+                await waitEnd;
+                promise.UpdateProgress(operation.progress);
+            }
+            promise.SetResult(Path.GetFileNameWithoutExtension(path));
         }
 
         public override IProgressResult<float,string> CheckDownloadSize()

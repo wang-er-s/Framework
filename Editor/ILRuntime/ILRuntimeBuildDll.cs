@@ -35,17 +35,18 @@ namespace Framework.Editor
 
         private static List<string> defineList = new List<string>();
         private static bool usePdb;
+        private static ILRConfig ilrConfig;
         
         private static void BuildDLL(bool isDebug)
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
-            var config = runtimeConfig.ILRConfig;
+            ilrConfig = runtimeConfig.ILRConfig;
             EditorUtility.SetDirty(runtimeConfig);
             AssetDatabase.SaveAssets();
-            usePdb = config.UsePbd;
-            var dllName = config.DllName;
+            usePdb = ilrConfig.UsePbd;
+            var dllName = ilrConfig.DllName;
             string codeSource = Application.dataPath + "/_scripts@hotfix";
-            string outPath = config.DllGenPath + $"/{dllName}.dll";
+            string outPath = ilrConfig.DllGenPath + $"/{dllName}.dll";
             List<string> allDll = new List<string>();
             var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
             try
@@ -163,6 +164,15 @@ namespace Framework.Editor
 
             //去重
             dllList = dllList.Distinct().ToList();
+            // 删除unity生成的热更dll  防止重复
+            for (int i = 0; i < dllList.Count; i++)
+            {
+                if (Path.GetFileNameWithoutExtension(dllList[i]) == ilrConfig.DllName)
+                {
+                    dllList.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -247,10 +257,12 @@ namespace Framework.Editor
                     diagnostic.IsWarningAsError ||
                     diagnostic.Severity ==
                     DiagnosticSeverity.Error);
+                StringBuilder sb = new StringBuilder();
                 foreach (var diagnostic in failures)
                 {
-                    Debug.LogError(diagnostic.ToString());
+                    sb.AppendLine(diagnostic.ToString());
                 }
+                throw new Exception(sb.ToString());
             }
             else
             {

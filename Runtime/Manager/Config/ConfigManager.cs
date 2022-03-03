@@ -9,9 +9,9 @@ using UnityEngine;
 
 public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
 {
-    private object[] _objects = new object[1];
+    private object[] @params = new object[1];
     private MulAsyncResult asyncResult;
-    private Action _loadedCb;
+    public event Action LoadedCb;
     public bool Loaded { get; private set; }
     public static Func<string, string> CustomLoadPath;
     
@@ -27,12 +27,12 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
             var progress = Res.Default.LoadAssetAsync<TextAsset>(path);
             progress.Callbackable().OnCallback(result =>
             {
-                lock (_objects)
+                lock (@params)
                 {
-                    _objects[0] = result.Result.text;
+                    @params[0] = result.Result.text;
                     try
                     {
-                        method.Invoke(null, _objects);
+                        method.Invoke(null, @params);
                     }
                     catch (Exception)
                     {
@@ -47,7 +47,7 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
         {
             Timer.RegisterFrame(() =>
             {
-                _loadedCb?.Invoke();
+                LoadedCb?.Invoke();
                 Loaded = true;
             });
         });
@@ -55,20 +55,16 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
 
     public async Task AddConfig(Type type)
     {
-        var configAttribute = type.GetCustomAttribute(typeof(ConfigAttribute), false);
-        if(configAttribute == null) return;
-        var path = (configAttribute as ConfigAttribute).Path;
+        CheckType(type);
+        var classData = GetClassData(type);
+        if(classData == null) return;
+        var path = (classData.Attribute as ConfigAttribute).Path;
         if (CustomLoadPath != null)
             path = CustomLoadPath(path);
         var method = type.GetMethod("Load", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
         var content = (await Res.Default.LoadAssetAsync<TextAsset>(path)).text;
-        _objects[0] = content;
-        method.Invoke(null, _objects);
-    }
-
-    public void AddLoadedCallback(Action action)
-    {
-        _loadedCb += action;
+        @params[0] = content;
+        method.Invoke(null, @params);
     }
 
 #if UNITY_EDITOR && ILRUNTIME

@@ -38,17 +38,18 @@ namespace Framework.Assets
         }
         
         public abstract T LoadAsset<T>(string key) where T : Object;
-        protected abstract void LoadScene(IProgressPromise<float, Scene> promise, string path,
-            LoadSceneMode loadSceneMode);
+        protected abstract void LoadScene(IProgressPromise<float, string> promise, string path,
+            LoadSceneMode loadSceneMode, bool allowSceneActivation = true);
+
         public abstract IProgressResult<float,string> CheckDownloadSize();
         public abstract IProgressResult<DownloadProgress> DownloadAssets();
         protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
         public abstract void Release();
         
-        public IProgressResult<float,Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public IProgressResult<float,string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true)
         {
-            ProgressResult<float,Scene> progressResult = new ProgressResult<float, Scene>();
-            LoadScene(progressResult, path, loadSceneMode);
+            ProgressResult<float,string> progressResult = new ProgressResult<float, string>();
+            LoadScene(progressResult, path, loadSceneMode, allowSceneActivation);
             return progressResult;
         }
         

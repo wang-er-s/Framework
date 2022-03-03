@@ -119,17 +119,6 @@ namespace Framework.UI.Core
             promise.UpdateProgress(1f);
             promise.SetResult(view);
         }
-        
-#if UNITY_EDITOR
-        public async void EditorCreateView(View view, ViewModel viewModel,string path)
-        {
-            var goPrefab = await Res.Default.LoadAssetAsync<GameObject>(path);
-            Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
-            GameObject go = Object.Instantiate(goPrefab, Canvas.transform);
-            view.SetGameObject(go);
-            view.SetVm(viewModel);
-        }
-#endif
 
         [Obsolete("use LoadViewAsync replace", true)]
         public View Open(string path, ViewModel viewModel = null)

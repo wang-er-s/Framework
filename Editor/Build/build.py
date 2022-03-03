@@ -4,6 +4,13 @@ import sys
 import re
 import io
 import codecs
+import json
+import requests
+import time
+import hmac
+import hashlib
+import base64
+import urllib.parse
     
 project_path = sys.argv[1]
 is_debug = sys.argv[2]
@@ -14,6 +21,10 @@ use_aab = sys.argv[6]
 svn_path = sys.argv[7]
 build_path = project_path + "/Build"
 svn_commit_path = build_path
+svn_account = "--username jenkins --password jenkins"
+
+editor_path = "D:/unity/Unity/2019.4.34f1c1/Editor/Unity.exe"
+python_path = "C:/Users/hm2/AppData/Local/Programs/Python/Python310/python.exe"
 
 def SafeHandleFunction(log='', errorlog='', errorcode=-1):
     def decorator(func):
@@ -38,7 +49,6 @@ def SafeHandleFunction(log='', errorlog='', errorcode=-1):
 class BaseBuilder:
     def __init__(self):
         # get base environment
-        self.UnityAppPath = "C:/Program\" \"Files/Unity/Hub/Editor/2019.4.24f1c1/Editor/Unity.exe"
         self.LogFilePath = build_path+"/buildLog.log"
         self.Error = ""
 
@@ -56,15 +66,23 @@ class BaseBuilder:
         lines = f.readlines()
         last_line = lines[-1]
         if(last_line.find("1") >= 0):
+            start_save_error = False
             for line in lines:
-                if(line.find("error")) >= 0:
+                if(start_save_error):
                     self.Error += line
+                    continue
+                if(line.find("BuildException")) >= 0:
+                    self.Error += line
+                    start_save_error = True
+            return 1
+        return 0
         
     @SafeHandleFunction("Begin to build UnityProject", errorlog="Build UnityProject Error", errorcode=-1)
     def Build(self):
         buildFunction = "Framework.Editor.Build.JenkinsBuild"
         UnityBuildCmd = "{} -batchmode -quit -nographics -executeMethod {} -logFile {} -projectPath {} {}".format(
-            self.UnityAppPath, buildFunction, self.LogFilePath, project_path, " ".join(self.args))
+            editor_path, buildFunction, self.LogFilePath, project_path, " ".join(self.args))
+        LogConsole(UnityBuildCmd)
         ExecuteBuildShell(UnityBuildCmd)
 
     
@@ -105,7 +123,7 @@ def ExecuteShell(command):
 def update_svn():
     result= ExecuteShell("svn info {} --show-item revision".format(svn_path))
     old_version = int(result)
-    ExecuteShell("svn update {}".format(svn_path))
+    ExecuteShell("svn update {} {}".format(svn_path,svn_account))
     result= ExecuteShell("svn info {} --show-item revision".format(svn_path))
     new_version = int(result)
     if(old_version != new_version):
@@ -123,17 +141,54 @@ def commit_svn():
             if(match.group(1) == "!"):
                 need_del_file_path.append(match.group(3))
     for del_file in need_del_file_path:
-        ExecuteShell("svn delete {}".format(del_file.strip()))
-    ExecuteShell("svn add {} --force".format(svn_commit_path))
-    ExecuteShell('svn commit {} -m "commit build ...."'.format(svn_commit_path))
+        ExecuteShell("svn delete {} {}".format(del_file.strip(), svn_account))
+    ExecuteShell("svn add {} --force {}".format(svn_commit_path, svn_account))
+    ExecuteShell('svn commit {} -m "commit build ...." {}'.format(svn_commit_path, svn_account))
+
+def notify(msg, success):
+    url = 'https://oapi.dingtalk.com/robot/send?access_token=55bce92dc73ad58bc7ba2ae8590205d6c7a5fae3b936cdf45769fc7adb929e50'
+    timestamp = str(round(time.time() * 1000))
+    secret = 'SECa482adba43f33bae1d7ff98181f7a50c208c3786012461a4887a97302d0ae418'
+    secret_enc = secret.encode('utf-8')
+    string_to_sign = '{}\n{}'.format(timestamp, secret)
+    string_to_sign_enc = string_to_sign.encode('utf-8')
+    hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
+    sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
+    url = url + "&timestamp={0}&sign={1}".format(timestamp, sign)
+    headers = {'Content-Type': 'application/json;charset=utf-8'}
+    title = ""
+    if(success == 0):
+        title = "打包成功"
+    else:
+        title = "打包失败"
+    data = {
+        # 发送消息类型为文本
+        "msgtype": "text",
+        "at": {
+            # 决定是否@所有人,True为发送的消息自动@所有人
+            "isAtAll": success != 0,
+        },
+        "text": {
+            "title": title,
+            # 消息正文
+            "content": msg
+        }
+    }
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    return r.text
 
 result = update_svn()
 obj = BaseBuilder()
 obj.Build()
-obj.CheckBuildState()
+success = obj.CheckBuildState()
 commit_svn()
 LogConsole(result)
-if(obj.Error != ""):
-    raise Exception(obj.Error)
+notify_msg = "is_debug={} up_version={} platform={} use_hotfix={}".format(is_debug, up_version, platform, use_hotfix)
+if(success == 1):
+    notify("打包失败\n {} \n{} \n {} \n 检查Log看看错误\n{}".format(notify_msg ,result,obj.Error, obj.LogFilePath) ,success)
     exit(1)
+if (platform == "Android"):
+    result = "手机下载地址 http://desktop-e2sfa1j/ \n" + result
+LogConsole(re)
+notify("打包成功\n{}\n{}".format(notify_msg, result) , success)
 exit(0)

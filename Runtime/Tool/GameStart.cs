@@ -7,7 +7,12 @@ namespace Framework
     /// 必须是静态无参方法
     /// </summary>
     [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Class)]
-    public class GameStartAttribute : Attribute
+    public class GameStartBeforeManagerAttribute : Attribute
+    {
+    }
+    
+    [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Class)]
+    public class GameStartAfterManagerAttribute : Attribute
     {
     }
 }

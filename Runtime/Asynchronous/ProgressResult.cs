@@ -28,7 +28,7 @@ namespace Framework.Asynchronous
     {
         private ProgressCallbackable<TProgress> _callbackable;
 
-        public ProgressResult() : this(false)
+        public ProgressResult() : this(true)
         {
         }
 
@@ -91,7 +91,7 @@ namespace Framework.Asynchronous
         private ProgressCallbackable<TProgress, TResult> _progressCallbackable;
         private Synchronizable<TResult> _synchronizable;
 
-        public ProgressResult() : this(false)
+        public ProgressResult() : this(true)
         {
         }
 

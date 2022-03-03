@@ -44,7 +44,7 @@ namespace Framework.Asynchronous
         private Synchronizable _synchronizable;
         private Callbackable _callbackable;
 
-        public AsyncResult() : this(false)
+        public AsyncResult() : this(true)
         {
         }
 

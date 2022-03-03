@@ -373,17 +373,19 @@ namespace Framework
         private void Reset()
         {
             this.duration = 0;
+            this.isLooped = false;
+            this.isCompleted = false;
+            this.usesRealTime = false;
+            
             this._onComplete = null;
             this._onUpdate = null;
-            this.isLooped = false;
-            this.usesRealTime = false;
-            this._autoDestroyOwner = null;
-            this._hasAutoDestroyOwner = false;
             this._startTime = 0;
             this._lastUpdateTime = 0;
-            this.isCompleted = false;
             this._timeElapsedBeforeCancel = null;
             this._timeElapsedBeforePause = null;
+            
+            this._autoDestroyOwner = null;
+            this._hasAutoDestroyOwner = false;
         }
 
         #endregion
