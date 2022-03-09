@@ -15,7 +15,6 @@ namespace Framework.Pool
         {
             template = prefab;
             this.autoActive = autoActive;
-            template.gameObject.SetActive(false);
         }
 
         public override TComponent Allocate()
@@ -49,7 +48,6 @@ namespace Framework.Pool
             () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
         {
             template = prefab;
-            template.SetActive(false);
         }
 
         public override GameObject Allocate()
