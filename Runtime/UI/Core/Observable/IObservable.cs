@@ -19,11 +19,6 @@ namespace Framework.UI.Core.Bind
         {
             this.action = action;
         }
-        
-        public void ClearView()
-        {
-            
-        }
 
         public void Clear()
         {

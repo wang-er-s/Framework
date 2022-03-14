@@ -145,6 +145,16 @@ namespace Framework.Editor
                 }
             }
 
+            // 删除UNITY_EDITOR的宏
+            for (int i = 0; i < defineList.Count; i++)
+            {
+                if (defineList[i] == "UNITY_EDITOR")
+                {
+                    defineList.RemoveAt(i);
+                    break;
+                }
+            }
+
             //csproj也加入
             foreach (var csproj in csprojList)
             {

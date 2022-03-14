@@ -268,6 +268,36 @@ namespace IngameDebugConsole
 		{
 #if UNITY_EDITOR
 			//在scene界面不让选中
+			if (LayerMask.NameToLayer("SceneLocked") == -1)
+			{
+				var tagManager =
+					new UnityEditor.SerializedObject(
+						UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+				UnityEditor.SerializedProperty it = tagManager.GetIterator();
+				bool showChildren = true;
+				int index = 0;
+				bool isLayer = false;
+				while (it.NextVisible(showChildren))
+				{
+//set your tags here
+					if (it.name == "data")
+					{
+						if (it.stringValue == "UI")
+						{
+							isLayer = true;
+						}
+						if (isLayer)
+							index++;
+						if (string.IsNullOrEmpty(it.stringValue) && index > 10)
+						{
+							it.stringValue = "SceneLocked";
+							break;
+						}
+					}
+				}
+				tagManager.ApplyModifiedProperties();
+			}
+			gameObject.layer = LayerMask.NameToLayer("SceneLocked");
 			UnityEditor.Tools.lockedLayers |= 1 << LayerMask.NameToLayer("SceneLocked");
 #endif
 			
