@@ -25,6 +25,7 @@ namespace Framework
 
         public override object CreateCLRInstance(AppDomain appdomain, ILTypeInstance instance)
         {
+            // ReSharper disable once Unity.IncorrectMonoBehaviourInstantiation
             return new Adaptor(appdomain, instance);
         }
 

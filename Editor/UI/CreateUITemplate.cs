@@ -32,7 +32,6 @@ namespace Framework.Editor
             if(go == null) return;
             var ins = PrefabUtility.InstantiatePrefab(go) as GameObject;
             if(ins == null) return;
-            string path = AssetDatabase.GetAssetPath(go);
             var marks = ins.GetComponentsInChildren<UIMark>();
             foreach (var mark in marks)
             {

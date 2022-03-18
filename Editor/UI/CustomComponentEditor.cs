@@ -15,7 +15,7 @@ namespace Framework.Editor
     {
         public static void ReplaceComponent(GameObject gameObject)
         {
-            void FindAndReplace<T, TNew>(GameObject go, Action<T,TNew> replace = null)
+            void FindAndReplace<T, TNew>(GameObject go)
             {
                 var components = go.GetComponents(typeof(T));
                 for (int i = 0; i < components.Length; i++)

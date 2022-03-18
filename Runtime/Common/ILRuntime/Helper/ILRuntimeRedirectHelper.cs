@@ -285,7 +285,10 @@ namespace Framework
         #region Log
 
         private static unsafe StackObject* LogMsg(ILIntepreter intp, StackObject* esp, IList<object> mStack,
-            CLRMethod method, bool isNewObj, Action<object[]> action)
+            // ReSharper disable once UnusedParameter.Local
+            CLRMethod method,
+            // ReSharper disable once UnusedParameter.Local
+            bool isNewObj, Action<object[]> action)
         {
             AppDomain domain = intp.AppDomain;
             StackObject* ret = ILIntepreter.Minus(esp, 1);
