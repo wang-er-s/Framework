@@ -3,7 +3,8 @@ using UnityEditor;
 
 namespace Framework.Editor.AssetsChecker
 {
-    public class AnimationChecker : IAssetRule<BasicAssetCheckerCollection, ModelImporter>
+    [BelongToCollectionAttribute(typeof(BasicAssetCheckerCollection))]
+    public class AnimationChecker : IAssetRule
     {
         public string Description => "Compression != Optimal的动画资源";
         public RulePriority Priority { get; }
@@ -14,13 +15,15 @@ namespace Framework.Editor.AssetsChecker
             table = new RuleDataTable("名称", "路径", "压缩类型");
         }
 
-        public void Check(ModelImporter assetImporter)
+        public void Check(AssetImporter assetImporter)
         {
-            if (assetImporter.animationCompression == ModelImporterAnimationCompression.Off)
+            var modelImporter = assetImporter as ModelImporter;
+            if(modelImporter == null) return;
+            if (modelImporter.animationCompression == ModelImporterAnimationCompression.Off)
             {
                 var path = assetImporter.assetPath;
                 var name = Path.GetFileNameWithoutExtension(path);
-                table.AddRow(name, path, assetImporter.animationCompression.ToString());
+                table.AddRow(name, path, modelImporter.animationCompression.ToString());
             }
         }
     }

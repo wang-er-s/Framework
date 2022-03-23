@@ -21,14 +21,64 @@ namespace Framework.Editor.AssetsChecker
         {
             menuTree = new OdinMenuTree();
             List<BasicAssetCheckerCollection> collections = new List<BasicAssetCheckerCollection>();
+            List<IRule> rules = new List<IRule>();
+            foreach (var type in GetType().Assembly.GetTypes())
+            {
+                if (type.IsSubclassOf(typeof(CheckerCollection)))
+                {
+                    collections.Add(Activator.CreateInstance(type) as BasicAssetCheckerCollection);
+                    continue;
+                }
+                
+                if (typeof(IRule).IsAssignableFrom(type) && !type.IsInterface)
+                {
+                    rules.Add(Activator.CreateInstance(type) as IRule);
+                }
+            }
+            foreach (var collection in collections)
+            {
+                foreach (var rule in rules)
+                {
+                    collection.AddRule(rule);
+                }
+                
+                menuTree.Add(collection.Name, collection);
+            }
+            
+            
+            return menuTree;
+        }
+
+        public void Run()
+        {
+            List<BasicAssetCheckerCollection> collections = new List<BasicAssetCheckerCollection>();
+            List<IRule> rules = new List<IRule>();
+            List<IAssetRule> assetRules = new List<IAssetRule>();
             foreach (var type in GetType().Assembly.GetTypes())
             {
                 if (type.IsSubclassOf(typeof(BasicAssetCheckerCollection)))
                 {
                     collections.Add(Activator.CreateInstance(type) as BasicAssetCheckerCollection);
+                    continue;
+                }
+                
+                if (type.IsSubclassOf(typeof(IRule)))
+                {
+                    rules.Add(Activator.CreateInstance(type) as IRule);
+                }
+
+                if (type.IsSubclassOf(typeof(IAssetRule)))
+                {
+                    assetRules.Add(Activator.CreateInstance(type) as IAssetRule);
                 }
             }
-            return menuTree;
+            foreach (var collection in collections)
+            {
+                foreach (var rule in rules)
+                {
+                    collection.AddRule(rule);
+                }
+            }
         }
     }
 
@@ -39,7 +89,6 @@ namespace Framework.Editor.AssetsChecker
         [Button]
         public void CX()
         {
-
         }
     }
 }

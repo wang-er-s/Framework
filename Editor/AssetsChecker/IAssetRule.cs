@@ -2,8 +2,8 @@
 {
     using UnityEditor;
 
-    public interface IAssetRule<T,A> : IRule<T> where T : CheckerCollection where A : AssetImporter
+    public interface IAssetRule : IRule
     {
-        void Check(A assetImporter);
+        void Check(AssetImporter assetImporter);
     }
 }
