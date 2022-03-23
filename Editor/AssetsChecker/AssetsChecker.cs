@@ -21,7 +21,7 @@ namespace Framework.Editor.AssetsChecker
         {
             menuTree = new OdinMenuTree();
             List<BasicAssetCheckerCollection> collections = new List<BasicAssetCheckerCollection>();
-            List<IRule> rules = new List<IRule>();
+            List<Rule> rules = new List<Rule>();
             foreach (var type in GetType().Assembly.GetTypes())
             {
                 if (type.IsSubclassOf(typeof(CheckerCollection)))
@@ -30,9 +30,9 @@ namespace Framework.Editor.AssetsChecker
                     continue;
                 }
                 
-                if (typeof(IRule).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                if (type.IsSubclassOf(typeof(Rule))  && !type.IsAbstract)
                 {
-                    rules.Add(Activator.CreateInstance(type) as IRule);
+                    rules.Add(Activator.CreateInstance(type) as Rule);
                 }
             }
             foreach (var collection in collections)
@@ -52,8 +52,8 @@ namespace Framework.Editor.AssetsChecker
         public void Run()
         {
             List<BasicAssetCheckerCollection> collections = new List<BasicAssetCheckerCollection>();
-            List<IRule> rules = new List<IRule>();
-            List<IAssetRule> assetRules = new List<IAssetRule>();
+            List<Rule> rules = new List<Rule>();
+            List<AssetRule> assetRules = new List<AssetRule>();
             foreach (var type in GetType().Assembly.GetTypes())
             {
                 if (type.IsSubclassOf(typeof(BasicAssetCheckerCollection)))
@@ -62,14 +62,14 @@ namespace Framework.Editor.AssetsChecker
                     continue;
                 }
                 
-                if (type.IsSubclassOf(typeof(IRule)))
+                if (type.IsSubclassOf(typeof(Rule)))
                 {
-                    rules.Add(Activator.CreateInstance(type) as IRule);
+                    rules.Add(Activator.CreateInstance(type) as Rule);
                 }
 
-                if (type.IsSubclassOf(typeof(IAssetRule)))
+                if (type.IsSubclassOf(typeof(AssetRule)))
                 {
-                    assetRules.Add(Activator.CreateInstance(type) as IAssetRule);
+                    assetRules.Add(Activator.CreateInstance(type) as AssetRule);
                 }
             }
             foreach (var collection in collections)

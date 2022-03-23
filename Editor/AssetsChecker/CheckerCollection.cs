@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace Framework.Editor.AssetsChecker
@@ -11,9 +12,9 @@ namespace Framework.Editor.AssetsChecker
 
         [ShowInInspector]
         [TableList(AlwaysExpanded = true, IsReadOnly = true, HideToolbar = true)]
-        protected List<IRule> Rules = new List<IRule>();
+        protected List<Rule> Rules = new List<Rule>();
 
-        public virtual void AddRule(IRule rule)
+        public virtual void AddRule(Rule rule)
         {
             var attrs = rule.GetType().GetCustomAttributes(typeof(BelongToCollectionAttribute), false);
             if (attrs.Length != 1)
@@ -29,9 +30,12 @@ namespace Framework.Editor.AssetsChecker
         }
 
         [Button("运行", ButtonSizes.Medium)]
-        private void Run()
+        protected virtual void Run()
         {
-            
+            foreach (var rule in Rules)
+            {
+                rule.Run();
+            }
         }
     }
 }

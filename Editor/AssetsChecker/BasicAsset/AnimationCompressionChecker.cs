@@ -5,15 +5,19 @@ using UnityEditor;
 namespace Framework.Editor.AssetsChecker
 {
     [BelongToCollectionAttribute(typeof(BasicAssetCheckerCollection))]
-    public class AnimationChecker : IAssetRule
+    public class AnimationCompressionChecker : AssetRule
     {
-        public override string Description => "Compression != Optimal的动画资源";
-        public override RulePriority Priority { get; }
-        private RuleDataTable table;
-        public override void Run(out bool hasTable, out RuleDataTable table)
+        public AnimationCompressionChecker()
         {
-            hasTable = true;
-            table = new RuleDataTable("名称", "路径", "压缩类型");
+            Table = new RuleDataTable("名称", "路径", "压缩类型");
+        }
+        
+        protected override string Description => "Compression != Optimal的动画资源";
+        protected override RulePriority Priority { get; }
+    
+        public override void Run()
+        {
+            
         }
 
         public override void Check(AssetImporter assetImporter)
@@ -24,7 +28,7 @@ namespace Framework.Editor.AssetsChecker
             {
                 var path = assetImporter.assetPath;
                 var name = Path.GetFileNameWithoutExtension(path);
-                table.AddRow(name, path, modelImporter.animationCompression.ToString());
+                Table.AddRow(name, path, modelImporter.animationCompression.ToString());
             }
         }
     }

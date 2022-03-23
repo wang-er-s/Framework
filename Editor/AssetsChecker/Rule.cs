@@ -4,14 +4,17 @@ using UnityEngine;
 
 namespace Framework.Editor.AssetsChecker
 {
-    public interface IRule
+    public abstract class Rule
     {
+        protected RuleDataTable Table;
+        
         [ShowInInspector]
-        string Description { get; }
+        [HideLabel]
+        protected abstract string Description { get; }
 
-        RulePriority Priority { get; }
+        protected abstract RulePriority Priority { get; }
 
-        void Run(out bool hasTable, out RuleDataTable table);
+        public abstract void Run();
     }
 
     public enum RulePriority
