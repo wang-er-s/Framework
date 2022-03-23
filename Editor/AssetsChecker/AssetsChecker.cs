@@ -30,7 +30,7 @@ namespace Framework.Editor.AssetsChecker
                     continue;
                 }
                 
-                if (typeof(IRule).IsAssignableFrom(type) && !type.IsInterface)
+                if (typeof(IRule).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
                 {
                     rules.Add(Activator.CreateInstance(type) as IRule);
                 }

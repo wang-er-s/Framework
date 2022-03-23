@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Framework.Editor.AssetsChecker
 {
@@ -7,6 +8,9 @@ namespace Framework.Editor.AssetsChecker
     public abstract class CheckerCollection
     {
         public abstract string Name { get; }
+
+        [ShowInInspector]
+        [TableList(AlwaysExpanded = true, IsReadOnly = true, HideToolbar = true)]
         protected List<IRule> Rules = new List<IRule>();
 
         public virtual void AddRule(IRule rule)
@@ -17,10 +21,17 @@ namespace Framework.Editor.AssetsChecker
                 Debug.LogError($"{rule.GetType()} 缺少属性BelongToCollectionAttribute");
                 return;
             }
+
             var belongType = (attrs[0] as BelongToCollectionAttribute).BelongType;
-            if(belongType != GetType())
+            if (belongType != GetType())
                 return;
             Rules.Add(rule);
+        }
+
+        [Button("运行", ButtonSizes.Medium)]
+        private void Run()
+        {
+            
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEditor;
 
 namespace Framework.Editor.AssetsChecker
@@ -6,16 +7,16 @@ namespace Framework.Editor.AssetsChecker
     [BelongToCollectionAttribute(typeof(BasicAssetCheckerCollection))]
     public class AnimationChecker : IAssetRule
     {
-        public string Description => "Compression != Optimal的动画资源";
-        public RulePriority Priority { get; }
+        public override string Description => "Compression != Optimal的动画资源";
+        public override RulePriority Priority { get; }
         private RuleDataTable table;
-        public void Run(out bool hasTable, out RuleDataTable table)
+        public override void Run(out bool hasTable, out RuleDataTable table)
         {
             hasTable = true;
             table = new RuleDataTable("名称", "路径", "压缩类型");
         }
 
-        public void Check(AssetImporter assetImporter)
+        public override void Check(AssetImporter assetImporter)
         {
             var modelImporter = assetImporter as ModelImporter;
             if(modelImporter == null) return;

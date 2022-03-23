@@ -1,9 +1,22 @@
-﻿namespace Framework.Editor.AssetsChecker
+﻿using System;
+using Sirenix.OdinInspector;
+
+namespace Framework.Editor.AssetsChecker
 {
     using UnityEditor;
 
-    public interface IAssetRule : IRule
+    [Serializable]
+    [HideLabel]
+    [HideInTables]
+    public abstract class IAssetRule : IRule
     {
-        void Check(AssetImporter assetImporter);
+        public abstract void Check(AssetImporter assetImporter);
+        [ShowInInspector]
+        [HideLabel]
+        public abstract string Description { get; }
+        [ShowInInspector]
+        [HideLabel]
+        public abstract RulePriority Priority { get; }
+        public abstract void Run(out bool hasTable, out RuleDataTable table);
     }
 }
