@@ -171,7 +171,7 @@ namespace Framework
         {
             for (int i = 0; i < Count; i++)
             {
-                action(dic[keyList[i]]);
+                if(action(dic[keyList[i]])) break;
             }
         }
         
@@ -192,7 +192,12 @@ namespace Framework
             dic[key] = value;
         }
 
-        bool IDictionary<TKey, TValue>.ContainsKey(TKey key)
+        public TValue GetByIndex(int index)
+        {
+            return dic[keyList[index]];
+        }
+
+        public bool ContainsKey(TKey key)
         {
             return dic.ContainsKey(key);
         }

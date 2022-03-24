@@ -31,11 +31,16 @@ namespace Framework.Pool
             if (autoActive)
                 obj.gameObject.SetActive(false);
         }
-
+        
         public override void Dispose()
         {
-            base.Dispose();
-            Object.Destroy(template.gameObject);
+            while (CacheStack.Count > 0)
+            {
+                TComponent item = CacheStack.Pop();
+                OnDispose?.Invoke(item);
+                Object.Destroy(item.gameObject);
+            }
+            CacheStack.Clear();
         }
     }
 
@@ -62,11 +67,16 @@ namespace Framework.Pool
             base.Free(obj);
             obj.gameObject.SetActive(false);
         }
-
+        
         public override void Dispose()
         {
-            base.Dispose();
-            Object.Destroy(template);
+            while (CacheStack.Count > 0)
+            {
+                var item = CacheStack.Pop();
+                OnDispose?.Invoke(item);
+                Object.Destroy(item.gameObject);
+            }
+            CacheStack.Clear();
         }
     }
 

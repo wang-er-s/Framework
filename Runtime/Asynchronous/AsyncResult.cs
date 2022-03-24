@@ -187,10 +187,6 @@ namespace Framework.Asynchronous
         
         private static IAsyncResult voidResult;
         
-        /// <summary>
-        /// 返回一个完成的IProgressResult<float>
-        /// </summary>
-        /// <returns></returns>
         public static IAsyncResult Void()
         {
             if (voidResult == null)
