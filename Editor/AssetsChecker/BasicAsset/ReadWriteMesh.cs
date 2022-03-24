@@ -18,7 +18,7 @@ namespace Framework.Editor.AssetsChecker
         {
             var modelImporter = assetImporter as ModelImporter;
             if(modelImporter == null) return;
-            // if (modelImporter.isReadable)
+            if (modelImporter.isReadable)
             {
                 var path = modelImporter.assetPath;
                 var name = Path.GetFileNameWithoutExtension(path);
@@ -32,7 +32,7 @@ namespace Framework.Editor.AssetsChecker
                     var meshFilter = go.GetComponent<MeshFilter>();
                     if (meshFilter != null)
                     {
-                        var mesh = meshFilter.mesh;
+                        var mesh = meshFilter.sharedMesh;
                         meshVerticesCount = mesh.vertexCount;
                         meshTrisCount = mesh.triangles.Length;
                         break;

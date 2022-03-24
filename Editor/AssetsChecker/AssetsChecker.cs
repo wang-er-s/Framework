@@ -48,38 +48,6 @@ namespace Framework.Editor.AssetsChecker
             
             return menuTree;
         }
-
-        public void Run()
-        {
-            List<BasicAssetCheckerCollection> collections = new List<BasicAssetCheckerCollection>();
-            List<Rule> rules = new List<Rule>();
-            List<AssetRule> assetRules = new List<AssetRule>();
-            foreach (var type in GetType().Assembly.GetTypes())
-            {
-                if (type.IsSubclassOf(typeof(BasicAssetCheckerCollection)))
-                {
-                    collections.Add(Activator.CreateInstance(type) as BasicAssetCheckerCollection);
-                    continue;
-                }
-                
-                if (type.IsSubclassOf(typeof(Rule)))
-                {
-                    rules.Add(Activator.CreateInstance(type) as Rule);
-                }
-
-                if (type.IsSubclassOf(typeof(AssetRule)))
-                {
-                    assetRules.Add(Activator.CreateInstance(type) as AssetRule);
-                }
-            }
-            foreach (var collection in collections)
-            {
-                foreach (var rule in rules)
-                {
-                    collection.AddRule(rule);
-                }
-            }
-        }
     }
 
     public class AA

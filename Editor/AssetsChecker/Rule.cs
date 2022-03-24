@@ -6,7 +6,8 @@ namespace Framework.Editor.AssetsChecker
 {
     public abstract class Rule
     {
-        protected RuleDataTable Table;
+        [HideInInspector]
+        public RuleDataTable Table;
         
         [ShowInInspector]
         [HideLabel]
@@ -15,6 +16,12 @@ namespace Framework.Editor.AssetsChecker
         protected abstract RulePriority Priority { get; }
 
         public abstract void Run();
+        
+        public virtual string HelpUrl { get; }
+
+        public virtual void TryFix()
+        {
+        }
     }
 
     public enum RulePriority

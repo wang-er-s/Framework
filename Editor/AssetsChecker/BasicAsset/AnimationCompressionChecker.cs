@@ -24,7 +24,7 @@ namespace Framework.Editor.AssetsChecker
         {
             var modelImporter = assetImporter as ModelImporter;
             if(modelImporter == null) return;
-            if (modelImporter.animationCompression == ModelImporterAnimationCompression.Off)
+            if (modelImporter.animationCompression != ModelImporterAnimationCompression.Optimal)
             {
                 var path = assetImporter.assetPath;
                 var name = Path.GetFileNameWithoutExtension(path);

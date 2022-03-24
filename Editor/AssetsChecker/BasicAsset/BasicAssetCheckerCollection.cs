@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 
 namespace Framework.Editor.AssetsChecker
 {
@@ -26,6 +27,12 @@ namespace Framework.Editor.AssetsChecker
                 {
                     rule.Check(importer);
                 }
+            }
+
+            foreach (var rule in assetRules)
+            {
+                Debug.Log(rule);
+                Debug.Log(rule.Table.ToString());
             }
         }
     }
