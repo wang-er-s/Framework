@@ -23,7 +23,7 @@ build_path = project_path + "/Build"
 svn_commit_path = build_path
 svn_account = "--username jenkins --password jenkins"
 
-editor_path = "D:/unity/Unity/2019.4.34f1c1/Editor/Unity.exe"
+editor_path = "D:/unity/Unity/2020.3.18f1c1/Editor/Unity.exe"
 python_path = "C:/Users/hm2/AppData/Local/Programs/Python/Python310/python.exe"
 
 def SafeHandleFunction(log='', errorlog='', errorcode=-1):
@@ -74,6 +74,12 @@ class BaseBuilder:
                 if(line.find("BuildException")) >= 0:
                     self.Error += line
                     start_save_error = True
+
+            if(start_save_error == False): 
+                for line in lines:
+                    if(line.find("): error ")) >= 0:
+                        self.Error += line
+                  
             return 1
         return 0
         
@@ -189,6 +195,5 @@ if(success == 1):
     exit(1)
 if (platform == "Android"):
     result = "手机下载地址 http://desktop-e2sfa1j/ \n" + result
-LogConsole(re)
 notify("打包成功\n{}\n{}".format(notify_msg, result) , success)
 exit(0)

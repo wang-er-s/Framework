@@ -10,8 +10,8 @@ namespace Framework.Pool
         private TComponent template;
         private bool autoActive;
         public PrefabPool(TComponent prefab, int initCount = 1, Action<TComponent> onAlloc = null,
-            Action<TComponent> onFree = null, Action<TComponent> onDispose = null, bool autoActive = true) : base(
-            () => Object.Instantiate(prefab, prefab.transform.parent), initCount, onAlloc, onFree, onDispose)
+            Action<TComponent> onFree = null, Action<TComponent> onDispose = null, bool autoActive = true, Transform parent = null) : base(
+            () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
         {
             template = prefab;
             this.autoActive = autoActive;
@@ -47,10 +47,10 @@ namespace Framework.Pool
     public class PrefabPool : Pool<GameObject>
     {
         private GameObject template;
-        
+
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
-            Action<GameObject> onFree = null, Action<GameObject> onDispose = null) : base(
-            () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
+            Action<GameObject> onFree = null, Action<GameObject> onDispose = null, Transform parent = null) : base(
+            () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
         {
             template = prefab;
         }
@@ -84,14 +84,14 @@ namespace Framework.Pool
     {
         private Dictionary<TKey, TComponent> key2Component = new Dictionary<TKey, TComponent>();
 
-        protected PrefabPoolWithKey(Func<TKey, TComponent> factory, Action<TComponent> onAlloc,
-            Action<TComponent> onFree, Action<TComponent> onDispose) : base(factory, onAlloc, onFree, onDispose)
+        public PrefabPoolWithKey(Func<TKey, TComponent> factory, Action<TComponent> onAlloc = null,
+            Action<TComponent> onFree = null, Action<TComponent> onDispose = null, Transform parent = null) : base(factory, onAlloc, onFree, onDispose)
         {
             Factory = key =>
             {
                 if (!key2Component.ContainsKey(key))
                     key2Component[key] = factory(key);
-                return Object.Instantiate(key2Component[key]);
+                return Object.Instantiate(key2Component[key], parent);
             };
         }
 

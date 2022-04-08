@@ -54,7 +54,8 @@ namespace Framework.Editor
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
                 FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
-                BuildByRoslyn(allDll, allCsFiles, outPath, isDebug);
+                
+                BuildByRoslyn(allDll, allCsFiles, outPath);
             }
             finally
             {
@@ -79,7 +80,7 @@ namespace Framework.Editor
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
                 FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
-                BuildByRoslyn(allDll, allCsFiles, outPath, isDebug);
+                BuildByRoslyn(allDll, allCsFiles, outPath);
             }
             finally
             {
@@ -145,16 +146,6 @@ namespace Framework.Editor
                 }
             }
 
-            // 删除UNITY_EDITOR的宏
-            for (int i = 0; i < defineList.Count; i++)
-            {
-                if (defineList[i] == "UNITY_EDITOR")
-                {
-                    defineList.RemoveAt(i);
-                    break;
-                }
-            }
-
             //csproj也加入
             foreach (var csproj in csprojList)
             {
@@ -166,7 +157,7 @@ namespace Framework.Editor
                 var gendll = FApplication.Library + "/ScriptAssemblies/" + csproj.Replace(".csproj", ".dll");
                 if (!File.Exists(gendll))
                 {
-                    Debug.LogError("不存在:" + gendll);
+                    Debug.LogError("不存在:" + gendll + "\n或许有编译错误");
                 }
 
                 dllList.Add(gendll);
@@ -190,7 +181,7 @@ namespace Framework.Editor
         /// </summary>
         /// <param name="rootpaths"></param>
         /// <param name="output"></param>
-        private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output, bool isDebug)
+        private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output)
         {
             if (Application.platform == RuntimePlatform.OSXEditor)
             {
@@ -234,7 +225,7 @@ namespace Framework.Editor
             Directory.CreateDirectory(dir);
             //编译参数
             CSharpCompilationOptions option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release, warningLevel: 4,
+                    optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
                     allowUnsafe: true);
 
             //创建编译器代理
@@ -272,7 +263,7 @@ namespace Framework.Editor
                 {
                     sb.AppendLine(diagnostic.ToString());
                 }
-                throw new Exception(sb.ToString());
+                throw new BuildException(sb.ToString());
             }
             else
             {

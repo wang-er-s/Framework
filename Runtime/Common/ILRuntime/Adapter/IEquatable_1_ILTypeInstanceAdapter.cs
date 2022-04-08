@@ -8,7 +8,8 @@ namespace Adapter
 {   
     public class IEquatable_1_ILTypeInstanceAdapter : CrossBindingAdaptor
     {
-        static CrossBindingFunctionInfo<ILRuntime.Runtime.Intepreter.ILTypeInstance, System.Boolean> mEquals_0 = new CrossBindingFunctionInfo<ILRuntime.Runtime.Intepreter.ILTypeInstance, System.Boolean>("Equals");
+        static CrossBindingFunctionInfo<Adapter, System.Boolean> mEquals_0 = new CrossBindingFunctionInfo<Adapter, System.Boolean>("Equals");
+        static readonly CrossBindingFunctionInfo<Int32> mGetHashCode = new CrossBindingFunctionInfo< System.Int32>("GetHashCode");
         public override Type BaseCLRType
         {
             get
@@ -30,9 +31,9 @@ namespace Adapter
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : System.IEquatable<ILRuntime.Runtime.Intepreter.ILTypeInstance>, CrossBindingAdaptorType
+        public class Adapter : System.IEquatable<Adapter>, CrossBindingAdaptorType
         {
-            ILTypeInstance instance;
+            readonly ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
             public Adapter()
@@ -48,9 +49,17 @@ namespace Adapter
 
             public ILTypeInstance ILInstance { get { return instance; } }
 
-            public System.Boolean Equals(ILRuntime.Runtime.Intepreter.ILTypeInstance other)
+            public System.Boolean Equals(Adapter other)
             {
-                return mEquals_0.Invoke(this.instance, other);
+                return mEquals_0.Invoke(instance, other);
+            }
+            
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((Adapter) obj);
             }
 
             public override string ToString()
@@ -63,6 +72,11 @@ namespace Adapter
                 }
                 else
                     return instance.Type.FullName;
+            }
+
+            public override int GetHashCode()
+            {
+                return mGetHashCode.Invoke(instance);
             }
         }
     }

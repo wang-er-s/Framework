@@ -10,7 +10,7 @@ namespace Framework.MessageCenter
     {
         private struct MessageEvent
         {
-            public MethodInfo MethodInfo;
+            private Action<object> action;
             public string Tag;
             public object Instance;
 
@@ -18,49 +18,40 @@ namespace Framework.MessageCenter
             {
                 try
                 {
-                    MethodInfo.Invoke(Instance, para);
+                    action(para);
                 }
                 catch (Exception e)
                 {
-                    Log.Error("执行方法出错", MethodInfo.DeclaringType.Name, MethodInfo.Name, e);
+                    Log.Error("执行方法出错", Instance.GetType().Name, Tag, e);
                 }
             }
 
-            public MessageEvent(MessageEvent messageEvent) : this(messageEvent.MethodInfo, messageEvent.Instance, messageEvent.Tag)
+            public MessageEvent(MessageEvent messageEvent) : this(messageEvent.action, messageEvent.Instance, messageEvent.Tag)
             {
             }
 
             public MessageEvent(MethodInfo info, object instance, string tag)
             {
-                MethodInfo = info;
+                action = o => info.Invoke(instance, o as Object[]);
+                Instance = instance;
+                Tag = tag;
+            }
+
+            public MessageEvent(Action<object> action, object instance, string tag)
+            {
+                this.action = action;
                 Instance = instance;
                 Tag = tag;
             }
         }
 
+        // tag - methods
         private Dictionary<string, List<MessageEvent>> _subscribeTag2Methods = new Dictionary<string, List<MessageEvent>>(0);
+        // instance - methods
         private Dictionary<object, List<MessageEvent>> _subscribeInstance2Methods = new Dictionary<object, List<MessageEvent>>();
+        // type - methods
         private Dictionary<Type, List<MessageEvent>> _classType2Methods = new Dictionary<Type, List<MessageEvent>>();
-        private List<List<MessageEvent>> executeEventLists = new List<List<MessageEvent>> {new List<MessageEvent>()};
-        private List<MessageEvent> getExecuteEventList
-        {
-            get
-            {
-                for (int i = 0; i < executeEventLists.Count; i++)
-                {
-                    if (executeEventLists[i].Count <= 0)
-                        return executeEventLists[i];
-                }
-                var newList = new List<MessageEvent>();
-                executeEventLists.Add(newList);
-                return newList;
-            }
-        }
 
-        /// <summary>
-        /// Default static JEvent
-        /// 默认静态JEvent
-        /// </summary>
         public static Message defaultEvent => _instance ?? (_instance = new Message());
         private static Message _instance = new Message();
 
@@ -74,7 +65,7 @@ namespace Framework.MessageCenter
         {
             if (!_subscribeTag2Methods.TryGetValue(tag, out var todo)) return;
             if (todo.Count == 0) return;
-            var executeEvent = getExecuteEventList;
+            var executeEvent = RecyclableList<MessageEvent>.Create();
             foreach (var td in todo)
             {
                 if(td.Tag != tag) continue;
@@ -92,7 +83,7 @@ namespace Framework.MessageCenter
             {
                 messageEvent.Invoke(parameters);
             }
-            executeEvent.Clear();
+            executeEvent.Dispose();
         }
 
         /// <summary>
@@ -102,35 +93,26 @@ namespace Framework.MessageCenter
         /// <param name="val"></param>
         public void Unregister<T>(T val) where T : class
         {
-            var type = val.GetCLRType();
-            if (!_classType2Methods.TryGetValue(type, out var methods))
-            {
-                return;
-            }
-
-            foreach (var method in methods)
-            {
-                UnregisterOneMethod(method.Tag, val);
-            }
-        }
-        
-        public void Unregister<T>(T val, MethodInfo method) where T : class
-        {
             if (!_subscribeInstance2Methods.TryGetValue(val, out var methods))
             {
                 return;
             }
-            foreach (var _method in methods)
+
+            var tmpMethods = RecyclableList<MessageEvent>.Create();
+            tmpMethods.AddRange(methods);
+            foreach (var method in tmpMethods)
             {
-                if (_method.MethodInfo == method)
-                {
-                    UnregisterOneMethod(_method.Tag, val);
-                    break;
-                }
+                UnregisterOneMethod(method.Tag, val);
             }
+            tmpMethods.Dispose();
         }
-        
-        private void UnregisterOneMethod(string tag, object instance)
+
+        /// <summary>
+        /// 默认是一个instance同一个tag只注册一个方法
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="instance"></param>
+        public void UnregisterOneMethod(string tag, object instance)
         {
             if (_subscribeTag2Methods.TryGetValue(tag, out var values))
             {
@@ -198,20 +180,33 @@ namespace Framework.MessageCenter
                 Register(msgEvent);
             }
         }
-
-        public void Register<T>(T val, MethodInfo method) where T : class
+        
+        public void Register<T>(T val, Action method, string tag) where T : class
         {
-            var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), false);
-            var hasAttr = methodAttr.Length > 0;
-            if (!hasAttr)
+            Register(new MessageEvent(o => method(), val, tag));
+        }
+
+        public void Register<T, P>(T val, Action<P> method, string tag) where T : class
+        {
+            Register(new MessageEvent(o => method((P) o), val, tag));
+        }
+        
+        public void Register<T, P,P2>(T val, Action<P,P2> method, string tag) where T : class
+        {
+            Register(new MessageEvent(o =>
             {
-                Log.Error("必须要有",nameof(SubscriberAttribute),"的标签");  
-                return;
-            }
-            foreach (var tag in ((SubscriberAttribute) methodAttr[0]).Tags)
+                object[] paras = o as object[];
+                method((P) paras[0], (P2) paras[1]);
+            }, val, tag));
+        }
+        
+        public void Register<T, P,P2,P3>(T val, Action<P,P2,P3> method, string tag) where T : class
+        {
+            Register(new MessageEvent(o =>
             {
-                Register(new MessageEvent(method, val, tag));
-            }
+                object[] paras = o as object[];
+                method((P) paras[0], (P2) paras[1], (P3) paras[2]);
+            }, val, tag));
         }
 
         private void Register(MessageEvent messageEvent)
@@ -229,6 +224,7 @@ namespace Framework.MessageCenter
                 _subscribeTag2Methods[messageEvent.Tag] = paraTypeEvents;
             }
             paraTypeEvents.Add(messageEvent);
+            
         }
 
         public void Clear()

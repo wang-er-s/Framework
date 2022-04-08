@@ -36,9 +36,9 @@ namespace Framework
 			        Log.Error(dllText.Exception);
 		        }
 		        fs = new MemoryStream(dllText.Result.bytes);
-		        if (ilrConfig.UsePbd && File.Exists(pdbPath))
+		        if (ilrConfig.UsePbd)
 		        {
-			        var pdbText = Res.Default.LoadAssetAsync<TextAsset>(dllPath);
+			        var pdbText = Res.Default.LoadAssetAsync<TextAsset>(pdbPath);
 			        await pdbText;
 			        if (pdbText.Exception != null)
 			        {
