@@ -105,14 +105,20 @@ namespace Framework.UI.Core.Bind
         private void ParseItems(string itemName, Transform root)
         {
             _views = new List<View>();
-            var regex = new Regex(@"[/w ]*?(?<=\[)[?](?=\])");
-            Log.Assert(regex.IsMatch(itemName), $"{itemName} not match (skill[?]) pattern.");
-            foreach (Transform child in root)
+            var regex = new Regex(@"(\w+)?\[\?\]");
+            var match = regex.Match(itemName);
+            Log.Assert(match.Success, $"{itemName} not match (skill[?]) pattern.");
+            itemName = match.Groups[1].Value;
+            regex = new Regex(itemName + @"\[\d+\]");
+            for (int i = 0; i < root.childCount; i++)
             {
-                var view = ReflectionHelper.CreateInstance(viewType) as View;
-                Log.Assert(view != null, $"{child.name} must have view component", child);
-                view.SetGameObject (child.gameObject);
-                _views.Add(view);
+                var child = root.GetChild(i);
+                if (regex.IsMatch(child.name))
+                {
+                    var view = ReflectionHelper.CreateInstance(viewType) as View;
+                    view.SetGameObject (child.gameObject);
+                    _views.Add(view);
+                }
             }
         }
 
