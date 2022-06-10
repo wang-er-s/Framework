@@ -8,15 +8,19 @@ namespace Framework
     {
         private static Pool<RecyclableList<T>> pool;
 
-        public static RecyclableList<T> Create()
+        public static RecyclableList<T> Create(int count = 4)
         {
             if (pool == null)
             {
-                pool = new Pool<RecyclableList<T>>(() => new RecyclableList<T>());
+                pool = new Pool<RecyclableList<T>>(() => new RecyclableList<T>(count));
             }
             return pool.Allocate();
         }
-        
+
+        private RecyclableList(int count) : base(count)
+        {
+        }
+
         public void Dispose()
         {
             Clear();

@@ -82,16 +82,13 @@ namespace Framework.Pool
 
     public class PrefabPoolWithKey<TKey, TComponent> : PoolWithKey<TKey, TComponent> where TComponent : Component
     {
-        private Dictionary<TKey, TComponent> key2Component = new Dictionary<TKey, TComponent>();
-
         public PrefabPoolWithKey(Func<TKey, TComponent> factory, Action<TComponent> onAlloc = null,
             Action<TComponent> onFree = null, Action<TComponent> onDispose = null, Transform parent = null) : base(factory, onAlloc, onFree, onDispose)
         {
             Factory = key =>
             {
-                if (!key2Component.ContainsKey(key))
-                    key2Component[key] = factory(key);
-                return Object.Instantiate(key2Component[key], parent);
+                var com = factory(key);
+                return Object.Instantiate(com, parent);
             };
         }
 

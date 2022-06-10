@@ -85,6 +85,16 @@ namespace Framework.UI.Core.Bind
             return Dictionary.TryGetValue(key, out value);
         }
 
+        public bool TryRemove(TKey key)
+        {
+            if (ContainsKey(key))
+            {
+                Remove(key);
+                return true;
+            }
+            return false;
+        }
+
         public bool ContainsKey(TKey key)
         {
             return Dictionary.ContainsKey(key);

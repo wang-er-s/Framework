@@ -99,7 +99,10 @@ namespace Framework.Pool
             }
             else
             {
-                result = CacheStack[key].Pop();
+                if (CacheStack[key].Count > 0)
+                    result = CacheStack[key].Pop();
+                else
+                    result = Factory(key);
             }
 
             OnAlloc?.Invoke(result);
