@@ -68,6 +68,7 @@ namespace Framework.Editor
             EditorGUILayout.PropertyField(longPressIntervalTime,new GUIContent("按下状态,多久触发一次OnLongPress(s)"));
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("<b><color=white>For original ScrollRect</color></b>", caption);
+            serializedObject.ApplyModifiedProperties();
             base.OnInspectorGUI();
         }
     }

@@ -45,6 +45,13 @@ namespace Framework.Editor
                 txt.color = Color.black;
                 txt.text = "说点什么..";
             }
+            
+            var tmp = gameObject.GetComponent<CustomTextMeshPro>();
+            if (tmp)
+            {
+                tmp.color = Color.black;
+                tmp.text = "说点什么..";
+            }
 
             var btn = gameObject.GetComponent<CustomButton>();
             if (btn)
@@ -105,27 +112,7 @@ namespace Framework.Editor
             var obj = Selection.activeGameObject;
             ReplaceComponent(obj);
         }
-        
-        [MenuItem("GameObject/CustomUI/Text", false, -10)]
-        private static void CreateText(MenuCommand menuCommand)
-        {
-            var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
-            var createBtn = menuOptions.GetMethod("AddText", BindingFlags.Static | BindingFlags.Public);
-            createBtn.Invoke(null, new object[] {menuCommand});
-            var obj = Selection.activeGameObject;
-            ReplaceComponent(obj);
-        }
-        
-        [MenuItem("GameObject/CustomUI/Text-TMP", false, -10)]
-        private static void CreateTextTMP(MenuCommand menuCommand)
-        {
-            var method = typeof(TMPro_CreateObjectMenu).GetMethod("CreateTextMeshProGuiObjectPerform",
-                BindingFlags.Static | BindingFlags.NonPublic);
-            method.Invoke(null, new object[] {menuCommand});
-            var obj = Selection.activeGameObject;
-            ReplaceComponent(obj);
-        }
-        
+
         [MenuItem("GameObject/CustomUI/Toggle", false, -10)]
         private static void CreateToggle(MenuCommand menuCommand)
         {

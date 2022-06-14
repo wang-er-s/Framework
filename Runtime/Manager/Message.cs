@@ -10,7 +10,7 @@ namespace Framework.MessageCenter
     {
         private struct MessageEvent
         {
-            private Action<object> action;
+            private Action<object, object> action;
             public string Tag;
             public object Instance;
 
@@ -18,7 +18,7 @@ namespace Framework.MessageCenter
             {
                 try
                 {
-                    action(para);
+                    action(Instance, para);
                 }
                 catch (Exception e)
                 {
@@ -26,31 +26,38 @@ namespace Framework.MessageCenter
                 }
             }
 
-            public MessageEvent(MessageEvent messageEvent) : this(messageEvent.action, messageEvent.Instance, messageEvent.Tag)
+            public MessageEvent(MessageEvent messageEvent, object instance)
             {
+                this.action = messageEvent.action;
+                this.Tag = messageEvent.Tag;
+                Instance = instance;
             }
 
             public MessageEvent(MethodInfo info, object instance, string tag)
             {
-                action = o => info.Invoke(instance, o as Object[]);
                 Instance = instance;
                 Tag = tag;
+                action = (ins, o) => info.Invoke(ins, o as object[]);
             }
+
 
             public MessageEvent(Action<object> action, object instance, string tag)
             {
-                this.action = action;
+                this.action = (ins, o) => action(o);
                 Instance = instance;
                 Tag = tag;
             }
         }
 
         // tag - methods
-        private Dictionary<string, List<MessageEvent>> _subscribeTag2Methods = new Dictionary<string, List<MessageEvent>>(0);
+        private Dictionary<string, List<MessageEvent>> _subscribeTag2Methods =
+            new Dictionary<string, List<MessageEvent>>(0);
         // instance - methods
-        private Dictionary<object, List<MessageEvent>> _subscribeInstance2Methods = new Dictionary<object, List<MessageEvent>>();
+        private Dictionary<object, List<MessageEvent>> _subscribeInstance2Methods =
+            new Dictionary<object, List<MessageEvent>>();
         // type - methods
-        private Dictionary<Type, List<MessageEvent>> _classType2Methods = new Dictionary<Type, List<MessageEvent>>();
+        private static Dictionary<Type, List<MessageEvent>> _classType2Methods =
+            new Dictionary<Type, List<MessageEvent>>();
 
         public static Message defaultEvent => _instance ?? (_instance = new Message());
         private static Message _instance = new Message();
@@ -68,7 +75,7 @@ namespace Framework.MessageCenter
             var executeEvent = RecyclableList<MessageEvent>.Create();
             foreach (var td in todo)
             {
-                if(td.Tag != tag) continue;
+                if (td.Tag != tag) continue;
                 try
                 {
                     executeEvent.Add(td);
@@ -78,7 +85,6 @@ namespace Framework.MessageCenter
                     Log.Error(ex);
                 }
             }
-
             foreach (var messageEvent in executeEvent)
             {
                 messageEvent.Invoke(parameters);
@@ -97,7 +103,6 @@ namespace Framework.MessageCenter
             {
                 return;
             }
-
             var tmpMethods = RecyclableList<MessageEvent>.Create();
             tmpMethods.AddRange(methods);
             foreach (var method in tmpMethods)
@@ -127,7 +132,6 @@ namespace Framework.MessageCenter
                     _subscribeTag2Methods.Remove(tag);
                 }
             }
-            
             if (_subscribeInstance2Methods.TryGetValue(instance, out var events))
             {
                 for (int i = 0; i < events.Count; i++)
@@ -146,7 +150,6 @@ namespace Framework.MessageCenter
         public void Register<T>(T val)
         {
             var type = val.GetCLRType();
-            
             if (_subscribeInstance2Methods.ContainsKey(val))
             {
                 Log.Error($"{type.FullName}已注册");
@@ -173,25 +176,24 @@ namespace Framework.MessageCenter
                 }
                 _classType2Methods[type] = events;
             }
-
             foreach (var messageEvent in events)
             {
-                var msgEvent = new MessageEvent(messageEvent) {Instance = val};
+                var msgEvent = new MessageEvent(messageEvent, val);
                 Register(msgEvent);
             }
         }
-        
-        public void Register<T>(T val, Action method, string tag) where T : class
+
+        public void Register<T>(T val, string tag, Action method) where T : class
         {
             Register(new MessageEvent(o => method(), val, tag));
         }
 
-        public void Register<T, P>(T val, Action<P> method, string tag) where T : class
+        public void Register<T, P>(T val, string tag, Action<P> method) where T : class
         {
-            Register(new MessageEvent(o => method((P) o), val, tag));
+            Register(new MessageEvent(o => method((P) (o as object[])[0]), val, tag));
         }
-        
-        public void Register<T, P,P2>(T val, Action<P,P2> method, string tag) where T : class
+
+        public void Register<T, P, P2>(T val, string tag, Action<P, P2> method) where T : class
         {
             Register(new MessageEvent(o =>
             {
@@ -199,8 +201,8 @@ namespace Framework.MessageCenter
                 method((P) paras[0], (P2) paras[1]);
             }, val, tag));
         }
-        
-        public void Register<T, P,P2,P3>(T val, Action<P,P2,P3> method, string tag) where T : class
+
+        public void Register<T, P, P2, P3>(T val, string tag, Action<P, P2, P3> method) where T : class
         {
             Register(new MessageEvent(o =>
             {
@@ -217,14 +219,12 @@ namespace Framework.MessageCenter
                 _subscribeInstance2Methods[messageEvent.Instance] = instanceEvents;
             }
             instanceEvents.Add(messageEvent);
-
             if (!_subscribeTag2Methods.TryGetValue(messageEvent.Tag, out var paraTypeEvents))
             {
                 paraTypeEvents = new List<MessageEvent>();
                 _subscribeTag2Methods[messageEvent.Tag] = paraTypeEvents;
             }
             paraTypeEvents.Add(messageEvent);
-            
         }
 
         public void Clear()
@@ -234,22 +234,22 @@ namespace Framework.MessageCenter
             _subscribeTag2Methods.Clear();
         }
     }
-    
+
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public class SubscriberAttribute : Attribute
     {
         public string[] Tags { get; }
-        
+
         public SubscriberAttribute(string tag)
         {
             Tags = new[] {tag};
         }
-        
+
         public SubscriberAttribute(string tag1, string tag2)
         {
             Tags = new[] {tag1, tag2};
         }
-        
+
         public SubscriberAttribute(string tag1, string tag2, string tag3)
         {
             Tags = new[] {tag1, tag2, tag3};
