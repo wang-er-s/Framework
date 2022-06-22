@@ -44,6 +44,7 @@ namespace Framework.Editor
             {
                 txt.color = Color.black;
                 txt.text = "说点什么..";
+                txt.alignment = TextAnchor.MiddleCenter;
             }
             
             var tmp = gameObject.GetComponent<CustomTextMeshPro>();
@@ -51,6 +52,8 @@ namespace Framework.Editor
             {
                 tmp.color = Color.black;
                 tmp.text = "说点什么..";
+                tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
             }
 
             var btn = gameObject.GetComponent<CustomButton>();

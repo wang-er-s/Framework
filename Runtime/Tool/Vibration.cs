@@ -43,7 +43,8 @@ public static class Vibration
 
     public static AndroidJavaClass vibrationEffect;
 
-
+    // 震动强度 1 - 255
+    private static int Strength = 100;
 #endif
 
     private static bool initialized = false;
@@ -71,7 +72,7 @@ public static class Vibration
     }
 
     ///<summary>
-    /// Tiny pop vibration
+    /// 20ms vibration
     ///</summary>
     public static void VibratePop ()
     {
@@ -79,12 +80,12 @@ public static class Vibration
 #if UNITY_IOS
         _VibratePop ();
 #elif UNITY_ANDROID
-            Vibrate ( 50 );
+            Vibrate ( 20 );
 #endif
         }
     }
     ///<summary>
-    /// Small peek vibration
+    /// 100ms vibration
     ///</summary>
     public static void VibratePeek ()
     {
@@ -124,7 +125,7 @@ public static class Vibration
 #if UNITY_ANDROID
 
             if ( AndroidVersion >= 26 ) {
-                AndroidJavaObject createOneShot = vibrationEffect.CallStatic<AndroidJavaObject> ( "createOneShot", milliseconds, -1 );
+                AndroidJavaObject createOneShot = vibrationEffect.CallStatic<AndroidJavaObject> ( "createOneShot", milliseconds, Strength );
                 vibrator.Call ( "vibrate", createOneShot );
 
             } else {

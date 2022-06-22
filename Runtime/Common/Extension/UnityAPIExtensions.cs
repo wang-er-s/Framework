@@ -1222,7 +1222,6 @@ public static class Vector3Extension
         float num2 = self.y - other.y;
         float num3 = self.z - other.z;
         return (float) (num1 * (double) num1 + num2 * (double) num2 + num3 * (double) num3);
-
     }
 
     public static Vector3 SetY(this Vector3 self, float yValue)

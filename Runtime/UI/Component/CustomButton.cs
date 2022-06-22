@@ -61,13 +61,6 @@ namespace Framework.UIComponent
             selfMat = targetGraphic.material;
         }
 
-        protected override void Start()
-        {
-            base.Start();
-            if (grayMat == null && Application.isPlaying)
-                grayMat = Resources.Load<Material>("ImageGrayMaterial");
-        }
-
         public ButtonClickedEvent OnSingleClick { get; } = new ButtonClickedEvent();
         public ButtonClickedEvent OnDoubleClick { get; } = new ButtonClickedEvent();
         public UnityEvent OnLongClick { get; } = new UnityEvent();
@@ -92,19 +85,7 @@ namespace Framework.UIComponent
             base.OnPointerExit(eventData);
             isPointDown = false;
         }
-
-        public void SetGray(bool interactable = true)
-        {
-            targetGraphic.material = grayMat;
-            this.interactable = interactable;
-        }
-
-        public void SetNormal()
-        {
-            targetGraphic.material = selfMat;
-            interactable = true;
-        }
-
+        
         public override void OnPointerUp(PointerEventData eventData)
         {
             base.OnPointerUp(eventData);

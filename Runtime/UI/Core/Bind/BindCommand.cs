@@ -39,6 +39,8 @@ namespace Framework.UI.Core.Bind
             _componentEvent = _componentEvent ?? (_component as IComponentEvent)?.GetComponentEvent() ??
                 (_defaultWrapper as IComponentEvent)?.GetComponentEvent();
             Debug.Assert(_componentEvent != null, "componentEvent can not be null");
+            // 清除一下上次的绑定
+            _componentEvent.RemoveListener(Listener);
             _componentEvent.AddListener(Listener);
         }
         
@@ -104,6 +106,8 @@ namespace Framework.UI.Core.Bind
             }
             Debug.Assert(_componentEvent != null,
                 $" can not found wrapper , check if the folder(Runtime/UI/Wrap) has {typeof(TComponent).Name} wrapper or {typeof(TComponent).Name} implements IComponentEvent<{typeof(TData).Name}> interface");
+            // 清除一下上次的绑定
+            _componentEvent.RemoveListener(Listener);
             _componentEvent.AddListener(Listener);
         }
 

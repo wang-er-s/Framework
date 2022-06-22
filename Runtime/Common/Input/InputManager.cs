@@ -48,11 +48,8 @@ namespace Framework
             }
             return false;
         }
-        
-        public static bool TouchedUI()
-        {
-            return EventSystem.current.IsPointerOverGameObject();
-        }
+
+        public static bool TouchedUI => EventSystem.current.IsPointerOverGameObject();
 
         public static float GetAxis(string name)
         {

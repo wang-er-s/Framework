@@ -43,6 +43,7 @@ namespace Framework.Editor
             base.OnEnable();
             customOutlineColor = serializedObject.FindProperty("customOutLineColor");
             customOutlineWidth = serializedObject.FindProperty("customOutLineWidth");
+            languageKey = serializedObject.FindProperty("languageKey");
         }
         
         public override void OnInspectorGUI()
