@@ -118,7 +118,7 @@ namespace Framework.Runtime.UI.Component
         }
     }
     
-    [UI("ToastContent")]
+    [UI("Assets/Framework/Runtime/UI/Res/ToastContent.prefab")]
     public class ToastContent : View
     {
         protected override void OnVmChange()
@@ -128,7 +128,7 @@ namespace Framework.Runtime.UI.Component
         public override UILevel UILevel { get; } = UILevel.Toast;
     }
     
-    [UI("Toast")]
+    [UI("Assets/Framework/Runtime/UI/Res/Toast.prefab")]
     public class ToastView : View
     {
         [TransformPath("content/Text")]

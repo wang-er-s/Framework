@@ -279,7 +279,7 @@ namespace Framework.UI.Core.Bind
             return self.Dictionary;
         }
 
-        void IObservable.AddListener(Action<object> listener)
+        void IObservable.AddRawListener(Action<object> listener)
         {
             dicChanged += dic => listener(dic);
         }

@@ -236,6 +236,25 @@ public static class GameObjectExtension
 
     #region CEGO006 Layer
 
+    public static void SetLayerRecursively(this GameObject obj, int newLayer)
+    {
+        if (null == obj)
+        {
+            return;
+        }
+       
+        obj.layer = newLayer;
+       
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+            {
+                continue;
+            }
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }
+    
     public static GameObject Layer(this GameObject selfObj, int layer)
     {
         selfObj.layer = layer;

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Framework.UI.Core;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.UI.Wrap.Base

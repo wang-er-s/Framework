@@ -44,7 +44,7 @@ public static class Vibration
     public static AndroidJavaClass vibrationEffect;
 
     // 震动强度 1 - 255
-    private static int Strength = 100;
+    private static int Strength = 150;
 #endif
 
     private static bool initialized = false;

@@ -208,9 +208,9 @@ namespace Framework.UI.Core.Bind
             return self._items;
         }
 
-        void IObservable.AddListener(Action<object> listener)
+        void IObservable.AddRawListener(Action<object> listener)
         {
-            ListUpdateChanged += listener;
+            ListUpdateChanged += (l)=> listener(l);
         }
         
         object IObservable.RawValue => _items;

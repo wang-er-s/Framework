@@ -18,6 +18,7 @@ namespace Framework.UI.Wrap.Base
         Action<bool> IFieldChangeCb<bool>.GetFieldChangeCb()
         {
             if (Component is Component component) return (value) => component.gameObject.SetActive(value);
+            if (Component is GameObject go) return value => go.SetActive(value);
             return null;
         }
     }

@@ -51,7 +51,7 @@ namespace Framework.UI.Core.Bind
             return _value != null ? _value.ToString() : "null";
         }
 
-        void IObservable.AddListener(Action<object> listener)
+        void IObservable.AddRawListener(Action<object> listener)
         {
             OnValueChanged += obj => listener(obj);
         }
