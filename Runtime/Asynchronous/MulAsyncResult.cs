@@ -258,7 +258,7 @@ namespace Framework.Asynchronous
             progressResult.Callbackable().OnProgressCallback((progress => RaiseOnProgressCallback(0)));
             progressResult.Callbackable().OnCallback(progress =>
             {
-                if(CheckAllFinish()) RaiseFinish();
+                RaiseOnProgressCallback(0);
             });
         }
 
@@ -266,6 +266,10 @@ namespace Framework.Asynchronous
         {
             UpdateProgress();
             base.RaiseOnProgressCallback(Progress);
+            if (Progress >= 1)
+            {
+                if(CheckAllFinish()) RaiseFinish();
+            }
         }
 
         private bool CheckAllFinish()
@@ -279,7 +283,6 @@ namespace Framework.Asynchronous
 
         private void RaiseFinish()
         {
-            RaiseOnProgressCallback(0);
             StringBuilder sb = null;
             foreach (var progressResult in _allProgress)
             {

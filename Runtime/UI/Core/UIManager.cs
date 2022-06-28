@@ -22,7 +22,6 @@ namespace Framework.UI.Core
             Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
             Object.DontDestroyOnLoad(Canvas);
             _res = Res.Create();
-            GameLoop.Ins.OnUpdate += Update;
         }
 
         public override void CheckType(Type type)
@@ -58,45 +57,51 @@ namespace Framework.UI.Core
 
         private void InternalOpen<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
+            View view = null;
+            var path = (GetClassData(type).Attribute as UIAttribute).Path;
             promise.Callbackable().OnCallback(progressResult =>
             {
-                var _view = progressResult.Result;
-                Sort(_view);
-                _view.Show();
-                openedViews.Add(_view);
-                if (_view.IsSingle)
-                    openedSingleViews[type] = _view;
+                Sort(view);
+                view.Show();
             });
-            if (openedSingleViews.TryGetValue(type, out var view))
+            if (openedSingleViews.TryGetValue(type, out var view1))
             {
                 promise.UpdateProgress(1);
-                promise.SetResult(view);
+                promise.SetResult(view1);
             }
             else
             {
-                Executors.RunOnCoroutineNoReturn(CreateView(promise, type, viewModel));
+                view = ReflectionHelper.CreateInstance(type) as View;
+                Executors.RunOnCoroutineNoReturn(CreateViewGo(promise, view, path, viewModel));
             }
+            openedViews.Add(view);
+            if (view.IsSingle)
+                openedSingleViews[type] = view;
         }
 
         public IProgressResult<float, T> CreateView<T>(ViewModel vm) where T : View
         {
             ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
-            Executors.RunOnCoroutineNoReturn(CreateView(progressResult, typeof(T), vm));
+            var type = typeof(T);
+            var view = ReflectionHelper.CreateInstance(type) as View;
+            var path = (GetClassData(type).Attribute as UIAttribute).Path;
+            Executors.RunOnCoroutineNoReturn(CreateViewGo(progressResult, view, path, vm));
             return progressResult;
         }
         
         public IProgressResult<float, View> CreateView(Type type, ViewModel vm)
         {
             ProgressResult<float, View> progressResult = new ProgressResult<float, View>();
-            Executors.RunOnCoroutineNoReturn(CreateView(progressResult, type, vm));
+            var view = ReflectionHelper.CreateInstance(type) as View;
+            var path = (GetClassData(type).Attribute as UIAttribute).Path;
+            Executors.RunOnCoroutineNoReturn(CreateViewGo(progressResult, view, path, vm));
             return progressResult;
         }
 
-        private IEnumerator CreateView<T>(IProgressPromise<float, T> promise,Type type, ViewModel viewModel)
+        private IEnumerator CreateViewGo<T>(IProgressPromise<float, T> promise,View view,string path, ViewModel viewModel)
             where T : View
         {
-            var view = ReflectionHelper.CreateInstance(type) as View;
-            var path = (GetClassData(type).Attribute as UIAttribute).Path;
+            
             var request = _res.LoadAssetAsync<GameObject>(path);
             while (!request.IsDone)
             {
@@ -112,12 +117,11 @@ namespace Framework.UI.Core
                 yield break;
             }
             GameObject go = Object.Instantiate(viewTemplateGo);
-            go.name = viewTemplateGo.name;
             view.SetGameObject(go);
-            view.SetVm(viewModel);
-            view.Visible(false);
+            go.name = viewTemplateGo.name;
             promise.UpdateProgress(1f);
             promise.SetResult(view);
+            view.SetVm(viewModel);
         }
 
         [Obsolete("use LoadViewAsync replace", true)]

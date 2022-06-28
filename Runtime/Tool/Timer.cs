@@ -70,8 +70,6 @@ namespace Framework
 
         #region Public Static Methods
 
-        private static Pool<Timer> pool;
-
         /// <summary>
         /// Register a new timer that should fire an event after a certain amount of time
         /// has elapsed.
@@ -93,7 +91,7 @@ namespace Framework
         public static Timer Register(float duration, Action onComplete, Action<float> onUpdate = null,
             bool isLooped = false, bool useRealTime = false, MonoBehaviour autoDestroyOwner = null)
         {
-            Timer timer = pool.Allocate();
+            Timer timer = new Timer();
             timer.Init(duration, onComplete, onUpdate, isLooped, useRealTime, autoDestroyOwner);
             Timer._manager.RegisterTimer(timer);
             return timer;
@@ -101,8 +99,8 @@ namespace Framework
         
         public static Timer RegisterFrame(Action onComplete)
         {
-            Timer timer = pool.Allocate();
-            timer.Init(0.001f, onComplete, null, false, false, null);
+            Timer timer = new Timer();
+            timer.Init(0.01f, onComplete, null, false, false, null);
             Timer._manager.RegisterTimer(timer);
             return timer;
         }
@@ -119,10 +117,6 @@ namespace Framework
                 GameObject managerObject = new GameObject {name = "TimerManager"};
                 Timer._manager = managerObject.AddComponent<TimerManager>();
             }
-            pool = new Pool<Timer>(() => new Timer(), onFree: timer =>
-            {
-                timer.Reset();
-            });
         }
 
         /// <summary>
@@ -130,11 +124,14 @@ namespace Framework
         /// </summary>
         /// <param name="duration">单位s</param>
         /// <returns></returns>
-        public static IAsyncResult WaitAsync(float duration)
+        public static IProgressResult<float> WaitAsync(float duration)
         {
-            AsyncResult result = new AsyncResult(true);
-            Timer timer = pool.Allocate();
-            timer.Init(duration, onComplete: () => result.SetResult(), null, false, false, null);
+            ProgressResult<float> result = new ProgressResult<float>(true);
+            Timer timer = new Timer();
+            timer.Init(duration, onComplete: () => result.SetResult(), onUpdate: val =>
+            {
+                result.UpdateProgress(val / duration);
+            } , false, false, null);
             Timer._manager.RegisterTimer(timer);
             return result;
         }
@@ -144,13 +141,13 @@ namespace Framework
         /// </summary>
         /// <param name="duration">时间戳</param>
         /// <returns></returns>
-        public static IAsyncResult WaitTillAsync(long duration)
+        public static IProgressResult<float> WaitTillAsync(long duration)
         {
             var waitTime = (TimeHelper.ServerNow() - duration) / 10000000;
             return WaitAsync(waitTime);
         }
 
-        public static IAsyncResult WaitFrameAsync()
+        public static IProgressResult<float> WaitFrameAsync()
         {
             return WaitAsync(0.001f);
         }
@@ -240,6 +237,20 @@ namespace Framework
             {
                 return;
             }
+            this._timeElapsedBeforeCancel = this.GetTimeElapsed();
+            this._timeElapsedBeforePause = null;
+        }
+
+        /// <summary>
+        /// Stop a timer that is in-progress or paused. The timer's on completion callback will be call.
+        /// </summary>
+        public void CancelAndTrigger()
+        {
+            if (this.isDone)
+            {
+                return;
+            }
+            this._onComplete?.Invoke();
             this._timeElapsedBeforeCancel = this.GetTimeElapsed();
             this._timeElapsedBeforePause = null;
         }
@@ -513,7 +524,6 @@ namespace Framework
                     {
                         _timers.RemoveAt(i);
                         i--;
-                        pool.Free(timer);
                     }
                 }
             }
