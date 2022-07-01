@@ -30,7 +30,7 @@ namespace Framework.Editor
             }
         }
 
-        [MenuItem("GameObject/CustomUI/Button", false, -10)]
+        [MenuItem("GameObject/CustomUI/Button", false, -8)]
         private static void Create(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -40,7 +40,7 @@ namespace Framework.Editor
             CustomComponentEditor.ReplaceComponent(obj);
         }
         
-        [MenuItem("GameObject/CustomUI/Button-TMP", false, -10)]
+        [MenuItem("GameObject/CustomUI/Button-TMP", false, -7)]
         private static void CreateTMP(MenuCommand menuCommand)
         {
             TMPro_CreateObjectMenu.AddButton(menuCommand);

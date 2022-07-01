@@ -39,11 +39,32 @@ namespace Framework.Editor
             FindAndReplace<InputField, CustomInputField>(gameObject);
             FindAndReplace<TMP_InputField, CustomInputFieldTMP>(gameObject);
 
+            var img = gameObject.GetComponent<Image>();
+            if (img)
+            {
+                if (img.GetComponent<Button>() == null)
+                {
+                    if (img.transform.parent.GetComponent<Button>() == null)
+                    {
+                        img.raycastTarget = false;
+                    }
+                    else
+                    {
+                        if (img.transform.parent.GetComponent<Button>().targetGraphic != img)
+                        {
+                            img.raycastTarget = false;
+                        }
+                    }
+                }
+            }
+            
             var txt = gameObject.GetComponent<CustomText>();
             if (txt)
             {
                 txt.color = Color.black;
                 txt.text = "说点什么..";
+                txt.supportRichText = false;
+                txt.raycastTarget = false;
                 txt.alignment = TextAnchor.MiddleCenter;
             }
             
@@ -52,6 +73,8 @@ namespace Framework.Editor
             {
                 tmp.color = Color.black;
                 tmp.text = "说点什么..";
+                tmp.richText = false;
+                tmp.raycastTarget = false;
                 tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
                 tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
             }
@@ -96,7 +119,7 @@ namespace Framework.Editor
             }
         }
         
-        [MenuItem("GameObject/CustomUI/Image", false, -10)]
+        [MenuItem("GameObject/CustomUI/Image", false, -6)]
         private static void CreateImage(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -106,7 +129,7 @@ namespace Framework.Editor
             ReplaceComponent(obj);
         }
         
-        [MenuItem("GameObject/CustomUI/RawImage", false, -10)]
+        [MenuItem("GameObject/CustomUI/RawImage", false, -5)]
         private static void CreateRawImage(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -116,7 +139,7 @@ namespace Framework.Editor
             ReplaceComponent(obj);
         }
 
-        [MenuItem("GameObject/CustomUI/Toggle", false, -10)]
+        [MenuItem("GameObject/CustomUI/Toggle", false, -4)]
         private static void CreateToggle(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -126,7 +149,7 @@ namespace Framework.Editor
             ReplaceComponent(obj);
         }
         
-        [MenuItem("GameObject/CustomUI/Slider", false, -10)]
+        [MenuItem("GameObject/CustomUI/Slider", false, -3)]
         private static void CreateSlider(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -136,7 +159,7 @@ namespace Framework.Editor
             ReplaceComponent(obj);
         }
         
-        [MenuItem("GameObject/CustomUI/InputField", false, -10)]
+        [MenuItem("GameObject/CustomUI/InputField", false, -2)]
         private static void CreateDropdown(MenuCommand menuCommand)
         {
             var menuOptions = typeof(MaskEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
@@ -146,7 +169,7 @@ namespace Framework.Editor
             ReplaceComponent(obj);
         }
         
-        [MenuItem("GameObject/CustomUI/InputField-TMP", false, -10)]
+        [MenuItem("GameObject/CustomUI/InputField-TMP", false, -1)]
         private static void CreateInputFieldTMP(MenuCommand menuCommand)
         {
             var method = typeof(TMPro_CreateObjectMenu).GetMethod("AddTextMeshProInputField",

@@ -136,6 +136,7 @@ namespace Framework.UI.Core
 
         public void Visible(bool visible)
         {
+            if (Go == null) return;
             _canvasGroup.interactable = visible;
             _canvasGroup.alpha = visible ? 1 : 0;
             _canvasGroup.blocksRaycasts = visible;
@@ -196,7 +197,8 @@ namespace Framework.UI.Core
             Binding.Reset();
             OnDestroy?.Invoke();
             ViewModel?.OnViewDestroy();
-            Object.Destroy(Go.gameObject);
+            if (Go != null)
+                Object.Destroy(Go.gameObject);
         }
 
         protected abstract void OnVmChange();

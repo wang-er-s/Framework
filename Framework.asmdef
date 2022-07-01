@@ -4,7 +4,8 @@
         "Unity.ResourceManager",
         "Unity.TextMeshPro",
         "ILRuntime",
-        "XAsset"
+        "XAsset",
+        "xasset"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -27,7 +27,7 @@ namespace Framework.Editor
             }
         }
         
-        [MenuItem("GameObject/CustomUI/Text-TMP", false, -10)]
+        [MenuItem("GameObject/CustomUI/Text-TMP", false, -9)]
         private static void CreateTextTMP(MenuCommand menuCommand)
         {
             var method = typeof(TMPro_CreateObjectMenu).GetMethod("CreateTextMeshProGuiObjectPerform",
