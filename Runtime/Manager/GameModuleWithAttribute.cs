@@ -17,38 +17,42 @@ namespace Framework
 
         public virtual string IndexName { get; } = nameof(IntTag);
     }
-    
-    public class ManagerBase<T,V,I> : IManager  where T : IManager, new() 
+
+    public abstract class GameModule<T> : MonoBehaviour where T : GameModule<T>
+    {
+        public static T Ins { get; private set; }
+        public virtual void Init()
+        {
+        }
+
+        public virtual void OnStart()
+        {
+        }
+        
+        /// <summary>
+        /// 获取游戏框架模块优先级。
+        /// </summary>
+        /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
+        internal virtual int Priority => 0;
+        
+        /// <summary>
+        /// 游戏框架模块轮询。
+        /// </summary>
+        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
+        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
+        internal abstract void OnUpdate(float elapseSeconds, float realElapseSeconds);
+        
+        /// <summary>
+        /// 关闭并清理游戏框架模块。
+        /// </summary>
+        internal abstract void Shutdown();
+    }
+
+    public abstract class GameModuleWithAttribute<T,V,I> : GameModule<T>  where T : GameModuleWithAttribute<T,V,I>, new() 
         where V : ManagerAttribute
     {
         
-        private static T ins;
-
-        public static T Ins
-        {
-            get
-            {
-                if (ins == null)
-                {
-                    ins = new T();
-                }
-
-                return ins;
-            }
-        }
-
         protected Dictionary<I, ClassData> ClassDataMap { get; } = new Dictionary<I, ClassData>();
-        
-        public virtual void Init()
-        {
-            
-        }
-
-        public virtual void Start()
-        {
-            
-        }
-
         private PropertyInfo _indexProperty;
         private BindingFlags _flags = BindingFlags.Instance | BindingFlags.Public;
         

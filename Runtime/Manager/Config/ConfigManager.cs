@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Framework;
@@ -8,16 +7,15 @@ using Framework.Asynchronous;
 using UnityEngine;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
-public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
+public class ConfigManager : GameModuleWithAttribute<ConfigManager, ConfigAttribute, string>
 {
     private object[] @params = new object[1];
     private MulAsyncResult asyncResult;
     public IAsyncResult LoadAsync => asyncResult;
-    public event Action LoadedCb;
     public bool Loaded { get; private set; }
     public static Func<string, string> CustomLoadPath;
     
-    public override void Start()
+    public override void OnStart()
     {
         asyncResult = new MulAsyncResult();
         foreach (ClassData classData in GetAllClassDatas())
@@ -45,14 +43,19 @@ public class ConfigManager : ManagerBase<ConfigManager, ConfigAttribute, string>
             });
             asyncResult.AddAsyncResult(progress);
         }
+
         asyncResult.Callbackable().OnCallback(result =>
         {
-            Timer.RegisterFrame(() =>
-            {
-                LoadedCb?.Invoke();
-                Loaded = true;
-            });
+            Loaded = true;
         });
+    }
+
+    internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+    {
+    }
+
+    internal override void Shutdown()
+    {
     }
 
     public async Task AddConfig(Type type)

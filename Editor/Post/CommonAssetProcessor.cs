@@ -48,9 +48,8 @@ public class CommonAssetProcessor : AssetPostprocessor
 
     public static bool Ignore(string path)
     {
-        if (path.Contains("Plugins")) return true;
-        if (path.Contains("Packages")) return true;
-        return false;
+        if (path.Contains("Assets/Res")) return false;
+        return true;
     }
     #endregion
     
@@ -166,7 +165,7 @@ public class CommonAssetProcessor : AssetPostprocessor
     }
 
     [MenuItem("Assets/格式化资源", false)]
-    private static void FormatModel()
+    private static void Format()
     {
         List<ModelImporter> modelImporters = new List<ModelImporter>();
         var objs = Selection.objects;

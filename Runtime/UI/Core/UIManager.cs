@@ -10,17 +10,26 @@ using Object = UnityEngine.Object;
 
 namespace Framework.UI.Core
 {
-    public class UIManager : ManagerBase<UIManager, UIAttribute, Type>
+    public class UIManager : GameModuleWithAttribute<UIManager, UIAttribute, Type>
     {
         private IRes _res;
-       
-        public Canvas Canvas { get; private set; }
+
+        [SerializeField]
+        private Canvas canvas;
+        public Canvas Canvas => canvas;
 
         public override void Init()
         {
-            Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
-            Object.DontDestroyOnLoad(Canvas);
+            DontDestroyOnLoad(Canvas);
             _res = Res.Create();
+        }
+
+        internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        {
+        }
+
+        internal override void Shutdown()
+        {
         }
 
         public override void CheckType(Type type)
@@ -35,8 +44,6 @@ namespace Framework.UI.Core
             }
         }
 
-        private const int ViewDestroyTime = 5;
-        private Dictionary<View,DateTime> waitDestroyViews = new Dictionary<View, DateTime>();
         private List<View> openedViews = new List<View>();
         private Dictionary<Type, View> openedSingleViews = new Dictionary<Type, View>();
 
@@ -166,19 +173,13 @@ namespace Framework.UI.Core
                 }
             }
         }
-
-        /// <summary>
-        /// get isSingle=true的窗口
-        /// </summary>
+        
         public T Get<T>() where T : View
         {
             var view = Get(typeof(T));
             return view as T;
         }
-
-        /// <summary>
-        /// get isSingle=true的窗口
-        /// </summary>
+        
         public View Get(Type type)
         {
             if (openedSingleViews.TryGetValue(type, out var view))
@@ -187,10 +188,7 @@ namespace Framework.UI.Core
             }
             return null;
         }
-
-        /// <summary>
-        /// close isSingle=true的窗口
-        /// </summary>
+        
         public void Close(Type type)
         {
             if (!openedSingleViews.TryGetValue(type, out var view))
@@ -248,26 +246,6 @@ namespace Framework.UI.Core
                 viewTransform.SetAsLastSibling();
             else
                 viewTransform.SetSiblingIndex(index);
-        }
-
-        private List<View> _needDestroyViews = new List<View>();
-        private void Update()
-        {
-            if(waitDestroyViews.Count <= 0) return;
-            var nowTime = DateTime.Now;
-            foreach (var waitDestroyView in waitDestroyViews)
-            {
-                if (waitDestroyView.Value <= nowTime)
-                {
-                    waitDestroyView.Key.Dispose();
-                    _needDestroyViews.Add(waitDestroyView.Key);
-                }
-            }
-            foreach (var view in _needDestroyViews)
-            {
-                waitDestroyViews.Remove(view);
-            }
-            _needDestroyViews.Clear();
         }
     }
 }
