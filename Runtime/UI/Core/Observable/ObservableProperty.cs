@@ -40,6 +40,13 @@ namespace Framework.UI.Core.Bind
             UnRegister result = new UnRegister(() => RemoveListener(changeAction));
             return result;
         }
+        
+        public UnRegister AddListenerWithoutCall(Action<T> changeAction)
+        {
+            OnValueChanged += changeAction;
+            UnRegister result = new UnRegister(() => RemoveListener(changeAction));
+            return result;
+        }
 
         public void RemoveListener(Action<T> changeAction)
         {

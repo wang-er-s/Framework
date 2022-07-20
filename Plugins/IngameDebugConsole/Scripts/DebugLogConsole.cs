@@ -6,8 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Tool;
-using Object = UnityEngine.Object;
+using Framework;
 
 // Manages the console commands, parses console input and handles execution of commands
 // Supported method parameter types: int, float, bool, string, Vector2, Vector3, Vector4

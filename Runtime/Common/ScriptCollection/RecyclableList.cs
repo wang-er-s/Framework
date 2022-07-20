@@ -8,16 +8,27 @@ namespace Framework
     {
         private static Pool<RecyclableList<T>> pool;
 
-        public static RecyclableList<T> Create(int count = 4)
+        public static RecyclableList<T> Create()
         {
             if (pool == null)
             {
-                pool = new Pool<RecyclableList<T>>(() => new RecyclableList<T>(count));
+                pool = new Pool<RecyclableList<T>>(() => new RecyclableList<T>());
             }
             return pool.Allocate();
         }
+        
+        public static RecyclableList<T> Create(IEnumerable<T> collection)
+        {
+            var result = Create();
+            result.AddRange(collection);
+            return result;
+        }
 
-        private RecyclableList(int count) : base(count)
+        private RecyclableList() : base()
+        {
+        }
+
+        private RecyclableList(IEnumerable<T> collection) : base(collection)
         {
         }
 

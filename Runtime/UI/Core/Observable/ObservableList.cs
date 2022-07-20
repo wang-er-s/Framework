@@ -154,8 +154,8 @@ namespace Framework.UI.Core.Bind
             lock (_locker)
             {
                 var count = Count;
-                _items.Clear();
                 OnCollectionChanged(NotifyCollectionChangedAction.Reset, default, count);
+                _items.Clear();
             }
         }
 
@@ -187,6 +187,12 @@ namespace Framework.UI.Core.Bind
         public UnRegister AddListener(Action<List<T>> listener)
         {
             listener(_items);
+            ListUpdateChanged += listener;
+            return new UnRegister(() => ListUpdateChanged -= listener);
+        }
+        
+        public UnRegister AddListenerWithoutCall(Action<List<T>> listener)
+        {
             ListUpdateChanged += listener;
             return new UnRegister(() => ListUpdateChanged -= listener);
         }

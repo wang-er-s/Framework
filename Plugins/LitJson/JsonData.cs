@@ -15,10 +15,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using Framework;
 #if ILRUNTIME
 using ILRuntime.Reflection;
 #endif
-using Tool;
 
 
 namespace LitJson

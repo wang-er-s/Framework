@@ -224,7 +224,7 @@ namespace Framework.UI.Core.Bind
             clearables.Clear();
         }
 
-        protected void AddClearable(IClearable clearable)
+        public void AddClearable(IClearable clearable)
         {
             //viewModel.OnClearModelBinding += clearable.ClearModel;
             clearables.Add(clearable);

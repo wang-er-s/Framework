@@ -10,7 +10,7 @@ using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 #endif
 
-namespace Tool
+namespace Framework
 {
     public static class ReflectionHelper
     {

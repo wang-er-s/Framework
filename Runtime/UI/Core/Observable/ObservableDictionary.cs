@@ -117,6 +117,12 @@ namespace Framework.UI.Core.Bind
             dicChanged += changeCb;
             return new UnRegister(() => dicChanged -= changeCb);
         }
+        
+        public UnRegister AddListenerWithoutCall(Action<Dictionary<TKey, TValue>> changeCb)
+        {
+            dicChanged += changeCb;
+            return new UnRegister(() => dicChanged -= changeCb);
+        }
 
         public void RemoveListener(
             Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)

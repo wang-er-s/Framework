@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Framework.UI.Wrap;
 using Framework.UI.Wrap.Base;
-using Tool;
 using UnityEngine;
 
 namespace Framework.UI.Core.Bind

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Text;
 using System.Collections;
+using Framework;
 
 public static class ClassExtention
 {
@@ -241,6 +242,27 @@ public static class IEnumerableExtension
     public static int GetRandomIndex(this ICollection list)
     {
         return UnityEngine.Random.Range(0, list.Count);
+    }
+    
+    public static void Swap<T>(this IList<T> list, int i, int j)
+    {
+        var temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
+    }
+    
+    public static RecyclableList<T> RandomSort<T>(this IList<T> list)
+    {
+        RecyclableList<T> result = RecyclableList<T>.Create(list);
+        System.Random rnd = new System.Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = UnityEngine.Random.Range(0, n + 1);
+            result.Swap(k, n);
+        }
+        return result;
     }
 
     /// <summary>
