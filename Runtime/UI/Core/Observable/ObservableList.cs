@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 
 namespace Framework.UI.Core.Bind
 {
@@ -53,6 +54,14 @@ namespace Framework.UI.Core.Bind
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
             AddItem(item);
+        }
+
+        public void AddRange(IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                Add(item);
+            }
         }
 
         public void Clear()
@@ -166,6 +175,26 @@ namespace Framework.UI.Core.Bind
                 _items[index] = item;
                 OnCollectionChanged(NotifyCollectionChangedAction.Replace, item, index);
             }
+        }
+        
+        public void Sort()
+        {
+            Sort(0, Count, null);
+        }
+        
+        public void Sort(IComparer<T> comparer)
+        {
+            Sort(0, Count, comparer);
+        }
+
+        public void Sort(int index, int count, IComparer<T> comparer)
+        {
+            _items.Sort(index, count, comparer);
+        }
+
+        public void Sort(Comparison<T> comparison)
+        {
+            _items.Sort(comparison);
         }
 
         public UnRegister AddListener(Action<NotifyCollectionChangedAction, T, int> listener)

@@ -34,8 +34,10 @@ namespace Framework.UI.Wrap.Base
                     return Activator.CreateInstance(type.Value, args);
                 }
             if (defaultWrapperCon == null)
+            {
                 defaultWrapperCon = typeof(DefaultWrapper).GetConstructor(BindingFlags.Public | BindingFlags.Instance,
                     null, new[] {typeof(object), typeof(object)}, null);
+            }
             return defaultWrapperCon.Invoke(args);
         }
     }

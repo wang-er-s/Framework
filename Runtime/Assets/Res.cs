@@ -87,6 +87,7 @@ namespace Framework.Assets
             ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
+                if (loadProgress.IsCancelled) return;
                 var go = Object.Instantiate(result.Result);
                 go.transform.SetParent(parent, instantiateInWorldSpace);
                 resultProgress.SetResult(go);
@@ -103,6 +104,7 @@ namespace Framework.Assets
             ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
+                if (loadProgress.IsCancelled) return;
                 var trans = Object.Instantiate(result.Result).transform;
                 trans.SetParent(parent);
                 trans.localPosition = position;

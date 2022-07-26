@@ -64,7 +64,7 @@ namespace Framework.UI.Core.Bind
         }
         
         object IObservable.RawValue => _value;
-        Type IObservable.RawType => _value.GetType();
+        Type IObservable.RawType => typeof(T);
 
         void IObservable.InitValueWithoutCb(object val)
         {
