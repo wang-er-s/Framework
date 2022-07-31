@@ -94,7 +94,6 @@ namespace Framework.UIComponent
             lastUpTime = upTime;
             upTime = time;
             OnUp.Invoke();
-            CheckSingleClick();
             CheckDoubleClick();
             CheckLongClick();
             isPointDown = false;
@@ -111,7 +110,7 @@ namespace Framework.UIComponent
         private bool CheckSingleClick()
         {
             if (upTime - lastUpTime < singleClickIntervalTime) return false;
-            onClick = OnSingleClick;
+            OnSingleClick.Invoke();
             return true;
         }
 
@@ -135,6 +134,27 @@ namespace Framework.UIComponent
             }
 
             return false;
+        }
+        
+        public override void OnSubmit(BaseEventData eventData)
+        {
+            base.OnSubmit(eventData);
+            // if we get set disabled during the press
+            // don't run the coroutine.
+            if (!IsActive() || !IsInteractable())
+                return;
+
+            CheckSingleClick();
+        }
+
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            base.OnPointerClick(eventData);
+            
+            if (!IsActive() || !IsInteractable())
+                return;
+
+            CheckSingleClick();
         }
 
         public UnityEvent GetComponentEvent()

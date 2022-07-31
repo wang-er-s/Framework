@@ -40,9 +40,8 @@ namespace Tests
 
             UnityWebRequest www = await UnityWebRequest.Get("http://www.baidu.com").SendWebRequest();
             
-            Assert.IsFalse(www.isHttpError);
-            Assert.IsFalse(www.isNetworkError);
-            if (!www.isHttpError && !www.isNetworkError)
+            Assert.IsTrue(www.result == UnityWebRequest.Result.Success);
+            if (www.result == UnityWebRequest.Result.Success)
                 Debug.Log(www.downloadHandler.text);
             timer = Time.time;
             

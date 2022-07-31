@@ -23,16 +23,16 @@ namespace Framework.Assets
             return AsyncResult.Void();   
         }
 
-        public override string DownloadURL { get; set; }
-        
-        protected override async void LoadScene(IProgressPromise<float, string> promise, string path, LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
+        public override string HostServerURL { get; set; }
+        public override string FallbackHostServerURL { get; set; }
+
+        protected override IEnumerator LoadScene(IProgressPromise<float, string> promise, string path, LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
         {
             var operation = SceneManager.LoadSceneAsync(path, loadSceneMode);
             operation.allowSceneActivation = allowSceneActivation;
-            var waitEnd = new WaitForEndOfFrame();
             while (!operation.isDone)
             {
-                await waitEnd;
+                yield return null;
                 promise.UpdateProgress(operation.progress);
             }
             promise.SetResult(Path.GetFileNameWithoutExtension(path));
@@ -48,12 +48,7 @@ namespace Framework.Assets
             return ProgressResult<DownloadProgress>.Void();
         }
 
-        protected override void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
-        {
-            Executors.RunOnCoroutineNoReturn(loadAsync(key, promise));
-        }
-        
-        private IEnumerator loadAsync<T>(string key,IProgressPromise<float,T> promise) where T : Object
+        protected override IEnumerator loadAssetAsync<T>(string key, IProgressPromise<float, T> promise)
         {
             var operation = Resources.LoadAsync<T>(key);
             requests.Add(operation);

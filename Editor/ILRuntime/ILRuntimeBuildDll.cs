@@ -20,15 +20,15 @@ namespace Framework.Editor
     public class ILRuntimeBuildDll
     {
         [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Debug)",ButtonSizes.Large)]
+        [Button("编译dll(Roslyn-Debug)", ButtonSizes.Large)]
         public static void DebugBuild()
         {
             BuildDLL(true);
         }
 
         [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Release)",ButtonSizes.Large)]
-        public  static void ReleaseBuild()
+        [Button("编译dll(Roslyn-Release)", ButtonSizes.Large)]
+        public static void ReleaseBuild()
         {
             BuildDLL(false);
         }
@@ -36,7 +36,7 @@ namespace Framework.Editor
         private static List<string> defineList = new List<string>();
         private static bool usePdb;
         private static ILRConfig ilrConfig;
-        
+
         private static void BuildDLL(bool isDebug)
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
@@ -54,7 +54,7 @@ namespace Framework.Editor
                 EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
                 FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
-                
+
                 BuildByRoslyn(allDll, allCsFiles, outPath);
             }
             finally
@@ -63,8 +63,8 @@ namespace Framework.Editor
                 AssetDatabase.Refresh();
             }
         }
-        
-        public static void BuildDLL(string codeSource,string outPath,bool isDebug)
+
+        public static void BuildDLL(string codeSource, string outPath, bool isDebug)
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
             var config = runtimeConfig.ILRConfig;
@@ -108,6 +108,7 @@ namespace Framework.Editor
                     break;
                 }
             }
+
             defineList.Clear();
             List<string> csprojList = new List<string>();
             foreach (XmlNode childNode in ProjectNode.ChildNodes)
@@ -136,12 +137,12 @@ namespace Framework.Editor
                         if (item.Name == "DefineConstants")
                         {
                             var define = item.InnerText;
-                
+
                             var defines = define.Split(';');
-                
+
                             defineList.AddRange(defines);
                         }
-                
+
                     }
                 }
             }
@@ -189,13 +190,15 @@ namespace Framework.Editor
                 {
                     dlls[i] = dlls[i].Replace("\\", "/");
                 }
+
                 for (int i = 0; i < codefiles.Count; i++)
                 {
                     codefiles[i] = codefiles[i].Replace("\\", "/");
                 }
+
                 output = output.Replace("\\", "/");
             }
-            
+
             //添加语法树
             List<Microsoft.CodeAnalysis.SyntaxTree> codes = new List<Microsoft.CodeAnalysis.SyntaxTree>();
             var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
@@ -225,8 +228,8 @@ namespace Framework.Editor
             Directory.CreateDirectory(dir);
             //编译参数
             CSharpCompilationOptions option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
-                    allowUnsafe: true);
+                optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
+                allowUnsafe: true);
 
             //创建编译器代理
             var assemblyname = Path.GetFileNameWithoutExtension(output);
@@ -234,7 +237,7 @@ namespace Framework.Editor
             EmitResult result = null;
 
             var pdbPath = Path.ChangeExtension(output, "pdb");
-            
+
             var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb,
                 pdbFilePath: pdbPath);
             using (var dllStream = new MemoryStream())
@@ -243,7 +246,7 @@ namespace Framework.Editor
                 result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
                 File.WriteAllBytes(output + ".bytes", dllStream.GetBuffer());
                 pdbPath += ".bytes";
-                if(File.Exists(pdbPath))
+                if (File.Exists(pdbPath))
                     File.Delete(pdbPath);
                 if (usePdb)
                 {
@@ -263,14 +266,25 @@ namespace Framework.Editor
                 {
                     sb.AppendLine(diagnostic.ToString());
                 }
+
                 throw new BuildException(sb.ToString());
             }
             else
             {
-                Debug.Log("编译DLL成功");
+                Debug.Log("编译DLL成功  " + output);
             }
+
             return result.Success;
         }
     }
+
+    class BuildException : Exception
+    {
+        public BuildException(string ex) : base(ex)
+        {
+            
+        }
+    }
+
 }
 #endif

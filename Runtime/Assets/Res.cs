@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Framework.Asynchronous;
+using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using YooAsset;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
@@ -22,6 +25,11 @@ namespace Framework.Assets
             DownloadSpeed = downloadSpeed;
             Progress = progress;
         }
+
+        public override string ToString()
+        {
+            return $"{DownloadedSize}/{TotalSize}  {DownloadSpeed}";
+        }
     }
     
     public abstract class Res : IRes
@@ -29,7 +37,8 @@ namespace Framework.Assets
         private static IRes @default;
         public abstract IAsyncResult Init();
         public static Type DefaultResType = typeof(ResourcesRes);
-        public abstract string DownloadURL { get; set; }
+        public abstract string HostServerURL { get; set; }
+        public abstract string FallbackHostServerURL { get; set; }
         public static IRes Default => @default ?? (@default = Create());
 
         public static IRes Create()
@@ -38,25 +47,25 @@ namespace Framework.Assets
         }
         
         public abstract T LoadAsset<T>(string key) where T : Object;
-        protected abstract void LoadScene(IProgressPromise<float, string> promise, string path,
+        protected abstract IEnumerator LoadScene(IProgressPromise<float, string> promise, string path,
             LoadSceneMode loadSceneMode, bool allowSceneActivation = true);
 
         public abstract IProgressResult<float,string> CheckDownloadSize();
         public abstract IProgressResult<DownloadProgress> DownloadAssets();
-        protected abstract void loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
+        protected abstract IEnumerator loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
         public abstract void Release();
         
         public IProgressResult<float,string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true)
         {
             ProgressResult<float,string> progressResult = new ProgressResult<float, string>();
-            LoadScene(progressResult, path, loadSceneMode, allowSceneActivation);
+            Executors.RunOnCoroutineReturn(LoadScene(progressResult, path, loadSceneMode, allowSceneActivation));
             return progressResult;
         }
         
         public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
         {
             ProgressResult<float, T> progressResult = new ProgressResult<float, T>(true);
-            loadAssetAsync(key, progressResult);
+            Executors.RunOnCoroutineReturn(loadAssetAsync(key, progressResult));
             return progressResult;
         }
         
@@ -66,7 +75,17 @@ namespace Framework.Assets
             var progress = InstantiateAsync(key, parent, instantiateInWorldSpace);
             ProgressResult<float, T> result = new ProgressResult<float, T>(true);
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
-            progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
+            progress.Callbackable().OnCallback(progressResult =>
+            {
+                if (result.IsCancelled)
+                {
+                    Object.Destroy(progressResult.Result);
+                }
+                else
+                {
+                    result.SetResult(progressResult.Result.GetComponent<T>());
+                }
+            });
             return result;
         }
 
@@ -75,8 +94,25 @@ namespace Framework.Assets
         {
             var progress = InstantiateAsync(key, position, rotation, parent);
             ProgressResult<float, T> result = new ProgressResult<float, T>(true);
+            result.Callbackable().OnCallback((progressResult =>
+            {
+                if (progressResult.IsCancelled)
+                {
+                    progress.Cancel();
+                }
+            }));
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
-            progress.Callbackable().OnCallback(progressResult => result.SetResult(progressResult.Result.GetComponent<T>()));
+            progress.Callbackable().OnCallback(progressResult =>
+            {
+                if (result.IsCancelled && progressResult.Result != null)
+                {
+                    Object.Destroy(progressResult.Result);
+                }
+                else
+                {
+                    result.SetResult(progressResult.Result.GetComponent<T>());
+                }
+            });
             return result;
         }
 
@@ -87,13 +123,14 @@ namespace Framework.Assets
             ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
-                if (loadProgress.IsCancelled) return;
+                if(resultProgress.IsCancelled) return;
                 var go = Object.Instantiate(result.Result);
                 go.transform.SetParent(parent, instantiateInWorldSpace);
                 resultProgress.SetResult(go);
             }));
-            loadAssetAsync(key, loadProgress);
-            return resultProgress;
+            loadProgress.Callbackable().OnProgressCallback(resultProgress.UpdateProgress);
+            Executors.RunOnCoroutineNoReturn(loadAssetAsync(key, loadProgress));
+            return null;
         }
 
         public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
@@ -104,14 +141,15 @@ namespace Framework.Assets
             ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
             loadProgress.Callbackable().OnCallback((result =>
             {
-                if (loadProgress.IsCancelled) return;
+                if(resultProgress.IsCancelled) return;
                 var trans = Object.Instantiate(result.Result).transform;
                 trans.SetParent(parent);
                 trans.localPosition = position;
                 trans.localRotation = rotation;
                 resultProgress.SetResult(trans.gameObject);
             }));
-            loadAssetAsync(key, loadProgress);
+            loadProgress.Callbackable().OnProgressCallback(resultProgress.UpdateProgress);
+            Executors.RunOnCoroutineNoReturn(loadAssetAsync(key, loadProgress));
             return resultProgress;
         }
 
@@ -121,6 +159,30 @@ namespace Framework.Assets
             var trans = Object.Instantiate(LoadAsset<GameObject>(key)).transform;
             trans.SetParent(parent, instantiateInWorldSpace);
             return trans.gameObject;
+        }
+
+        protected string DownloadUrl
+        {
+            get
+            {
+                string hostServerIP = HostServerURL;
+                string gameVersion = ConfigBase.Load<FrameworkRuntimeConfig>().GameVersion;
+                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(Application.platform)}/{gameVersion}";
+            }
+        }
+        
+        protected string FallbackDownloadUrl
+        {
+            get
+            {
+                string hostServerIP = FallbackHostServerURL;
+                string gameVersion = ConfigBase.Load<FrameworkRuntimeConfig>().GameVersion;
+#if UNITY_EDITOR
+                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(UnityEditor.EditorUserBuildSettings.activeBuildTarget)}/{gameVersion}";
+#else
+                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(Application.platform)}/{gameVersion}";
+#endif
+            }
         }
     }
 }

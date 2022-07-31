@@ -1,0 +1,22 @@
+{
+    "name": "com.wanger.framework",
+    "displayName": "YooAsset",
+    "version": "1.0.1",
+    "unity": "2021.3",
+    "description": "unity3d game framework.",
+    "author": {
+        "name": "wanger",
+        "url": "https://github.com/so-sos-so/Framework"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/so-sos-so/Framework.git"
+    },
+    "relatedPackages": {},
+    "dependencies": {
+        "com.unity.scriptablebuildpipeline": "1.20.2",
+        "com.unity.modules.assetbundle": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
+    }
+}

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
-namespace Framework.Helper
+namespace Framework
 {
     public class UIHelper
     {

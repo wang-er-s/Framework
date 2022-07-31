@@ -11,7 +11,8 @@ namespace Framework.Assets
     public interface IRes
     {
         IAsyncResult Init();
-        string DownloadURL { get; set; }
+        string HostServerURL { get; set; }
+        string FallbackHostServerURL { get; set; }
         IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object;
 
         IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,

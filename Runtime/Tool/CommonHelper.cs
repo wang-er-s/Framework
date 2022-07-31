@@ -124,6 +124,23 @@ namespace Framework.Helper
             long millTime = Convert.ToInt64(tss.TotalMilliseconds);
             return millTime;
         }
+
+        public static string FormatBytes(long bytes)
+        {
+            float kb = bytes / 1024f;
+            if (kb < 1024)
+            {
+                return $"{kb.ToString(".0")}KB";
+            }
+            float mb = kb / 1024f;
+            if (mb < 1024)
+            {
+                return $"{mb.ToString(".0")}MB";
+            }
+            
+            float gb = mb / 1024f;
+            return $"{gb.ToString(".0")}GB";
+        }
         
         #region Editor
 

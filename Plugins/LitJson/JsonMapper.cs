@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using Google.Protobuf;
 using UnityEngine;
 using Object = System.Object;
 #if ILRUNTIME

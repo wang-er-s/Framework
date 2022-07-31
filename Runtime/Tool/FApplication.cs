@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace Framework
@@ -33,7 +30,7 @@ namespace Framework
         /// Library
         /// </summary>
         public static string Library { get; private set; }
-        
+
         public static string GetPlatformPath(UnityEditor.BuildTarget platform)
         {
             switch (platform)
@@ -41,6 +38,7 @@ namespace Framework
                 case UnityEditor.BuildTarget.StandaloneOSX:
                     return "OSX";
                 case UnityEditor.BuildTarget.StandaloneWindows:
+                case UnityEditor.BuildTarget.StandaloneWindows64:
                     return "Windows";
                 case UnityEditor.BuildTarget.Android:
                     return "Android";
@@ -51,6 +49,7 @@ namespace Framework
             return "";
         }
 #endif
+        
         /// <summary>
         /// 平台资源的父路径
         /// </summary>

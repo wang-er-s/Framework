@@ -1,11 +1,10 @@
 {
     "name": "Framework",
+    "rootNamespace": "",
     "references": [
-        "Unity.ResourceManager",
         "Unity.TextMeshPro",
         "ILRuntime",
-        "XAsset",
-        "xasset"
+        "YooAsset"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
