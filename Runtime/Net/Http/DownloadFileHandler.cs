@@ -91,7 +91,7 @@ namespace Framework.Net
                 if (_fileInfo.Exists)
                     _fileInfo.Delete();
 
-                _tmpFileInfo.MoveTo(_fileInfo.FullName);
+                File.Move(_tmpFileInfo.FullName, _fileInfo.FullName);
                 WriteFinish = true;
             });
         }
