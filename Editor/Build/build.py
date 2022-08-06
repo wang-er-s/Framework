@@ -1,32 +1,38 @@
-import base64
-import hashlib
-import hmac
-import json
 import os
 import re
 import subprocess
 import sys
 import time
-import urllib.parse
-import requests
 import pathlib
 import tempfile
 
-project_path = sys.argv[1]
-is_debug = sys.argv[2]
-up_version = sys.argv[3]
-platform = sys.argv[4]
-use_hotfix = sys.argv[5]
-use_aab = sys.argv[6]
-# stable = sys.argv[7]
-stable = "False"
+class build_types():
+    BuildDll = "1"
+    BuildAB = "2"
+    BuildPlayer = "3"
+
+build_type = sys.argv[1]
+project_path = sys.argv[2]
+is_debug = "false"
+use_hotfix = "false"
+platform = "Android"
+incremental = "false"
+
+if build_type == build_types.BuildDll:
+    platform = "Android"
+elif build_type == build_types.BuildAB:
+    platform = sys.argv[3]
+    incremental = sys.argv[4]
+elif build_type == build_types.BuildPlayer:
+    is_debug = sys.argv[3]
+    platform = sys.argv[4]
+    use_hotfix = sys.argv[5]
+
 build_path_relative_project = "../../share/build"
 build_path = project_path + "/" + build_path_relative_project
 svn_commit_path = build_path
 svn_account = "--username jenkins --password jenkins"
-
-editor_path = "D:/unity/Unity/2020.3.18f1c1/Editor/Unity.exe"
-
+editor_path = "D:/unity/Unity/2021.3.6f1c1/Editor/Unity.exe"
 
 def SafeHandleFunction(log='', errorlog='', errorcode=-1):
     def decorator(func):
@@ -58,16 +64,14 @@ class BaseBuilder:
         # get base environment
         self.LogFilePath = build_path + "/buildLog.log"
         self.Error = ""
-
+        self.buildFunction = ""
         # set environment
         self.args = []
         self.args.append('--BUILDPATH:"{}"'.format(build_path_relative_project))
         self.args.append("--DEBUG:" + is_debug)
-        self.args.append("--UPVERSION:" + up_version)
         self.args.append("--PLATFORM:" + platform)
         self.args.append("--USEHOTFIX:" + use_hotfix)
-        self.args.append("--AAB:" + use_aab)
-        self.args.append("--STABLE:" + stable)
+        self.args.append("--IncrementalBuild:"+incremental)
 
     def CheckBuildState(self):
         f = open(self.LogFilePath, "r", encoding="utf-8")
@@ -93,11 +97,25 @@ class BaseBuilder:
 
     @SafeHandleFunction("Begin to build UnityProject", errorlog="Build UnityProject Error", errorcode=-1)
     def Build(self):
-        buildFunction = "Framework.Editor.Build.JenkinsBuild"
-        UnityBuildCmd = "{} -batchmode -quit -nographics -executeMethod {} -logFile {} -projectPath {} {}".format(
-            editor_path, buildFunction, self.LogFilePath, project_path, " ".join(self.args))
+        if build_type == build_types.BuildPlayer:
+            self.BuildPlayer()
+        elif build_type == build_types.BuildDll:
+            self.BuildDll()
+        elif build_type == build_types.BuildAB:
+            self.BuildAb()
+        UnityBuildCmd = "{} -batchmode -quit -nographics -buildTarget {} -executeMethod {} -logFile {} -projectPath {} {}".format(
+            editor_path,platform, self.buildFunction, self.LogFilePath, project_path, " ".join(self.args))
         LogConsole(UnityBuildCmd)
         ExecuteShellWithFile(UnityBuildCmd)
+
+    def BuildAb(self):
+        self.buildFunction = "Framework.Editor.Build.JenkinsBuildCodeAndAb"
+
+    def BuildPlayer(self):
+        self.buildFunction = "Framework.Editor.Build.JenkinsBuildAll"
+
+    def BuildDll(self):
+        self.buildFunction = "Framework.Editor.Build.JenkinsBuildCode"
 
 
 def ExecuteShellWithFile(command):
@@ -115,8 +133,9 @@ def ExecuteShellWithFile(command):
 
 def ExecuteShell(command):
     LogConsole(command)
-    result = subprocess.check_output(command, shell=True)
+    result = ""
     try:
+        result = subprocess.check_output(command, shell=True)
         result = result.decode('gbk').strip('\r\n')  # 处理GBK编码的输出，去掉结尾换行
     except:
         try:
@@ -177,53 +196,15 @@ git commit -m "Add changed file"
 git push origin master
     """.format(project_path))
 
-
-def notify(msg, success):
-    url = 'https://oapi.dingtalk.com/robot/send?access_token=55bce92dc73ad58bc7ba2ae8590205d6c7a5fae3b936cdf45769fc7adb929e50'
-    timestamp = str(round(time.time() * 1000))
-    secret = 'SECa482adba43f33bae1d7ff98181f7a50c208c3786012461a4887a97302d0ae418'
-    secret_enc = secret.encode('utf-8')
-    string_to_sign = '{}\n{}'.format(timestamp, secret)
-    string_to_sign_enc = string_to_sign.encode('utf-8')
-    hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
-    sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
-    url = url + "&timestamp={0}&sign={1}".format(timestamp, sign)
-    headers = {'Content-Type': 'application/json;charset=utf-8'}
-    title = ""
-    if success == 0:
-        title = "打包成功"
-    else:
-        title = "打包失败"
-    data = {
-        # 发送消息类型为文本
-        "msgtype": "text",
-        "at": {
-            # 决定是否@所有人,True为发送的消息自动@所有人
-            "isAtAll": success != 0,
-        },
-        "text": {
-            "title": title,
-            # 消息正文
-            "content": msg
-        }
-    }
-    r = requests.post(url, data=json.dumps(data), headers=headers)
-    return r.text
-
-
-result = update_svn()
-result = ""
+update_svn()
 obj = BaseBuilder()
 obj.Build()
 success = obj.CheckBuildState()
 commit_svn()
-LogConsole(result)
-notify_msg = "is_debug={} up_version={} platform={} use_hotfix={}".format(is_debug, up_version, platform, use_hotfix)
+f = open(obj.LogFilePath, 'r',  encoding='utf8')
+# LogConsole(f.read())
 if success == 1:
-    notify("打包失败\n {} \n{} \n {} \n 检查Log看看错误\n{}".format(notify_msg, result, obj.Error, obj.LogFilePath), success)
     exit(1)
-if platform == "Android":
-    result = "手机下载地址 http://192.168.10.112:1980 \n" + result
-notify("打包成功\n{}\n{}".format(notify_msg, result), success)
-commit_git()
+# commit_git()
 exit(0)
+

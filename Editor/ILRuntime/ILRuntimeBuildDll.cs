@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
+using LitJson;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -19,25 +16,17 @@ namespace Framework.Editor
     [LabelText("生成DLL")]
     public class ILRuntimeBuildDll
     {
-        [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Debug)", ButtonSizes.Large)]
-        public static void DebugBuild()
+        [Button("编译dll(Roslyn-Release)",ButtonSizes.Large)]
+        public  static string ReleaseBuild()
         {
-            BuildDLL(true);
-        }
-
-        [HorizontalGroup()]
-        [Button("编译dll(Roslyn-Release)", ButtonSizes.Large)]
-        public static void ReleaseBuild()
-        {
-            BuildDLL(false);
+            return BuildDLL();
         }
 
         private static List<string> defineList = new List<string>();
         private static bool usePdb;
         private static ILRConfig ilrConfig;
-
-        private static void BuildDLL(bool isDebug)
+        
+        private static string BuildDLL()
         {
             var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
             ilrConfig = runtimeConfig.ILRConfig;
@@ -55,7 +44,35 @@ namespace Framework.Editor
                 FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
                 EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
 
-                BuildByRoslyn(allDll, allCsFiles, outPath);
+                var buildParams = new BuildParams()
+                    {Dlls = allDll, CodeFiles = allCsFiles, DefineList = defineList, Output = Path.GetFullPath(outPath), UsePdb = true};
+                var paramsPath = Path.Combine(Path.GetTempPath(), "BuildParams.txt");
+                File.WriteAllText(paramsPath, JsonMapper.ToJson(buildParams));
+                
+                var exePath = Path.Combine(FApplication.ProjectRoot, "../../share/tools/BuildDllExe/OutPutExe/net6.0/BuildDll.exe");
+                System.Diagnostics.ProcessStartInfo processStartInfo =
+                    new System.Diagnostics.ProcessStartInfo(exePath, paramsPath);
+                int exitCode = 0;
+                processStartInfo.RedirectStandardError = true;
+                processStartInfo.RedirectStandardOutput = true;
+                processStartInfo.CreateNoWindow = true;
+                processStartInfo.UseShellExecute = false;
+                Debug.Log("开始编译");
+                System.Diagnostics.Process process =
+                    System.Diagnostics.Process.Start(processStartInfo);
+                
+                process.WaitForExit(); //wait for 20 sec
+                Debug.Log("编译完成");
+                exitCode = process.ExitCode;
+                string stderr = process.StandardError.ReadToEnd();
+                if (exitCode == 0)
+                {
+                    return String.Empty;
+                }
+                else
+                {
+                   return stderr;
+                }
             }
             finally
             {
@@ -64,30 +81,6 @@ namespace Framework.Editor
             }
         }
 
-        public static void BuildDLL(string codeSource, string outPath, bool isDebug)
-        {
-            var runtimeConfig = ConfigBase.Load<FrameworkRuntimeConfig>();
-            var config = runtimeConfig.ILRConfig;
-            EditorUtility.SetDirty(runtimeConfig);
-            AssetDatabase.SaveAssets();
-            usePdb = config.UsePbd;
-            //string codeSource = Application.dataPath + "/_scripts@hotfix";
-            //string outPath = config.DllGenPath + $"/{dllName}.dll";
-            List<string> allDll = new List<string>();
-            var allCsFiles = new List<string>(Directory.GetFiles(codeSource, "*.cs", SearchOption.AllDirectories));
-            try
-            {
-                EditorUtility.DisplayProgressBar("编译服务", "[1/2]查找引用和脚本...", 0.5f);
-                FindDLLByCSPROJ("Assembly-CSharp.csproj", ref allDll);
-                EditorUtility.DisplayProgressBar("编译服务", "[2/2]开始编译hotfix.dll...", 0.7f);
-                BuildByRoslyn(allDll, allCsFiles, outPath);
-            }
-            finally
-            {
-                EditorUtility.ClearProgressBar();
-                AssetDatabase.Refresh();
-            }
-        }
 
         /// <summary>
         /// 解析project中的dll
@@ -108,7 +101,6 @@ namespace Framework.Editor
                     break;
                 }
             }
-
             defineList.Clear();
             List<string> csprojList = new List<string>();
             foreach (XmlNode childNode in ProjectNode.ChildNodes)
@@ -137,12 +129,12 @@ namespace Framework.Editor
                         if (item.Name == "DefineConstants")
                         {
                             var define = item.InnerText;
-
+                
                             var defines = define.Split(';');
-
+                
                             defineList.AddRange(defines);
                         }
-
+                
                     }
                 }
             }
@@ -176,115 +168,112 @@ namespace Framework.Editor
                 }
             }
         }
-
-        /// <summary>
-        /// 编译dll
-        /// </summary>
-        /// <param name="rootpaths"></param>
-        /// <param name="output"></param>
-        private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output)
+        
+        // /// <summary>
+        // /// 编译dll
+        // /// </summary>
+        // /// <param name="rootpaths"></param>
+        // /// <param name="output"></param>
+        // private static bool BuildByRoslyn(List<string> dlls, List<string> codefiles, string output)
+        // {
+        //     if (Application.platform == RuntimePlatform.OSXEditor)
+        //     {
+        //         for (int i = 0; i < dlls.Count; i++)
+        //         {
+        //             dlls[i] = dlls[i].Replace("\\", "/");
+        //         }
+        //         for (int i = 0; i < codefiles.Count; i++)
+        //         {
+        //             codefiles[i] = codefiles[i].Replace("\\", "/");
+        //         }
+        //         output = output.Replace("\\", "/");
+        //     }
+        //     
+        //     //添加语法树
+        //     List<Microsoft.CodeAnalysis.SyntaxTree> codes = new List<Microsoft.CodeAnalysis.SyntaxTree>();
+        //     var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
+        //     foreach (var cs in codefiles)
+        //     {
+        //         //判断文件是否存在
+        //         if (!File.Exists(cs)) continue;
+        //         //
+        //         var content = File.ReadAllText(cs);
+        //         var syntaxTree = CSharpSyntaxTree.ParseText(content, opa, cs, Encoding.UTF8);
+        //         codes.Add(syntaxTree);
+        //     }
+        //
+        //     //添加dll
+        //     List<MetadataReference> assemblies = new List<MetadataReference>();
+        //     foreach (var dll in dlls)
+        //     {
+        //         var metaref = MetadataReference.CreateFromFile(dll);
+        //         if (metaref != null)
+        //         {
+        //             assemblies.Add(metaref);
+        //         }
+        //     }
+        //
+        //     //创建目录
+        //     var dir = Path.GetDirectoryName(output);
+        //     Directory.CreateDirectory(dir);
+        //     //编译参数
+        //     CSharpCompilationOptions option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
+        //             optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
+        //             allowUnsafe: true);
+        //
+        //     //创建编译器代理
+        //     var assemblyname = Path.GetFileNameWithoutExtension(output);
+        //     var compilation = CSharpCompilation.Create(assemblyname, codes, assemblies, option);
+        //     EmitResult result = null;
+        //
+        //     var pdbPath = Path.ChangeExtension(output, "pdb");
+        //     
+        //     var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb,
+        //         pdbFilePath: pdbPath);
+        //     
+        //     using (var dllStream = new MemoryStream())
+        //     using (var pdbStream = new MemoryStream())
+        //     {
+        //         result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
+        //         File.WriteAllBytes(output + ".bytes", dllStream.GetBuffer());
+        //         pdbPath += ".bytes";
+        //         if(File.Exists(pdbPath))
+        //             File.Delete(pdbPath);
+        //         if (usePdb)
+        //         {
+        //             File.WriteAllBytes(pdbPath, pdbStream.GetBuffer());
+        //         }
+        //     }
+        //
+        //     // 编译失败，提示
+        //     if (!result.Success)
+        //     {
+        //         IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
+        //             diagnostic.IsWarningAsError ||
+        //             diagnostic.Severity ==
+        //             DiagnosticSeverity.Error);
+        //         StringBuilder sb = new StringBuilder();
+        //         foreach (var diagnostic in failures)
+        //         {
+        //             sb.AppendLine(diagnostic.ToString());
+        //         }
+        //         throw new Exception(sb.ToString());
+        //     }
+        //     else
+        //     {
+        //         Debug.Log("编译DLL成功");
+        //     }
+        //     return result.Success;
+        // }
+        //
+        private class BuildParams
         {
-            if (Application.platform == RuntimePlatform.OSXEditor)
-            {
-                for (int i = 0; i < dlls.Count; i++)
-                {
-                    dlls[i] = dlls[i].Replace("\\", "/");
-                }
-
-                for (int i = 0; i < codefiles.Count; i++)
-                {
-                    codefiles[i] = codefiles[i].Replace("\\", "/");
-                }
-
-                output = output.Replace("\\", "/");
-            }
-
-            //添加语法树
-            List<Microsoft.CodeAnalysis.SyntaxTree> codes = new List<Microsoft.CodeAnalysis.SyntaxTree>();
-            var opa = new CSharpParseOptions(LanguageVersion.Latest, preprocessorSymbols: defineList);
-            foreach (var cs in codefiles)
-            {
-                //判断文件是否存在
-                if (!File.Exists(cs)) continue;
-                //
-                var content = File.ReadAllText(cs);
-                var syntaxTree = CSharpSyntaxTree.ParseText(content, opa, cs, Encoding.UTF8);
-                codes.Add(syntaxTree);
-            }
-
-            //添加dll
-            List<MetadataReference> assemblies = new List<MetadataReference>();
-            foreach (var dll in dlls)
-            {
-                var metaref = MetadataReference.CreateFromFile(dll);
-                if (metaref != null)
-                {
-                    assemblies.Add(metaref);
-                }
-            }
-
-            //创建目录
-            var dir = Path.GetDirectoryName(output);
-            Directory.CreateDirectory(dir);
-            //编译参数
-            CSharpCompilationOptions option = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                optimizationLevel: OptimizationLevel.Release, warningLevel: 4,
-                allowUnsafe: true);
-
-            //创建编译器代理
-            var assemblyname = Path.GetFileNameWithoutExtension(output);
-            var compilation = CSharpCompilation.Create(assemblyname, codes, assemblies, option);
-            EmitResult result = null;
-
-            var pdbPath = Path.ChangeExtension(output, "pdb");
-
-            var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb,
-                pdbFilePath: pdbPath);
-            using (var dllStream = new MemoryStream())
-            using (var pdbStream = new MemoryStream())
-            {
-                result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
-                File.WriteAllBytes(output + ".bytes", dllStream.GetBuffer());
-                pdbPath += ".bytes";
-                if (File.Exists(pdbPath))
-                    File.Delete(pdbPath);
-                if (usePdb)
-                {
-                    File.WriteAllBytes(pdbPath, pdbStream.GetBuffer());
-                }
-            }
-
-            // 编译失败，提示
-            if (!result.Success)
-            {
-                IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
-                    diagnostic.IsWarningAsError ||
-                    diagnostic.Severity ==
-                    DiagnosticSeverity.Error);
-                StringBuilder sb = new StringBuilder();
-                foreach (var diagnostic in failures)
-                {
-                    sb.AppendLine(diagnostic.ToString());
-                }
-
-                throw new BuildException(sb.ToString());
-            }
-            else
-            {
-                Debug.Log("编译DLL成功  " + output);
-            }
-
-            return result.Success;
+            public List<string> Dlls;
+            public List<string> CodeFiles;
+            public string Output;
+            public List<string> DefineList;
+            public bool UsePdb;
         }
     }
-
-    class BuildException : Exception
-    {
-        public BuildException(string ex) : base(ex)
-        {
-            
-        }
-    }
-
 }
 #endif
