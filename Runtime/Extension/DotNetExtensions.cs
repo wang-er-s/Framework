@@ -692,6 +692,20 @@ public static class IOExtension
         }
     }
 
+    public static void CopyTo(this DirectoryInfo srcPath, string destPath)
+    {
+        Directory.CreateDirectory(destPath);
+        foreach (var srcInfo in srcPath.GetDirectories("*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory($"{destPath}{srcInfo.FullName[srcPath.FullName.Length..]}");
+        }
+        
+        foreach (var srcInfo in srcPath.GetFiles("*", SearchOption.AllDirectories))
+        {
+            File.Copy(srcInfo.FullName, $"{destPath}{srcInfo.FullName[srcPath.FullName.Length..]}", true);
+        }
+    }
+    
     /// <summary>
     /// 使目录存在,Path可以是目录名必须是文件名
     /// </summary>
