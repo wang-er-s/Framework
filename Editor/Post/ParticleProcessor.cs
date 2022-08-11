@@ -101,7 +101,6 @@ public class ParticleProcessor
 		sw.Close();
     }
     
-    [MenuItem("Framework/Tool/清理选定材质球里面无用的属性")]
     static void ClearMatProperties()
     {
 	    UnityEngine.Object[] objs = Selection.GetFiltered(typeof(Material), SelectionMode.DeepAssets);

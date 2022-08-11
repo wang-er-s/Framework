@@ -126,6 +126,7 @@ namespace Framework.Assets
                 if(resultProgress.IsCancelled) return;
                 var go = Object.Instantiate(result.Result);
                 go.transform.SetParent(parent, instantiateInWorldSpace);
+                go.transform.LocalIdentity();
                 resultProgress.SetResult(go);
             }));
             loadProgress.Callbackable().OnProgressCallback(resultProgress.UpdateProgress);

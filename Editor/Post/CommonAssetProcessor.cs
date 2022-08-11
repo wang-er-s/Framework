@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using NPinyin;
 using UnityEditor;
-using UnityEngine;
 
 public class CommonAssetProcessor : AssetPostprocessor
 {
@@ -19,36 +15,47 @@ public class CommonAssetProcessor : AssetPostprocessor
         return path.Contains("/UI/");
     }
 
-    public static bool HasScale(string path)
+    public static bool AnimationHasScale(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).Contains("_Scale");
+        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_scale");
     }
 
     public static bool ReadWrite(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).Contains("_ReadWrite");
+        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_rw");
     }
 
     public static bool HasExtraUv(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).Contains("_UV2");
+        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_uv1");
     }
 
     public static bool HasMipMap(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).Contains("_MipMap");
+        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_mipmap");
+    }
+    
+    public static bool HasVertexColor(string path)
+    {
+        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_vc");
     }
 
     public static bool FirstImport(AssetImporter importer)
     {
-        // 如果是忽略的文件夹，则跳过
         if (Ignore(importer.assetPath)) return false;
         return importer.importSettingsMissing;
     }
 
-    public static bool Ignore(string path)
-    {
-        if (path.Contains("Assets/Res")) return false;
+    private static bool Ignore(string path)
+    { 
+        if (path.Contains("Assets/Res/"))
+        {
+            return false;
+        }
+        if (path.Contains("Assets/Art/"))
+        {
+            return false;
+        }
         return true;
     }
     #endregion
@@ -57,6 +64,7 @@ public class CommonAssetProcessor : AssetPostprocessor
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
         string[] movedFromAssetPaths)
     {
+        
         void renameAssets(string path, string newPath)
         {
             if (File.Exists(path))
@@ -76,6 +84,9 @@ public class CommonAssetProcessor : AssetPostprocessor
         }
 
         List<string> chineseFilePath = new List<string>();
+        StringBuilder chineseTips = new StringBuilder();
+        List<string> chineseDirPath = new List<string>();
+        chineseTips.AppendLine("有多个文件夹含有中文");
         // 删除名字中的空格和中文
         foreach (var importedAsset in importedAssets)
         {
@@ -86,9 +97,15 @@ public class CommonAssetProcessor : AssetPostprocessor
             // 如果是文件夹，自行修改
             if (Directory.Exists(importedAsset))
             {
-                if (Regex.IsMatch(fileName, @"[\u4e00-\u9fbb]"))
+                if (Regex.IsMatch(dir, @"[\u4e00-\u9fbb]"))
                 {
-                    EditorUtility.DisplayDialog("注意", $"{importedAsset} 的名字含有空格或中文，请修改", "好的");
+                    if (chineseDirPath.Count > 5) continue;
+                    if (!chineseDirPath.Contains(dir))
+                    {
+                        chineseTips.AppendLine(dir);
+                        chineseDirPath.Add(dir);
+                    }
+                    // EditorUtility.DisplayDialog("注意", $"{importedAsset} 的名字含有空格或中文，请修改", "好的");
                     continue;
                 }
             }
@@ -103,28 +120,19 @@ public class CommonAssetProcessor : AssetPostprocessor
             if (Regex.IsMatch(fileName, @"[\u4e00-\u9fbb]"))
             {
                 chineseFilePath.Add(sourceFilePath);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < fileName.Length; i++)
-                {
-                    var c = fileName[i].ToString();
-                    if (Regex.IsMatch(c, @"[\u4e00-\u9fbb]"))
-                    {
-                        sb.Append(Pinyin.GetPinyin(c).UppercaseFirst());
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
-                }
-                var newFile = Path.Combine(dir, $"{sb}{extension}");
-                renameAssets(sourceFilePath, newFile);
             }
         }
 
+        if (chineseDirPath.Count > 0)
+        {
+            chineseTips.AppendLine("....");
+            EditorUtility.DisplayDialog("注意", chineseTips.ToString(), "好");
+        }
+        
         if (chineseFilePath.Count > 0)
         {
             StringBuilder tips = new StringBuilder();
-            tips.AppendLine($"有{chineseFilePath.Count}个文件的名字含有中文，是否自动修改");
+            tips.AppendLine($"有{chineseFilePath.Count}个文件的名字含有中文");
             int count = 0;
             foreach (var path in chineseFilePath)
             {
@@ -136,36 +144,14 @@ public class CommonAssetProcessor : AssetPostprocessor
                     break;
                 }
             }
-            if (EditorUtility.DisplayDialog("注意", tips.ToString(), "好", "不用，我自己改"))
-            {
-                foreach (var sourceFilePath in chineseFilePath)
-                {
-                    var fileName = Path.GetFileNameWithoutExtension(sourceFilePath);
-                    var extension = Path.GetExtension(sourceFilePath);
-                    var dir = Path.GetDirectoryName(sourceFilePath);
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < fileName.Length; i++)
-                    {
-                        var c = fileName[i].ToString();
-                        if (Regex.IsMatch(c, @"[\u4e00-\u9fbb]"))
-                        {
-                            sb.Append(Pinyin.GetPinyin(c).UppercaseFirst());
-                        }
-                        else
-                        {
-                            sb.Append(c);
-                        }
-                    }
-                    var newFile = Path.Combine(dir, $"{sb}{extension}");
-                    renameAssets(sourceFilePath, newFile);
-                }
-            }
+            EditorUtility.DisplayDialog("注意", tips.ToString(), "好");
         }
         AssetDatabase.Refresh();
     }
 
+
     [MenuItem("Assets/格式化资源", false)]
-    private static void Format()
+    private static void FormatModel()
     {
         List<ModelImporter> modelImporters = new List<ModelImporter>();
         var objs = Selection.objects;
@@ -180,7 +166,13 @@ public class CommonAssetProcessor : AssetPostprocessor
             string path = AssetDatabase.GetAssetPath(o);
             textureImporters.AddRange(GetImporterByPath<TextureImporter>(path));
         }
-        int totalCount = modelImporters.Count + textureImporters.Count;
+        List<AudioImporter> audioImporters = new List<AudioImporter>();
+        foreach (var o in objs)
+        {
+            string path = AssetDatabase.GetAssetPath(o);
+            audioImporters.AddRange(GetImporterByPath<AudioImporter>(path));
+        }
+        int totalCount = modelImporters.Count + textureImporters.Count + audioImporters.Count;
         float index = 0;
         foreach (var modelImporter in modelImporters)
         {
@@ -194,6 +186,13 @@ public class CommonAssetProcessor : AssetPostprocessor
             index++;
             EditorUtility.DisplayProgressBar("正在格式化资源", importer.assetPath, index / totalCount);
             TextureProcessor.FormatTexture(importer);
+        }
+        
+        foreach (var importer in audioImporters)
+        {
+            index++;
+            EditorUtility.DisplayProgressBar("正在格式化资源", importer.assetPath, index / totalCount);
+            AudioProcessor.FormatAudio(importer);
         }
         
         EditorUtility.ClearProgressBar();
