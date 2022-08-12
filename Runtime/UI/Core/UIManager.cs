@@ -223,6 +223,7 @@ namespace Framework.UI.Core
             int index = Int32.MaxValue;
             foreach (View openedView in openedViews)
             {
+				if(openedView.Go == null) continue;
                 if(openedView.UILevel <= view.UILevel)
                     continue;
                 try
