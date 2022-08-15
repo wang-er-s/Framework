@@ -30,7 +30,6 @@ namespace Framework.UI.Core.Bind
             items.AddListener(OnListChanged);
             loopScrollRect.totalCount = items.Count;
             loopScrollRect.OnItemShow += OnItemChanged;
-            loopScrollRect.RefillCells();
         }
 
         private void OnItemChanged(Transform itemTrans, int index)
@@ -58,19 +57,19 @@ namespace Framework.UI.Core.Bind
         {
             yield return null;
             loopScrollRect.totalCount = itemsVm.Count;
-            loopScrollRect.RefreshCells();
+            loopScrollRect.RefillCells();
             delayRefreshCoroutine = null;
         }
-
-        public override void ClearView()
-        {
-            loopScrollRect.OnItemShow -= OnItemChanged;
-            itemTrans2View.Clear();
-        }
-
+        
         public override void Clear()
         {
+            foreach (var view in itemTrans2View.Values)
+            {
+                view.Dispose();
+            }
             itemsVm.RemoveListener(OnListChanged);
+            loopScrollRect.OnItemShow -= OnItemChanged;
+            itemTrans2View.Clear();
         }
     }
 }

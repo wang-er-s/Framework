@@ -94,13 +94,9 @@ namespace Framework.UI.Core.Bind
             _property.Value = _cpnt2PropWrap == null ? data : _cpnt2PropWrap(data);
         }
 
-        public override void ClearView()
-        {
-            _componentEvent?.RemoveListener(ComponentListener);
-        }
-
         public override void Clear()
         {
+            _componentEvent?.RemoveListener(ComponentListener);
             _property?.RemoveListener(PropertyListener);
         }
     }
@@ -165,10 +161,6 @@ namespace Framework.UI.Core.Bind
         private void Property2Listener(TData2 data2)
         {
             _propertyChangeCb(_wrapFunc(_property1.Value, data2));
-        }
-
-        public override void ClearView()
-        {
         }
 
         public override void Clear()

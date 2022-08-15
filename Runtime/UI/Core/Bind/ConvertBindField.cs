@@ -70,20 +70,17 @@ namespace Framework.UI.Core.Bind
         {
             _propChangeCb(_prop2CpntWrap(data));
         }
-
-        public override void ClearView()
-        {
-            if (_cpnt2PropWrap != null)
-            {
-                _componentEvent.RemoveListener(ComponentListener);
-            }
-        }
-
+        
         public override void Clear()
         {
             if (_prop2CpntWrap != null)
             {
                 _property.RemoveListener(PropertyListener);
+            }
+            
+            if (_cpnt2PropWrap != null)
+            {
+                _componentEvent.RemoveListener(ComponentListener);
             }
         }
     }

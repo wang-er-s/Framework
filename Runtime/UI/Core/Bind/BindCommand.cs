@@ -52,14 +52,9 @@ namespace Framework.UI.Core.Bind
                 _command();
         }
 
-        public override void ClearView()
-        {
-            _componentEvent.RemoveListener(Listener);
-        }
-
         public override void Clear()
         {
-            
+            _componentEvent.RemoveListener(Listener);
         }
     }
 
@@ -119,14 +114,9 @@ namespace Framework.UI.Core.Bind
                 _command(data);
         }
 
-        public override void ClearView()
-        {
-            _componentEvent.RemoveListener(Listener);
-        }
-
         public override void Clear()
         {
-
+            _componentEvent.RemoveListener(Listener);
         }
     }
 }

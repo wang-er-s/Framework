@@ -8,9 +8,7 @@ namespace Framework.UI.Core.Bind
         {
             Container = container;
         }
-
-        public abstract void ClearView();
-
+        
         public abstract void Clear();
 
     }

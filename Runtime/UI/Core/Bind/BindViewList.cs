@@ -58,16 +58,12 @@ namespace Framework.UI.Core.Bind
                 _wrappers.Add(wrapper);
             }
         }
-        
-        public override void ClearView()
-        {
-            
-        }
 
         public override void Clear()
         {
             foreach (var wrapper in _wrappers)
             {
+                wrapper.ClearView();
                 _list.RemoveListener(((IBindList<ViewModel>)wrapper).GetBindListFunc());
             }
         }
@@ -126,12 +122,12 @@ namespace Framework.UI.Core.Bind
             for (var i = 0; i < _views.Count; i++) _views[i].SetVm(_list[i]);
         }
 
-        public override void ClearView()
-        {
-        }
-
         public override void Clear()
         {
+            foreach (var view in _views)
+            {
+                view.Dispose();
+            }
         }
     }
 }

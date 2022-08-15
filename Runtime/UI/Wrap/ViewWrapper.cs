@@ -6,6 +6,7 @@ using Framework.Asynchronous;
 using Framework.UI.Core;
 using Framework.UI.Core.Bind;
 using Framework.UI.Wrap.Base;
+using Tool;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -102,6 +103,15 @@ namespace Framework.UI.Wrap
             var _vm = vm as IBindMulView;
             if (_vm == null) return 0;
             return _vm.Tag;
+        }
+
+        public void ClearView()
+        {
+            foreach (var existView in existViews)
+            {
+                existView.Dispose();
+            }
+            existViews.Clear();
         }
     }
 }
