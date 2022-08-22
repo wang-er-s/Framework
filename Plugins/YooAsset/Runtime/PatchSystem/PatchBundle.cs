@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.IO;
 
 namespace YooAsset
 {
@@ -14,17 +15,17 @@ namespace YooAsset
 		/// <summary>
 		/// 文件哈希值
 		/// </summary>
-		public string Hash;
+		public string FileHash;
 
 		/// <summary>
 		/// 文件校验码
 		/// </summary>
-		public string CRC;
+		public string FileCRC;
 
 		/// <summary>
 		/// 文件大小（字节数）
 		/// </summary>
-		public long SizeBytes;
+		public long FileSize;
 
 		/// <summary>
 		/// 资源包的分类标签
@@ -57,13 +58,46 @@ namespace YooAsset
 		/// </summary>	
 		public string FileName { private set; get; }
 
+		/// <summary>
+		/// 缓存文件路径
+		/// </summary>
+		private string _cachedFilePath;
+		public string CachedFilePath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_cachedFilePath) == false)
+					return _cachedFilePath;
 
-		public PatchBundle(string bundleName, string hash, string crc, long sizeBytes, string[] tags)
+				string cacheRoot = SandboxHelper.GetCacheFolderPath();			
+				_cachedFilePath = $"{cacheRoot}/{FileName}";
+				return _cachedFilePath;
+			}
+		}
+
+		/// <summary>
+		/// 内置文件路径
+		/// </summary>
+		private string _streamingFilePath;
+		public string StreamingFilePath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_streamingFilePath) == false)
+					return _streamingFilePath;
+
+				_streamingFilePath = PathHelper.MakeStreamingLoadPath(FileName);
+				return _streamingFilePath;
+			}
+		}
+
+
+		public PatchBundle(string bundleName, string fileHash, string fileCRC, long fileSize, string[] tags)
 		{
 			BundleName = bundleName;
-			Hash = hash;
-			CRC = crc;
-			SizeBytes = sizeBytes;
+			FileHash = fileHash;
+			FileCRC = fileCRC;
+			FileSize = fileSize;
 			Tags = tags;
 		}
 
@@ -101,24 +135,24 @@ namespace YooAsset
 		{
 			if (nameStype == 1)
 			{
-				FileName = Hash;
+				FileName = FileHash;
 			}
 			else if (nameStype == 2)
 			{
 				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
-				FileName = $"{Hash}{tempFileExtension}";
+				FileName = $"{FileHash}{tempFileExtension}";
 			}
 			else if (nameStype == 3)
 			{
 				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
 				string tempBundleName = BundleName.Replace('/', '_').Replace(tempFileExtension, "");
-				FileName = $"{tempBundleName}_{Hash}";
+				FileName = $"{tempBundleName}_{FileHash}";
 			}
 			else if (nameStype == 4)
 			{
 				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
 				string tempBundleName = BundleName.Replace('/', '_').Replace(tempFileExtension, "");
-				FileName = $"{tempBundleName}_{Hash}{tempFileExtension}";
+				FileName = $"{tempBundleName}_{FileHash}{tempFileExtension}";
 			}
 			else
 			{
@@ -153,6 +187,17 @@ namespace YooAsset
 				return true;
 			else
 				return false;
+		}
+
+		/// <summary>
+		/// 检测资源包文件内容是否相同
+		/// </summary>
+		public bool Equals(PatchBundle otherBundle)
+		{
+			if (FileHash == otherBundle.FileHash)
+				return true;
+			
+			return false;
 		}
 	}
 }

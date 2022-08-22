@@ -14,18 +14,15 @@ namespace YooAsset
 	{
 		private static readonly Dictionary<string, DownloaderBase> _downloaderDic = new Dictionary<string, DownloaderBase>();
 		private static readonly List<string> _removeList = new List<string>(100);
-		private static readonly Dictionary<string, string> _cachedHashList = new Dictionary<string, string>(1000);
 		private static int _breakpointResumeFileSize = int.MaxValue;
-		private static EVerifyLevel _verifyLevel = EVerifyLevel.High;
 
 
 		/// <summary>
 		/// 初始化
 		/// </summary>
-		public static void Initialize(int breakpointResumeFileSize, EVerifyLevel verifyLevel)
+		public static void Initialize(int breakpointResumeFileSize)
 		{
 			_breakpointResumeFileSize = breakpointResumeFileSize;
-			_verifyLevel = verifyLevel;
 		}
 
 		/// <summary>
@@ -62,7 +59,6 @@ namespace YooAsset
 			}
 			_downloaderDic.Clear();
 			_removeList.Clear();
-			_cachedHashList.Clear();
 			_breakpointResumeFileSize = int.MaxValue;
 		}
 
@@ -74,13 +70,13 @@ namespace YooAsset
 		public static DownloaderBase BeginDownload(BundleInfo bundleInfo, int failedTryAgain, int timeout = 60)
 		{
 			// 查询存在的下载器
-			if (_downloaderDic.TryGetValue(bundleInfo.Hash, out var downloader))
+			if (_downloaderDic.TryGetValue(bundleInfo.Bundle.CachedFilePath, out var downloader))
 			{
 				return downloader;
 			}
 
 			// 如果资源已经缓存
-			if (ContainsVerifyFile(bundleInfo.Hash))
+			if (CacheSystem.IsCached(bundleInfo.Bundle))
 			{
 				var tempDownloader = new TempDownloader(bundleInfo);
 				return tempDownloader;
@@ -88,15 +84,15 @@ namespace YooAsset
 
 			// 创建新的下载器	
 			{
-				YooLogger.Log($"Beginning to download file : {bundleInfo.FileName} URL : {bundleInfo.RemoteMainURL}");
-				FileUtility.CreateFileDirectory(bundleInfo.GetCacheLoadPath());
+				YooLogger.Log($"Beginning to download file : {bundleInfo.Bundle.FileName} URL : {bundleInfo.RemoteMainURL}");
+				FileUtility.CreateFileDirectory(bundleInfo.Bundle.CachedFilePath);
 				DownloaderBase newDownloader;
-				if (bundleInfo.SizeBytes >= _breakpointResumeFileSize)
+				if (bundleInfo.Bundle.FileSize >= _breakpointResumeFileSize)
 					newDownloader = new HttpDownloader(bundleInfo);
 				else
 					newDownloader = new FileDownloader(bundleInfo);
 				newDownloader.SendRequest(failedTryAgain, timeout);
-				_downloaderDic.Add(bundleInfo.Hash, newDownloader);
+				_downloaderDic.Add(bundleInfo.Bundle.CachedFilePath, newDownloader);
 				return newDownloader;
 			}
 		}
@@ -107,85 +103,6 @@ namespace YooAsset
 		public static int GetDownloaderTotalCount()
 		{
 			return _downloaderDic.Count;
-		}
-
-		/// <summary>
-		/// 查询是否为验证文件
-		/// 注意：被收录的文件完整性是绝对有效的
-		/// </summary>
-		public static bool ContainsVerifyFile(string hash)
-		{
-			if (_cachedHashList.ContainsKey(hash))
-			{
-				string fileName = _cachedHashList[hash];
-				string filePath = SandboxHelper.MakeCacheFilePath(fileName);
-				if (File.Exists(filePath))
-				{
-					return true;
-				}
-				else
-				{
-					_cachedHashList.Remove(hash);
-					YooLogger.Error($"Cache file is missing : {fileName}");
-					return false;
-				}
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// 缓存验证过的文件
-		/// </summary>
-		public static void CacheVerifyFile(string hash, string fileName)
-		{
-			if (_cachedHashList.ContainsKey(hash) == false)
-			{
-				YooLogger.Log($"Cache verify file : {fileName}");
-				_cachedHashList.Add(hash, fileName);
-			}
-		}
-
-		/// <summary>
-		/// 验证文件完整性
-		/// </summary>
-		public static bool CheckContentIntegrity(string filePath, long size, string crc)
-		{
-			return CheckContentIntegrity(_verifyLevel, filePath, size, crc);
-		}
-
-		/// <summary>
-		/// 验证文件完整性
-		/// </summary>
-		public static bool CheckContentIntegrity(EVerifyLevel verifyLevel, string filePath, long size, string crc)
-		{
-			try
-			{
-				if (File.Exists(filePath) == false)
-					return false;
-
-				// 先验证文件大小
-				long fileSize = FileUtility.GetFileSize(filePath);
-				if (fileSize != size)
-					return false;
-
-				// 再验证文件CRC
-				if (verifyLevel == EVerifyLevel.High)
-				{
-					string fileCRC = HashUtility.FileCRC32(filePath);
-					return fileCRC == crc;
-				}
-				else
-				{
-					return true;
-				}
-			}
-			catch (Exception)
-			{
-				return false;
-			}
 		}
 	}
 }

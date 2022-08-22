@@ -64,7 +64,7 @@ namespace YooAsset
 	}
 
 	/// <summary>
-	/// 网络模式的更新资源包裹操作
+	/// 联机模式的更新资源包裹操作
 	/// </summary>
 	internal sealed class HostPlayModeUpdatePackageOperation : UpdatePackageOperation
 	{
@@ -198,24 +198,14 @@ namespace YooAsset
 			foreach (var patchBundle in _remotePatchManifest.BundleList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (CacheSystem.IsCached(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
 				if (_impl.AppPatchManifest.TryGetPatchBundle(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
-					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
-						continue;
-				}
-
-				// 注意：通过比对文件大小做快速的文件校验！
-				// 注意：在初始化的时候会去做最终校验！
-				string filePath = SandboxHelper.MakeCacheFilePath(patchBundle.FileName);
-				if (File.Exists(filePath))
-				{
-					long fileSize = FileUtility.GetFileSize(filePath);
-					if (fileSize == patchBundle.SizeBytes)
+					if (appPatchBundle.IsBuildin && appPatchBundle.Equals(patchBundle))
 						continue;
 				}
 

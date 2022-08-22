@@ -250,8 +250,7 @@ namespace YooAsset.Editor
 		/// </summary>
 		public static void ClearAll()
 		{
-			Setting.AutoCollectShaders = false;
-			Setting.ShadersBundleName = string.Empty;
+			Setting.EnableAddressable = false;
 			Setting.Groups.Clear();
 			SaveFile();
 		}
@@ -333,14 +332,6 @@ namespace YooAsset.Editor
 			IsDirty = true;
 		}
 
-		// 着色器编辑相关
-		public static void ModifyShader(bool isCollectAllShaders, string shadersBundleName)
-		{
-			Setting.AutoCollectShaders = isCollectAllShaders;
-			Setting.ShadersBundleName = shadersBundleName;
-			IsDirty = true;
-		}
-
 		// 资源分组编辑相关
 		public static void CreateGroup(string groupName)
 		{
@@ -400,8 +391,8 @@ namespace YooAsset.Editor
 		/// </summary>
 		public static string GetAllTags()
 		{
-			var allTgas = Setting.GetAllTags();
-			return string.Join(";", allTgas);
+			var allTags = Setting.GetAllTags();
+			return string.Join(";", allTags);
 		}
 	}
 }

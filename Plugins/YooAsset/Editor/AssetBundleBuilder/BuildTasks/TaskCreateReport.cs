@@ -48,8 +48,6 @@ namespace YooAsset.Editor
 				buildReport.Summary.BuildinTags = buildParameters.Parameters.BuildinTags;
 				buildReport.Summary.EnableAddressable = buildParameters.Parameters.EnableAddressable;
 				buildReport.Summary.CopyBuildinTagFiles = buildParameters.Parameters.CopyBuildinTagFiles;
-				buildReport.Summary.AutoCollectShaders = AssetBundleCollectorSettingData.Setting.AutoCollectShaders;
-				buildReport.Summary.ShadersBundleName = AssetBundleCollectorSettingData.Setting.ShadersBundleName;
 				buildReport.Summary.EncryptionServicesClassName = buildParameters.Parameters.EncryptionServices == null ?
 					"null" : buildParameters.Parameters.EncryptionServices.GetType().FullName;
 
@@ -83,7 +81,7 @@ namespace YooAsset.Editor
 				reportAssetInfo.AssetTags = patchAsset.AssetTags;
 				reportAssetInfo.AssetGUID = AssetDatabase.AssetPathToGUID(patchAsset.AssetPath);
 				reportAssetInfo.MainBundleName = mainBundle.BundleName;
-				reportAssetInfo.MainBundleSize = mainBundle.SizeBytes;
+				reportAssetInfo.MainBundleSize = mainBundle.FileSize;
 				reportAssetInfo.DependBundles = GetDependBundles(patchManifest, patchAsset);
 				reportAssetInfo.DependAssets = GetDependAssets(buildMapContext, mainBundle.BundleName, patchAsset.AssetPath);
 				buildReport.AssetInfos.Add(reportAssetInfo);
@@ -96,9 +94,9 @@ namespace YooAsset.Editor
 				ReportBundleInfo reportBundleInfo = new ReportBundleInfo();
 				reportBundleInfo.BundleName = patchBundle.BundleName;
 				reportBundleInfo.FileName = patchBundle.FileName;
-				reportBundleInfo.Hash = patchBundle.Hash;
-				reportBundleInfo.CRC = patchBundle.CRC;
-				reportBundleInfo.SizeBytes = patchBundle.SizeBytes;
+				reportBundleInfo.FileHash = patchBundle.FileHash;
+				reportBundleInfo.FileCRC = patchBundle.FileCRC;
+				reportBundleInfo.FileSize = patchBundle.FileSize;
 				reportBundleInfo.Tags = patchBundle.Tags;
 				reportBundleInfo.Flags = patchBundle.Flags;
 				buildReport.BundleInfos.Add(reportBundleInfo);
@@ -174,7 +172,7 @@ namespace YooAsset.Editor
 			long fileBytes = 0;
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
-				fileBytes += patchBundle.SizeBytes;
+				fileBytes += patchBundle.FileSize;
 			}
 			return fileBytes;
 		}
@@ -194,7 +192,7 @@ namespace YooAsset.Editor
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
 				if (patchBundle.IsBuildin)
-					fileBytes += patchBundle.SizeBytes;
+					fileBytes += patchBundle.FileSize;
 			}
 			return fileBytes;
 		}
@@ -214,7 +212,7 @@ namespace YooAsset.Editor
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
 				if (patchBundle.IsEncrypted)
-					fileBytes += patchBundle.SizeBytes;
+					fileBytes += patchBundle.FileSize;
 			}
 			return fileBytes;
 		}
@@ -234,7 +232,7 @@ namespace YooAsset.Editor
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
 				if (patchBundle.IsRawFile)
-					fileBytes += patchBundle.SizeBytes;
+					fileBytes += patchBundle.FileSize;
 			}
 			return fileBytes;
 		}

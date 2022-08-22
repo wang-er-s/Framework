@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace YooAsset
 {
-	public static class YooAssets
+	public static partial class YooAssets
 	{
 		/// <summary>
 		/// 运行模式
@@ -25,7 +25,7 @@ namespace YooAsset
 			OfflinePlayMode,
 
 			/// <summary>
-			/// 网络运行模式
+			/// 联机运行模式
 			/// </summary>
 			HostPlayMode,
 		}
@@ -81,7 +81,7 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 网络运行模式的初始化参数
+		/// 联机运行模式的初始化参数
 		/// </summary>
 		public class HostPlayModeParameters : InitializeParameters
 		{
@@ -100,10 +100,17 @@ namespace YooAsset
 			/// </summary>
 			public bool ClearCacheWhenDirty = false;
 
+#if UNITY_WEBGL
+			/// <summary>
+			/// WEBGL模式不支持多线程下载
+			/// </summary>
+			internal int BreakpointResumeFileSize = int.MaxValue;
+#else
 			/// <summary>
 			/// 启用断点续传功能的文件大小
 			/// </summary>
 			public int BreakpointResumeFileSize = int.MaxValue;
+#endif
 
 			/// <summary>
 			/// 下载文件校验等级
@@ -194,12 +201,14 @@ namespace YooAsset
 			// 初始化下载系统
 			if (_playMode == EPlayMode.HostPlayMode)
 			{
-#if UNITY_WEBGL
-				throw new Exception($"{EPlayMode.HostPlayMode} not supports WebGL platform !");
-#else
 				var hostPlayModeParameters = parameters as HostPlayModeParameters;
-				DownloadSystem.Initialize(hostPlayModeParameters.BreakpointResumeFileSize, hostPlayModeParameters.VerifyLevel);
-#endif
+				CacheSystem.Initialize(hostPlayModeParameters.VerifyLevel);
+				DownloadSystem.Initialize(hostPlayModeParameters.BreakpointResumeFileSize);		
+			}
+			else
+			{
+				CacheSystem.Initialize(EVerifyLevel.Low);
+				DownloadSystem.Initialize(int.MaxValue);
 			}
 
 			// 初始化资源系统
@@ -258,13 +267,13 @@ namespace YooAsset
 			if (_playMode == EPlayMode.EditorSimulateMode)
 			{
 				var operation = new EditorPlayModeUpdateStaticVersionOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.OfflinePlayMode)
 			{
 				var operation = new OfflinePlayModeUpdateStaticVersionOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
@@ -288,13 +297,13 @@ namespace YooAsset
 			if (_playMode == EPlayMode.EditorSimulateMode)
 			{
 				var operation = new EditorPlayModeUpdateManifestOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.OfflinePlayMode)
 			{
 				var operation = new OfflinePlayModeUpdateManifestOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
@@ -318,13 +327,13 @@ namespace YooAsset
 			if (_playMode == EPlayMode.EditorSimulateMode)
 			{
 				var operation = new EditorPlayModeUpdateManifestOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.OfflinePlayMode)
 			{
 				var operation = new OfflinePlayModeUpdateManifestOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
@@ -341,9 +350,9 @@ namespace YooAsset
 		/// 开启一个异步操作
 		/// </summary>
 		/// <param name="operation">异步操作对象</param>
-		public static void StartOperaiton(GameAsyncOperation operation)
+		public static void StartOperation(GameAsyncOperation operation)
 		{
-			OperationSystem.StartOperaiton(operation);
+			OperationSystem.StartOperation(operation);
 		}
 
 		/// <summary>
@@ -509,36 +518,36 @@ namespace YooAsset
 			if (assetInfo.IsInvalid)
 			{
 				RawFileOperation operation = new CompletedRawFileOperation(assetInfo.Error, copyPath);
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 
 			BundleInfo bundleInfo = _bundleServices.GetBundleInfo(assetInfo);
-			if (bundleInfo.IsRawFile == false)
+			if (bundleInfo.Bundle.IsRawFile == false)
 			{
 				string error = $"Cannot load asset bundle file using {nameof(GetRawFileAsync)} interfaces !";
 				YooLogger.Warning(error);
 				RawFileOperation operation = new CompletedRawFileOperation(error, copyPath);
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 
 			if (_playMode == EPlayMode.EditorSimulateMode)
 			{
 				RawFileOperation operation = new EditorPlayModeRawFileOperation(bundleInfo, copyPath);
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.OfflinePlayMode)
 			{
 				RawFileOperation operation = new OfflinePlayModeRawFileOperation(bundleInfo, copyPath);
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
 			{
 				RawFileOperation operation = new HostPlayModeRawFileOperation(bundleInfo, copyPath);
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else
@@ -956,13 +965,13 @@ namespace YooAsset
 			if (_playMode == EPlayMode.EditorSimulateMode)
 			{
 				var operation = new EditorPlayModeUpdatePackageOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.OfflinePlayMode)
 			{
 				var operation = new OfflinePlayModeUpdatePackageOperation();
-				OperationSystem.StartOperaiton(operation);
+				OperationSystem.StartOperation(operation);
 				return operation;
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
@@ -1026,6 +1035,7 @@ namespace YooAsset
 
 			OperationSystem.DestroyAll();
 			DownloadSystem.DestroyAll();
+			CacheSystem.DestroyAll();
 			AssetSystem.DestroyAll();
 			YooLogger.Log("YooAssets destroy all !");
 		}

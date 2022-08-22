@@ -59,4 +59,50 @@ namespace YooAsset.Editor
 			}
 		}
 	}
-}
+
+	public class CollectTexture : IFilterRule
+	{
+		public bool IsCollectAsset(FilterRuleData data)
+		{
+			var mainAssetType = AssetDatabase.GetMainAssetTypeAtPath(data.AssetPath);
+			if(mainAssetType == typeof(Texture2D))
+			{
+				var texImporter = AssetImporter.GetAtPath(data.AssetPath) as TextureImporter;
+				if (texImporter != null && texImporter.textureType == TextureImporterType.Sprite)
+					return false;
+				else
+					return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	
+	public class CollectMaterial : IFilterRule
+	{
+		public bool IsCollectAsset(FilterRuleData data)
+		{
+			return Path.GetExtension(data.AssetPath) == ".mat";
+		}
+	}
+	
+	public class CollectModel : IFilterRule
+	{
+		public bool IsCollectAsset(FilterRuleData data)
+		{
+			return Path.GetExtension(data.AssetPath) == ".fbx";
+		}
+	}
+
+	/// <summary>
+	/// 只收集着色器变种收集文件
+	/// </summary>
+	public class CollectShaderVariants : IFilterRule
+	{
+		public bool IsCollectAsset(FilterRuleData data)
+		{
+			return Path.GetExtension(data.AssetPath) == ".shadervariants";
+		}
+	}}

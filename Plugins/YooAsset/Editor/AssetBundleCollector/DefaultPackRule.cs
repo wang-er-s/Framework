@@ -1,9 +1,75 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace YooAsset.Editor
 {
+	
+	public class RandomPackModelDirectory : IPackRule
+	{
+		private Dictionary<string, int> dir2fileCount = new Dictionary<string, int>();
+		private const int bundleMaxFileCount = 2;
+		string IPackRule.GetBundleName(PackRuleData data)
+		{
+			var dirPath = Path.GetDirectoryName(data.AssetPath);
+			if (!dir2fileCount.TryGetValue(dirPath, out var fileCount))
+			{
+				fileCount = new DirectoryInfo(dirPath).GetFiles("*.meta").Length;
+				dir2fileCount[dirPath] = fileCount;
+			}
+			if (fileCount > bundleMaxFileCount)
+			{
+				int bundleCount = fileCount / bundleMaxFileCount + 1;
+				return $"{Path.GetDirectoryName(data.AssetPath)}_{Mathf.Abs(data.AssetPath.GetHashCode()) % bundleCount}";
+			}
+			return Path.GetDirectoryName(data.AssetPath);
+		}
+	}
+	
+	public class RandomPackMaterialDirectory : IPackRule
+	{
+		private Dictionary<string, int> dir2fileCount = new Dictionary<string, int>();
+		private const int bundleMaxFileCount = 2;
+		string IPackRule.GetBundleName(PackRuleData data)
+		{
+			var dirPath = Path.GetDirectoryName(data.AssetPath);
+			if (!dir2fileCount.TryGetValue(dirPath, out var fileCount))
+			{
+				fileCount = new DirectoryInfo(dirPath).GetFiles("*.meta").Length;
+				dir2fileCount[dirPath] = fileCount;
+			}
+			if (fileCount > bundleMaxFileCount)
+			{
+				int bundleCount = fileCount / bundleMaxFileCount + 1;
+				return $"{Path.GetDirectoryName(data.AssetPath)}_{Mathf.Abs(data.AssetPath.GetHashCode()) % bundleCount}";
+			}
+			return Path.GetDirectoryName(data.AssetPath);
+		}
+	}
+	
+	public class RandomPackTextureDirectory : IPackRule
+	{
+		private Dictionary<string, int> dir2fileCount = new Dictionary<string, int>();
+		private const int bundleMaxFileCount = 2;
+		string IPackRule.GetBundleName(PackRuleData data)
+		{
+			var dirPath = Path.GetDirectoryName(data.AssetPath);
+			if (!dir2fileCount.TryGetValue(dirPath, out var fileCount))
+			{
+				fileCount = new DirectoryInfo(dirPath).GetFiles("*.meta").Length;
+				dir2fileCount[dirPath] = fileCount;
+			}
+			if (fileCount > bundleMaxFileCount)
+			{
+				int bundleCount = fileCount / bundleMaxFileCount + 1;
+				return $"{Path.GetDirectoryName(data.AssetPath)}_{Mathf.Abs(data.AssetPath.GetHashCode()) % bundleCount}";
+			}
+			return Path.GetDirectoryName(data.AssetPath);
+		}
+	}
+	
 	/// <summary>
 	/// 以文件路径作为资源包名
 	/// 注意：每个文件独自打资源包
@@ -15,7 +81,8 @@ namespace YooAsset.Editor
 	{
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return StringUtility.RemoveExtension(data.AssetPath);
+			string bundleName = StringUtility.RemoveExtension(data.AssetPath);
+			return EditorTools.GetRegularPath(bundleName).Replace('/', '_');
 		}
 	}
 
@@ -32,7 +99,8 @@ namespace YooAsset.Editor
 
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return Path.GetDirectoryName(data.AssetPath);
+			string bundleName = Path.GetDirectoryName(data.AssetPath);
+			return EditorTools.GetRegularPath(bundleName).Replace('/', '_');
 		}
 	}
 
@@ -55,7 +123,7 @@ namespace YooAsset.Editor
 				if (Path.HasExtension(splits[0]))
 					throw new Exception($"Not found root directory : {assetPath}");
 				string bundleName = $"{data.CollectPath}/{splits[0]}";
-				return bundleName;
+				return EditorTools.GetRegularPath(bundleName).Replace('/', '_');
 			}
 			else
 			{
@@ -72,7 +140,8 @@ namespace YooAsset.Editor
 	{
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return StringUtility.RemoveExtension(data.CollectPath);
+			string bundleName = StringUtility.RemoveExtension(data.CollectPath);
+			return EditorTools.GetRegularPath(bundleName).Replace('/', '_');
 		}
 	}
 
@@ -110,7 +179,19 @@ namespace YooAsset.Editor
 			if (depends.Length != 1)
 				throw new Exception($"{nameof(PackRawFile)} is not support estension : {extension}");
 
-			return StringUtility.RemoveExtension(data.AssetPath);
+			string bundleName = StringUtility.RemoveExtension(data.AssetPath);
+			return EditorTools.GetRegularPath(bundleName).Replace('/', '_');
+		}
+	}
+
+	/// <summary>
+	/// 着色器变种收集文件
+	/// </summary>
+	public class PackShaderVariants : IPackRule
+	{
+		public string GetBundleName(PackRuleData data)
+		{
+			return YooAssetSettings.UnityShadersBundleName;
 		}
 	}
 }

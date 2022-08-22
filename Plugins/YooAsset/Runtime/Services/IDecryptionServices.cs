@@ -4,8 +4,7 @@ namespace YooAsset
 	public struct DecryptionFileInfo
 	{
 		public string BundleName;
-		public string BundleHash;
-		public string BundleCRC;
+		public string FileHash;
 	}
 
 	public interface IDecryptionServices

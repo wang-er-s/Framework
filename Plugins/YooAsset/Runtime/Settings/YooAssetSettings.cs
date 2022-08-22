@@ -42,9 +42,9 @@ namespace YooAsset
 		public const string VersionFileName = "StaticVersion.bytes";
 
 		/// <summary>
-		/// Unity内置着色器资源包名称
+		/// Unity着色器资源包名称
 		/// </summary>
-		public const string UnityBuiltInShadersBundleName = "UnityBuiltInShaders.bundle";
+		public const string UnityShadersBundleName = "unityshaders";
 
 		/// <summary>
 		/// PlayMode
