@@ -1253,3 +1253,30 @@ public static class Vector3Extension
         return new Vector3(self.x, self.y, zValue);
     }
 }
+
+public static class Vector2Extension
+{
+    public static Vector2 GetRandomVector3(this Vector2 self, float floatRang)
+    {
+        return new Vector2(
+            UnityEngine.Random.Range(self.x - floatRang, self.x + floatRang),
+            UnityEngine.Random.Range(self.y - floatRang, self.y + floatRang));
+    }
+
+    public static Vector2 SetX(this Vector2 self, float xValue)
+    {
+        return new Vector2(xValue, self.y);
+    }
+
+    public static float SqrDistance(this Vector2 a, Vector2 b)
+    {
+        float num1 = a.x - b.x;
+        float num2 = a.y - b.y;
+        return (float) (num1 * (double) num1 + num2 * (double) num2);
+    }
+
+    public static Vector2 SetY(this Vector2 self, float yValue)
+    {
+        return new Vector2(self.x, yValue);
+    }
+}

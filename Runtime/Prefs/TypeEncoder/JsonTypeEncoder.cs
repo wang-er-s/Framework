@@ -23,9 +23,7 @@
  */
 
 using System;
-using System.Collections;
-using LitJson;
-using UnityEngine;
+using CatJson;
 
 namespace Framework.Prefs
 {
@@ -43,7 +41,7 @@ namespace Framework.Prefs
         {
             try
             {
-                return JsonMapper.ToJson(value);
+                return JsonParser.Default.ToJson(value);
             }
             catch (Exception e)
             {
@@ -55,7 +53,7 @@ namespace Framework.Prefs
         {
             try
             {
-                return JsonMapper.ToObject(value, type);
+                return JsonParser.Default.ParseJson(value, type);
             }
             catch (Exception e)
             {

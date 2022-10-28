@@ -243,6 +243,16 @@ public static class IEnumerableExtension
     {
         return UnityEngine.Random.Range(0, list.Count);
     }
+
+    public static T Last<T>(this IList<T> list)
+    {
+        return list[list.Count - 1];
+    }
+
+    public static T First<T>(this IList<T> list)
+    {
+        return list[0];
+    }
     
     public static void Swap<T>(this IList<T> list, int i, int j)
     {
