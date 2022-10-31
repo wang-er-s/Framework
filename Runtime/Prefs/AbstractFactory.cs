@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Framework.Prefs
+namespace Framework
 {
 
     public abstract class AbstractFactory : IFactory

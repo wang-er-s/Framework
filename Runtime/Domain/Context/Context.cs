@@ -24,7 +24,7 @@
 
 using System.Collections.Generic;
 
-namespace Framework.Contexts
+namespace Framework
 {
     public class Context
     {

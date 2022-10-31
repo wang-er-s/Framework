@@ -24,9 +24,8 @@
 
 using System;
 using System.Threading;
-using Framework.Execution;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class AsyncResult : IAsyncResult, IPromise
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class ObservableList<T> : IList<T> , IObservable
     {

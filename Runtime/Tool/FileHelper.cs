@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Framework.Helper
+namespace Framework
 {
     public static class FileHelper
     {

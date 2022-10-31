@@ -26,10 +26,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Framework.Execution;
 using UnityEngine;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     [Flags]
     public enum CoroutineTaskContinuationOptions

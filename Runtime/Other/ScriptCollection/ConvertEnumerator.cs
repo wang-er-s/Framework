@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Framework.Helper
+namespace Framework
 {
     public class ConvertEnumerator : IEnumerator
     {

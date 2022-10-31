@@ -36,14 +36,6 @@ namespace Framework
             m_ProcedureFsm = m_FsmManager.CreateFsm(this, states);
         }
 
-        internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
-        {
-        }
-
-        internal override void Shutdown()
-        {
-        }
-        
         /// <summary>
         /// 开始流程。
         /// </summary>

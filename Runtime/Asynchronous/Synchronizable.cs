@@ -25,7 +25,7 @@
 using System;
 using System.Threading;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public interface ISynchronizable
     {

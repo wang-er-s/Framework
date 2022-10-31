@@ -25,7 +25,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Framework.Prefs
+namespace Framework
 {
     public class DefaultSerializer : ISerializer
     {

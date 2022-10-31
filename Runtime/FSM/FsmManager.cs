@@ -13,7 +13,7 @@ namespace Framework
     /// <summary>
     /// 有限状态机管理器。
     /// </summary>
-    public sealed class FsmManager : GameModule<FsmManager>
+    public sealed class FsmManager : IGameModule
     {
         private readonly Dictionary<TypeNamePair, FsmBase> Fsms;
         private readonly List<FsmBase> TempFsms;
@@ -31,19 +31,26 @@ namespace Framework
         /// 获取游戏框架模块优先级。
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        internal override int Priority => 1;
+        internal int Priority => 1;
 
         /// <summary>
         /// 获取有限状态机数量。
         /// </summary>
         public int Count => Fsms.Count;
 
+        public void Init()
+        {
+            
+        }
+
+        public void OnStart()
+        {
+        }
+
         /// <summary>
         /// 有限状态机管理器轮询。
         /// </summary>
-        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
-        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        public void OnUpdate(float deltaTime)
         {
             TempFsms.Clear();
             if (Fsms.Count <= 0)
@@ -63,14 +70,18 @@ namespace Framework
                     continue;
                 }
 
-                fsm.Update(elapseSeconds, realElapseSeconds);
+                fsm.Update();
             }
+        }
+
+        public void OnGUI()
+        {
         }
 
         /// <summary>
         /// 关闭并清理有限状态机管理器。
         /// </summary>
-        internal override void Shutdown()
+        public void Shutdown()
         {
             foreach (KeyValuePair<TypeNamePair, FsmBase> fsm in Fsms)
             {

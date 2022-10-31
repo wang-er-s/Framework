@@ -20,7 +20,6 @@ namespace Framework
         private readonly Dictionary<Type, FsmState<T>> m_States;
         private Dictionary<string, object> m_Datas;
         private FsmState<T> m_CurrentState;
-        private float m_CurrentStateTime;
         private bool m_IsDestroyed;
 
         /// <summary>
@@ -32,7 +31,6 @@ namespace Framework
             m_States = new Dictionary<Type, FsmState<T>>();
             m_Datas = null;
             m_CurrentState = null;
-            m_CurrentStateTime = 0f;
             m_IsDestroyed = true;
         }
 
@@ -113,16 +111,7 @@ namespace Framework
             }
         }
 
-        /// <summary>
-        /// 获取当前有限状态机状态持续时间。
-        /// </summary>
-        public override float CurrentStateTime
-        {
-            get
-            {
-                return m_CurrentStateTime;
-            }
-        }
+        public override float CurrentStateTime { get; }
 
         /// <summary>
         /// 创建有限状态机。
@@ -237,7 +226,6 @@ namespace Framework
             }
 
             m_CurrentState = null;
-            m_CurrentStateTime = 0f;
             m_IsDestroyed = true;
         }
 
@@ -259,7 +247,6 @@ namespace Framework
                     $"FSM '{new TypeNamePair(typeof(T), Name).ToString()}' can not start state '{typeof(TState).FullName}' which is not exist.");
             }
 
-            m_CurrentStateTime = 0f;
             m_CurrentState = state;
             m_CurrentState.OnEnter(this);
         }
@@ -287,7 +274,6 @@ namespace Framework
 
             FsmState<T> state = GetState(stateType);
 
-            m_CurrentStateTime = 0f;
             m_CurrentState = state ?? throw new Exception(
                 $"FSM '{new TypeNamePair(typeof(T), Name).ToString()}' can not start state '{stateType.FullName}' which is not exist.");
             m_CurrentState.OnEnter(this);
@@ -515,17 +501,15 @@ namespace Framework
         /// <summary>
         /// 有限状态机轮询。
         /// </summary>
-        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
-        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        internal override void Update(float elapseSeconds, float realElapseSeconds)
+
+        internal override void Update()
         {
             if (m_CurrentState == null)
             {
                 return;
             }
 
-            m_CurrentStateTime += elapseSeconds;
-            m_CurrentState.OnUpdate(this, elapseSeconds, realElapseSeconds);
+            m_CurrentState.OnUpdate(this);
         }
 
         /// <summary>
@@ -563,7 +547,6 @@ namespace Framework
             }
 
             m_CurrentState.OnLeave(this, false);
-            m_CurrentStateTime = 0f;
             m_CurrentState = state;
             m_CurrentState.OnEnter(this);
         }

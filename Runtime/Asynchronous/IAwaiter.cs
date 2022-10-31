@@ -24,7 +24,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public interface IAwaiter : ICriticalNotifyCompletion
     {

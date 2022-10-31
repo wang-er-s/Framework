@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public interface IProgressPromise<TProgress> : IPromise
     {

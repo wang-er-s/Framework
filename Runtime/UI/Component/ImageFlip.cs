@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     [RequireComponent(typeof(RectTransform), typeof(Graphic)), DisallowMultipleComponent]
     public class ImageFlip : MonoBehaviour, IMeshModifier

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Framework;
-using Framework.UI.Core;
 #if ILRUNTIME
 using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Reflection;

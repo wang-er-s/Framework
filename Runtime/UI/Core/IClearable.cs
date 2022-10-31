@@ -1,4 +1,4 @@
-﻿namespace Framework.UI.Core
+﻿namespace Framework
 {
     public interface IClearable
     {

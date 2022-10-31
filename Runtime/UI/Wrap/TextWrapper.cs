@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using Framework.UI.Core;
-using Framework.UI.Wrap.Base;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class TextWrapper : BaseWrapper<Text>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>,
         IFieldChangeCb<double>, IFieldChangeCb<long>

@@ -24,12 +24,11 @@
 
 using System;
 using System.Collections;
-using Framework.Execution;
 using UnityEngine;
 using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public static class CoroutineAwaiterExtensions
     {

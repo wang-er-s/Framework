@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class SequenceProgress : ProgressResult<float>
     {

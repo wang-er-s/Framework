@@ -1,6 +1,6 @@
 using System;
 
-namespace Framework.UI.Core
+namespace Framework
 {
     public class UIAttribute : ManagerAttribute
     {

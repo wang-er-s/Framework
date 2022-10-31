@@ -1,4 +1,4 @@
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     /// <summary>
     /// 为了实现一个list vm绑定多个不同的view

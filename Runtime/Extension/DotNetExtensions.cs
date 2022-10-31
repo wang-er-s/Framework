@@ -9,6 +9,7 @@ using System.Text;
 using System.Collections;
 using Framework;
 
+
 public static class ClassExtention
 {
     public static void Example()

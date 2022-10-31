@@ -25,11 +25,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Framework.Asynchronous;
 using JetBrains.Annotations;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
-namespace Framework.Execution
+namespace Framework
 {
     public class ThreadTimerExecutor : AbstractExecutor, ITimerExecutor
     {
@@ -129,12 +127,12 @@ namespace Framework.Execution
                 throw new Exception("The ScheduledExecutor isn't started.");
         }
 
-        public virtual Asynchronous.IAsyncResult Delay(Action command, long delay)
+        public virtual IAsyncResult Delay(Action command, long delay)
         {
             return Delay(command, GetTimeSpan(delay).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult Delay(Action command, TimeSpan delay)
+        public virtual IAsyncResult Delay(Action command, TimeSpan delay)
         {
             this.Check();
             return new OneTimeDelayTask(this, command, delay);
@@ -151,12 +149,12 @@ namespace Framework.Execution
             return new OneTimeDelayTask<TResult>(this, command, delay);
         }
 
-        public virtual Asynchronous.IAsyncResult FixedRate(Action command, long initialDelay, long period)
+        public virtual IAsyncResult FixedRate(Action command, long initialDelay, long period)
         {
             return FixedRate(command, GetTimeSpan(initialDelay).Value, GetTimeSpan(period).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult FixedRate(Action command, TimeSpan initialDelay,
+        public virtual IAsyncResult FixedRate(Action command, TimeSpan initialDelay,
             TimeSpan period)
         {
             this.Check();
@@ -188,7 +186,7 @@ namespace Framework.Execution
             this.Stop();
         }
 
-        interface IDelayTask : Asynchronous.IAsyncResult
+        interface IDelayTask : IAsyncResult
         {
             TimeSpan Delay { get; }
 

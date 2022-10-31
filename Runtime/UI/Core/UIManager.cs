@@ -2,39 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Framework.Assets;
-using Framework.Asynchronous;
-using Framework.Execution;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Core
+namespace Framework
 {
     public class UIManager : GameModuleWithAttribute<UIManager, UIAttribute, Type>
     {
         private IRes _res;
 
-        [SerializeField]
-        private Canvas canvas;
-        public Canvas Canvas => canvas;
+        public Canvas Canvas { get; private set; } 
 
         public override void Init()
         {
-            DontDestroyOnLoad(Canvas);
+            Canvas = GameObject.Find("UIRoot").GetComponent<Canvas>();
+            if (Canvas == null)
+            {
+                throw new Exception("找不到名为UIRoot的canvas");
+            }
+            Object.DontDestroyOnLoad(Canvas);
             _res = Res.Create();
-        }
-
-        internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
-        {
-        }
-
-        internal override void Shutdown()
-        {
         }
 
         public override void CheckType(Type type)
         {
-            
             var attrs = type.GetCustomAttributes(typeof(UIAttribute), false);
             if (attrs.Length <= 0) return;
             var attr = (UIAttribute)attrs[0];

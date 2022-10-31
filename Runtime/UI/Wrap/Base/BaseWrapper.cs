@@ -1,8 +1,7 @@
 ﻿using System;
-using Framework.UI.Core;
 using UnityEngine;
 
-namespace Framework.UI.Wrap.Base
+namespace Framework
 {
     public class BaseWrapper<T> : IFieldChangeCb<bool> where T : class
     {

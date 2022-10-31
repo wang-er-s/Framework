@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
-namespace Framework.Helper
+namespace Framework
 {
 	public static class MathHelper
 	{

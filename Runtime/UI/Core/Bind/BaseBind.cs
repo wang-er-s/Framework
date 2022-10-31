@@ -1,4 +1,4 @@
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public abstract class BaseBind : IClearable
     {

@@ -25,9 +25,8 @@
 using System;
 using System.Threading;
 using System.Collections;
-using Framework.Execution;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class ProgressTask<TProgress> : IProgressTask<TProgress>
     {
@@ -398,7 +397,7 @@ namespace Framework.Asynchronous
 
         public virtual TResult Result => this._result.Result;
 
-        object Asynchronous.IAsyncResult.Result => this._result.Result;
+        object IAsyncResult.Result => this._result.Result;
 
         public virtual Exception Exception => this._result.Exception;
 

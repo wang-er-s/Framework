@@ -18,37 +18,21 @@ namespace Framework
         public virtual string IndexName { get; } = nameof(IntTag);
     }
 
-    public abstract class GameModule<T> : MonoBehaviour where T : GameModule<T>
+    public interface IGameModule
     {
-        public static T Ins { get; private set; }
-        public virtual void Init()
-        {
-        }
-
-        public virtual void OnStart()
-        {
-        }
-        
-        /// <summary>
-        /// 获取游戏框架模块优先级。
-        /// </summary>
-        /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        internal virtual int Priority => 0;
-        
-        /// <summary>
-        /// 游戏框架模块轮询。
-        /// </summary>
-        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
-        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        internal abstract void OnUpdate(float elapseSeconds, float realElapseSeconds);
-        
-        /// <summary>
-        /// 关闭并清理游戏框架模块。
-        /// </summary>
-        internal abstract void Shutdown();
+        void Init();
+        void OnStart();
+        void OnUpdate(float deltaTime);
+        void OnGUI();
+        void Shutdown();
     }
 
-    public abstract class GameModuleWithAttribute<T,V,I> : GameModule<T>  where T : GameModuleWithAttribute<T,V,I>, new() 
+    public interface IGameModuleWithAttribute : IGameModule
+    {
+        void CheckType(Type type);
+    }
+
+    public abstract class GameModuleWithAttribute<T,V,I> : Singleton<T>, IGameModuleWithAttribute where T : GameModuleWithAttribute<T,V,I> 
         where V : ManagerAttribute
     {
         
@@ -85,7 +69,7 @@ namespace Framework
         
         public ClassData GetClassData(Type type)
         {
-            var classDatas = GetAllClassDatas();
+            var classDatas = GetAllClassData();
             foreach (var value in classDatas)
             {
                 if (value.Type == type)
@@ -96,7 +80,7 @@ namespace Framework
             return null;
         }
         
-        public IEnumerable<ClassData> GetAllClassDatas()
+        public IEnumerable<ClassData> GetAllClassData()
         {
             return ClassDataMap.Values;
         }
@@ -110,6 +94,32 @@ namespace Framework
                 return null;
             }
             return ReflectionHelper.CreateInstance(cd.Type, args) as TIns;
+        }
+
+        public virtual void Init()
+        {
+            
+        }
+
+        public virtual void OnStart()
+        {
+        }
+
+        public virtual void OnUpdate(float deltaTime)
+        {
+        }
+
+        public virtual void OnGUI()
+        {
+        }
+
+        public virtual void Shutdown()
+        {
+        }
+
+        void IGameModuleWithAttribute.CheckType(Type type)
+        {
+            CheckType(type);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using UnityEngine;
 
-namespace Framework.Helper
+namespace Framework
 {
     /// <summary>
     /// 显示游戏帧率/占用内存等信息的助手类

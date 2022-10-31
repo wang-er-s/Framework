@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Framework.MessageCenter;
+using Framework;
 using NSubstitute;
 using NUnit.Framework;
 

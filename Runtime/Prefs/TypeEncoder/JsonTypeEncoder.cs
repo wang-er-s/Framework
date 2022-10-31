@@ -25,7 +25,7 @@
 using System;
 using CatJson;
 
-namespace Framework.Prefs
+namespace Framework
 {
     public class JsonTypeEncoder : ITypeEncoder
     {

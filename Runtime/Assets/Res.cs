@@ -1,15 +1,10 @@
 using System;
 using System.Collections;
-using System.Threading.Tasks;
-using Framework.Asynchronous;
-using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using YooAsset;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
-namespace Framework.Assets
+namespace Framework
 {
     public struct DownloadProgress
     {
@@ -34,12 +29,10 @@ namespace Framework.Assets
     
     public abstract class Res : IRes
     {
-        private static IRes @default;
         public abstract IAsyncResult Init();
         public static Type DefaultResType = typeof(ResourcesRes);
         public abstract string HostServerURL { get; set; }
         public abstract string FallbackHostServerURL { get; set; }
-        public static IRes Default => @default ?? (@default = Create());
 
         public static IRes Create()
         {

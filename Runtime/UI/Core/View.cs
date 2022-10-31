@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Framework.Assets;
-using Framework.Asynchronous;
-using Framework.Execution;
-using Framework.UI.Core.Bind;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Core
+namespace Framework
 {
     public enum UILevel
     {
@@ -36,7 +32,7 @@ namespace Framework.UI.Core
         {
             _subViews = new List<View>();
             Binding = new UIBindFactory(this);
-            Res = Assets.Res.Create();
+            Res = Framework.Res.Create();
         }
 
         public void SetGameObject(GameObject obj)

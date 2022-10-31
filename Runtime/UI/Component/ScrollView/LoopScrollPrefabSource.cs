@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using Framework.Pool;
 
-namespace Framework.UI
+namespace Framework
 {
     [System.Serializable]
     public class LoopScrollPrefabSource

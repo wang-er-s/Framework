@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     [RequireComponent(typeof(Image))]
     public class UGUISpriteAnimation : MonoBehaviour

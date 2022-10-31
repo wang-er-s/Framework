@@ -24,7 +24,7 @@
 
 using System.Threading.Tasks;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public static class TaskYieldInstructionExtensions
     {

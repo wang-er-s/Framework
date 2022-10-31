@@ -1,11 +1,8 @@
 ﻿using System;
-using Framework.UI.Core;
-using Framework.UI.Core.Bind;
-using Framework.UI.Wrap.Base;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class SliderWrapper : BaseWrapper<Slider>, IFieldChangeCb<float>, IComponentEvent<float>
     {

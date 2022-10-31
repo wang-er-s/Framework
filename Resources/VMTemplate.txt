@@ -1,4 +1,3 @@
-using Framework.UI.Core;
 
 public class #ClassName : ViewModel
 {

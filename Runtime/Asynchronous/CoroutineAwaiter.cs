@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using UnityEngine;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class CoroutineAwaiter : IAwaiter
     {

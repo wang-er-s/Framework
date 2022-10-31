@@ -26,7 +26,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Framework.Prefs
+namespace Framework
 {
     /// <summary>
     /// Abstract class for accessing and modifying preference data

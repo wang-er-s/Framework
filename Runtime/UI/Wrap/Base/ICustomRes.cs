@@ -1,4 +1,3 @@
-using Framework.Assets;
 
 namespace Framework
 {

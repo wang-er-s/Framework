@@ -23,9 +23,8 @@
  */
 
 using System;
-using Framework.Execution;
 
-namespace Framework.Net
+namespace Framework
 {
     public class Progress<T> : IProgress<T>
     {

@@ -1,18 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Framework.Asynchronous;
-using Framework.Execution;
-using Framework.Helper;
-using Framework.Net;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using YooAsset;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
-namespace Framework.Assets
+namespace Framework
 {
     public class YooRes : Res
     {

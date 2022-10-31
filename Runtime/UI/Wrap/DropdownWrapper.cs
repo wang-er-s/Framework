@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Specialized;
-using Framework.UI.Core;
-using Framework.UI.Wrap.Base;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class DropdownWrapper : BaseWrapper<Dropdown>, IFieldChangeCb<int>, IComponentEvent<int>,
         IBindList<Dropdown.OptionData>

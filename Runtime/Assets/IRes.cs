@@ -1,12 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using Framework.Asynchronous;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
-namespace Framework.Assets
+namespace Framework
 {
     public interface IRes
     {

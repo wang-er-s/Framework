@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Framework.UI.Wrap.Base
+namespace Framework
 {
     public interface IFieldChangeCb<T>
     {

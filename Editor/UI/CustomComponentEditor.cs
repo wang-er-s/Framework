@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Framework.UIComponent;
 using TMPro;
 using TMPro.EditorUtilities;
 using UnityEditor;

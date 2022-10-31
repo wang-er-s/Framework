@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Framework.Prefs
+namespace Framework
 {
 
     public class PlayerPrefsPreferencesFactory : AbstractFactory

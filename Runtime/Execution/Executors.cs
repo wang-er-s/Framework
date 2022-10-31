@@ -27,10 +27,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
-using Framework.Asynchronous;
 using Object = UnityEngine.Object;
 
-namespace Framework.Execution
+namespace Framework
 {
     public class Executors
     {
@@ -322,14 +321,14 @@ namespace Framework.Execution
             });
         }
 
-        public static Asynchronous.IAsyncResult RunOnCoroutine(IEnumerator routine)
+        public static IAsyncResult RunOnCoroutine(IEnumerator routine)
         {
             CoroutineResult result = new CoroutineResult();
             DoRunOnCoroutine(routine, result);
             return result;
         }
 
-        public static Asynchronous.IAsyncResult RunOnCoroutine(Func<IPromise, IEnumerator> func)
+        public static IAsyncResult RunOnCoroutine(Func<IPromise, IEnumerator> func)
         {
             CoroutineResult result = new CoroutineResult();
             DoRunOnCoroutine(func(result), result);
@@ -392,7 +391,7 @@ namespace Framework.Execution
 #endif
         }
 
-        public static Asynchronous.IAsyncResult RunAsync(Action action)
+        public static IAsyncResult RunAsync(Action action)
         {
             AsyncResult result = new AsyncResult();
             DoRunAsync(() =>
@@ -430,7 +429,7 @@ namespace Framework.Execution
             return result;
         }
 
-        public static Asynchronous.IAsyncResult RunAsync(Action<IPromise> action)
+        public static IAsyncResult RunAsync(Action<IPromise> action)
         {
             AsyncResult result = new AsyncResult();
             DoRunAsync(() =>

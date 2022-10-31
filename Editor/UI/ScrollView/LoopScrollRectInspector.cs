@@ -1,5 +1,4 @@
-﻿using Framework.UI;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace Framework.Editor.UI

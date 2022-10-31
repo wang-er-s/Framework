@@ -1,6 +1,5 @@
-using Framework.UI.Wrap.Base;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class DefaultWrapper : BaseWrapper<object>
     {

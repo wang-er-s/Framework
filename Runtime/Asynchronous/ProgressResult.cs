@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class ProgressResult<TProgress> : AsyncResult, IProgressResult<TProgress>, IProgressPromise<TProgress>
     {

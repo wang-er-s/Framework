@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public static class AsyncOperationHandleAwaiterExtensions
     {

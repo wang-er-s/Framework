@@ -1,9 +1,8 @@
 using System;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class ConvertBindField<TComponent, TData, TResult> : BaseBind where TComponent : class
     {

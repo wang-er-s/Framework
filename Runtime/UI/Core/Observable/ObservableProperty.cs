@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class ObservableProperty<T> : IClearable , IObservable
     {

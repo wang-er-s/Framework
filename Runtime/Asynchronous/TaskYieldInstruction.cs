@@ -26,7 +26,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public class TaskYieldInstruction : CustomYieldInstruction
     {

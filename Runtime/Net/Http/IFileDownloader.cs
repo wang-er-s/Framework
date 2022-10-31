@@ -24,9 +24,8 @@
 
 using System;
 using System.IO;
-using Framework.Asynchronous;
 
-namespace Framework.Net
+namespace Framework
 {
     public interface IFileDownloader
     {

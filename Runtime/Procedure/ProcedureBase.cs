@@ -19,6 +19,7 @@ namespace Framework
         /// <param name="procedureOwner">流程持有者。</param>
         protected internal override void OnEnter(ProcedureOwner procedureOwner)
         {
+            Context.AddContext(new DomainContext());
             base.OnEnter(procedureOwner);
         }
 
@@ -28,9 +29,9 @@ namespace Framework
         /// <param name="procedureOwner">流程持有者。</param>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        protected internal override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
+        protected internal override void OnUpdate(ProcedureOwner procedureOwner)
         {
-            base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
+            base.OnUpdate(procedureOwner);
         }
 
         /// <summary>
@@ -41,6 +42,9 @@ namespace Framework
         protected internal override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
+            DomainContext context = Context.GetContext<DomainContext>();
+            context.Res.Release();
+            Context.RemoveContext<DomainContext>();
         }
 
         /// <summary>

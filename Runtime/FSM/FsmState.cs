@@ -42,9 +42,7 @@ namespace Framework
         /// 有限状态机状态轮询时调用。
         /// </summary>
         /// <param name="fsm">有限状态机引用。</param>
-        /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
-        /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        protected internal virtual void OnUpdate(IFsm<T> fsm, float elapseSeconds, float realElapseSeconds)
+        protected internal virtual void OnUpdate(IFsm<T> fsm)
         {
         }
 

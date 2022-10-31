@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-namespace Framework.UI
+namespace Framework
 {
     [AddComponentMenu("UI/Loop Vertical Scroll Rect", 51)]
     [DisallowMultipleComponent]

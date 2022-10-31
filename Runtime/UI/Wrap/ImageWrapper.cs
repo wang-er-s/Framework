@@ -1,11 +1,8 @@
 ﻿using System;
-using Framework.Assets;
-using Framework.UI.Core;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class ImageWrapper : BaseWrapper<Image>, IFieldChangeCb<string>
     {
@@ -22,7 +19,7 @@ namespace Framework.UI.Wrap
                 }
                 else
                 {
-                    res = Res.Default;
+                    throw new Exception($"{Container} need extend ICustomRes");
                 }
                 res.LoadAssetAsync<Sprite>(path).Callbackable()
                     .OnCallback(result =>

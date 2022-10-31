@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
-using Framework.UI.Wrap;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class BindViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {

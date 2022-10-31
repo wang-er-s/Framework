@@ -1,12 +1,11 @@
 ﻿using System;
-using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     public class CustomButton : Button, IComponentEvent, IFieldChangeCb<bool>
     {

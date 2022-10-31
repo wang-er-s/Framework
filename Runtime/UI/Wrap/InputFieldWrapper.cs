@@ -1,11 +1,9 @@
 ﻿using System;
-using Framework.UI.Core;
-using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class InputFieldWrapper : BaseWrapper<InputField>, IFieldChangeCb<string>, IComponentEvent<string>
     {

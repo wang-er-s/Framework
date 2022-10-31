@@ -28,16 +28,15 @@ using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
-using Framework.Asynchronous;
 using UnityEngine;
 
-namespace Framework.Net
+namespace Framework
 {
     public class UnityWebRequestFileDownloader : FileDownloaderBase
     {
         public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(string path, FileInfo fileInfo, float overtimeTime = 50)
         {
-            return Execution.Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) =>
+            return Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) =>
                 DoDownloadFileAsync(path, fileInfo, promise, overtimeTime));
         }
 
@@ -99,7 +98,7 @@ namespace Framework.Net
 
         public override IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos)
         {
-            return Execution.Executors.RunOnCoroutine<ProgressInfo, ResourceInfo[]>((promise) =>
+            return Executors.RunOnCoroutine<ProgressInfo, ResourceInfo[]>((promise) =>
                 DoDownloadFileAsync(infos, promise));
         }
 

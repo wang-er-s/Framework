@@ -1,16 +1,11 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Framework.Asynchronous;
-using Framework.Contexts;
-using Framework.Execution;
-using Framework.UI.Core;
-using Framework.UI.Core.Bind;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.Runtime.UI.Component
+namespace Framework
 {
     public class AlertDialog
     {

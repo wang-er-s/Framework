@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-using Framework.Prefs;
 
-namespace Framework.Contexts
+namespace Framework
 {
     public class ApplicationContext : Context
     {

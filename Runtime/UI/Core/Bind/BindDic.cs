@@ -1,7 +1,6 @@
 ﻿using System.Collections.Specialized;
-using Framework.UI.Wrap.Base;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     // public class BindDic<TComponent,TKey, TValue> : BaseBind
     // {

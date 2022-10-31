@@ -1,16 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-using Framework.Asynchronous;
-using Framework.Execution;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 using Object = UnityEngine.Object;
 
-namespace Framework.Assets
+namespace Framework
 {
     public class ResourcesRes : Res
     {

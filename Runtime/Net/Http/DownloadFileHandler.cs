@@ -27,7 +27,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Framework.Net
+namespace Framework
 {
     public class DownloadFileHandler : DownloadHandlerScript
     {

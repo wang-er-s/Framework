@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Framework.Prefs
+namespace Framework
 {
     public interface ISerializer
     {

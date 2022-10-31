@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using Framework.MessageCenter;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     public class CustomText : Text, IFieldChangeCb<bool>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>, IFieldChangeCb<long>, IFieldChangeCb<double>
     {

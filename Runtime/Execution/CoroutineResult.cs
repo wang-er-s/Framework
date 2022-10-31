@@ -24,10 +24,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using Framework.Asynchronous;
 
 
-namespace Framework.Execution
+namespace Framework
 {
     public class CoroutineResult : AsyncResult, ICoroutinePromise
     {

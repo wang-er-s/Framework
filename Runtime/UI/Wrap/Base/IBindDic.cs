@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 
-namespace Framework.UI.Wrap.Base
+namespace Framework
 {
     public interface IBindDic
     {

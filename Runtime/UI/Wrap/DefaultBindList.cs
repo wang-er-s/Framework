@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class DefaultBindList<TComponent, TVm> : IBindList<TVm> where TComponent :  Component
     {

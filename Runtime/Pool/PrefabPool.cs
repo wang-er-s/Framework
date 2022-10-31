@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.Pool
+namespace Framework
 {
     public class PrefabPool<TComponent> : Pool<TComponent> where TComponent : Component
     {

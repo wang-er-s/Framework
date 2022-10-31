@@ -1,11 +1,9 @@
 using System;
 using System.Globalization;
-using Framework.UI.Core;
-using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap
+namespace Framework
 {
     public class TmpWrapper : BaseWrapper<TextMeshProUGUI>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>,
         IFieldChangeCb<double>, IFieldChangeCb<long>

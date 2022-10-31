@@ -1,7 +1,5 @@
 ﻿using System;
-using Framework.UI.Core;
-using Framework.UI.Core.Bind;
-using Framework.UI.Wrap.Base;
+using Framework;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine.Events;

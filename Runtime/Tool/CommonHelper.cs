@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Framework.Helper
+namespace Framework
 {
     public static class CommonHelper
     {

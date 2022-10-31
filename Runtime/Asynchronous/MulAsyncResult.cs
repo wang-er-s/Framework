@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Framework.Execution;
 using UnityEngine;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public interface IMulProgress
     {

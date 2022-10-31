@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using Framework.MessageCenter;
-using Framework.UI.Wrap.Base;
 using TMPro;
 using UnityEngine;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     public class CustomTextMeshPro : TextMeshProUGUI, IFieldChangeCb<bool>, IFieldChangeCb<string>, IFieldChangeCb<int>, IFieldChangeCb<float>, IFieldChangeCb<long>, IFieldChangeCb<double>
     {

@@ -1,7 +1,6 @@
 using System;
-using Framework.Asynchronous;
 
-namespace Framework.Pool
+namespace Framework
 {
 	public interface IPool<T> : IDisposable
 	{

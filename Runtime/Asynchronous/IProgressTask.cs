@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Framework.Asynchronous
+namespace Framework
 {
     public interface IProgressTask<TProgress> : IProgressResult<TProgress>
     {

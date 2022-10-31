@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Framework.UI.Wrap;
-using Framework.UI.Wrap.Base;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class BindList<TComponent,TVm> : BaseBind where TComponent : UnityEngine.Object
     {

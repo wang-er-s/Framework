@@ -1,9 +1,7 @@
 ﻿using System;
-using Framework.Execution;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
 namespace Framework
 {

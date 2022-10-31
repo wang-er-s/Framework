@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using UnityEngine.UI;
 
-namespace Framework.UI
+namespace Framework
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]

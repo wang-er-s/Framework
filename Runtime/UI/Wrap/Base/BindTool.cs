@@ -4,7 +4,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine.UI;
 
-namespace Framework.UI.Wrap.Base
+namespace Framework
 {
     public static class BindTool
     {

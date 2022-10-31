@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     public class CustomToggle : Toggle
     {

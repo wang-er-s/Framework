@@ -26,7 +26,7 @@ using System;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace Framework.Prefs
+namespace Framework
 {
 
     public class DefaultEncryptor : IEncryptor

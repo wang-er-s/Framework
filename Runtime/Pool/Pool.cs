@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Framework.Asynchronous;
 using UnityEngine;
 
-namespace Framework.Pool
+namespace Framework
 {
     public class Pool<T> : IPool<T>
     {

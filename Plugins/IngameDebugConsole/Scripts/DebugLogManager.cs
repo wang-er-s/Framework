@@ -241,7 +241,6 @@ namespace IngameDebugConsole
 		private object logEntriesLock;
 		private int pendingLogToAutoExpand;
 		private float fps;
-		private float fpsTick = 0.5f;
 		private float fpsTimer;
 
 		// Pools for memory efficiency

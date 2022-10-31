@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UI
+namespace Framework
 {
     [AddComponentMenu("UI/Loop Horizontal Scroll Rect", 50)]
     [DisallowMultipleComponent]

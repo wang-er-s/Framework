@@ -2,14 +2,11 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using Framework.Asynchronous;
-using Framework.Execution;
-using Framework.UI.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace Framework.Runtime.UI.Component
+namespace Framework
 {
     public class Toast
     {

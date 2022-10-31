@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-using Framework.Asynchronous;
 using UnityEngine;
 
-namespace Framework.Execution
+namespace Framework
 {
     public interface ICoroutinePromise : IPromise
     {

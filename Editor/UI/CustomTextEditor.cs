@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Framework.UIComponent;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;

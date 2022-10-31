@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Framework.Execution;
 using UnityEngine;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class BindLoopViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View , new()
     {

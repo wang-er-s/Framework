@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class BindFactory
     {

@@ -26,11 +26,9 @@ using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
-using Framework.Asynchronous;
 using UnityEngine;
-using IAsyncResult = Framework.Asynchronous.IAsyncResult;
 
-namespace Framework.Execution
+namespace Framework
 {
     public class CoroutineTimerExecutor : AbstractExecutor, ITimerExecutor
     {
@@ -110,12 +108,12 @@ namespace Framework.Execution
                 throw new Exception("The ScheduledExecutor isn't started.");
         }
 
-        public virtual Asynchronous.IAsyncResult Delay(Action command, long delay)
+        public virtual IAsyncResult Delay(Action command, long delay)
         {
             return this.Delay(command, GetTimeSpan(delay).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult Delay(Action command, TimeSpan delay)
+        public virtual IAsyncResult Delay(Action command, TimeSpan delay)
         {
             this.Check();
             return new OneTimeDelayTask(this, command, delay);
@@ -132,12 +130,12 @@ namespace Framework.Execution
             return new OneTimeDelayTask<TResult>(this, command, delay);
         }
 
-        public virtual Asynchronous.IAsyncResult FixedRate(Action command, long initialDelay, long period)
+        public virtual IAsyncResult FixedRate(Action command, long initialDelay, long period)
         {
             return this.FixedRate(command, GetTimeSpan(initialDelay).Value, GetTimeSpan(period).Value);
         }
 
-        public virtual Asynchronous.IAsyncResult FixedRate(Action command, TimeSpan initialDelay, TimeSpan period)
+        public virtual IAsyncResult FixedRate(Action command, TimeSpan initialDelay, TimeSpan period)
         {
             this.Check();
             return new FixedRateDelayTask(this, command, initialDelay, period);
@@ -167,7 +165,7 @@ namespace Framework.Execution
             return timer.Delay(action, millisecond);
         }
 
-        interface IDelayTask : Asynchronous.IAsyncResult
+        interface IDelayTask : IAsyncResult
         {
             TimeSpan Delay { get; }
 

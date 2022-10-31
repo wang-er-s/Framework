@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.Assets;
-using Framework.Asynchronous;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

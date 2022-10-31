@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Framework.Prefs
+namespace Framework
 {
     /// <summary>
     /// A interface for encoding and decoding preference data.

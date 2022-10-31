@@ -1,6 +1,5 @@
-﻿using Framework;
-using Framework.Asynchronous;
-using Framework.Editor;
+﻿
+using Framework;
 using UnityEditor;
 
 public class BuildIlrNode : IBuildTask

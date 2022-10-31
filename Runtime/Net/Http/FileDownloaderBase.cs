@@ -24,10 +24,9 @@
 
 using System;
 using System.IO;
-using Framework.Asynchronous;
 using UnityEngine;
 
-namespace Framework.Net
+namespace Framework
 {
     public abstract class FileDownloaderBase : IFileDownloader
     {

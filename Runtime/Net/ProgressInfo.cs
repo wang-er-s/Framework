@@ -24,9 +24,8 @@
 
 using System;
 using System.Globalization;
-using Framework.Asynchronous;
 
-namespace Framework.Net
+namespace Framework
 {
     public enum UNIT
     {

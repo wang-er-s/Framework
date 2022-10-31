@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Framework.UI.Core
+namespace Framework
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class TransformPath : Attribute

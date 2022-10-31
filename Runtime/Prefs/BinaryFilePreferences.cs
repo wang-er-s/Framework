@@ -29,7 +29,7 @@ using System.Text;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Framework.Prefs
+namespace Framework
 {
 
     public class BinaryFilePreferencesFactory : AbstractFactory

@@ -1,8 +1,7 @@
 ﻿using System;
-using Framework.UI.Wrap.Base;
 using UnityEngine.UI;
 
-namespace Framework.UIComponent
+namespace Framework
 {
     public class CustomSlider : Slider , IFieldChangeCb<float>, IFieldChangeCb<int>
     {

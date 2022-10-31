@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Framework.UI.Core.Bind
+namespace Framework
 {
     public class UIBindFactory : BindFactory
     {

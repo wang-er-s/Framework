@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Framework.Execution
+namespace Framework
 {
     public abstract class AbstractExecutor
     {
