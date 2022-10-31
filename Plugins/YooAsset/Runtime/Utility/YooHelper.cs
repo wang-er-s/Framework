@@ -30,7 +30,7 @@ namespace YooAsset
 		/// </summary>
 		public static string MakeStreamingLoadPath(string path)
 		{
-			return StringUtility.Format("{0}/YooAssets/{1}", UnityEngine.Application.streamingAssetsPath, path);
+			return StringUtility.Format("{0}/{1}/{2}", UnityEngine.Application.streamingAssetsPath, YooAssetSettings.StreamingAssetsBuildinFolder, path);
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 获取网络资源加载路径
+		/// 获取WWW加载本地资源的路径
 		/// </summary>
 		public static string ConvertToWWWPath(string path)
 		{

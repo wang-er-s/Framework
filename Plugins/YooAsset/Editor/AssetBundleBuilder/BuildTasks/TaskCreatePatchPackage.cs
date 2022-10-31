@@ -19,55 +19,59 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 拷贝补丁文件到补丁包目录
 		/// </summary>
-		private void CopyPatchFiles(BuildParametersContext buildParameters)
+		private void CopyPatchFiles(BuildParametersContext buildParametersContext)
 		{
-			int resourceVersion = buildParameters.Parameters.BuildVersion;
-			string packageDirectory = buildParameters.GetPackageDirectory();
-			BuildRunner.Log($"开始拷贝补丁文件到补丁包目录：{packageDirectory}");
+			var buildParameters = buildParametersContext.Parameters;
+			string pipelineOutputDirectory = buildParametersContext.GetPipelineOutputDirectory();
+			string packageOutputDirectory = buildParametersContext.GetPackageOutputDirectory();
+			BuildRunner.Log($"开始拷贝补丁文件到补丁包目录：{packageOutputDirectory}");
 
 			// 拷贝Report文件
 			{
-				string reportFileName = YooAssetSettingsData.GetReportFileName(buildParameters.Parameters.BuildVersion);
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{reportFileName}";
-				string destPath = $"{packageDirectory}/{reportFileName}";
+				string fileName = YooAssetSettingsData.GetReportFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string sourcePath = $"{pipelineOutputDirectory}/{fileName}";
+				string destPath = $"{packageOutputDirectory}/{fileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
 			// 拷贝补丁清单文件
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
-				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
+				string fileName = YooAssetSettingsData.GetPatchManifestFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string sourcePath = $"{pipelineOutputDirectory}/{fileName}";
+				string destPath = $"{packageOutputDirectory}/{fileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
 			// 拷贝补丁清单哈希文件
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(resourceVersion)}";
-				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(resourceVersion)}";
+				string fileName = YooAssetSettingsData.GetPatchManifestHashFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string sourcePath = $"{pipelineOutputDirectory}/{fileName}";
+				string destPath = $"{packageOutputDirectory}/{fileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
-			// 拷贝静态版本文件
+			// 拷贝补丁清单版本文件
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettings.VersionFileName}";
-				string destPath = $"{packageDirectory}/{YooAssetSettings.VersionFileName}";
+				string fileName = YooAssetSettingsData.GetPatchManifestVersionFileName(buildParameters.PackageName);
+				string sourcePath = $"{pipelineOutputDirectory}/{fileName}";
+				string destPath = $"{packageOutputDirectory}/{fileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
-			if (buildParameters.Parameters.BuildPipeline == EBuildPipeline.ScriptableBuildPipeline)
+			if (buildParameters.BuildPipeline == EBuildPipeline.ScriptableBuildPipeline)
 			{
 				// 拷贝构建日志
 				{
-					string sourcePath = $"{buildParameters.PipelineOutputDirectory}/buildlogtep.json";
-					string destPath = $"{packageDirectory}/buildlogtep.json";
+					string sourcePath = $"{pipelineOutputDirectory}/buildlogtep.json";
+					string destPath = $"{packageOutputDirectory}/buildlogtep.json";
 					EditorTools.CopyFile(sourcePath, destPath, true);
 				}
 
 				// 拷贝代码防裁剪配置
-				if (buildParameters.Parameters.SBPParameters.WriteLinkXML)
+				if (buildParameters.SBPParameters.WriteLinkXML)
 				{
-					string sourcePath = $"{buildParameters.PipelineOutputDirectory}/link.xml";
-					string destPath = $"{packageDirectory}/link.xml";
+					string sourcePath = $"{pipelineOutputDirectory}/link.xml";
+					string destPath = $"{packageOutputDirectory}/link.xml";
 					EditorTools.CopyFile(sourcePath, destPath, true);
 				}
 			}
@@ -75,27 +79,27 @@ namespace YooAsset.Editor
 			{
 				// 拷贝UnityManifest序列化文件
 				{
-					string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettings.OutputFolderName}";
-					string destPath = $"{packageDirectory}/{YooAssetSettings.OutputFolderName}";
+					string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettings.OutputFolderName}";
+					string destPath = $"{packageOutputDirectory}/{YooAssetSettings.OutputFolderName}";
 					EditorTools.CopyFile(sourcePath, destPath, true);
 				}
 
 				// 拷贝UnityManifest文本文件
 				{
-					string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettings.OutputFolderName}.manifest";
-					string destPath = $"{packageDirectory}/{YooAssetSettings.OutputFolderName}.manifest";
+					string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettings.OutputFolderName}.manifest";
+					string destPath = $"{packageOutputDirectory}/{YooAssetSettings.OutputFolderName}.manifest";
 					EditorTools.CopyFile(sourcePath, destPath, true);
 				}
 			}
 
 			// 拷贝所有补丁文件
 			int progressValue = 0;
-			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(buildParameters.PipelineOutputDirectory, buildParameters.Parameters.BuildVersion);
+			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(pipelineOutputDirectory, buildParameters.PackageName, buildParameters.PackageVersion);
 			int patchFileTotalCount = patchManifest.BundleList.Count;
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{patchBundle.BundleName}";
-				string destPath = $"{packageDirectory}/{patchBundle.FileName}";
+				string sourcePath = $"{pipelineOutputDirectory}/{patchBundle.BundleName}";
+				string destPath = $"{packageOutputDirectory}/{patchBundle.FileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 				EditorTools.DisplayProgressBar("拷贝补丁文件", ++progressValue, patchFileTotalCount);
 			}

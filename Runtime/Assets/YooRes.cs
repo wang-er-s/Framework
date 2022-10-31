@@ -18,6 +18,7 @@ namespace Framework.Assets
     {
         private Dictionary<string, AssetOperationHandle> handles = new Dictionary<string, AssetOperationHandle>();
         private List<IProgressPromise<float>> loadProgress = new List<IProgressPromise<float>>();
+        private AssetsPackage defaultPackage;
 
         public override IAsyncResult Init()
         {
@@ -26,27 +27,27 @@ namespace Framework.Assets
 
         private IEnumerator init(IPromise promise)
         {
+            YooAssets.Initialize();
+            defaultPackage = YooAssets.CreateAssetsPackage("DefaultPackage");
+            YooAssets.SetDefaultAssetsPackage(defaultPackage);
             switch (YooAssetSettingsData.Setting.PlayMode)
             {
-                case YooAssets.EPlayMode.EditorSimulateMode:
-                    var createParameters = new YooAssets.EditorSimulateModeParameters();
-                    createParameters.LocationServices = new DefaultLocationServices(string.Empty);
-                    yield return YooAssets.InitializeAsync(createParameters);
+                case YooAsset.EPlayMode.EditorSimulateMode:
+                    var createParameters = new EditorSimulateModeParameters();
+                    createParameters.SimulatePatchManifestPath =
+                        EditorSimulateModeHelper.SimulateBuild("DefaultPackage");
+                        yield return defaultPackage.InitializeAsync(createParameters);
                     break;
-                case YooAssets.EPlayMode.OfflinePlayMode:
-                    var createParameters2 = new YooAssets.OfflinePlayModeParameters();
-                    createParameters2.LocationServices = new DefaultLocationServices(string.Empty);
-                    yield return YooAssets.InitializeAsync(createParameters2);
+                case YooAsset.EPlayMode.OfflinePlayMode:
+                    var createParameters2 = new OfflinePlayModeParameters();
+                    yield return defaultPackage.InitializeAsync(createParameters2);
                     break;
-                case YooAssets.EPlayMode.HostPlayMode:
-                    var createParameters3 = new YooAssets.HostPlayModeParameters();
-                    createParameters3.LocationServices = new DefaultLocationServices(string.Empty);
+                case YooAsset.EPlayMode.HostPlayMode:
+                    var createParameters3 = new HostPlayModeParameters();
                     createParameters3.DecryptionServices = null;
-                    createParameters3.ClearCacheWhenDirty = false;
                     createParameters3.DefaultHostServer = DownloadUrl;
                     createParameters3.FallbackHostServer = FallbackDownloadUrl;
-                    createParameters3.VerifyLevel = EVerifyLevel.High;
-                    yield return YooAssets.InitializeAsync(createParameters3);
+                    yield return defaultPackage.InitializeAsync(createParameters3);
                     break;
             }
             promise.SetResult();
@@ -65,20 +66,20 @@ namespace Framework.Assets
        
         private IEnumerator checkDownloadSize(IProgressPromise<float,string> promise)
         {
-            if (YooAssetSettingsData.Setting.PlayMode != YooAssets.EPlayMode.HostPlayMode)
+            if (YooAssetSettingsData.Setting.PlayMode != YooAsset.EPlayMode.HostPlayMode)
             {
                 promise.SetResult(string.Empty);
                 yield break;
             }
             
             // 更新资源版本号
-            var versionOperation = YooAssets.UpdateStaticVersionAsync(30);
+            var versionOperation = defaultPackage.UpdateStaticVersionAsync(30);
             yield return versionOperation;
-            int resourceVersion = 0;
+            string resourceVersion = String.Empty;
             if (versionOperation.Status == EOperationStatus.Succeed)
             {
-                Debug.Log($"Found static version : {versionOperation.ResourceVersion}");
-                resourceVersion = versionOperation.ResourceVersion;
+                Debug.Log($"Found static version : {versionOperation.PackageVersion}");
+                resourceVersion = versionOperation.PackageVersion;
             }
             else
             {
@@ -86,7 +87,7 @@ namespace Framework.Assets
             }
             
             // 更新补丁清单
-            var patchOperation = YooAssets.UpdateManifestAsync(resourceVersion, 30);
+            var patchOperation = defaultPackage.UpdateManifestAsync(resourceVersion, 30);
             yield return patchOperation;
             if(patchOperation.Status == EOperationStatus.Failed)
             {
@@ -117,7 +118,7 @@ namespace Framework.Assets
 
         private IEnumerator Download(IProgressPromise<DownloadProgress> promise)
         {
-            if (YooAssetSettingsData.Setting.PlayMode != YooAssets.EPlayMode.HostPlayMode)
+            if (YooAssetSettingsData.Setting.PlayMode != YooAsset.EPlayMode.HostPlayMode)
             {
                 promise.SetResult();
                 yield break;
@@ -219,7 +220,9 @@ namespace Framework.Assets
             }
             loadProgress.Clear();
             handles.Clear();
+            defaultPackage.UnloadUnusedAssets();
         }
+        
 
         public override T LoadAsset<T>(string key)
         {

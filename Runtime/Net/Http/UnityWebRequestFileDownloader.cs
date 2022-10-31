@@ -82,7 +82,9 @@ namespace Framework.Net
                     yield return null;
                 }
                 
+#pragma warning disable CS0618
                 if(www.isNetworkError || www.isHttpError)
+#pragma warning restore CS0618
                 {
                     promise.SetException(www.error);
                     yield break;
@@ -180,7 +182,9 @@ namespace Framework.Net
                         progressInfo.CompletedCount += 1;
                         tasks.RemoveAt(j);
                         downloadedSize += _info.FileSize;
+#pragma warning disable CS0618
                         if (_www.isNetworkError || _www.isHttpError)
+#pragma warning restore CS0618
                         {
                             promise.SetException(new Exception(_www.error));
                             Log.Error(

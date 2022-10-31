@@ -18,11 +18,6 @@ namespace YooAsset
 		public string FileVersion;
 
 		/// <summary>
-		/// 资源版本号
-		/// </summary>
-		public int ResourceVersion;
-
-		/// <summary>
 		/// 启用可寻址资源定位
 		/// </summary>
 		public bool EnableAddressable;
@@ -33,9 +28,14 @@ namespace YooAsset
 		public int OutputNameStyle;
 
 		/// <summary>
-		/// 内置资源的标签列表（首包资源）
+		/// 资源包裹名称
 		/// </summary>
-		public string BuildinTags;
+		public string PackageName;
+
+		/// <summary>
+		/// 资源包裹的版本信息
+		/// </summary>
+		public string PackageVersion;
 
 		/// <summary>
 		/// 资源列表（主动收集的资源列表）
@@ -148,6 +148,23 @@ namespace YooAsset
 		}
 
 		/// <summary>
+		/// 尝试映射为资源路径
+		/// </summary>
+		public string TryMappingToAssetPath(string location)
+		{
+			if (string.IsNullOrEmpty(location))
+				return string.Empty;
+
+			if (_locationToLower)
+				location = location.ToLower();
+
+			if (AssetPathMapping.TryGetValue(location, out string assetPath))
+				return assetPath;
+			else
+				return string.Empty;
+		}
+
+		/// <summary>
 		/// 获取主资源包
 		/// 注意：传入的资源路径一定合法有效！
 		/// </summary>
@@ -215,6 +232,19 @@ namespace YooAsset
 		public bool TryGetPatchBundle(string bundleName, out PatchBundle result)
 		{
 			return BundleDic.TryGetValue(bundleName, out result);
+		}
+
+		/// <summary>
+		/// 是否包含资源文件
+		/// </summary>
+		public bool IsIncludeBundleFile(string fileName)
+		{
+			foreach (var patchBundle in BundleList)
+			{
+				if (patchBundle.FileName == fileName)
+					return true;
+			}
+			return false;
 		}
 
 

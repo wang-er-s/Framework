@@ -21,16 +21,15 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 获取资源版本号
+		/// 获取包裹的版本信息
 		/// </summary>
-		public int GetResourceVersion()
+		public string GetPackageVersion()
 		{
 			if (_simulatePatchManifest == null)
-				return 0;
-			return _simulatePatchManifest.ResourceVersion;
+				return string.Empty;
+			return _simulatePatchManifest.PackageVersion;
 		}
 
-		// 设置资源清单
 		internal void SetSimulatePatchManifest(PatchManifest patchManifest)
 		{
 			_simulatePatchManifest = patchManifest;
@@ -66,6 +65,18 @@ namespace YooAsset
 		string IBundleServices.MappingToAssetPath(string location)
 		{
 			return _simulatePatchManifest.MappingToAssetPath(location);
+		}
+		string IBundleServices.TryMappingToAssetPath(string location)
+		{
+			return _simulatePatchManifest.TryMappingToAssetPath(location);
+		}
+		string IBundleServices.GetPackageName()
+		{
+			return _simulatePatchManifest.PackageName;
+		}
+		bool IBundleServices.IsIncludeBundleFile(string fileName)
+		{
+			return _simulatePatchManifest.IsIncludeBundleFile(fileName);
 		}
 		#endregion
 	}

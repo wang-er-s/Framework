@@ -17,6 +17,7 @@ namespace Framework.Editor
         SERVER_PATH,
         BUILDPATH,
         IncrementalBuild,
+        ResOffline,
     }
 
     public class Build : OdinEditorWindow
@@ -43,14 +44,16 @@ namespace Framework.Editor
         public bool ExportAab;
         [LabelText("增量ab打包")]
         public bool Incremental;
+        [LabelText("资源离线")]
+        public bool ResOffline;
 
         [Button(ButtonSizes.Large, Name = "打包")]
         private void BuildPlatform()
         {
             var target = (BuildTarget) Enum.Parse(typeof(BuildTarget), Platform);
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildPipeline.GetBuildTargetGroup(target), target);
-            var buildContext = new BuildContext(target, DebugMode, UseHotfix, Incremental, "../../share/build",
-                IsUpVersion, ExportAab);
+            var buildContext = new BuildContext(target, ResOffline, DebugMode, UseHotfix, Incremental,
+                "../../share/build", IsUpVersion, ExportAab);
             List<IBuildTask> buildTasks = new List<IBuildTask>()
             {
                 new BuildIlrNode(),
@@ -137,7 +140,9 @@ namespace Framework.Editor
             bool useHotfix = Boolean.Parse(GetEnvironmentVariable(CommandArgsName.USEHOTFIX));
             var outPath = GetEnvironmentVariable(CommandArgsName.BUILDPATH);
             var incremental = bool.Parse(GetEnvironmentVariable(CommandArgsName.IncrementalBuild));
-            var buildContext = new BuildContext(buildTarget, debug, useHotfix, incremental, outPath, false, false);
+            var resOffline = bool.Parse(GetEnvironmentVariable(CommandArgsName.ResOffline));
+            var buildContext = new BuildContext(buildTarget, resOffline, debug, useHotfix, incremental, outPath, false,
+                false);
             List<IBuildTask> buildTasks = new List<IBuildTask>()
             {
                 new BuildIlrNode(),

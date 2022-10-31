@@ -17,11 +17,13 @@ namespace YooAsset
 			}
 		}
 
-		public BundledSubAssetsProvider(string providerGUID, AssetInfo assetInfo) : base(providerGUID, assetInfo)
+		public BundledSubAssetsProvider(AssetSystemImpl impl, string providerGUID, AssetInfo assetInfo) : base(impl, providerGUID, assetInfo)
 		{
 		}
 		public override void Update()
 		{
+			DebugRecording();
+
 			if (IsDone)
 				return;
 

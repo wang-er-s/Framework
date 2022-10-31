@@ -11,11 +11,13 @@ public class BuildContext
     public readonly bool UpVersion;
     public readonly bool ExportAAB;
     public readonly BuildTarget BuildTarget;
+    public readonly bool ResOffline;
     
 
-    public BuildContext(BuildTarget buildTarget, bool debug = true, bool useHotfix = false, bool incrementalBuild = false, string buildPath = "", bool upVersion = false, bool exportAab = false)
+    public BuildContext(BuildTarget buildTarget, bool resOffline = true,  bool debug = true, bool useHotfix = false, bool incrementalBuild = false, string buildPath = "", bool upVersion = false, bool exportAab = false)
     {
         BuildTarget = buildTarget;
+        ResOffline = resOffline;
         Debug = debug;
         UseHotfix = useHotfix;
         IncrementalBuild = incrementalBuild;

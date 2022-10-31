@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace YooAsset
 {
@@ -12,25 +13,46 @@ namespace YooAsset
 		/// <summary>
 		/// 异步初始化
 		/// </summary>
-		public InitializationOperation InitializeAsync(bool locationToLower)
+		public InitializationOperation InitializeAsync(bool locationToLower, string packageName)
 		{
 			_locationToLower = locationToLower;
-			var operation = new OfflinePlayModeInitializationOperation(this);
+			var operation = new OfflinePlayModeInitializationOperation(this, packageName);
 			OperationSystem.StartOperation(operation);
 			return operation;
 		}
 
 		/// <summary>
-		/// 获取资源版本号
+		/// 获取包裹的版本信息
 		/// </summary>
-		public int GetResourceVersion()
+		public string GetPackageVersion()
 		{
 			if (_appPatchManifest == null)
-				return 0;
-			return _appPatchManifest.ResourceVersion;
+				return string.Empty;
+			return _appPatchManifest.PackageVersion;
 		}
 
-		// 设置资源清单
+		internal List<VerifyInfo> GetVerifyInfoList()
+		{
+			List<VerifyInfo> result = new List<VerifyInfo>(_appPatchManifest.BundleList.Count);
+
+			// 遍历所有文件然后验证并缓存合法文件
+			foreach (var patchBundle in _appPatchManifest.BundleList)
+			{
+				// 忽略缓存文件
+				if (CacheSystem.IsCached(patchBundle))
+					continue;
+
+				string filePath = patchBundle.CachedFilePath;
+				if (File.Exists(filePath))
+				{
+					bool isBuildinFile = true;
+					VerifyInfo verifyInfo = new VerifyInfo(isBuildinFile, patchBundle);
+					result.Add(verifyInfo);
+				}
+			}
+
+			return result;
+		}
 		internal void SetAppPatchManifest(PatchManifest patchManifest)
 		{
 			_appPatchManifest = patchManifest;
@@ -94,6 +116,18 @@ namespace YooAsset
 		string IBundleServices.MappingToAssetPath(string location)
 		{
 			return _appPatchManifest.MappingToAssetPath(location);
+		}
+		string IBundleServices.TryMappingToAssetPath(string location)
+		{
+			return _appPatchManifest.TryMappingToAssetPath(location);
+		}
+		string IBundleServices.GetPackageName()
+		{
+			return _appPatchManifest.PackageName;
+		}
+		bool IBundleServices.IsIncludeBundleFile(string fileName)
+		{
+			return _appPatchManifest.IsIncludeBundleFile(fileName);
 		}
 		#endregion
 	}

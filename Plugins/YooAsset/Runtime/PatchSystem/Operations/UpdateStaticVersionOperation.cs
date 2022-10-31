@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace YooAsset
 {
@@ -9,9 +10,9 @@ namespace YooAsset
 	public abstract class UpdateStaticVersionOperation : AsyncOperationBase
 	{
 		/// <summary>
-		/// 资源版本号
+		/// 当前最新的包裹版本
 		/// </summary>
-		public int ResourceVersion { protected set; get; } = 0;
+		public string PackageVersion { protected set; get; }
 	}
 
 	/// <summary>
@@ -57,13 +58,15 @@ namespace YooAsset
 
 		private static int RequestCount = 0;
 		private readonly HostPlayModeImpl _impl;
+		private readonly string _packageName;
 		private readonly int _timeout;
 		private ESteps _steps = ESteps.None;
 		private UnityWebDataRequester _downloader;
 
-		internal HostPlayModeUpdateStaticVersionOperation(HostPlayModeImpl impl, int timeout)
+		internal HostPlayModeUpdateStaticVersionOperation(HostPlayModeImpl impl, string packageName, int timeout)
 		{
 			_impl = impl;
+			_packageName = packageName;
 			_timeout = timeout;
 		}
 		internal override void Start()
@@ -78,7 +81,8 @@ namespace YooAsset
 
 			if (_steps == ESteps.LoadStaticVersion)
 			{
-				string webURL = GetStaticVersionRequestURL(YooAssetSettings.VersionFileName);
+				string fileName = YooAssetSettingsData.GetPatchManifestVersionFileName(_packageName);
+				string webURL = GetStaticVersionRequestURL(fileName);
 				YooLogger.Log($"Beginning to request static version : {webURL}");
 				_downloader = new UnityWebDataRequester();
 				_downloader.SendRequest(webURL, _timeout);
@@ -99,17 +103,17 @@ namespace YooAsset
 				}
 				else
 				{
-					if (int.TryParse(_downloader.GetText(), out int value))
+					PackageVersion = _downloader.GetText();
+					if (string.IsNullOrEmpty(PackageVersion))
 					{
-						ResourceVersion = value;
 						_steps = ESteps.Done;
-						Status = EOperationStatus.Succeed;
+						Status = EOperationStatus.Failed;
+						Error = $"Static package version is empty : {_downloader.URL}";
 					}
 					else
 					{
 						_steps = ESteps.Done;
-						Status = EOperationStatus.Failed;
-						Error = $"URL : {_downloader.URL} Error : static version content is invalid.";
+						Status = EOperationStatus.Succeed;
 					}
 				}
 				_downloader.Dispose();

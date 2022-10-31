@@ -23,6 +23,11 @@ namespace YooAsset
 		public string ProviderGUID { private set; get; }
 
 		/// <summary>
+		/// 所属资源系统
+		/// </summary>
+		public AssetSystemImpl Impl { private set; get; }
+
+		/// <summary>
 		/// 资源信息
 		/// </summary>
 		public AssetInfo MainAssetInfo { private set; get; }
@@ -90,8 +95,9 @@ namespace YooAsset
 		private readonly List<OperationHandleBase> _handles = new List<OperationHandleBase>();
 
 
-		public ProviderBase(string providerGUID, AssetInfo assetInfo)
+		public ProviderBase(AssetSystemImpl impl, string providerGUID, AssetInfo assetInfo)
 		{
+			Impl = impl;
 			ProviderGUID = providerGUID;
 			MainAssetInfo = assetInfo;
 		}
@@ -232,6 +238,15 @@ namespace YooAsset
 		/// </summary>
 		public string SpawnTime = string.Empty;
 
+		/// <summary>
+		/// 加载耗时（单位：毫秒）
+		/// </summary>
+		public long LoadingTime { protected set; get; }
+
+		// 加载耗时统计
+		private bool _isRecording = false;
+		private Stopwatch _watch;
+
 		[Conditional("DEBUG")]
 		public void InitSpawnDebugInfo()
 		{
@@ -244,6 +259,25 @@ namespace YooAsset
 			float m = UnityEngine.Mathf.FloorToInt(spawnTime / 60f - h * 60f);
 			float s = UnityEngine.Mathf.FloorToInt(spawnTime - m * 60f - h * 3600f);
 			return h.ToString("00") + ":" + m.ToString("00") + ":" + s.ToString("00");
+		}
+
+		[Conditional("DEBUG")]
+		protected void DebugRecording()
+		{
+			if (_isRecording == false)
+			{
+				_isRecording = true;
+				_watch = Stopwatch.StartNew();
+			}
+
+			if (_watch != null)
+			{
+				if (IsDone)
+				{
+					LoadingTime = _watch.ElapsedMilliseconds;
+					_watch = null;
+				}
+			}
 		}
 		#endregion
 	}

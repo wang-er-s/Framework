@@ -21,42 +21,56 @@ namespace YooAsset.Editor
 		/// </summary>
 		private void CreatePatchManifestFile(BuildContext context)
 		{
-			var buildParameters = context.GetContextObject<BuildParametersContext>();
-			int resourceVersion = buildParameters.Parameters.BuildVersion;
+			var buildMapContext = context.GetContextObject<BuildMapContext>();
+			var buildParametersContext = context.GetContextObject<BuildParametersContext>();
+			var buildParameters = buildParametersContext.Parameters;
+			string pipelineOutputDirectory = buildParametersContext.GetPipelineOutputDirectory();
 
 			// 创建新补丁清单
 			PatchManifest patchManifest = new PatchManifest();
 			patchManifest.FileVersion = YooAssetSettings.PatchManifestFileVersion;
-			patchManifest.ResourceVersion = buildParameters.Parameters.BuildVersion;
-			patchManifest.EnableAddressable = buildParameters.Parameters.EnableAddressable;
-			patchManifest.OutputNameStyle = (int)buildParameters.Parameters.OutputNameStyle;
-			patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
+			patchManifest.EnableAddressable = buildMapContext.EnableAddressable;
+			patchManifest.OutputNameStyle = (int)buildParameters.OutputNameStyle;
+			patchManifest.PackageName = buildParameters.PackageName;
+			patchManifest.PackageVersion = buildParameters.PackageVersion;
 			patchManifest.BundleList = GetAllPatchBundle(context);
 			patchManifest.AssetList = GetAllPatchAsset(context, patchManifest);
 
 			// 更新Unity内置资源包的引用关系
-			if (buildParameters.Parameters.BuildPipeline == EBuildPipeline.ScriptableBuildPipeline)
+			if (buildParameters.BuildPipeline == EBuildPipeline.ScriptableBuildPipeline)
 			{
-				var buildResultContext = context.GetContextObject<TaskBuilding_SBP.BuildResultContext>();
-				UpdateBuiltInBundleReference(patchManifest, buildResultContext.Results);
+				if (buildParameters.BuildMode == EBuildMode.IncrementalBuild)
+				{
+					var buildResultContext = context.GetContextObject<TaskBuilding_SBP.BuildResultContext>();
+					UpdateBuiltInBundleReference(patchManifest, buildResultContext.Results);
+				}
+			}
+			
+			// 创建补丁清单文件
+			string packageHash = string.Empty;
+			{
+				string fileName = YooAssetSettingsData.GetPatchManifestFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string filePath = $"{pipelineOutputDirectory}/{fileName}";
+				PatchManifest.Serialize(filePath, patchManifest);
+				packageHash = HashUtility.FileMD5(filePath);
+				BuildRunner.Log($"创建补丁清单文件：{filePath}");
 			}
 
-			// 创建补丁清单文件
-			string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
-			BuildRunner.Log($"创建补丁清单文件：{manifestFilePath}");
-			PatchManifest.Serialize(manifestFilePath, patchManifest);
-
 			// 创建补丁清单哈希文件
-			string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(resourceVersion)}";
-			string manifestHash = HashUtility.FileMD5(manifestFilePath);
-			BuildRunner.Log($"创建补丁清单哈希文件：{manifestHashFilePath}");
-			FileUtility.CreateFile(manifestHashFilePath, manifestHash);
+			{
+				string fileName = YooAssetSettingsData.GetPatchManifestHashFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string filePath = $"{pipelineOutputDirectory}/{fileName}";		
+				FileUtility.CreateFile(filePath, packageHash);
+				BuildRunner.Log($"创建补丁清单哈希文件：{filePath}");
+			}
 
-			// 创建静态版本文件
-			string staticVersionFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettings.VersionFileName}";
-			string staticVersion = resourceVersion.ToString();
-			BuildRunner.Log($"创建静态版本文件：{staticVersionFilePath}");
-			FileUtility.CreateFile(staticVersionFilePath, staticVersion);
+			// 创建补丁清单版本文件
+			{
+				string fileName = YooAssetSettingsData.GetPatchManifestVersionFileName(buildParameters.PackageName);
+				string filePath = $"{pipelineOutputDirectory}/{fileName}";
+				FileUtility.CreateFile(filePath, buildParameters.PackageVersion);
+				BuildRunner.Log($"创建补丁清单版本文件：{filePath}");
+			}
 		}
 
 		/// <summary>
@@ -64,43 +78,58 @@ namespace YooAsset.Editor
 		/// </summary>
 		private List<PatchBundle> GetAllPatchBundle(BuildContext context)
 		{
-			var buildParameters = context.GetContextObject<BuildParametersContext>();
+			var buildParametersContext = context.GetContextObject<BuildParametersContext>();
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
 			var encryptionContext = context.GetContextObject<TaskEncryption.EncryptionContext>();
 
 			List<PatchBundle> result = new List<PatchBundle>(1000);
-
-			List<string> buildinTags = buildParameters.Parameters.GetBuildinTags();
 			foreach (var bundleInfo in buildMapContext.BundleInfos)
 			{
+				// NOTE：检测路径长度不要超过260字符。
+				string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
+				if (filePath.Length >= 260)
+					throw new Exception($"The output bundle name is too long {filePath.Length} chars : {filePath}");
+
 				var bundleName = bundleInfo.BundleName;
-				string fileHash = bundleInfo.FileHash;
-				string fileCRC = bundleInfo.FileCRC;
-				long fileSize = bundleInfo.FileSize;
+				string fileHash = GetBundleFileHash(bundleInfo, buildParametersContext);
+				string fileCRC = GetBundleFileCRC(bundleInfo, buildParametersContext);
+				long fileSize = GetBundleFileSize(bundleInfo, buildParametersContext);
 				string[] tags = buildMapContext.GetBundleTags(bundleName);
 				bool isEncrypted = encryptionContext.IsEncryptFile(bundleName);
-				bool isBuildin = IsBuildinBundle(tags, buildinTags);
 				bool isRawFile = bundleInfo.IsRawFile;
 
 				PatchBundle patchBundle = new PatchBundle(bundleName, fileHash, fileCRC, fileSize, tags);
-				patchBundle.SetFlagsValue(isEncrypted, isBuildin, isRawFile);
+				patchBundle.SetFlagsValue(isRawFile, isEncrypted);
 				result.Add(patchBundle);
 			}
-
 			return result;
 		}
-		private bool IsBuildinBundle(string[] bundleTags, List<string> buildinTags)
+		private string GetBundleFileHash(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
 		{
-			// 注意：没有任何分类标签的Bundle文件默认为内置文件
-			if (bundleTags.Length == 0)
-				return true;
+			var buildMode = buildParametersContext.Parameters.BuildMode;
+			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
+				return "00000000000000000000000000000000"; //32位
 
-			foreach (var tag in bundleTags)
-			{
-				if (buildinTags.Contains(tag))
-					return true;
-			}
-			return false;
+			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
+			return HashUtility.FileMD5(filePath);
+		}
+		private string GetBundleFileCRC(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
+		{
+			var buildMode = buildParametersContext.Parameters.BuildMode;
+			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
+				return "00000000"; //8位
+
+			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
+			return HashUtility.FileCRC32(filePath);
+		}
+		private long GetBundleFileSize(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
+		{
+			var buildMode = buildParametersContext.Parameters.BuildMode;
+			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
+				return 0;
+
+			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
+			return FileUtility.GetFileSize(filePath);
 		}
 
 		/// <summary>
@@ -108,7 +137,6 @@ namespace YooAsset.Editor
 		/// </summary>
 		private List<PatchAsset> GetAllPatchAsset(BuildContext context, PatchManifest patchManifest)
 		{
-			var buildParameters = context.GetContextObject<BuildParametersContext>();
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
 
 			List<PatchAsset> result = new List<PatchAsset>(1000);
@@ -118,7 +146,7 @@ namespace YooAsset.Editor
 				foreach (var assetInfo in assetInfos)
 				{
 					PatchAsset patchAsset = new PatchAsset();
-					if (buildParameters.Parameters.EnableAddressable)
+					if (buildMapContext.EnableAddressable)
 						patchAsset.Address = assetInfo.Address;
 					else
 						patchAsset.Address = string.Empty;

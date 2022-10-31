@@ -17,11 +17,13 @@ namespace YooAsset
 			}
 		}
 
-		public BundledAssetProvider(string providerGUID, AssetInfo assetInfo) : base(providerGUID, assetInfo)
+		public BundledAssetProvider(AssetSystemImpl impl, string providerGUID, AssetInfo assetInfo) : base(impl, providerGUID, assetInfo)
 		{
 		}
 		public override void Update()
 		{
+			DebugRecording();
+
 			if (IsDone)
 				return;
 
@@ -66,6 +68,7 @@ namespace YooAsset
 						throw new System.Exception("Should never get here !");
 					Status = EStatus.Fail;
 					LastError = $"The bundle {OwnerBundle.MainBundleInfo.Bundle.BundleName} has been destroyed by unity bugs !";
+					YooLogger.Error(LastError);
 					InvokeCompletion();
 					return;
 				}

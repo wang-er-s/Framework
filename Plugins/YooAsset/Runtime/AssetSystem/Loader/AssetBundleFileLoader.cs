@@ -14,7 +14,7 @@ namespace YooAsset
 			Download,
 			CheckDownload,
 			LoadFile,
-			CheckFile,
+			CheckLoadFile,
 			Done,
 		}
 
@@ -23,10 +23,10 @@ namespace YooAsset
 		private bool _isWaitForAsyncComplete = false;
 		private bool _isShowWaitForAsyncError = false;
 		private DownloaderBase _downloader;
-		private AssetBundleCreateRequest _cacheRequest;
+		private AssetBundleCreateRequest _createRequest;
 
 
-		public AssetBundleFileLoader(BundleInfo bundleInfo) : base(bundleInfo)
+		public AssetBundleFileLoader(AssetSystemImpl impl, BundleInfo bundleInfo) : base(impl, bundleInfo)
 		{
 		}
 
@@ -105,44 +105,44 @@ namespace YooAsset
 				// Load assetBundle file
 				if (MainBundleInfo.Bundle.IsEncrypted)
 				{
-					if (AssetSystem.DecryptionServices == null)
+					if (Impl.DecryptionServices == null)
 						throw new Exception($"{nameof(AssetBundleFileLoader)} need {nameof(IDecryptionServices)} : {MainBundleInfo.Bundle.BundleName}");
 
 					DecryptionFileInfo fileInfo = new DecryptionFileInfo();
 					fileInfo.BundleName = MainBundleInfo.Bundle.BundleName;
 					fileInfo.FileHash = MainBundleInfo.Bundle.FileHash;
-					ulong offset = AssetSystem.DecryptionServices.GetFileOffset(fileInfo);
+					ulong offset = Impl.DecryptionServices.GetFileOffset(fileInfo);
 					if (_isWaitForAsyncComplete)
 						CacheBundle = AssetBundle.LoadFromFile(_fileLoadPath, 0, offset);
 					else
-						_cacheRequest = AssetBundle.LoadFromFileAsync(_fileLoadPath, 0, offset);
+						_createRequest = AssetBundle.LoadFromFileAsync(_fileLoadPath, 0, offset);
 				}
 				else
 				{
 					if (_isWaitForAsyncComplete)
 						CacheBundle = AssetBundle.LoadFromFile(_fileLoadPath);
 					else
-						_cacheRequest = AssetBundle.LoadFromFileAsync(_fileLoadPath);
+						_createRequest = AssetBundle.LoadFromFileAsync(_fileLoadPath);
 				}
-				_steps = ESteps.CheckFile;
+				_steps = ESteps.CheckLoadFile;
 			}
 
 			// 4. 检测AssetBundle加载结果
-			if (_steps == ESteps.CheckFile)
+			if (_steps == ESteps.CheckLoadFile)
 			{
-				if (_cacheRequest != null)
+				if (_createRequest != null)
 				{
 					if (_isWaitForAsyncComplete)
 					{
 						// 强制挂起主线程（注意：该操作会很耗时）
 						YooLogger.Warning("Suspend the main thread to load unity bundle.");
-						CacheBundle = _cacheRequest.assetBundle;
+						CacheBundle = _createRequest.assetBundle;
 					}
 					else
 					{
-						if (_cacheRequest.isDone == false)
+						if (_createRequest.isDone == false)
 							return;
-						CacheBundle = _cacheRequest.assetBundle;
+						CacheBundle = _createRequest.assetBundle;
 					}
 				}
 
@@ -159,7 +159,7 @@ namespace YooAsset
 					if (MainBundleInfo.LoadMode == BundleInfo.ELoadMode.LoadFromCache)
 					{
 						string cacheLoadPath = MainBundleInfo.Bundle.CachedFilePath;
-						if (CacheSystem.VerifyBundle(MainBundleInfo.Bundle, EVerifyLevel.High) == false)
+						if (CacheSystem.VerifyBundle(MainBundleInfo.Bundle, EVerifyLevel.High) != EVerifyResult.Succeed)
 						{
 							if (File.Exists(cacheLoadPath))
 							{

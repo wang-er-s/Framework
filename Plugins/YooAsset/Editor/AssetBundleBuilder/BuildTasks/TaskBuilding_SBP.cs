@@ -58,11 +58,12 @@ namespace YooAsset.Editor
 		/// </summary>
 		private void CopyRawBundle(BuildMapContext buildMapContext, BuildParametersContext buildParametersContext)
 		{
+			string pipelineOutputDirectory = buildParametersContext.GetPipelineOutputDirectory();
 			foreach (var bundleInfo in buildMapContext.BundleInfos)
 			{
 				if (bundleInfo.IsRawFile)
 				{
-					string dest = $"{buildParametersContext.PipelineOutputDirectory}/{bundleInfo.BundleName}";
+					string dest = $"{pipelineOutputDirectory}/{bundleInfo.BundleName}";
 					foreach (var buildAsset in bundleInfo.BuildinAssets)
 					{
 						if (buildAsset.IsRawAsset)
@@ -77,15 +78,13 @@ namespace YooAsset.Editor
 		/// </summary>
 		private void UpdateBuildBundleInfo(BuildMapContext buildMapContext, BuildParametersContext buildParametersContext, BuildResultContext buildResult)
 		{
+			string pipelineOutputDirectory = buildParametersContext.GetPipelineOutputDirectory();
 			foreach (var bundleInfo in buildMapContext.BundleInfos)
 			{
-				string filePath = $"{buildParametersContext.PipelineOutputDirectory}/{bundleInfo.BundleName}";
-				bundleInfo.FileHash = HashUtility.FileMD5(filePath);
-				bundleInfo.FileCRC = HashUtility.FileCRC32(filePath);
-				bundleInfo.FileSize = FileUtility.GetFileSize(filePath);
 				if (bundleInfo.IsRawFile)
 				{
-					bundleInfo.ContentHash = bundleInfo.FileHash;
+					string filePath = $"{pipelineOutputDirectory}/{bundleInfo.BundleName}";
+					bundleInfo.ContentHash = HashUtility.FileMD5(filePath);
 				}
 				else
 				{

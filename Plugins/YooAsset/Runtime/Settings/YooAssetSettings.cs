@@ -22,9 +22,9 @@ namespace YooAsset
 
 
 		/// <summary>
-		/// 补丁清单文件版本
+		/// 补丁清单文件格式版本
 		/// </summary>
-		public const string PatchManifestFileVersion = "1.2.2";
+		public const string PatchManifestFileVersion = "1.3.3";
 
 		/// <summary>
 		/// 构建输出文件夹名称
@@ -37,19 +37,26 @@ namespace YooAsset
 		public const string ReportFileName = "BuildReport";
 
 		/// <summary>
-		/// 静态版本文件
-		/// </summary>
-		public const string VersionFileName = "StaticVersion.bytes";
-
-		/// <summary>
 		/// Unity着色器资源包名称
 		/// </summary>
 		public const string UnityShadersBundleName = "unityshaders";
 
 		/// <summary>
+		/// 内置资源目录名称
+		/// </summary>
+		public const string StreamingAssetsBuildinFolder = "BuildinFiles";
+
+
+		/// <summary>
+		/// 忽略的文件类型
+		/// </summary>
+		public static readonly string[] IgnoreFileExtensions =
+			{ "", ".so", ".dll", ".cs", ".js", ".boo", ".meta", ".cginc" };
+
+		/// <summary>
 		/// PlayMode
 		/// </summary>
 		/// <returns></returns>
-		public YooAssets.EPlayMode PlayMode = YooAssets.EPlayMode.EditorSimulateMode;
+		public YooAsset.EPlayMode PlayMode = YooAsset.EPlayMode.EditorSimulateMode;
 	}
 }
