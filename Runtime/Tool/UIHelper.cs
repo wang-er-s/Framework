@@ -57,15 +57,5 @@ namespace Framework
 
             return null;
         }
-
-        public static bool TouchInUI()
-        {
-            #if IPHONE || ANDROID
-            			if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return true;
-            #else
-                    if (EventSystem.current.IsPointerOverGameObject()) return true;
-            #endif
-            return false;
-        }
     }
 }

@@ -13,7 +13,7 @@ namespace Framework
     /// <summary>
     /// 有限状态机管理器。
     /// </summary>
-    public sealed class FsmManager : IGameModule
+    public sealed class FsmManager : Singleton<FsmManager>, IGameModule
     {
         private readonly Dictionary<TypeNamePair, FsmBase> Fsms;
         private readonly List<FsmBase> TempFsms;
@@ -26,12 +26,6 @@ namespace Framework
             Fsms = new Dictionary<TypeNamePair, FsmBase>();
             TempFsms = new List<FsmBase>();
         }
-
-        /// <summary>
-        /// 获取游戏框架模块优先级。
-        /// </summary>
-        /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        internal int Priority => 1;
 
         /// <summary>
         /// 获取有限状态机数量。
@@ -70,7 +64,7 @@ namespace Framework
                     continue;
                 }
 
-                fsm.Update();
+                fsm.Update(deltaTime);
             }
         }
 

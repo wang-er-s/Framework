@@ -22,11 +22,12 @@
  * SOFTWARE.
  */
 
+using System;
 using System.Collections.Generic;
 
 namespace Framework
 {
-    public class Context
+    public class Context : IDisposable
     {
         private static ApplicationContext context = new ApplicationContext();
         private static Dictionary<string, Context> contexts = new Dictionary<string, Context>();
@@ -74,8 +75,11 @@ namespace Framework
 
         public static void RemoveContext(string key)
         {
-            if (contexts.ContainsKey(key))
+            if (contexts.TryGetValue(key,out var context))
+            {
+                context.Dispose();
                 contexts.Remove(key);
+            }
         }
         
         private bool _innerContainer;
@@ -158,6 +162,11 @@ namespace Framework
             object v = this._attributes[name];
             this._attributes.Remove(name);
             return (T)v;
+        }
+
+        public virtual void Dispose()
+        {
+            
         }
     }
 }

@@ -101,7 +101,7 @@ namespace Framework
         /// <summary>
         /// 有限状态机轮询。
         /// </summary>
-        internal abstract void Update();
+        internal abstract void Update(float deltaTime);
 
         /// <summary>
         /// 关闭并清理有限状态机。

@@ -33,6 +33,12 @@ namespace Framework
         public static Type DefaultResType = typeof(ResourcesRes);
         public abstract string HostServerURL { get; set; }
         public abstract string FallbackHostServerURL { get; set; }
+        public static IRes Default { get; protected set; }
+
+        internal static void SetDefaultRes(IRes res)
+        {
+            Default = res;
+        }
 
         public static IRes Create()
         {

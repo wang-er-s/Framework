@@ -502,14 +502,14 @@ namespace Framework
         /// 有限状态机轮询。
         /// </summary>
 
-        internal override void Update()
+        internal override void Update(float deltaTime)
         {
             if (m_CurrentState == null)
             {
                 return;
             }
 
-            m_CurrentState.OnUpdate(this);
+            m_CurrentState.OnUpdate(this, deltaTime);
         }
 
         /// <summary>

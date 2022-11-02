@@ -42,7 +42,7 @@ namespace Framework
         /// 有限状态机状态轮询时调用。
         /// </summary>
         /// <param name="fsm">有限状态机引用。</param>
-        protected internal virtual void OnUpdate(IFsm<T> fsm)
+        protected internal virtual void OnUpdate(IFsm<T> fsm, float deltaTime)
         {
         }
 

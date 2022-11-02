@@ -88,21 +88,6 @@ namespace Framework
             return random.Next(2) == 0;
         }
 
-        public static T RandomArray<T>(this T[] array)
-        {
-            return array[RandomNumber(0, array.Length)];
-        }
-
-        public static int RandomArray_Len2(this int[] array)
-        {
-            return RandomHelper.RandomNumber(array[0], array[1]);
-        }
-
-        public static T RandomArray<T>(this List<T> array)
-        {
-            return array[RandomNumber(0, array.Count)];
-        }
-
         /// <summary>
         /// 打乱数组
         /// </summary>
