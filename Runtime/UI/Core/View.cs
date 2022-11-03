@@ -91,7 +91,7 @@ namespace Framework
             if (vm == null || ViewModel == vm) return;
             ViewModel = vm;
             Binding.Reset();
-            Res.Release();
+            Res.Dispose();
             if (ViewModel != null)
             {
                 OnVmChange();
@@ -183,7 +183,7 @@ namespace Framework
         public void Dispose()
         {
             Hide();
-            Res.Release();
+            Res.Dispose();
             OnClose();
             for (int i = 0; i < _subViews.Count; i++)
             {

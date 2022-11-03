@@ -200,8 +200,9 @@ namespace Framework
             }
         }
 
-        public override void Release()
+        public override void Dispose()
         {
+            if(handles.Count <= 0) return;
             foreach (var loadable in handles.Values)
             {
                 loadable?.Release();

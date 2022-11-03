@@ -505,7 +505,7 @@ namespace Framework
             StopSingleSound();
             StopAllMultipleSound();
             StopAllWorldSound();
-            res.Release();
+            res.Dispose();
         }
     }
 }

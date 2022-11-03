@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    public interface IRes
+    public interface IRes : IDisposable
     {
         IAsyncResult Init();
         string HostServerURL { get; set; }
@@ -29,8 +30,6 @@ namespace Framework
         IProgressResult<float, string> CheckDownloadSize();
         IProgressResult<DownloadProgress> DownloadAssets();
 
-        void Release();
-        
         GameObject Instantiate(string key, Transform parent = null, bool instantiateInWorldSpace = false);
         
         T LoadAsset<T>(string key) where T : Object;

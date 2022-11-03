@@ -64,7 +64,7 @@ namespace Framework
             return obj;
         }
 
-        public override void Release()
+        public override void Dispose()
         {
             foreach (var handle in _handles)
             {

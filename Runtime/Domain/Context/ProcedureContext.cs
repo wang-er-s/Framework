@@ -13,7 +13,7 @@ namespace Framework
 
         public override void Dispose()
         {
-            Res.Release();
+            Res.Dispose();
         }
     }
 }

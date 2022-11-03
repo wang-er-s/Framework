@@ -52,7 +52,7 @@ namespace Framework
         public abstract IProgressResult<float,string> CheckDownloadSize();
         public abstract IProgressResult<DownloadProgress> DownloadAssets();
         protected abstract IEnumerator loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
-        public abstract void Release();
+        public abstract void Dispose();
         
         public IProgressResult<float,string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true)
         {
@@ -184,5 +184,7 @@ namespace Framework
 #endif
             }
         }
+
+   
     }
 }

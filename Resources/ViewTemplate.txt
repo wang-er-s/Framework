@@ -1,3 +1,4 @@
+using Framework;
 
 [UI("#PrefabPath")]
 public class #ClassName : View

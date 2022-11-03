@@ -76,7 +76,7 @@ namespace Framework
             var content = (await res.LoadAssetAsync<TextAsset>(path)).text;
             @params[0] = content;
             method.Invoke(null, @params);
-            res.Release();
+            res.Dispose();
         }
     }
 }
