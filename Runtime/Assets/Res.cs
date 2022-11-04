@@ -88,10 +88,10 @@ namespace Framework
             return result;
         }
 
-        public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 position, Quaternion rotation,
+        public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 localPosition, Quaternion localRotation,
             Transform parent = null) where T : Component
         {
-            var progress = InstantiateAsync(key, position, rotation, parent);
+            var progress = InstantiateAsync(key, localPosition, localRotation, parent);
             ProgressResult<float, T> result = new ProgressResult<float, T>(true);
             result.Callbackable().OnCallback((progressResult =>
             {
@@ -133,8 +133,8 @@ namespace Framework
             return null;
         }
 
-        public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 position,
-            Quaternion rotation,
+        public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 localPosition,
+            Quaternion localRotation,
             Transform parent = null)
         {
             ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>(true);
@@ -144,8 +144,8 @@ namespace Framework
                 if(resultProgress.IsCancelled) return;
                 var trans = Object.Instantiate(result.Result).transform;
                 trans.SetParent(parent);
-                trans.localPosition = position;
-                trans.localRotation = rotation;
+                trans.localPosition = localPosition;
+                trans.localRotation = localRotation;
                 resultProgress.SetResult(trans.gameObject);
             }));
             loadProgress.Callbackable().OnProgressCallback(resultProgress.UpdateProgress);

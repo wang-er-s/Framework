@@ -254,6 +254,13 @@ public static class IEnumerableExtension
     {
         return list[0];
     }
+
+    public static T RemoveLast<T>(this IList<T> list)
+    {
+        T result = list.Last();
+        list.RemoveAt(list.Count - 1);
+        return result;
+    }
     
     public static void Swap<T>(this IList<T> list, int i, int j)
     {

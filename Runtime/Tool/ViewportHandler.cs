@@ -38,6 +38,13 @@ namespace Framework
         public Vector3 BottomLeft { get; private set; }
 
         public Vector3 TopRight { get; private set; }
+        public Vector3 MidCenter { get; private set; }
+        public Vector3 BottomCenter => new Vector3(MidCenter.x, BottomLeft.y, BottomLeft.z);
+        public Vector3 BottomRight => new Vector3(TopRight.x, BottomLeft.y, BottomLeft.z);
+        public Vector3 MiddleLeft => new Vector3(BottomLeft.x, MidCenter.y, BottomLeft.z);
+        public Vector3 MiddleRight => new Vector3(TopRight.x, MidCenter.y, BottomLeft.z);
+        public Vector3 TopLeft => new Vector3(BottomLeft.x, TopRight.y, BottomLeft.z);
+        public Vector3 TopCenter => new Vector3(MidCenter.x, TopRight.y, BottomLeft.z);
 
         #endregion
 
@@ -55,7 +62,10 @@ namespace Framework
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
+            {
+                Instance = this;
                 ComputeResolution();
+            }
 #endif
         }
 
@@ -104,10 +114,12 @@ namespace Framework
                 TopRight = camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Depth)) -
                            new Vector3(0, 0, cameraZ);
             }
+
+            MidCenter = BottomLeft + (TopRight - BottomLeft) / 2;
         }
 
         #endregion
-
+        
         [Serializable]
         private enum Constraint
         {

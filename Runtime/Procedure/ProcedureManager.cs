@@ -64,6 +64,11 @@ namespace Framework
             m_ProcedureFsm.Start(procedureType);
         }
 
+        public void StartProcedure(int tag)
+        {
+            StartProcedure(ClassDataMap[tag].Type);
+        }
+
         /// <summary>
         /// 获取流程。
         /// </summary>
