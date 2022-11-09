@@ -9,6 +9,7 @@ namespace Framework
 {
     public class UIManager : GameModuleWithAttribute<UIManager, UIAttribute, Type>
     {
+        public static UIManager Ins => SingletonProperty<UIManager>.Instance;
         private IRes _res;
 
         public Canvas Canvas { get; private set; } 

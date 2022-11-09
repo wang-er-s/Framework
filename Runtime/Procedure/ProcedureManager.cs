@@ -4,24 +4,10 @@ namespace Framework
 {
     public class ProcedureManager : GameModuleWithAttribute<ProcedureManager, ProcedureAttribute, int>
     {
-        private FsmManager m_FsmManager;
+        public static ProcedureManager Ins => SingletonProperty<ProcedureManager>.Instance;
+        private FsmManager m_FsmManager => FsmManager.Ins;
         private IFsm<ProcedureManager> m_ProcedureFsm;
 
-        /// <summary>
-        /// 初始化流程管理器。
-        /// </summary>
-        /// <param name="fsmManager">有限状态机管理器。</param>
-        /// <param name="procedures">流程管理器包含的流程。</param>
-        public void Initialize(FsmManager fsmManager)
-        {
-            if (fsmManager == null)
-            {
-                throw new Exception("FSM manager is invalid.");
-            }
-
-            m_FsmManager = fsmManager;
-            
-        }
 
         public override void Init()
         {
@@ -47,6 +33,7 @@ namespace Framework
                 throw new Exception("You must initialize procedure first.");
             }
 
+            
             m_ProcedureFsm.Start<T>();
         }
 
@@ -67,6 +54,12 @@ namespace Framework
         public void StartProcedure(int tag)
         {
             StartProcedure(ClassDataMap[tag].Type);
+        }
+
+        public void ChangeState<T>() where T : ProcedureBase
+        {
+            var tmpFsm = (Fsm<ProcedureManager>) m_ProcedureFsm;
+            tmpFsm.ChangeState<T>();
         }
 
         /// <summary>

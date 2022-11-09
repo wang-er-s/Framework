@@ -407,7 +407,7 @@ namespace Framework
 
         object IFsm<T>.GetData(string name)
         {
-            throw new NotImplementedException();
+            return GetData(name);
         }
 
         /// <summary>

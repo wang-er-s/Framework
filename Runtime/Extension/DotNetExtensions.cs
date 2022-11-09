@@ -271,7 +271,7 @@ public static class IEnumerableExtension
     
     public static RecyclableList<T> RandomSort<T>(this IList<T> list)
     {
-        RecyclableList<T> result = RecyclableList<T>.Create(list);
+        RecyclableList<T> result = RecyclableList<T>.Create(list, list.Count);
         System.Random rnd = new System.Random();
         int n = list.Count;
         while (n > 1)

@@ -13,8 +13,9 @@ namespace Framework
     /// <summary>
     /// 有限状态机管理器。
     /// </summary>
-    public sealed class FsmManager : Singleton<FsmManager>, IGameModule
+    public sealed class FsmManager : IGameModule
     {
+        public static FsmManager Ins => SingletonProperty<FsmManager>.Instance;
         private readonly Dictionary<TypeNamePair, FsmBase> Fsms;
         private readonly List<FsmBase> TempFsms;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -267,6 +268,7 @@ namespace Framework.Editor
             typeof(Toggle),
             typeof(Dropdown),
             typeof(Slider),
+            typeof(TMP_InputField)
         };
 
         class _uiMark

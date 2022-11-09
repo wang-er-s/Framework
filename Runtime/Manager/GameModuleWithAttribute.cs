@@ -32,10 +32,9 @@ namespace Framework
         void CheckType(Type type);
     }
 
-    public abstract class GameModuleWithAttribute<T,V,I> : Singleton<T>, IGameModuleWithAttribute where T : GameModuleWithAttribute<T,V,I> 
+    public abstract class GameModuleWithAttribute<T,V,I> : IGameModuleWithAttribute where T : GameModuleWithAttribute<T,V,I> 
         where V : ManagerAttribute
     {
-        
         protected Dictionary<I, ClassData> ClassDataMap { get; } = new Dictionary<I, ClassData>();
         private PropertyInfo _indexProperty;
         private BindingFlags _flags = BindingFlags.Instance | BindingFlags.Public;

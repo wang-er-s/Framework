@@ -8,6 +8,7 @@ namespace Framework
 {
     public class ConfigManager : GameModuleWithAttribute<ConfigManager, ConfigAttribute, string>
     {
+        public static ConfigManager Ins => SingletonProperty<ConfigManager>.Instance;
         private object[] @params = new object[1];
         private ProgressResult<float> asyncResult;
         public IProgressResult<float> LoadAsync => asyncResult;

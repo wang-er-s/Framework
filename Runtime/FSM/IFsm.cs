@@ -145,6 +145,8 @@ namespace Framework
         /// <param name="name">有限状态机数据名称。</param>
         /// <returns>要获取的有限状态机数据。</returns>
         object GetData(string name);
+        
+        TData GetData<TData>(string name);
 
         /// <summary>
         /// 设置有限状态机数据。
