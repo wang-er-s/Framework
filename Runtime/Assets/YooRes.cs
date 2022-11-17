@@ -18,6 +18,12 @@ namespace Framework
             return Executors.RunOnCoroutine(init);
         }
 
+        public YooRes()
+        {
+            if (YooAssets.IsInitialize)
+                defaultPackage = YooAssets.GetAssetsPackage("DefaultPackage");
+        }
+
         private IEnumerator init(IPromise promise)
         {
             YooAssets.Initialize();

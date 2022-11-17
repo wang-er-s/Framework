@@ -31,6 +31,7 @@ namespace Framework
     {
         private static ApplicationContext context = new ApplicationContext();
         private static Dictionary<string, Context> contexts = new Dictionary<string, Context>();
+        public event Action OnDispose;
         public static ApplicationContext GetApplicationContext()
         {
             return Context.context;
@@ -166,7 +167,7 @@ namespace Framework
 
         public virtual void Dispose()
         {
-            
+            OnDispose?.Invoke();
         }
     }
 }

@@ -11,6 +11,8 @@ namespace YooAsset
 		private static bool _isInitialize = false;
 		private static readonly List<AssetsPackage> _packages = new List<AssetsPackage>();
 
+		public static bool IsInitialize => _isInitialize;
+
 		/// <summary>
 		/// 初始化资源系统
 		/// </summary>

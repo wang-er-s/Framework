@@ -202,34 +202,6 @@ namespace Framework
         }
 
         /// <summary>
-        /// 清理有限状态机。
-        /// </summary>
-        public void Clear()
-        {
-            if (m_CurrentState != null)
-            {
-                m_CurrentState.OnLeave(this, true);
-            }
-
-            foreach (KeyValuePair<Type, FsmState<T>> state in m_States)
-            {
-                state.Value.OnDestroy(this);
-            }
-
-            Name = null;
-            m_Owner = null;
-            m_States.Clear();
-
-            if (m_Datas != null)
-            {
-                m_Datas.Clear();
-            }
-
-            m_CurrentState = null;
-            m_IsDestroyed = true;
-        }
-
-        /// <summary>
         /// 开始有限状态机。
         /// </summary>
         /// <typeparam name="TState">要开始的有限状态机状态类型。</typeparam>
@@ -517,6 +489,27 @@ namespace Framework
         /// </summary>
         internal override void Shutdown()
         {
+            if (m_CurrentState != null)
+            {
+                m_CurrentState.OnLeave(this, true);
+            }
+
+            foreach (KeyValuePair<Type, FsmState<T>> state in m_States)
+            {
+                state.Value.OnDestroy(this);
+            }
+
+            Name = null;
+            m_Owner = null;
+            m_States.Clear();
+
+            if (m_Datas != null)
+            {
+                m_Datas.Clear();
+            }
+
+            m_CurrentState = null;
+            m_IsDestroyed = true;
         }
 
         /// <summary>
