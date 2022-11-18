@@ -241,6 +241,7 @@ public static class IEnumerableExtension
 
     public static T GetRandomItem<T>(this IList<T> list, float min, float max)
     {
+        if (min > 1 || max > 1) throw new Exception("min max muse less or equal 1");
         int minIndex = (int)(min * list.Count);
         int maxIndex = (int)(max * list.Count);
         return list[UnityEngine.Random.Range(minIndex, maxIndex)];
@@ -250,15 +251,16 @@ public static class IEnumerableExtension
     {
         return UnityEngine.Random.Range(0, list.Count);
     }
-    
+
     public static int GetRandomIndex(this ICollection list, float min, float max)
     {
-        int minIndex = (int)(min * list.Count);
-        int maxIndex = (int)(max * list.Count);
+        if (min > 1 || max > 1) throw new Exception("min max muse less or equal 1");
+        int minIndex = (int) (min * list.Count);
+        int maxIndex = (int) (max * list.Count);
         return UnityEngine.Random.Range(minIndex, maxIndex);
-    } 
+    }
 
- public static T Last<T>(this IList<T> list)
+    public static T Last<T>(this IList<T> list)
     {
         return list[list.Count - 1];
     }
