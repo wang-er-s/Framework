@@ -239,10 +239,24 @@ public static class IEnumerableExtension
         return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
+    public static T GetRandomItem<T>(this IList<T> list, float min, float max)
+    {
+        int minIndex = (int)(min * list.Count);
+        int maxIndex = (int)(max * list.Count);
+        return list[UnityEngine.Random.Range(minIndex, maxIndex)];
+    }
+    
     public static int GetRandomIndex(this ICollection list)
     {
         return UnityEngine.Random.Range(0, list.Count);
     }
+    
+    public static int GetRandomIndex(this ICollection list, float min, float max)
+    {
+        int minIndex = (int)(min * list.Count);
+        int maxIndex = (int)(max * list.Count);
+        return UnityEngine.Random.Range(minIndex, maxIndex);
+    } 
 
  public static T Last<T>(this IList<T> list)
     {
