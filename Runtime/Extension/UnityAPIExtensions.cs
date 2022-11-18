@@ -1,8 +1,7 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Framework;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -606,17 +605,17 @@ public static class TransformExtension
         var transform = selfScript.transform;
 
         transform.Parent(null).LocalIdentity().LocalPositionIdentity().LocalRotationIdentity().LocalScaleIdentity()
-            .LocalPosition(Vector3.zero).LocalPosition(0, 0, 0).LocalPosition(0, 0).LocalPositionX(0).LocalPositionY(0)
-            .LocalPositionZ(0).LocalRotation(Quaternion.identity).LocalScale(Vector3.one).LocalScaleX(1.0f)
-            .LocalScaleY(1.0f).Identity().PositionIdentity().RotationIdentity().Position(Vector3.zero).PositionX(0)
-            .PositionY(0).PositionZ(0).Rotation(Quaternion.identity).DestroyAllChild().AsLastSibling().AsFirstSibling()
+            .SetLocalPosition(Vector3.zero).SetLocalPosition(0, 0, 0).SetLocalPosition(0, 0).SetLocalPositionX(0).SetLocalPositionY(0)
+            .SetLocalPositionZ(0).SetLocalRotation(Quaternion.identity).SetLocalScale(Vector3.one).SetLocalScaleX(1.0f)
+            .SetLocalScaleY(1.0f).Identity().PositionIdentity().RotationIdentity().Position(Vector3.zero).SetPositionX(0)
+            .SetPositionY(0).SetPositionZ(0).Rotation(Quaternion.identity).DestroyAllChild().AsLastSibling().AsFirstSibling()
             .SiblingIndex(0);
 
         selfScript.Parent(null).LocalIdentity().LocalPositionIdentity().LocalRotationIdentity().LocalScaleIdentity()
-            .LocalPosition(Vector3.zero).LocalPosition(0, 0, 0).LocalPosition(0, 0).LocalPositionX(0).LocalPositionY(0)
-            .LocalPositionZ(0).LocalRotation(Quaternion.identity).LocalScale(Vector3.one).LocalScaleX(1.0f)
-            .LocalScaleY(1.0f).Identity().PositionIdentity().RotationIdentity().Position(Vector3.zero).PositionX(0)
-            .PositionY(0).PositionZ(0).Rotation(Quaternion.identity).DestroyAllChild().AsLastSibling().AsFirstSibling()
+            .SetLocalPosition(Vector3.zero).SetLocalPosition(0, 0, 0).SetLocalPosition(0, 0).SetLocalPositionX(0).SetLocalPositionY(0)
+            .SetLocalPositionZ(0).SetLocalRotation(Quaternion.identity).SetLocalScale(Vector3.one).SetLocalScaleX(1.0f)
+            .SetLocalScaleY(1.0f).Identity().PositionIdentity().RotationIdentity().Position(Vector3.zero).SetPositionX(0)
+            .SetPositionY(0).SetPositionZ(0).Rotation(Quaternion.identity).DestroyAllChild().AsLastSibling().AsFirstSibling()
             .SiblingIndex(0);
     }
 
@@ -692,9 +691,9 @@ public static class TransformExtension
 
     #endregion
 
-    #region CETR003 LocalPosition
+    #region CETR003 SetLocalPosition
 
-    public static T LocalPosition<T>(this T selfComponent, Vector3 localPos) where T : Component
+    public static T SetLocalPosition<T>(this T selfComponent, Vector3 localPos) where T : Component
     {
         selfComponent.transform.localPosition = localPos;
         return selfComponent;
@@ -705,13 +704,13 @@ public static class TransformExtension
         return selfComponent.transform.localPosition;
     }
 
-    public static T LocalPosition<T>(this T selfComponent, float x, float y, float z) where T : Component
+    public static T SetLocalPosition<T>(this T selfComponent, float x, float y, float z) where T : Component
     {
         selfComponent.transform.localPosition = new Vector3(x, y, z);
         return selfComponent;
     }
 
-    public static T LocalPosition<T>(this T selfComponent, float x, float y) where T : Component
+    public static T SetLocalPosition<T>(this T selfComponent, float x, float y) where T : Component
     {
         mLocalPos = selfComponent.transform.localPosition;
         mLocalPos.x = x;
@@ -720,7 +719,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalPositionX<T>(this T selfComponent, float x) where T : Component
+    public static T SetLocalPositionX<T>(this T selfComponent, float x) where T : Component
     {
         mLocalPos = selfComponent.transform.localPosition;
         mLocalPos.x = x;
@@ -728,7 +727,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalPositionY<T>(this T selfComponent, float y) where T : Component
+    public static T SetLocalPositionY<T>(this T selfComponent, float y) where T : Component
     {
         mLocalPos = selfComponent.transform.localPosition;
         mLocalPos.y = y;
@@ -736,7 +735,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalPositionZ<T>(this T selfComponent, float z) where T : Component
+    public static T SetLocalPositionZ<T>(this T selfComponent, float z) where T : Component
     {
         mLocalPos = selfComponent.transform.localPosition;
         mLocalPos.z = z;
@@ -744,6 +743,21 @@ public static class TransformExtension
         return selfComponent;
     }
 
+    public static float GetLocalPositionX<T>(this T self) where T : Component
+    {
+        return self.transform.localPosition.x;
+    }
+    
+    public static float GetLocalPositionY<T>(this T self) where T : Component
+    {
+        return self.transform.localPosition.y;
+    }
+    
+    public static float GetLocalPositionZ<T>(this T self) where T : Component
+    {
+        return self.transform.localPosition.z;
+    } 
+    
     public static T LocalPositionIdentity<T>(this T selfComponent) where T : Component
     {
         selfComponent.transform.localPosition = Vector3.zero;
@@ -752,14 +766,14 @@ public static class TransformExtension
 
     #endregion
 
-    #region CETR004 LocalRotation
+    #region CETR004 SetLocalRotation
 
     public static Quaternion GetLocalRotation<T>(this T selfComponent) where T : Component
     {
         return selfComponent.transform.localRotation;
     }
 
-    public static T LocalRotation<T>(this T selfComponent, Quaternion localRotation) where T : Component
+    public static T SetLocalRotation<T>(this T selfComponent, Quaternion localRotation) where T : Component
     {
         selfComponent.transform.localRotation = localRotation;
         return selfComponent;
@@ -773,9 +787,9 @@ public static class TransformExtension
 
     #endregion
 
-    #region CETR005 LocalScale
+    #region CETR005 SetLocalScale
 
-    public static T LocalScale<T>(this T selfComponent, Vector3 scale) where T : Component
+    public static T SetLocalScale<T>(this T selfComponent, Vector3 scale) where T : Component
     {
         selfComponent.transform.localScale = scale;
         return selfComponent;
@@ -786,13 +800,13 @@ public static class TransformExtension
         return selfComponent.transform.localScale;
     }
 
-    public static T LocalScale<T>(this T selfComponent, float xyz) where T : Component
+    public static T SetLocalScale<T>(this T selfComponent, float xyz) where T : Component
     {
         selfComponent.transform.localScale = Vector3.one * xyz;
         return selfComponent;
     }
 
-    public static T LocalScale<T>(this T selfComponent, float x, float y, float z) where T : Component
+    public static T SetLocalScale<T>(this T selfComponent, float x, float y, float z) where T : Component
     {
         mScale = selfComponent.transform.localScale;
         mScale.x = x;
@@ -802,7 +816,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalScale<T>(this T selfComponent, float x, float y) where T : Component
+    public static T SetLocalScale<T>(this T selfComponent, float x, float y) where T : Component
     {
         mScale = selfComponent.transform.localScale;
         mScale.x = x;
@@ -811,7 +825,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalScaleX<T>(this T selfComponent, float x) where T : Component
+    public static T SetLocalScaleX<T>(this T selfComponent, float x) where T : Component
     {
         mScale = selfComponent.transform.localScale;
         mScale.x = x;
@@ -819,7 +833,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalScaleY<T>(this T selfComponent, float y) where T : Component
+    public static T SetLocalScaleY<T>(this T selfComponent, float y) where T : Component
     {
         mScale = selfComponent.transform.localScale;
         mScale.y = y;
@@ -827,12 +841,27 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T LocalScaleZ<T>(this T selfComponent, float z) where T : Component
+    public static T SetLocalScaleZ<T>(this T selfComponent, float z) where T : Component
     {
         mScale = selfComponent.transform.localScale;
         mScale.z = z;
         selfComponent.transform.localScale = mScale;
         return selfComponent;
+    }
+
+    public static float GetLocalScaleX<T>(this T self) where T : Component
+    {
+        return self.transform.localScale.x;
+    }
+    
+    public static float GetLocalScaleY<T>(this T self) where T : Component
+    {
+        return self.transform.localScale.y;
+    }
+    
+    public static float GetLocalScaleZ<T>(this T self) where T : Component
+    {
+        return self.transform.localScale.z;
     }
 
     public static T LocalScaleIdentity<T>(this T selfComponent) where T : Component
@@ -889,7 +918,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionX<T>(this T selfComponent, float x) where T : Component
+    public static T SetPositionX<T>(this T selfComponent, float x) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.x = x;
@@ -897,7 +926,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionX<T>(this T selfComponent, Func<float, float> xSetter) where T : Component
+    public static T SetPositionX<T>(this T selfComponent, Func<float, float> xSetter) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.x = xSetter(mPos.x);
@@ -905,7 +934,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionY<T>(this T selfComponent, float y) where T : Component
+    public static T SetPositionY<T>(this T selfComponent, float y) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.y = y;
@@ -913,7 +942,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionY<T>(this T selfComponent, Func<float, float> ySetter) where T : Component
+    public static T SetPositionY<T>(this T selfComponent, Func<float, float> ySetter) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.y = ySetter(mPos.y);
@@ -921,7 +950,7 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionZ<T>(this T selfComponent, float z) where T : Component
+    public static T SetPositionZ<T>(this T selfComponent, float z) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.z = z;
@@ -929,12 +958,27 @@ public static class TransformExtension
         return selfComponent;
     }
 
-    public static T PositionZ<T>(this T selfComponent, Func<float, float> zSetter) where T : Component
+    public static T SetPositionZ<T>(this T selfComponent, Func<float, float> zSetter) where T : Component
     {
         mPos = selfComponent.transform.position;
         mPos.z = zSetter(mPos.z);
         selfComponent.transform.position = mPos;
         return selfComponent;
+    }
+
+    public static float GetPositionX<T>(this T self) where T : Component
+    {
+        return self.transform.position.x;
+    }
+    
+    public static float GetPositionY<T>(this T self) where T : Component
+    {
+        return self.transform.position.y;
+    }
+    
+    public static float GetPositionZ<T>(this T self) where T : Component
+    {
+        return self.transform.position.z;
     }
 
     #endregion
@@ -1252,10 +1296,9 @@ public static class Vector3Extension
         return new Vector3(self.x, self.y, zValue);
     }
 }
-
 public static class Vector2Extension
 {
-    public static Vector2 GetRandomVector3(this Vector2 self, float floatRang)
+    public static Vector2 GetRandomVector2(this Vector2 self, float floatRang)
     {
         return new Vector2(
             UnityEngine.Random.Range(self.x - floatRang, self.x + floatRang),
@@ -1279,3 +1322,4 @@ public static class Vector2Extension
         return new Vector2(self.x, yValue);
     }
 }
+
