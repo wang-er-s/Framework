@@ -17,18 +17,21 @@ namespace Framework
 
         private static List<RecyclableList<T>> cache = new();
 
-        public static RecyclableList<T> Create(int count = 6)
+        public static RecyclableList<T> Create(int count = -1)
         {
             RecyclableList<T> result = null;
             if (cache.Count > 0)
             {
-                for (int i = 0; i < cache.Count; i++)
+                if (count != -1)
                 {
-                    if (cache[i].Capacity == count)
+                    for (int i = 0; i < cache.Count; i++)
                     {
-                        result = cache[i];
-                        cache.RemoveAt(i);
-                        break;
+                        if (cache[i].Capacity == count)
+                        {
+                            result = cache[i];
+                            cache.RemoveAt(i);
+                            break;
+                        }
                     }
                 }
 
@@ -39,7 +42,7 @@ namespace Framework
             }
 
             if (result == null)
-                result = new RecyclableList<T>(count);
+                result = new RecyclableList<T>(count == -1 ? 6 : count);
 
             result.disposed = false;
             return result;

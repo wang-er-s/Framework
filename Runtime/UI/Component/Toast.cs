@@ -95,7 +95,7 @@ namespace Framework
                     time += Time.deltaTime;
                     var delta = time / flyTime;
                     canvasGroup.alpha = 1 - delta;
-                    view.Go.transform.PositionY(oldPosY + delta * flyDis);
+                    view.Go.transform.SetPositionY(oldPosY + delta * flyDis);
                     yield return null;
                 }
             }

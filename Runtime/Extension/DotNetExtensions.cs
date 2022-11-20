@@ -853,8 +853,15 @@ public static class IOExtension
         return normalized;
     }
 
-    public static List<string> GetDirSubFilePathList(this string dirABSPath, bool isRecursive = true,
-        string suffix = "")
+    /// <summary>
+    /// 根据文件夹路径获取文件夹下所有的文件
+    /// </summary>
+    /// <param name="dirABSPath"></param>
+    /// <param name="isRecursive"></param>
+    /// <param name="pattern"></param>
+    /// <param name="filter">true会被剔除</param>
+    /// <returns></returns>
+    public static List<string> DirGetSubFiles(this string dirABSPath, bool isRecursive = true,string pattern = "*", Func<string, bool> filter = null)
     {
         var pathList = new List<string>();
         var di = new DirectoryInfo(dirABSPath);
@@ -862,48 +869,54 @@ public static class IOExtension
         {
             return pathList;
         }
-        var files = di.GetFiles();
-        foreach (var fi in files)
+
+        pathList.AddRange(di
+            .GetFiles(pattern, isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            .Select((f) => f.FullName));
+        if (filter != null)
         {
-            if (!string.IsNullOrEmpty(suffix))
+            for (int i = 0; i < pathList.Count; i++)
             {
-                if (!fi.FullName.EndsWith(suffix, System.StringComparison.CurrentCultureIgnoreCase))
+                if (filter(pathList[i]))
                 {
-                    continue;
+                    pathList.RemoveAt(i);
+                    i--;
                 }
-            }
-            pathList.Add(fi.FullName);
-        }
-        if (isRecursive)
-        {
-            var dirs = di.GetDirectories();
-            foreach (var d in dirs)
-            {
-                pathList.AddRange(GetDirSubFilePathList(d.FullName, isRecursive, suffix));
             }
         }
         return pathList;
     }
 
-    public static List<string> GetDirSubDirNameList(this string dirABSPath)
+    /// <summary>
+    /// 根据文件夹路径获取文件夹下所有文件夹
+    /// </summary>
+    /// <param name="dirABSPath"></param>
+    /// <param name="isRecursive"></param>
+    /// <param name="pattern"></param>
+    /// <param name="filter">true会被剔除</param>
+    /// <returns></returns>
+    public static List<string> DirGetSubDirs(this string dirABSPath, bool isRecursive = true, string pattern = "*", Func<string, bool> filter = null)
     {
+        var pathList = new List<string>();
         var di = new DirectoryInfo(dirABSPath);
-        var dirs = di.GetDirectories();
-        return dirs.Select(d => d.Name).ToList();
-    }
-
-    public static string GetFileName(this string absOrAssetsPath)
-    {
-        var name = absOrAssetsPath.Replace("\\", "/");
-        var lastIndex = name.LastIndexOf("/");
-        return lastIndex >= 0 ? name.Substring(lastIndex + 1) : name;
-    }
-
-    public static string GetFileNameWithoutExtend(this string absOrAssetsPath)
-    {
-        var fileName = GetFileName(absOrAssetsPath);
-        var lastIndex = fileName.LastIndexOf(".");
-        return lastIndex >= 0 ? fileName.Substring(0, lastIndex) : fileName;
+        if (!di.Exists)
+        {
+            return pathList;
+        }
+        var dirs = di.GetDirectories(pattern , isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        pathList.AddRange(dirs.Select((dir) => dir.FullName));
+        if (filter != null)
+        {
+            for (int i = 0; i < pathList.Count; i++)
+            {
+                if (filter(pathList[i]))
+                {
+                    pathList.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        return pathList;
     }
 
     public static string GetFileExtendName(this string absOrAssetsPath)
@@ -914,13 +927,6 @@ public static class IOExtension
             return absOrAssetsPath.Substring(lastIndex);
         }
         return string.Empty;
-    }
-
-    public static string GetDirPath(this string absOrAssetsPath)
-    {
-        var name = absOrAssetsPath.Replace("\\", "/");
-        var lastIndex = name.LastIndexOf("/");
-        return name.Substring(0, lastIndex + 1);
     }
 
     public static string GetLastDirName(this string absOrAssetsPath)
@@ -1230,6 +1236,11 @@ public static class ReflectionExtension
     {
         return method.GetCustomAttributes(attributeType, inherit).Length > 0;
     }
+    
+    public static bool IsOverride(this MethodInfo methodInfo)
+    {
+        return (methodInfo.GetBaseDefinition().DeclaringType != methodInfo.DeclaringType);
+    } 
 
     /// <summary>
     /// 获取第一个特性
