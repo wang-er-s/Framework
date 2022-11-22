@@ -9,6 +9,14 @@ using System.Text;
 using System.Collections;
 using Framework;
 
+public static class CommonExtension
+{
+    public static bool NearlySame(this float f1, float f2, float offset = 0.0001f)
+    {
+        return Math.Abs(f1 - f2) < offset;
+    }
+}
+
 public static class ClassExtension
 {
     public static void Example()

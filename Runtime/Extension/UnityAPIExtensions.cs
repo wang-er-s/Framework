@@ -79,6 +79,16 @@ public static class ColorExtension
     }
 
     /// <summary>
+    /// 颜色基本一直
+    /// </summary>
+    public static bool NearlySame(this Color c1, Color c2)
+    {
+        if (c1.r.NearlySame(c2.r) && c1.g.NearlySame(c2.g) && c1.b.NearlySame(c2.b) && c1.a.NearlySame(c2.a))
+            return true;
+        return false;
+    }
+
+    /// <summary>
     /// unity's color always new a color
     /// </summary>
     public static Color White = Color.white;
