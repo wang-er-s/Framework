@@ -919,6 +919,40 @@ public static class IOExtension
         return pathList;
     }
 
+    public static List<string> DirGetUnitySubDirs(this string dirRelativePath, bool isRecursive = true,
+        Func<string, bool> filter = null)
+    {
+        List<string> result = new();
+
+        void getSubDir(string path, List<string> result, bool recursive)
+        {
+            var tmpDir = UnityEditor.AssetDatabase.GetSubFolders(path);
+            result.AddRange(tmpDir);
+            if (recursive)
+            {
+                foreach (var dir in tmpDir)
+                {
+                    getSubDir(dir, result, recursive);
+                }
+            }
+        }
+        
+        getSubDir(dirRelativePath, result, isRecursive);
+        if (filter != null)
+        {
+            for (int i = 0; i < result.Count; i++)
+            {
+                if (filter(result[i]))
+                {
+                    result.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        return result;
+    }
+
     public static string GetFileExtendName(this string absOrAssetsPath)
     {
         var lastIndex = absOrAssetsPath.LastIndexOf(".");
