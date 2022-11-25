@@ -927,6 +927,8 @@ public static class IOExtension
         return pathList;
     }
 
+#if UNITY_EDITOR
+    
     public static List<string> DirGetUnitySubDirs(this string dirRelativePath, bool isRecursive = true,
         Func<string, bool> filter = null)
     {
@@ -961,6 +963,7 @@ public static class IOExtension
         return result;
     }
 
+#endif
     public static string GetFileExtendName(this string absOrAssetsPath)
     {
         var lastIndex = absOrAssetsPath.LastIndexOf(".");

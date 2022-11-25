@@ -29,17 +29,18 @@ namespace Framework
 
         public void ChangeProcedure<T>() where T : ProcedureBase
         {
-            if (!m_ProcedureFsm.IsRunning)
-            {
-                m_ProcedureFsm.Start<T>();
-                return;
-            }
             ChangeProcedure(typeof(T));
         }
 
         public void ChangeProcedure(Type type)
         {
-            var tmpFsm = (Fsm<ProcedureManager>) m_ProcedureFsm;
+            if (!m_ProcedureFsm.IsRunning)
+            {
+                m_ProcedureFsm.Start(type);
+                return;
+            }
+
+            var tmpFsm = (Fsm<ProcedureManager>)m_ProcedureFsm;
             tmpFsm.ChangeState(type);
         }
 
