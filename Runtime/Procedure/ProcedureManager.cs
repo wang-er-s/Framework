@@ -22,44 +22,25 @@ namespace Framework
             m_ProcedureFsm = m_FsmManager.CreateFsm(this, states);
         }
 
-        /// <summary>
-        /// 开始流程。
-        /// </summary>
-        /// <typeparam name="T">要开始的流程类型。</typeparam>
-        public void StartProcedure<T>() where T : ProcedureBase
+        public void ChangeProcedure(int tag)
         {
-            if (m_ProcedureFsm == null)
+            ChangeProcedure(ClassDataMap[tag].Type);
+        }
+
+        public void ChangeProcedure<T>() where T : ProcedureBase
+        {
+            if (!m_ProcedureFsm.IsRunning)
             {
-                throw new Exception("You must initialize procedure first.");
+                m_ProcedureFsm.Start<T>();
+                return;
             }
-
-            
-            m_ProcedureFsm.Start<T>();
+            ChangeProcedure(typeof(T));
         }
 
-        /// <summary>
-        /// 开始流程。
-        /// </summary>
-        /// <param name="procedureType">要开始的流程类型。</param>
-        public void StartProcedure(Type procedureType)
-        {
-            if (m_ProcedureFsm == null)
-            {
-                throw new Exception("You must initialize procedure first.");
-            }
-
-            m_ProcedureFsm.Start(procedureType);
-        }
-
-        public void StartProcedure(int tag)
-        {
-            StartProcedure(ClassDataMap[tag].Type);
-        }
-
-        public void ChangeState<T>() where T : ProcedureBase
+        public void ChangeProcedure(Type type)
         {
             var tmpFsm = (Fsm<ProcedureManager>) m_ProcedureFsm;
-            tmpFsm.ChangeState<T>();
+            tmpFsm.ChangeState(type);
         }
 
         /// <summary>

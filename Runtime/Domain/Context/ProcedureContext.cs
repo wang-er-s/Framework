@@ -3,17 +3,17 @@ namespace Framework
 {
     public class ProcedureContext : Context
     {
-        public IRes Res { get; }
+        private IRes res;
 
         public ProcedureContext()
         {
-            Res = Framework.Res.Create();
-            Framework.Res.SetDefaultRes(Res);
+            res = Res.Create();
+            Res.SetDefaultRes(res);
         }
 
         public override void Dispose()
         {
-            Res.Dispose();
+            res.Dispose();
         }
     }
 }

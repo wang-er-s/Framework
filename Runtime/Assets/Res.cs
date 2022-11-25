@@ -69,7 +69,7 @@ namespace Framework
         }
         
         public IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false) where T : Component
+            bool instantiateInWorldSpace = false)
         {
             var progress = InstantiateAsync(key, parent, instantiateInWorldSpace);
             ProgressResult<float, T> result = new ProgressResult<float, T>(true);
@@ -89,7 +89,7 @@ namespace Framework
         }
 
         public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 localPosition, Quaternion localRotation,
-            Transform parent = null) where T : Component
+            Transform parent = null)
         {
             var progress = InstantiateAsync(key, localPosition, localRotation, parent);
             ProgressResult<float, T> result = new ProgressResult<float, T>(true);

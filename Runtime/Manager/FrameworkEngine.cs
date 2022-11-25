@@ -4,11 +4,14 @@ using UnityEngine;
 
 namespace Framework
 {
-    public static class FrameworkEngine
+    public class FrameworkEngine : MonoBehaviour 
     {
+
         private static List<IGameModule> gameModules = new();
-        public static event Action<float> LogicUpdate;
-        public static event Action<float> RenderUpdate;
+        public static event Action<float> LogicUpdateEvent;
+        public static event Action<float> RenderUpdateEvent;
+        public static event Action<bool> ApplicationPauseEvent;
+        public static event Action<bool> ApplicationFocusEvent;
 
         private static float logicUpdateInterval = 0.03f;
         private static float renderUpdateInterval = 0.02f;
@@ -18,22 +21,28 @@ namespace Framework
 
         static FrameworkEngine()
         {
-            LogicUpdate += f => { };
-            RenderUpdate += f => { };
+            LogicUpdateEvent += f => { };
+            RenderUpdateEvent += f => { };
         }
-        
+
+        private static FrameworkEngine mono;
         public static void AddModule(IEnumerable<IGameModule> modules)
         {
+            if (mono == null)
+            {
+                mono = new GameObject(nameof(FrameworkEngine)).AddComponent<FrameworkEngine>();
+                DontDestroyOnLoad(mono.gameObject);
+            }
             gameModules.AddRange(modules);
         }
 
-        public static void Update()
+        public void Update()
         {
             logicTimer += Time.deltaTime;
             renderTimer += Time.deltaTime;
             if (logicTimer >= logicUpdateInterval)
             {
-                LogicUpdate(logicTimer);
+                LogicUpdateEvent(logicTimer);
                 for (int i = 0; i < gameModules.Count; i++)
                 {
                     gameModules[i].OnUpdate(logicTimer);
@@ -44,7 +53,7 @@ namespace Framework
 
             if (renderTimer >= renderUpdateInterval)
             {
-                RenderUpdate(renderTimer);
+                RenderUpdateEvent(renderTimer);
                 renderTimer = 0;
             }
         }
@@ -56,7 +65,16 @@ namespace Framework
                 gameModules[i].OnGUI();
             }
         }
-        
-        
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            ApplicationPauseEvent?.Invoke(pauseStatus);
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            ApplicationFocusEvent?.Invoke(hasFocus);
+        }
+
     }
 }

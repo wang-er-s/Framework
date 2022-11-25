@@ -14,7 +14,7 @@ using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    public class Timer
+    public class Timer : IClearable
     {
         #region Public Properties/Fields
 
@@ -527,5 +527,10 @@ namespace Framework
         }
 
         #endregion
+
+        public void Clear()
+        {
+            Cancel(); 
+        }
     }
 }

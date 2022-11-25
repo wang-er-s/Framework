@@ -13,10 +13,10 @@ namespace Framework
         IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object;
 
         IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
-            bool instantiateInWorldSpace = false) where T : Component;
+            bool instantiateInWorldSpace = false);
 
         IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 localPosition, Quaternion localRotation,
-            Transform parent = null) where T : Component;
+            Transform parent = null);
         
         IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 localPosition,
             Quaternion localRotation,
