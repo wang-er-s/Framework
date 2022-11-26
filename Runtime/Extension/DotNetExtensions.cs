@@ -242,12 +242,12 @@ public static class IEnumerableExtension
         }
     }
 
-    public static T GetRandomItem<T>(this IList<T> list)
+    public static T GetRandomItem<T>(this List<T> list)
     {
         return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
-    public static T GetRandomItem<T>(this IList<T> list, float min, float max)
+    public static T GetRandomItem<T>(this List<T> list, float min, float max)
     {
         if (min > 1 || max > 1) throw new Exception("min max muse less or equal 1");
         int minIndex = (int)(min * list.Count);
@@ -268,31 +268,50 @@ public static class IEnumerableExtension
         return UnityEngine.Random.Range(minIndex, maxIndex);
     }
 
-    public static T Last<T>(this IList<T> list)
+    public static T Last<T>(this List<T> list)
     {
         return list[list.Count - 1];
     }
 
-    public static T First<T>(this IList<T> list)
+    public static T First<T>(this List<T> list)
     {
         return list[0];
     }
 
-    public static T RemoveLast<T>(this IList<T> list)
+    public static T RemoveLast<T>(this List<T> list)
     {
         T result = list.Last();
         list.RemoveAt(list.Count - 1);
         return result;
     }
-    
-    public static void Swap<T>(this IList<T> list, int i, int j)
+
+    public static void RemoveRange<T>(this List<T> list,in ICollection<T> list2)
+    {
+        if (list2.Count <= 0) return;
+        using RecyclableList<T> tmpList = RecyclableList<T>.Create(list2.Count);
+        tmpList.AddRange(list2);
+        for (int i = 0; i < list.Count; i++)
+        {
+            int index;
+            if ((index = tmpList.IndexOf(list[i])) >= 0)
+            {
+                list.RemoveAt(i);
+                tmpList.RemoveAt(index);
+                i--;
+                if (tmpList.Count <= 0)
+                    return;
+            }
+        }
+    }
+
+    public static void Swap<T>(this List<T> list, int i, int j)
     {
         var temp = list[i];
         list[i] = list[j];
         list[j] = temp;
     }
     
-    public static RecyclableList<T> RandomSort<T>(this IList<T> list)
+    public static RecyclableList<T> RandomSort<T>(this List<T> list)
     {
         RecyclableList<T> result = RecyclableList<T>.Create(list, list.Count);
         System.Random rnd = new System.Random();
@@ -394,12 +413,12 @@ public static class IEnumerableExtension
     /// <param name="selfList"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    public static T TryGet<T>(this IList<T> selfList, int index)
+    public static T TryGet<T>(this List<T> selfList, int index)
     {
         return selfList.Count > index ? selfList[index] : default(T);
     }
 
-    public static bool TryRemove<T>(this IList<T> self, T value)
+    public static bool TryRemove<T>(this List<T> self, T value)
     {
         var index = self.IndexOf(value);
         if (index == -1) return false;
@@ -407,7 +426,7 @@ public static class IEnumerableExtension
         return true;
     }
 
-    public static bool TryAdd<T>(this IList<T> selfList, T value)
+    public static bool TryAdd<T>(this List<T> selfList, T value)
     {
         if (!selfList.Contains(value))
         {

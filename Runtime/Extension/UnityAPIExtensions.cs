@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Framework;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -1143,6 +1144,21 @@ public static class TransformExtension
         {
             tfChild.ActionRecursion(action);
         }
+    }
+
+    public static string GetRelativePath(this Component self, Component relativeTrans)
+    {
+        if (self == relativeTrans) return string.Empty;
+        StringBuilder sb = new StringBuilder();
+        sb.Append(self.name);
+        Transform curTrans = self.transform.parent;
+        while (curTrans != null && curTrans != relativeTrans)
+        {
+            sb.Insert(0, $"{curTrans.name}/");
+            curTrans = curTrans.parent;
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>
