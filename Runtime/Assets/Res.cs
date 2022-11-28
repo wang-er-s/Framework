@@ -125,12 +125,11 @@ namespace Framework
                 if(resultProgress.IsCancelled) return;
                 var go = Object.Instantiate(result.Result);
                 go.transform.SetParent(parent, instantiateInWorldSpace);
-                go.transform.LocalIdentity();
                 resultProgress.SetResult(go);
             }));
             loadProgress.Callbackable().OnProgressCallback(resultProgress.UpdateProgress);
             Executors.RunOnCoroutineNoReturn(loadAssetAsync(key, loadProgress));
-            return null;
+            return resultProgress;
         }
 
         public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 localPosition,

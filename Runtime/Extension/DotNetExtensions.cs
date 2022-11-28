@@ -11,7 +11,7 @@ using Framework;
 
 public static class CommonExtension
 {
-    public static bool NearlySame(this float f1, float f2, float offset = 0.0001f)
+    public static bool NearlyEqual(this float f1, float f2, float offset = 0.0001f)
     {
         return Math.Abs(f1 - f2) < offset;
     }

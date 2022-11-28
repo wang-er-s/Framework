@@ -84,7 +84,7 @@ public static class ColorExtension
     /// </summary>
     public static bool NearlySame(this Color c1, Color c2)
     {
-        if (c1.r.NearlySame(c2.r) && c1.g.NearlySame(c2.g) && c1.b.NearlySame(c2.b) && c1.a.NearlySame(c2.a))
+        if (c1.r.NearlyEqual(c2.r) && c1.g.NearlyEqual(c2.g) && c1.b.NearlyEqual(c2.b) && c1.a.NearlyEqual(c2.a))
             return true;
         return false;
     }
@@ -1297,6 +1297,11 @@ public static class Vector3Extension
             UnityEngine.Random.Range(self.x - floatRang, self.x + floatRang),
             UnityEngine.Random.Range(self.y - floatRang, self.y + floatRang),
             UnityEngine.Random.Range(self.z - floatRang, self.z + floatRang));
+    }
+
+    public static bool NearEqual(this Vector3 self, Vector3 other)
+    {
+        return self.x.NearlyEqual(other.x) && self.y.NearlyEqual(other.y) && self.z.NearlyEqual(other.z);
     }
 
     public static Vector3 SetX(this Vector3 self, float xValue)
