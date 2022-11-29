@@ -148,6 +148,8 @@ namespace Framework
         
         TData GetData<TData>(string name);
 
+        TData GetData<TData>();
+
         /// <summary>
         /// 设置有限状态机数据。
         /// </summary>
@@ -155,6 +157,8 @@ namespace Framework
         /// <param name="name">有限状态机数据名称。</param>
         /// <param name="data">要设置的有限状态机数据。</param>
         void SetData(string name, object data);
+
+        void SetData<TData>(TData data);
 
         /// <summary>
         /// 移除有限状态机数据。

@@ -122,20 +122,17 @@ namespace Framework
             view.SetVm(viewModel);
         }
 
-        [Obsolete("use LoadViewAsync replace", true)]
-        public View Open(string path, ViewModel viewModel = null)
+        public T Open<T>(ViewModel viewModel = null) where T : View
         {
-            var view = CreateView(path);
-            view.SetVm(viewModel);
-            view.Show();
-            return view;
+            return CreateView(typeof(T)) as T;
         }
 
-        [Obsolete("", true)]
-        private View CreateView(string panelName)
+        private View CreateView(Type type)
         {
-            var loadGo = _res.LoadAsset<GameObject>(panelName);
-            var view = loadGo.GetComponent<View>();
+            var path = (GetClassData(type).Attribute as UIAttribute).Path;
+            var loadGo = _res.Instantiate(path);
+            View view = ReflectionHelper.CreateInstance(type) as View;
+            view.SetGameObject(loadGo);
             Sort(view);
             return view;
         }

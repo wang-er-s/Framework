@@ -393,6 +393,11 @@ namespace Framework
             return (TData)GetData(name);
         }
 
+        public TData GetData<TData>()
+        {
+            return GetData<TData>(typeof(TData).Name);
+        }
+
         /// <summary>
         /// 获取有限状态机数据。
         /// </summary>
@@ -448,6 +453,11 @@ namespace Framework
             }
 
             m_Datas[name] = data;
+        }
+
+        public void SetData<TData>(TData data)
+        {
+            SetData(typeof(T).Name, data);
         }
 
         /// <summary>

@@ -205,12 +205,11 @@ public static class IEnumerableExtension
     /// <param name="selfList">Self list.</param>
     /// <param name="action">Action.</param>
     /// <typeparam name="T">The 1st type parameter.</typeparam>
-    public static List<T> ForEachReverse<T>(this List<T> selfList, Action<T> action)
+    public static void ForEachReverse<T>(this IList<T> selfList, Action<T> action)
     {
         if (action == null) throw new ArgumentException();
         for (var i = selfList.Count - 1; i >= 0; --i)
             action(selfList[i]);
-        return selfList;
     }
 
     /// <summary>
@@ -220,12 +219,11 @@ public static class IEnumerableExtension
     /// <param name="selfList">Self list.</param>
     /// <param name="action">Action.</param>
     /// <typeparam name="T">The 1st type parameter.</typeparam>
-    public static List<T> ForEachReverse<T>(this List<T> selfList, Action<T, int> action)
+    public static void ForEachReverse<T>(this IList<T> selfList, Action<T, int> action)
     {
         if (action == null) throw new ArgumentException();
         for (var i = selfList.Count - 1; i >= 0; --i)
             action(selfList[i], i);
-        return selfList;
     }
 
     /// <summary>
@@ -234,7 +232,7 @@ public static class IEnumerableExtension
     /// <typeparam name="T">列表类型</typeparam>
     /// <param name="list">目标表</param>
     /// <param name="action">行为</param>
-    public static void ForEach<T>(this List<T> list, Action<int, T> action)
+    public static void ForEach<T>(this IList<T> list, Action<int, T> action)
     {
         for (var i = 0; i < list.Count; i++)
         {
@@ -242,12 +240,12 @@ public static class IEnumerableExtension
         }
     }
 
-    public static T GetRandomItem<T>(this List<T> list)
+    public static T GetRandomItem<T>(this IList<T> list)
     {
         return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
-    public static T GetRandomItem<T>(this List<T> list, float min, float max)
+    public static T GetRandomItem<T>(this IList<T> list, float min, float max)
     {
         if (min > 1 || max > 1) throw new Exception("min max muse less or equal 1");
         int minIndex = (int)(min * list.Count);
@@ -256,6 +254,11 @@ public static class IEnumerableExtension
     }
     
     public static int GetRandomIndex(this ICollection list)
+    {
+        return UnityEngine.Random.Range(0, list.Count);
+    }
+    
+    public static int GetRandomIndex<T>(this IReadOnlyCollection<T> list)
     {
         return UnityEngine.Random.Range(0, list.Count);
     }
@@ -268,25 +271,33 @@ public static class IEnumerableExtension
         return UnityEngine.Random.Range(minIndex, maxIndex);
     }
 
-    public static T Last<T>(this List<T> list)
+    public static T Last<T>(this IList<T> list)
     {
         return list[list.Count - 1];
     }
 
-    public static T First<T>(this List<T> list)
+    public static T First<T>(this IList<T> list)
     {
         return list[0];
     }
 
-    public static T RemoveLast<T>(this List<T> list)
+    public static T RemoveLast<T>(this IList<T> list)
     {
+        if (list.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         T result = list.Last();
         list.RemoveAt(list.Count - 1);
         return result;
     }
 
-    public static void RemoveRange<T>(this List<T> list,in ICollection<T> list2)
+    public static void RemoveRange<T>(this IList<T> list,in ICollection<T> list2)
     {
+        if (list.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         if (list2.Count <= 0) return;
         using RecyclableList<T> tmpList = RecyclableList<T>.Create(list2.Count);
         tmpList.AddRange(list2);
@@ -304,15 +315,23 @@ public static class IEnumerableExtension
         }
     }
 
-    public static void Swap<T>(this List<T> list, int i, int j)
+    public static void Swap<T>(this IList<T> list, int i, int j)
     {
+        if (list.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         var temp = list[i];
         list[i] = list[j];
         list[j] = temp;
     }
     
-    public static RecyclableList<T> RandomSort<T>(this List<T> list)
+    public static RecyclableList<T> RandomSort<T>(this IList<T> list)
     {
+        if (list.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         RecyclableList<T> result = RecyclableList<T>.Create(list, list.Count);
         System.Random rnd = new System.Random();
         int n = list.Count;
@@ -358,7 +377,7 @@ public static class IEnumerableExtension
     /// <param name="to"></param>
     /// <param name="begin"></param>
     /// <param name="end">不包含end</param>
-    public static void CopyTo<T>(this List<T> from, ref List<T> to, int begin = 0, int end = -1)
+    public static void CopyTo<T>(this IList<T> from, ref List<T> to, int begin = 0, int end = -1)
     {
         if (begin < 0) begin = 0;
         else if (begin >= from.Count) begin = from.Count;
@@ -396,7 +415,7 @@ public static class IEnumerableExtension
     /// <typeparam name="T"></typeparam>
     /// <param name="selfList"></param>
     /// <returns></returns>
-    public static T[] ToArraySavely<T>(this List<T> selfList)
+    public static T[] ToArraySavely<T>(this IList<T> selfList)
     {
         var res = new T[selfList.Count];
         for (var i = 0; i < selfList.Count; i++)
@@ -413,21 +432,36 @@ public static class IEnumerableExtension
     /// <param name="selfList"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    public static T TryGet<T>(this List<T> selfList, int index)
+    public static bool TryGet<T>(this IList<T> selfList, int index, out T val)
     {
-        return selfList.Count > index ? selfList[index] : default(T);
+        val = default;
+        if (selfList.Count > index)
+        {
+            val = selfList[index];
+            return true;
+        }
+
+        return false;
     }
 
-    public static bool TryRemove<T>(this List<T> self, T value)
+    public static bool TryRemove<T>(this IList<T> self, T value)
     {
+        if (self.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         var index = self.IndexOf(value);
         if (index == -1) return false;
         self.RemoveAt(index);
         return true;
     }
 
-    public static bool TryAdd<T>(this List<T> selfList, T value)
+    public static bool TryAddSingle<T>(this IList<T> selfList, T value)
     {
+        if (selfList.IsReadOnly)
+        {
+            throw new Exception("readonly list can not modify");
+        }
         if (!selfList.Contains(value))
         {
             selfList.Add(value);
@@ -2170,7 +2204,7 @@ public static class StringExtension
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static string ListConvertToString<T>(this List<T> value, char split1 = ',')
+    public static string ListConvertToString<T>(this IList<T> value, char split1 = ',')
     {
         var type = value.GetType();
         var Count = (int) type.GetProperty("Count").GetValue(value, null);

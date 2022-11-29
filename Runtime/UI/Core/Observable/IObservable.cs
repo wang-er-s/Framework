@@ -11,7 +11,7 @@ namespace Framework
         void ForceTrigger();
     }
 
-    public struct UnRegister : IClearable
+    public struct UnRegister : IClearable , IDisposable
     {
         private Action action;
 
@@ -23,6 +23,11 @@ namespace Framework
         public void Clear()
         {
             action();
+        }
+
+        public void Dispose()
+        {
+            Clear();
         }
     }
 }

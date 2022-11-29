@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public struct Range<T> : IEquatable<Range<T>>
+    public readonly struct Range<T> : IEquatable<Range<T>> where T : IComparable<T>
     {
         public T Min { get; }
         public T Max { get; }
@@ -12,6 +12,18 @@ namespace Framework
         {
             Min = min;
             Max = max;
+        }
+
+        public bool InRange(T val, bool includeMin = true, bool includeMax = true)
+        {
+            if (includeMin && includeMax)
+                return val.CompareTo(Min) >= 0 && val.CompareTo(Max) <= 0;
+            if (includeMin && !includeMax)
+                return val.CompareTo(Min) >= 0 && val.CompareTo(Max) < 0;
+            if (!includeMin && includeMax)
+                return val.CompareTo(Min) > 0 && val.CompareTo(Max) <= 0;
+
+            return val.CompareTo(Min) > 0 && val.CompareTo(Max) < 0;
         }
 
         public bool Equals(Range<T> other)

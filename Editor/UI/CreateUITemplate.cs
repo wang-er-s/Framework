@@ -171,6 +171,7 @@ namespace Framework.Editor
             var markStr = strBuilder.ToString() + "\t";
             template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(#endregion)",
                 $"$1{markStr}$3");
+            template = Regex.Replace(template, @"\[UI\((.*)\)\]", $"[UI(\"{panelCodeInfo.PanelPath}\")]");
             File.WriteAllText(generateFilePath, template);
         }
 
