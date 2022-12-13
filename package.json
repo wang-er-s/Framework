@@ -1,16 +1,16 @@
 {
     "name": "com.wanger.framework",
-    "displayName": "YooAsset",
+    "displayName": "Framework",
     "version": "1.0.1",
     "unity": "2021.3",
     "description": "unity3d game framework.",
     "author": {
         "name": "wanger",
-        "url": "https://github.com/so-sos-so/Framework"
+        "url": "https://github.com/wang-er-s"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/so-sos-so/Framework.git"
+        "url": "https://github.com/wang-er-s/Framework"
     },
     "relatedPackages": {},
     "dependencies": {
