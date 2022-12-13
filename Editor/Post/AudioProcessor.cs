@@ -6,6 +6,7 @@ public class AudioProcessor : AssetPostprocessor
 {
     private void OnPostprocessAudio(AudioClip audio)
     {
+        if (!CommonAssetProcessor.FirstImport(assetImporter)) return;
        FormatAudio(assetImporter as AudioImporter, audio);
     }
 

@@ -12,7 +12,7 @@ public class CommonAssetProcessor : AssetPostprocessor
 
     public static bool IsUI(string path)
     {
-        return path.Contains("/UI/");
+        return path.ToLower().Contains("/ui/");
     }
 
     public static bool AnimationHasScale(string path)
@@ -30,11 +30,6 @@ public class CommonAssetProcessor : AssetPostprocessor
         return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_uv1");
     }
 
-    public static bool HasMipMap(string path)
-    {
-        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_mipmap");
-    }
-    
     public static bool HasVertexColor(string path)
     {
         return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_vc");
@@ -60,11 +55,9 @@ public class CommonAssetProcessor : AssetPostprocessor
     }
     #endregion
     
-    
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
         string[] movedFromAssetPaths)
     {
-        
         void renameAssets(string path, string newPath)
         {
             if (File.Exists(path))

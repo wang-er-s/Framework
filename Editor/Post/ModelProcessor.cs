@@ -13,11 +13,38 @@ public class ModelProcessor : AssetPostprocessor
         ModelImporter importer = assetImporter as ModelImporter;
         FormatModel(importer);
     }
-
-    private static async void DelayDealGameObject(string assetPath, int delayTime)
+    
+    public static void FormatModel(ModelImporter importer)
     {
-        await Task.Delay(delayTime);
-        ModelImporter importer = AssetImporter.GetAtPath(assetPath) as ModelImporter;
+        string assetPath = importer.assetPath;
+        // --------model--------
+        importer.isReadable = CommonAssetProcessor.ReadWrite(importer.assetPath);
+
+        //OptimizeMesh:顶点优化选项,开启后顶点将被重新排序,GPU性能可以得到提升
+        importer.optimizeMeshPolygons = true;
+        importer.optimizeMeshVertices = true;
+        importer.meshCompression = ModelImporterMeshCompression.Medium;
+        importer.importNormals = ModelImporterNormals.None;
+        importer.importTangents = ModelImporterTangents.None;
+        importer.importCameras = false;
+        importer.importLights = false;
+        importer.importVisibility = false;
+        importer.importBlendShapes = false;
+        importer.importAnimation = true;
+
+        // animation
+        importer.animationType = ModelImporterAnimationType.Generic;
+        importer.optimizeGameObjects = true;
+        importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+        importer.resampleCurves = false;
+        importer.animationCompression = ModelImporterAnimationCompression.Optimal;
+        importer.animationRotationError = 0.1f;
+        importer.animationPositionError = 0.5f;
+        importer.animationScaleError = 1f;
+
+        // ------- Mat -----
+        importer.materialImportMode = ModelImporterMaterialImportMode.None;
+        importer.SaveAndReimport();
         var go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
         if (go == null) return;
         // 去除无用骨骼节点，后缀为 Nub 的
@@ -121,51 +148,6 @@ public class ModelProcessor : AssetPostprocessor
                 Debug.LogError($"压缩动画失败，path:{assetPath} , error:{e}");
             }
         }
-
-        // -------- Rig ---------
-        importer.importAnimation = hasAnimation;
-        if (hasAnimation)
-        {
-            importer.animationType = ModelImporterAnimationType.Generic;
-            importer.optimizeGameObjects = true;
-            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-            importer.resampleCurves = false;
-        }
-
-        // ------- Anim ------
-        if (hasAnimation)
-        {
-            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
-            importer.animationRotationError = 0.1f;
-            importer.animationPositionError = 0.5f;
-            importer.animationScaleError = 1f;
-        }
-        
-        importer.SaveAndReimport();
-    }
-
-    public static void FormatModel(ModelImporter importer, int delayTime = 0)
-    {
-        // --------model--------
-        var assetPath = importer.assetPath;
-        importer.isReadable = CommonAssetProcessor.ReadWrite(importer.assetPath);
-
-        //OptimizeMesh:顶点优化选项,开启后顶点将被重新排序,GPU性能可以得到提升
-        importer.optimizeMeshPolygons = true;
-        importer.optimizeMeshVertices = true;
-        importer.meshCompression = ModelImporterMeshCompression.Medium;
-        importer.importNormals = ModelImporterNormals.None;
-        importer.importTangents = ModelImporterTangents.None;
-        importer.importCameras = false;
-        importer.importLights = false;
-        importer.importVisibility = false;
-        importer.importBlendShapes = false;
-        importer.importAnimation = true;
-
-        // ------- Mat -----
-        importer.materialImportMode = ModelImporterMaterialImportMode.None;
-
-        DelayDealGameObject(assetPath, delayTime);
     }
 
     private static List<AnimationClip> CheckHasAnimation(string path)
@@ -181,21 +163,6 @@ public class ModelProcessor : AssetPostprocessor
         if (go != null && animationClips.Count <= 0)
         {
             animationClips.AddRange(AnimationUtility.GetAnimationClips(go));
-            if (animationClips.Count <= 0)
-            {
-                var objs = AssetDatabase.LoadAllAssetsAtPath(path);
-                foreach (var o in objs)
-                {
-                    if (o is AnimationClip clip)
-                    {
-                        animationClips.Add(clip);
-                    }
-                }
-            }
-        }
-        if (animationClips.Count <= 0)
-        {
-            animationClips.AddRange(Object.FindObjectsOfType<AnimationClip>());
         }
         return animationClips;
     }
