@@ -1,0 +1,486 @@
+{
+	"IncludeDir":[
+		"Assets"
+	],
+	"IgnoreDir":[
+		"Assets/Ignore"
+	],
+	"RuleConfig":{
+		"Animation_ResampleCurve":{
+			"Id":"Animation_ResampleCurve",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Animation_Compression":{
+			"Id":"Animation_Compression",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Animation_HasScale":{
+			"Id":"Animation_HasScale",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Animation_StateLimit":{
+			"Id":"Animation_StateLimit",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"30"
+		},
+		"Animation_OptimizeTransform":{
+			"Id":"Animation_OptimizeTransform",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_DoubleChannels":{
+			"Id":"Audio_DoubleChannels",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_Streaming":{
+			"Id":"Audio_Streaming",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_OptimizeSampleRate":{
+			"Id":"Audio_OptimizeSampleRate",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_Quality":{
+			"Id":"Audio_Quality",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_Compress":{
+			"Id":"Audio_Compress",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Audio_DecompressOnLoad":{
+			"Id":"Audio_DecompressOnLoad",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Material_EmptyTex":{
+			"Id":"Material_EmptyTex",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Material_SameTex":{
+			"Id":"Material_SameTex",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Material_PureColorTex":{
+			"Id":"Material_PureColorTex",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Material_UselessTex":{
+			"Id":"Material_UselessTex",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_Uv2":{
+			"Id":"Mesh_Uv2",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_Uv34":{
+			"Id":"Mesh_Uv34",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_Normal":{
+			"Id":"Mesh_Normal",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_Tangent":{
+			"Id":"Mesh_Tangent",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_Color":{
+			"Id":"Mesh_Color",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_TriangleLimit":{
+			"Id":"Mesh_TriangleLimit",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"500"
+		},
+		"Mesh_SameMesh":{
+			"Id":"Mesh_SameMesh",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Mesh_RW":{
+			"Id":"Mesh_RW",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Video_SizeLimit":{
+			"Id":"Video_SizeLimit",
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"512"
+		},
+		"Skin_MotionVector":{
+			"Id":"Skin_MotionVector",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Skin_TooManyBones":{
+			"Id":"Skin_TooManyBones",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"50"
+		},
+		"Animator_TooManyState":{
+			"Id":"Animator_TooManyState",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Shader_ToolManyGlobalKWs":{
+			"Id":"Shader_ToolManyGlobalKWs",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"10"
+		},
+		"Shader_ToolManyTexture":{
+			"Id":"Shader_ToolManyTexture",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"3"
+		},
+		"Shader_TooManyVariants":{
+			"Id":"Shader_TooManyVariants",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"100"
+		},
+		"Texture_Size":{
+			"Id":"Texture_Size",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"512"
+		},
+		"Texture_RW":{
+			"Id":"Texture_RW",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Texture_WrapMode":{
+			"Id":"Texture_WrapMode",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Texture_TooManyTransparentPixels":{
+			"Id":"Texture_TooManyTransparentPixels",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":"0.5"
+		},
+		"Texture_FilterMode":{
+			"Id":"Texture_FilterMode",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Texture_Compression":{
+			"Id":"Texture_Compression",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Texture_PureColor":{
+			"Id":"Texture_PureColor",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"Texture_AlphaAllOne":{
+			"Id":"Texture_AlphaAllOne",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"UI_TextWithOutline":{
+			"Id":"UI_TextWithOutline",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"UI_MipmapSprite":{
+			"Id":"UI_MipmapSprite",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"UI_RawImageAlphaAllZero":{
+			"Id":"UI_RawImageAlphaAllZero",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"UI_RawImageNullTex":{
+			"Id":"UI_RawImageNullTex",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		},
+		"UI_TiledImage":{
+			"Id":"UI_TiledImage",
+			"IsEnable":true,
+			"IncludeDir":[
+
+			],
+			"IgnoreDir":[
+
+			],
+			"Value":""
+		}
+	},
+	"MenuEnable":{
+		"GeneralSettingMenu":true,
+		"BasicResCheckMenu":true
+	}
+}
