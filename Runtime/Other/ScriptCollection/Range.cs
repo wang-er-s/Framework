@@ -51,5 +51,10 @@ namespace Framework
         {
             return !(d1 == d2);
         }
+
+        public override string ToString()
+        {
+            return $"min:{Min} max:{Max}";
+        }
     }
 }

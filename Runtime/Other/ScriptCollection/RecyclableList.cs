@@ -60,7 +60,16 @@ namespace Framework
             if (disposed) return;
             disposed = true;
             this.Clear();
-            cache.Add(this);
+            if (cache.Count > 0)
+            {
+                var first = cache.First();
+                cache[0] = this;
+                cache.Add(first);
+            }
+            else
+            {
+                cache.Add(this);
+            }
         }
     }
 }

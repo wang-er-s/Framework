@@ -457,7 +457,7 @@ namespace Framework
 
         public void SetData<TData>(TData data)
         {
-            SetData(typeof(T).Name, data);
+            SetData(typeof(TData).Name, data);
         }
 
         /// <summary>

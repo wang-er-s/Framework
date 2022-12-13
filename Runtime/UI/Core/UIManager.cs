@@ -42,18 +42,18 @@ namespace Framework
         public IProgressResult<float, View> OpenAsync<T>(ViewModel viewModel = null) where T : View
         {
             ProgressResult<float, View> result = new ProgressResult<float, View>();
-            InternalOpen(typeof(T), result, viewModel);
+            InternalOpenAsync(typeof(T), result, viewModel);
             return result;
         }
 
         public IProgressResult<float, View> OpenAsync(Type type, ViewModel viewModel = null)
         {
             ProgressResult<float, View> result = new ProgressResult<float, View>();
-            InternalOpen(type, result, viewModel);
+            InternalOpenAsync(type, result, viewModel);
             return result;
         }
 
-        private void InternalOpen<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
+        private void InternalOpenAsync<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
             View view = null;
             var path = (GetClassData(type).Attribute as UIAttribute).Path;
@@ -77,7 +77,7 @@ namespace Framework
                 openedSingleViews[type] = view;
         }
 
-        public IProgressResult<float, T> CreateView<T>(ViewModel vm) where T : View
+        public IProgressResult<float, T> CreateViewAsync<T>(ViewModel vm) where T : View
         {
             ProgressResult<float, T> progressResult = new ProgressResult<float, T>();
             var type = typeof(T);
@@ -87,7 +87,7 @@ namespace Framework
             return progressResult;
         }
         
-        public IProgressResult<float, View> CreateView(Type type, ViewModel vm)
+        public IProgressResult<float, View> CreateViewAsync(Type type, ViewModel vm)
         {
             ProgressResult<float, View> progressResult = new ProgressResult<float, View>();
             var view = ReflectionHelper.CreateInstance(type) as View;
@@ -124,15 +124,20 @@ namespace Framework
 
         public T Open<T>(ViewModel viewModel = null) where T : View
         {
-            return CreateView(typeof(T)) as T;
+            var view = CreateView(typeof(T), viewModel) as T;
+            openedViews.Add(view);
+            if (view.IsSingle)
+                openedSingleViews[typeof(T)] = view;
+            return view;
         }
 
-        private View CreateView(Type type)
+        private View CreateView(Type type, ViewModel viewModel)
         {
             var path = (GetClassData(type).Attribute as UIAttribute).Path;
             var loadGo = _res.Instantiate(path);
             View view = ReflectionHelper.CreateInstance(type) as View;
             view.SetGameObject(loadGo);
+            view.SetVm(viewModel);
             Sort(view);
             return view;
         }
