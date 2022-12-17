@@ -7,7 +7,7 @@ namespace Framework
         void AddRawListener(Action<object> listener);
         object RawValue { get; }
         Type RawType { get; }
-        void InitValueWithoutCb(object val);
+        void InitRawValueWithoutCb(object val);
         void ForceTrigger();
     }
 

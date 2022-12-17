@@ -33,7 +33,6 @@ namespace Framework
 
         public bool IsSupport(Type type)
         {
-
             return true;
         }
 

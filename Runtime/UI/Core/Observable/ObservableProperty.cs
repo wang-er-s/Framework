@@ -66,7 +66,7 @@ namespace Framework
         object IObservable.RawValue => _value;
         Type IObservable.RawType => typeof(T);
 
-        void IObservable.InitValueWithoutCb(object val)
+        void IObservable.InitRawValueWithoutCb(object val)
         {
             _value = (T)val;
         }

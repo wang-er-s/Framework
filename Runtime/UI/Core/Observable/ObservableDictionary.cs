@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using CatJson;
 using UnityEngine;
 
 namespace Framework
@@ -15,6 +16,11 @@ namespace Framework
         private event Action<Dictionary<TKey, TValue>> dicChanged; 
 
         protected Dictionary<TKey, TValue> Dictionary;
+
+        static ObservableDictionary()
+        {
+            JsonParser.AddCustomJsonFormatter(typeof(ObservableDictionary<,>), new DictionaryFormatter());
+        }
 
         public ObservableDictionary()
         {
@@ -292,7 +298,7 @@ namespace Framework
         object IObservable.RawValue => Dictionary;
         
         Type IObservable.RawType => Dictionary.GetType();
-        void IObservable.InitValueWithoutCb(object val)
+        void IObservable.InitRawValueWithoutCb(object val)
         {
             Dictionary = (Dictionary<TKey,TValue>)val;
         }

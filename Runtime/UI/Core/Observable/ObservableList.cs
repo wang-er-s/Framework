@@ -2,19 +2,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.Contracts;
+using CatJson;
 
 namespace Framework
 {
-    public class ObservableList<T> : IList<T> , IObservable
+    public class ObservableList<T> : IList<T> , IObservable, IList
     {
         private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
         private List<T> _items;
         private readonly object _locker = new object();
         private event Action<List<T>> ListUpdateChanged;
+        public void CopyTo(Array array, int index)
+        {
+            ((IList)_items).CopyTo(array, index);
+        }
+
         public int Count => _items.Count;
+        public bool IsSynchronized => ((IList)_items).IsSynchronized;
+        public object SyncRoot => ((IList)_items).SyncRoot;
         public bool IsReadOnly => false;
+
+        object IList.this[int index]
+        {
+            get => _items[index];
+            set => _items[index] = (T)value;
+        }
+
+        static ObservableList()
+        {
+            JsonParser.AddCustomJsonFormatter(typeof(ObservableList<>), new ListFormatter());
+        }
 
         public ObservableList()
         {
@@ -64,11 +82,37 @@ namespace Framework
             }
         }
 
+        public int Add(object value)
+        {
+            Add((T)value);
+            return Count - 1;
+        }
+
         public void Clear()
         {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
             ClearItems();
+        }
+
+        public bool Contains(object value)
+        {
+            return Contains((T)value);
+        }
+
+        public int IndexOf(object value)
+        {
+            return IndexOf((T)value);
+        }
+
+        public void Insert(int index, object value)
+        {
+            Insert(index, (T)value);
+        }
+
+        public void Remove(object value)
+        {
+            Remove((T)value);
         }
 
         public bool Contains(T item)
@@ -109,6 +153,8 @@ namespace Framework
                 throw new NotSupportedException("ReadOnlyCollection");
             RemoveItem(index);
         }
+
+        public bool IsFixedSize => ((IList)_items).IsFixedSize;
 
         public T this[int index]
         {
@@ -250,7 +296,7 @@ namespace Framework
         
         object IObservable.RawValue => _items;
         Type IObservable.RawType => _items.GetType();
-        void IObservable.InitValueWithoutCb(object val)
+        void IObservable.InitRawValueWithoutCb(object val)
         {
             _items = (List<T>)val;
         }

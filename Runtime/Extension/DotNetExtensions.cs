@@ -258,17 +258,24 @@ public static class IEnumerableExtension
         return UnityEngine.Random.Range(0, list.Count);
     }
     
-    public static int GetRandomIndex<T>(this IReadOnlyCollection<T> list)
-    {
-        return UnityEngine.Random.Range(0, list.Count);
-    }
-
     public static int GetRandomIndex(this ICollection list, float min, float max)
     {
         if (min > 1 || max > 1) throw new Exception("min max muse less or equal 1");
         int minIndex = (int) (min * list.Count);
         int maxIndex = (int) (max * list.Count);
         return UnityEngine.Random.Range(minIndex, maxIndex);
+    }
+
+    /// <summary>
+    /// 重置count数量的val
+    /// </summary>
+    public static void Reset<T>(this IList<T> list, int count, T val)
+    {
+        list.Clear();
+        for (int i = 0; i < count; i++)
+        {
+            list.Add(val);
+        }
     }
 
     public static T Last<T>(this IList<T> list)
