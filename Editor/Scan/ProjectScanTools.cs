@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Framework.Editor
 {
-    public static class ResScanTools
+    public static class ProjectScanTools
     {
         public static Texture2D CreateRwTexture2D(Texture2D texture)
         {

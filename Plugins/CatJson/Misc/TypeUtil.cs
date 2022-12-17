@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 #if FUCK_LUA
 using ILRuntime.Reflection;
@@ -115,9 +116,13 @@ namespace CatJson
             {
                 obj = Activator.CreateInstance(type);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception($"找不到{type.Name}的无参构造函数");
+                if (e is MissingMethodException)
+                {
+                    throw new Exception($"找不到{type.Name}的无参构造函数");
+                }
+                throw;
             }
 
             return obj;
@@ -140,8 +145,8 @@ namespace CatJson
         public static bool IsNumberType(Type type)
         {
             return type == typeof(byte) || type == typeof(int) || type == typeof(long) || type == typeof(float) || type == typeof(double)
-            ||type == typeof(uint)||type == typeof(ulong)||type == typeof(ushort)||type == typeof(short) ||type == typeof(decimal)
-            ||type == typeof(sbyte);
+                   ||type == typeof(uint)||type == typeof(ulong)||type == typeof(ushort)||type == typeof(short) ||type == typeof(decimal)
+                   ||type == typeof(sbyte);
         }
 
 
@@ -324,4 +329,3 @@ namespace CatJson
 
     }
 }
-

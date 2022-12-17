@@ -24,21 +24,21 @@ namespace Framework.Editor
         public abstract string Menu { get; }
         public bool IsEnable { get; private set; } = true;
         public abstract RulePriority Priority { get; }
-        private bool hasFixMethod;
+        public bool HasFixMethod { get; }
         public List<object[]> ScanResult { get; } = new();
 
         public ScanRule()
         {
             var fixMethod = GetType().GetMethod(nameof(Fix), BindingFlags.Instance | BindingFlags.Public);
-            hasFixMethod = fixMethod.IsOverride();
-            if (ResScan.RuleConfig.TryGetValue(RuleId, out var rules))
+            HasFixMethod = fixMethod.IsOverride();
+            if (ProjectScan.GlobalConfig.RuleNameConfig.TryGetValue(RuleId, out var rules))
             {
                 DisplayName = rules.Name;
                 Description = rules.Desc;
                 HelpUrl = rules.HelpUrl;
             }
 
-            if (ResScan.Config.RuleConfig.TryGetValue(RuleId, out var ruleConfig))
+            if (ProjectScan.GlobalConfig.RuleConfig.TryGetValue(RuleId, out var ruleConfig))
             {
                 IsEnable = ruleConfig.IsEnable;
                 Value = ruleConfig.Value;
@@ -131,8 +131,8 @@ namespace Framework.Editor
                 EditorGUILayout.Space(10);
                 SirenixEditorGUI.BeginVerticalList(drawBorder: false, drawDarkBg: false);
                 
-                EditorGUILayout.LabelField($"[规则ID]: {RuleId}", ResScanTools.DefaultStyle);
-                EditorGUILayout.LabelField($"[说明]: {Description}", ResScanTools.DefaultStyle);
+                EditorGUILayout.LabelField($"[规则ID]: {RuleId}", ProjectScanTools.DefaultStyle);
+                EditorGUILayout.LabelField($"[说明]: {Description}", ProjectScanTools.DefaultStyle);
                 EditorGUILayout.Space(10);
                 ExtendDrawer();
                 SirenixEditorGUI.EndVerticalList();
@@ -155,7 +155,7 @@ namespace Framework.Editor
 
         public ScanRuleWithDir() : base()
         {
-            if (ResScan.Config.RuleConfig.TryGetValue(RuleId, out var ruleConfig))
+            if (ProjectScan.GlobalConfig.RuleConfig.TryGetValue(RuleId, out var ruleConfig))
             {
                 UseSelfDirConfig = ruleConfig.UseSelfDirConfig;
                 IncludeDir.AddRange(ruleConfig.IncludeDir);
@@ -168,15 +168,15 @@ namespace Framework.Editor
             using (new GUILayout.HorizontalScope())
             {
                 // GUILayout.Space();
-                EditorGUILayout.LabelField("是否启用单独的目标文件夹配置", ResScanTools.DefaultStyle);
+                EditorGUILayout.LabelField("是否启用单独的目标文件夹配置", ProjectScanTools.DefaultStyle);
                 UseSelfDirConfig =
                     SirenixEditorGUI.ToolbarToggle(UseSelfDirConfig, UseSelfDirConfig ? enableContent : disableContent);
             }
 
             if (UseSelfDirConfig)
             {
-                ResScanTools.DrawPathList(IncludeDir, "目标文件夹");
-                ResScanTools.DrawPathList(IgnoreDir, "忽略文件夹");
+                ProjectScanTools.DrawPathList(IncludeDir, "目标文件夹");
+                ProjectScanTools.DrawPathList(IgnoreDir, "忽略文件夹");
             }
         }
 
@@ -208,8 +208,8 @@ namespace Framework.Editor
             List<string> ignoreFolders;
             if (!UseSelfDirConfig)
             {
-                targetFolders = ResScan.Config.IncludeDir;
-                ignoreFolders = ResScan.Config.IgnoreDir;
+                targetFolders = ProjectScan.GlobalConfig.IncludeDir;
+                ignoreFolders = ProjectScan.GlobalConfig.IgnoreDir;
             }
             else
             {

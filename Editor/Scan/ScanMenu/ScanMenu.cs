@@ -14,13 +14,11 @@ namespace Framework.Editor
         public bool IsEnable { get; set; } = true;
         public abstract string Name { get; }
         public virtual int Priority { get; protected set; } = 1;
-
-        private string typeName;
+        private bool hasFixRule = false;
 
         public ScanMenu()
         {
-            typeName = GetType().Name;
-            if (ResScan.Config.MenuEnable.TryGetValue(GetType().Name, out var enable))
+            if (ProjectScan.GlobalConfig.MenuEnable.TryGetValue(GetType().Name, out var enable))
             {
                 IsEnable = enable;
             }
@@ -28,7 +26,7 @@ namespace Framework.Editor
 
         public virtual void CheckRule(ScanRule rule)
         {
-            if (rule.Menu.StartsWith(typeName))
+            if (rule.Menu.StartsWith(GetType().Name))
             {
                 string type = string.Empty;
                 var match = Regex.Match(rule.Menu, @"(\w+)/(\w+)");
@@ -49,6 +47,18 @@ namespace Framework.Editor
 
         public void FillRuleFinish()
         {
+            foreach (var rules in Rules.Values)
+            {
+                foreach (var rule in rules.Rules)
+                {
+                    if (rule.HasFixMethod)
+                    {
+                        hasFixRule = true;
+                        break;
+                    }
+                }
+                if(hasFixRule) break;
+            }
         }
 
         public void Scan()
@@ -60,6 +70,26 @@ namespace Framework.Editor
                     scanRule.Scan();
                 }
             }     
+        }
+
+        
+        [PropertyOrder(0)]
+        [ShowIf("@hasFixRule")]
+        [Button("打开修复面板", ButtonSizes.Medium)]
+        private void ShowFixWindow()
+        {
+            
+        }
+
+        public void Fix()
+        {
+            foreach (var ruleList in Rules.Values)
+            {
+                foreach (var scanRule in ruleList.Rules)
+                {
+                    scanRule.Fix();
+                }
+            }                
         }
 
         [HideReferenceObjectPicker]

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,17 +21,17 @@ namespace Framework.Editor
 
         public GeneralSettingMenu()
         {
-            IncludeDir = ResScan.Config.IncludeDir;
-            IgnoreDir = ResScan.Config.IgnoreDir;
+            IncludeDir = ProjectScan.GlobalConfig.IncludeDir;
+            IgnoreDir = ProjectScan.GlobalConfig.IgnoreDir;
         }
 
         [OnInspectorGUI]
         protected void CustomDrawer()
         {
-            EditorGUILayout.LabelField(Name, ResScanTools.DefaultStyle);
+            EditorGUILayout.LabelField(Name, ProjectScanTools.DefaultStyle);
             EditorGUILayout.Space(10);
-            ResScanTools.DrawPathList(IncludeDir, "目标文件夹");
-            ResScanTools.DrawPathList(IgnoreDir, "忽略文件夹");
+            ProjectScanTools.DrawPathList(IncludeDir, "目标文件夹");
+            ProjectScanTools.DrawPathList(IgnoreDir, "忽略文件夹");
             if (!string.IsNullOrEmpty(loadedResult))
             {
                 EditorGUILayout.LabelField($"当前已读取的数据文件：  {loadedResult}");
@@ -48,9 +46,10 @@ namespace Framework.Editor
         private async void LoadScanResult()
         {
             await Task.Delay(10);
-            string path = EditorUtility.OpenFilePanel("选择要加载的文件", ResScan.ProjectConfigRootPath, "txt");
+            string path = EditorUtility.OpenFilePanel("选择要加载的文件", ProjectScanPath.ProjectConfigRootPath,
+                Path.GetExtension(ProjectScanPath.ScanResultJsonPath).Remove(0, 1));
             if(string.IsNullOrEmpty(path)) return;
-            ResScan.LoadScanResult(path);
+            ProjectScan.LoadScanResult(path);
             loadedResult = path;
         }
     }

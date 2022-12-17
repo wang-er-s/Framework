@@ -39,7 +39,7 @@ namespace Framework.Editor
             {
                 var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
-                if (ResScanTools.IsLongAudio(clip) && (settingsAndroid.loadType != AudioClipLoadType.Streaming ||
+                if (ProjectScanTools.IsLongAudio(clip) && (settingsAndroid.loadType != AudioClipLoadType.Streaming ||
                                          settingsIos.loadType != AudioClipLoadType.Streaming))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
@@ -102,16 +102,16 @@ namespace Framework.Editor
             {
                 var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
-                if (ResScanTools.IsLongAudio(clip) && (settingsAndroid.quality > 51 || settingsIos.quality > 51))
+                if (ProjectScanTools.IsLongAudio(clip) && (settingsAndroid.quality > 51 || settingsIos.quality > 51))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
-                else if (ResScanTools.IsMediumAudio(clip) &&
+                else if (ProjectScanTools.IsMediumAudio(clip) &&
                          (settingsAndroid.quality > 71 || settingsIos.quality > 71))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
-                else if (ResScanTools.IsShortAudio(clip) && (settingsAndroid.quality < 99 || settingsIos.quality < 99))
+                else if (ProjectScanTools.IsShortAudio(clip) && (settingsAndroid.quality < 99 || settingsIos.quality < 99))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
@@ -124,17 +124,17 @@ namespace Framework.Editor
             {
                 var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
-                if (ResScanTools.IsLongAudio(clip))
+                if (ProjectScanTools.IsLongAudio(clip))
                 {
                     settingsAndroid.quality = 50;
                     settingsIos.quality = 50;
                 }
-                else if (ResScanTools.IsMediumAudio(clip))
+                else if (ProjectScanTools.IsMediumAudio(clip))
                 {
                     settingsAndroid.quality = 70;
                     settingsIos.quality = 70;
                 }
-                else if (ResScanTools.IsShortAudio(clip))
+                else if (ProjectScanTools.IsShortAudio(clip))
                 {
                     settingsAndroid.quality = 100;
                     settingsIos.quality = 100;
@@ -192,7 +192,7 @@ namespace Framework.Editor
             {
                 var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
-                if (ResScanTools.IsShortAudio(clip) &&
+                if (ProjectScanTools.IsShortAudio(clip) &&
                     (settingsAndroid.loadType != AudioClipLoadType.DecompressOnLoad ||
                      settingsIos.loadType != AudioClipLoadType.DecompressOnLoad))
                 {
