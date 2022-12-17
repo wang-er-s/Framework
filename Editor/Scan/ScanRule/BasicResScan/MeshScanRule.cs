@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -199,12 +200,12 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<ModelImporter>((importer, _) =>
             {
                 importer.isReadable = false;
-            });
+            }, filter);
         }
     }
 }

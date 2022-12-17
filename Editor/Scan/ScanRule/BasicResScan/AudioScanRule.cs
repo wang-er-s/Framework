@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace Framework.Editor
@@ -19,12 +20,12 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<AudioImporter>((importer, _) =>
             {
                 importer.forceToMono = true;
-            });
+            }, filter);
         }
     }
     
@@ -47,7 +48,7 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<AudioImporter>((importer, _) =>
             {
@@ -55,9 +56,9 @@ namespace Framework.Editor
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
                 settingsAndroid.loadType = AudioClipLoadType.Streaming;
                 settingsIos.loadType = AudioClipLoadType.Streaming;
-                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsAndroid);
-                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsIos);
-            });
+                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsIos);
+                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsAndroid);
+            }, filter);
         }
     }
     
@@ -80,12 +81,17 @@ namespace Framework.Editor
            }); 
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
-            InternalFixImporter<AudioImporter>((importer, _) =>
+           InternalFixImporter<AudioImporter>((importer, _) =>
             {
-                importer.forceToMono = true;
-            });
+                var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
+                var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
+                settingsAndroid.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
+                settingsIos.sampleRateSetting = AudioSampleRateSetting.OptimizeSampleRate;
+                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsIos);
+                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsAndroid);
+            }, filter);
         }
     }
 
@@ -102,23 +108,23 @@ namespace Framework.Editor
             {
                 var settingsAndroid = importer.GetOverrideSampleSettings(BuildTargetGroup.Android.ToString());
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
-                if (ProjectScanTools.IsLongAudio(clip) && (settingsAndroid.quality > 51 || settingsIos.quality > 51))
+                if (ProjectScanTools.IsLongAudio(clip) && (settingsAndroid.quality > 0.51 || settingsIos.quality > 0.51))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
                 else if (ProjectScanTools.IsMediumAudio(clip) &&
-                         (settingsAndroid.quality > 71 || settingsIos.quality > 71))
+                         (settingsAndroid.quality > 0.71 || settingsIos.quality > 0.71))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
-                else if (ProjectScanTools.IsShortAudio(clip) && (settingsAndroid.quality < 99 || settingsIos.quality < 99))
+                else if (ProjectScanTools.IsShortAudio(clip) && (settingsAndroid.quality < 0.99 || settingsIos.quality < 0.99))
                 {
                     ScanResult.Add(new object[] { importer.assetPath });
                 }
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporterAndObj<AudioClip, AudioImporter>((clip, importer, _) =>
             {
@@ -126,22 +132,22 @@ namespace Framework.Editor
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
                 if (ProjectScanTools.IsLongAudio(clip))
                 {
-                    settingsAndroid.quality = 50;
-                    settingsIos.quality = 50;
+                    settingsAndroid.quality = 0.5f;
+                    settingsIos.quality = 0.5f;
                 }
                 else if (ProjectScanTools.IsMediumAudio(clip))
                 {
-                    settingsAndroid.quality = 70;
-                    settingsIos.quality = 70;
+                    settingsAndroid.quality = 0.7f;
+                    settingsIos.quality = 0.7f;
                 }
                 else if (ProjectScanTools.IsShortAudio(clip))
                 {
-                    settingsAndroid.quality = 100;
-                    settingsIos.quality = 100;
+                    settingsAndroid.quality = 1;
+                    settingsIos.quality = 1;
                 }
-                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsAndroid);
-                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsIos);
-            });
+                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsIos);
+                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsAndroid);
+            }, filter);
         }
     }
     
@@ -165,7 +171,7 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporterAndObj<AudioClip, AudioImporter>((clip, importer, _) =>
             {
@@ -173,9 +179,9 @@ namespace Framework.Editor
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
                 settingsAndroid.compressionFormat = AudioCompressionFormat.Vorbis;
                 settingsIos.compressionFormat = AudioCompressionFormat.Vorbis;
-                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsAndroid);
-                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsIos);
-            });
+                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsIos);
+                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsAndroid);
+            }, filter);
         }
     }
 
@@ -201,7 +207,7 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<AudioImporter>((importer, _) =>
             {
@@ -209,9 +215,9 @@ namespace Framework.Editor
                 var settingsIos = importer.GetOverrideSampleSettings(BuildTargetGroup.iOS.ToString());
                 settingsAndroid.loadType = AudioClipLoadType.DecompressOnLoad;
                 settingsIos.loadType = AudioClipLoadType.DecompressOnLoad;
-                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsAndroid);
-                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsIos);
-            });
+                importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), settingsIos);
+                importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), settingsAndroid);
+            }, filter);
         }
     }
 }

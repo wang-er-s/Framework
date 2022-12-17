@@ -48,7 +48,7 @@ namespace Framework.Editor
         public abstract void Scan();
 
 
-        public virtual void Fix()
+        public virtual void Fix(Func<string, bool> filter = null)
         {
         }
 
@@ -107,19 +107,14 @@ namespace Framework.Editor
 
             EditorGUILayout.LabelField(DisplayName, maxFontSize);
 
-            if (!string.IsNullOrEmpty(HelpUrl) && GUILayout.Button("帮助", GUILayout.Height(25),GUILayout.Width(50)))
+            if (!string.IsNullOrEmpty(HelpUrl) && GUILayout.Button("帮助", GUILayout.Height(25), GUILayout.Width(50)))
             {
                 Application.OpenURL(HelpUrl);
             }
-            
+
             if (GUILayout.Button("Scan", GUILayout.Height(25), GUILayout.Width(50)))
             {
                 Scan();
-            }
-
-            if (GUILayout.Button("Fix", GUILayout.Height(25), GUILayout.Width(50)))
-            {
-                Fix();
             }
 
             IsEnable = SirenixEditorGUI.ToolbarToggle(IsEnable, IsEnable ? enableContent : disableContent);
@@ -130,7 +125,7 @@ namespace Framework.Editor
                 EditorGUI.indentLevel += 2;
                 EditorGUILayout.Space(10);
                 SirenixEditorGUI.BeginVerticalList(drawBorder: false, drawDarkBg: false);
-                
+
                 EditorGUILayout.LabelField($"[规则ID]: {RuleId}", ProjectScanTools.DefaultStyle);
                 EditorGUILayout.LabelField($"[说明]: {Description}", ProjectScanTools.DefaultStyle);
                 EditorGUILayout.Space(10);
@@ -224,7 +219,9 @@ namespace Framework.Editor
             foreach (var guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                result.Add(AssetImporter.GetAtPath(path) as T);
+                var assetImporter = AssetImporter.GetAtPath(path);
+                if (assetImporter is T importer)
+                    result.Add(importer);
             }
 
             return result;
@@ -293,12 +290,14 @@ namespace Framework.Editor
         /// <summary>
         /// 第二个参数为object[]的toString值
         /// </summary>
-        protected void InternalFixImporter<T>(Action<T, string[]> action) where T : AssetImporter
+        protected void InternalFixImporter<T>(Action<T, string[]> action, Func<string, bool> filter) where T : AssetImporter
         {
             for (int i = 0; i < ScanResult.Count; i++)
             {
                 var objects = ScanResult[i].Select((o)=> o.ToString()).ToArray();
                 var path = objects[0];
+                if(filter != null && filter.Invoke(path)) continue;
+                if(ProjectScan.GlobalConfig.WhiteListDic.TryGetValue(RuleId, out var whiteList) && whiteList.Contains(path)) continue;
                 ShowProgress(path, i * 1.0f / ScanResult.Count);
                 var obj = AssetImporter.GetAtPath(path) as T;
                 action(obj, objects);
@@ -311,13 +310,15 @@ namespace Framework.Editor
         /// <summary>
         /// 第三个参数为object[]的toString值
         /// </summary>
-        protected void InternalFixImporterAndObj<TObject, TImporter>(Action<TObject, TImporter, string[]> action)
+        protected void InternalFixImporterAndObj<TObject, TImporter>(Action<TObject, TImporter, string[]> action, Func<string, bool> filter)
             where TImporter : AssetImporter where TObject : Object
         {
             for (int i = 0; i < ScanResult.Count; i++)
             {
                 var objects = ScanResult[i].Select((o) => o.ToString()).ToArray();
                 var path = objects[0];
+                if(filter != null && filter.Invoke(path)) continue;
+                if(ProjectScan.GlobalConfig.WhiteListDic.TryGetValue(RuleId, out var whiteList) && whiteList.Contains(path)) continue;
                 ShowProgress(path, i * 1.0f / ScanResult.Count);
                 var importer = AssetImporter.GetAtPath(path) as TImporter;
                 var obj = AssetDatabase.LoadAssetAtPath<TObject>(path);

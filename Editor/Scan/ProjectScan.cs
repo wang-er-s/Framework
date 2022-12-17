@@ -10,14 +10,14 @@ namespace Framework.Editor
 {
     public class ProjectScan : OdinMenuEditorWindow
     {
-        [MenuItem("Framework/Game Scan/Setting")]
+        [UnityEditor.MenuItem("Framework/Game Scan/Setting")]
         private static void CreateWindow()
         {
             Init();
             GetWindow<ProjectScan>().Show();
         }
 
-        [MenuItem("Framework/Game Scan/Scan All")]
+        [UnityEditor.MenuItem("Framework/Game Scan/Scan All")]
         private static void Scan()
         {
             Init();
@@ -132,7 +132,7 @@ namespace Framework.Editor
                 GlobalConfig.MenuEnable[scanMenu.GetType().Name] = scanMenu.IsEnable;
             }
 
-            File.WriteAllText(ProjectScanPath.ProjectScanConfigPath, JsonParser.Default.ToJson(GlobalConfig));
+            GlobalConfig.Save();
         }
         
         private static void SaveScanResultToCsv()
@@ -186,6 +186,7 @@ namespace Framework.Editor
             {
                 if (resultSaves.TryGetValue(scanRule.RuleId, out var save))
                 {
+                    scanRule.ScanResult.Clear();
                     scanRule.ScanResult.AddRange(save.ObjectsList);
                 }
             }

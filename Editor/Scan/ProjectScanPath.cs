@@ -14,6 +14,7 @@ namespace Framework.Editor
         public static string ProjectScanConfigPath => Path.Combine(ProjectConfigRootPath, "GameScanGlobalConfig.txt");
         public static string ScanResultJsonPath => Path.Combine(ProjectConfigRootPath, "JsonResult{0}.json");
         public static string ScanResultCSVPath => Path.Combine(ProjectConfigRootPath, "CSVResult{0}.csv");
+        public static string FixWhiteListPath => Path.Combine(ProjectConfigRootPath, "WhiteList.txt");
 
         public static void Init()
         {

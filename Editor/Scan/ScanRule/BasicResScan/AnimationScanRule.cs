@@ -1,6 +1,8 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.Editor
 {
@@ -18,12 +20,12 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<ModelImporter>((importer, _) =>
             {
                 importer.resampleCurves = false;
-            });
+            }, filter);
         }
     }
     
@@ -41,12 +43,12 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<ModelImporter>((importer, _) =>
             {
                 importer.animationCompression = ModelImporterAnimationCompression.Optimal;
-            });
+            }, filter);
         }
     }
     
@@ -114,13 +116,13 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<ModelImporter>((importer, _) =>
             {
                 importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
                 importer.optimizeGameObjects = true;
-            });
+            }, filter);
         }
     }
 }

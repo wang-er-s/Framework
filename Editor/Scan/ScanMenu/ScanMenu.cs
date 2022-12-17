@@ -75,21 +75,16 @@ namespace Framework.Editor
         
         [PropertyOrder(0)]
         [ShowIf("@hasFixRule")]
-        [Button("打开修复面板", ButtonSizes.Medium)]
+        [Button("打开资源修复面板", ButtonSizes.Large)]
         private void ShowFixWindow()
         {
-            
-        }
-
-        public void Fix()
-        {
-            foreach (var ruleList in Rules.Values)
+            List<ScanRule> rules = new();
+            foreach (var showRules in Rules.Values)
             {
-                foreach (var scanRule in ruleList.Rules)
-                {
-                    scanRule.Fix();
-                }
-            }                
+                rules.AddRange(showRules.Rules);
+            }
+
+            ResFixWindow.Open(rules);
         }
 
         [HideReferenceObjectPicker]

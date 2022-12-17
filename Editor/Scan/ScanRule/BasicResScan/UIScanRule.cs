@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -46,12 +47,12 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<TextureImporter>((importer, _) =>
             {
                 importer.mipmapEnabled = false;
-            });
+            }, filter);
         }
     }
     

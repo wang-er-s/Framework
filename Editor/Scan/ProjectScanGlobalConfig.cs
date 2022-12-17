@@ -12,6 +12,7 @@ namespace Framework.Editor
         public Dictionary<string, ScanRuleConfig> RuleConfig = new();
         public Dictionary<string, bool> MenuEnable = new();
         [JsonIgnore] public Dictionary<string, ScanRuleNameConfig> RuleNameConfig { get; } = new();
+        [JsonIgnore] public Dictionary<string, List<string>> WhiteListDic = new();
 
         public ProjectScanGlobalConfig()
         {
@@ -22,6 +23,18 @@ namespace Framework.Editor
             {
                 RuleNameConfig[rule.Id] = rule;
             }
+
+            if (File.Exists(ProjectScanPath.FixWhiteListPath))
+            {
+                string whiteList = File.ReadAllText(ProjectScanPath.FixWhiteListPath);
+                WhiteListDic = parser.ParseJson<Dictionary<string, List<string>>>(whiteList);
+            }
+        }
+
+        public void Save()
+        {
+            File.WriteAllText(ProjectScanPath.ProjectScanConfigPath, JsonParser.Default.ToJson(this));
+            File.WriteAllText(ProjectScanPath.FixWhiteListPath, JsonParser.Default.ToJson(WhiteListDic));
         }
     }
 

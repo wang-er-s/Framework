@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Framework.Editor
 {
@@ -41,9 +43,9 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
-            InternalFixImporter<TextureImporter>((importer, _) => { importer.isReadable = false; });
+            InternalFixImporter<TextureImporter>((importer, _) => { importer.isReadable = false; }, filter);
         }
     }
 
@@ -64,9 +66,10 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
-            InternalFixImporter<TextureImporter>((importer, _) => { importer.wrapMode = TextureWrapMode.Clamp; });
+            InternalFixImporter<TextureImporter>((importer, _) => { importer.wrapMode = TextureWrapMode.Clamp; },
+                filter);
         }
     }
 
@@ -127,9 +130,9 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
-            InternalFixImporter<TextureImporter>((importer, _) => { importer.filterMode = FilterMode.Bilinear; });
+            InternalFixImporter<TextureImporter>((importer, _) => { importer.filterMode = FilterMode.Bilinear; }, filter);
         }
     }
 
@@ -163,7 +166,7 @@ namespace Framework.Editor
             });
         }
 
-        public override void Fix()
+        public override void Fix(Func<string,bool> filter = null)
         {
             InternalFixImporter<TextureImporter>((importer, _) =>
             {
@@ -184,7 +187,7 @@ namespace Framework.Editor
 
                 importer.SetPlatformTextureSettings(settingsAndroid);
                 importer.SetPlatformTextureSettings(settingsIos);
-            });
+            }, filter);
         }
     }
 

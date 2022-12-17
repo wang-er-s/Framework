@@ -7,12 +7,12 @@ using System.Linq;
 namespace Framework.Editor
 {
 
-    public class EditorIcons : EditorWindow
+    public class EditorIconsShow : EditorWindow
     {
-        [MenuItem("Framework/Tool/Editor Icons", priority = -1001)]
+        [UnityEditor.MenuItem("Framework/Tool/Editor Icons", priority = -1001)]
         public static void EditorIconsOpen()
         {
-            var w = CreateWindow<EditorIcons>("Editor Icons");
+            var w = CreateWindow<EditorIconsShow>("Editor Icons");
             w.ShowUtility();
             w.minSize = new Vector2(320, 450);
         }
