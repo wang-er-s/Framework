@@ -172,6 +172,11 @@
         "HelpUrl":"https://answer.uwa4d.com/question/5bade8deafd2174f6fe94675"
     },
     {
+        "Id":"Material_DefaultMat",
+        "Name":"使用默认材质的物体",
+        "Desc":"不建议使用默认材质"
+    },
+    {
         "Id":"Shader_ToolManyGlobalKWs",
         "Name":"全局关键字过多的Shader",
         "Desc":"扫描并解析项目中目标路径下的Shader脚本，对预编译指令定义的关键字进行识别。由于Unity支持的全局关键字数量有限，建议根据实际情况将global类型的关键字改为local类型。",

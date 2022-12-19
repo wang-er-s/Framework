@@ -94,4 +94,27 @@ namespace Framework.Editor
             });
         }
     }
+
+    public class MaterialDefaultMat : ScanRuleWithDir
+    {
+        public override string RuleId { get; } = "Material_DefaultMat";
+        public override string Menu { get; } = $"{nameof(BasicResCheckMenu)}/Material";
+        public override RulePriority Priority { get; } = RulePriority.High;
+        private const string DefaultMatStr = "Resources/unity_builtin_extra";
+
+        public override void Scan()
+        {
+            InternalScanObject<GameObject>("t:prefab", (go, path) =>
+            {
+                var renderers = go.GetComponentsInChildren<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    if (AssetDatabase.GetAssetPath(renderer.sharedMaterial) == DefaultMatStr)
+                    {
+                        ScanResult.Add(new object[] { path, renderer.GetRelativePath(go.transform) });
+                    }
+                }
+            });
+        }
+    }
 }
