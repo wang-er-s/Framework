@@ -6,14 +6,26 @@ using Object = UnityEngine.Object;
 
 public class ModelProcessor : AssetPostprocessor
 {
+    private void OnPreprocessModel()
+    {
+        if (!CommonAssetProcessor.FirstImport(assetImporter)) return;
+        FormatModelImporter(assetImporter as ModelImporter);
+    }
+
     private void OnPostprocessModel(GameObject go)
     {
         if (!CommonAssetProcessor.FirstImport(assetImporter)) return;
-        ModelImporter importer = assetImporter as ModelImporter;
-        FormatModel(importer, go);
+        FormatGameObject(go, assetPath);
     }
-    
+
     public static void FormatModel(ModelImporter importer, GameObject go = null)
+    {
+        string assetPath = importer.assetPath;
+        FormatModelImporter(importer);
+        FormatGameObject(go, assetPath);
+    }
+
+    private static void FormatModelImporter(ModelImporter importer)
     {
         string assetPath = importer.assetPath;
         // --------model--------
@@ -31,14 +43,31 @@ public class ModelProcessor : AssetPostprocessor
         importer.importBlendShapes = false;
         importer.importAnimation = true;
 
-
         // ------- Mat -----
         importer.materialImportMode = ModelImporterMaterialImportMode.None;
-        importer.animationType = ModelImporterAnimationType.None;
-        EditorUtility.SetDirty(go);
+        importer.animationType = ModelImporterAnimationType.Generic;
+
+        List<AnimationClip> animationClips = CheckHasAnimation(assetPath);
+        bool hasAnimation = animationClips.Count > 0;
+        if (!hasAnimation)
+        {
+            // animation
+            if (importer.animationType != ModelImporterAnimationType.Human)
+                importer.animationType = ModelImporterAnimationType.Generic;
+            importer.optimizeGameObjects = true;
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            importer.resampleCurves = false;
+            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
+            importer.animationRotationError = 0.1f;
+            importer.animationPositionError = 0.5f;
+            importer.animationScaleError = 1f;
+        }
+
         importer.SaveAndReimport();
-        if (go == null)
-            go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+    }
+
+    private static void FormatGameObject(GameObject go, string assetPath)
+    {
         if (go == null) return;
         // 去除无用骨骼节点，后缀为 Nub 的
         foreach (var child in go.GetComponentsInChildren<Transform>())
@@ -48,6 +77,7 @@ public class ModelProcessor : AssetPostprocessor
                 Object.DestroyImmediate(child.gameObject);
             }
         }
+
         if (!CommonAssetProcessor.HasExtraUv(assetPath))
         {
             // 去除uv2 color信息
@@ -71,6 +101,7 @@ public class ModelProcessor : AssetPostprocessor
                 smr.sharedMesh.SetUVs(3, emptyUv);
             }
         }
+
         if (!CommonAssetProcessor.HasVertexColor(assetPath))
         {
             // 去除uv2 color信息
@@ -90,27 +121,19 @@ public class ModelProcessor : AssetPostprocessor
                 smr.sharedMesh.SetColors(emptyColor);
             }
         }
-        
+
         //关闭MotionVector
         SkinnedMeshRenderer[] smrs2 = go.GetComponentsInChildren<SkinnedMeshRenderer>();
         foreach (var smr in smrs2)
         {
             smr.skinnedMotionVectors = false;
         }
-        
-        List<AnimationClip> animationClips = CheckHasAnimation(assetPath);
-        bool hasAnimation = animationClips.Count > 0;
+
+        var animationClips = CheckHasAnimation(assetPath);
+        var hasAnimation = animationClips.Count > 0;
         if (hasAnimation)
         {
-            // animation
-            importer.animationType = ModelImporterAnimationType.Generic;
-            importer.optimizeGameObjects = true;
-            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-            importer.resampleCurves = false;
-            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
-            importer.animationRotationError = 0.1f;
-            importer.animationPositionError = 0.5f;
-            importer.animationScaleError = 1f;
+
             try
             {
                 foreach (var clip in animationClips)
@@ -140,6 +163,7 @@ public class ModelProcessor : AssetPostprocessor
                             keyframe.outTangent = float.Parse(keyframe.outTangent.ToString("f3"));
                             keyframes[j] = keyframe;
                         }
+
                         curveData.curve.keys = keyframes;
                         clip.SetCurve(curveData.path, curveData.type, curveData.propertyName, curveData.curve);
                     }
@@ -150,7 +174,6 @@ public class ModelProcessor : AssetPostprocessor
                 Debug.LogError($"压缩动画失败，path:{assetPath} , error:{e}");
             }
         }
-        importer.SaveAndReimport();
     }
 
     private static List<AnimationClip> CheckHasAnimation(string path)
@@ -162,11 +185,9 @@ public class ModelProcessor : AssetPostprocessor
             if (o is AnimationClip clip)
                 animationClips.Add(clip);
         }
-        var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-        if (go != null && animationClips.Count <= 0)
-        {
-            animationClips.AddRange(AnimationUtility.GetAnimationClips(go));
-        }
+
+        if (animationClips.Count <= 0)
+            animationClips.AddRange(Object.FindObjectsOfType<AnimationClip>());
         return animationClips;
     }
 }
