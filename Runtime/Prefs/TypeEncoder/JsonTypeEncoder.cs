@@ -24,6 +24,7 @@
 
 using System;
 using CatJson;
+using UnityEngine;
 
 namespace Framework
 {

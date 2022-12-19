@@ -153,7 +153,7 @@ namespace CatJson
         /// </summary>
         public string ToJson<T>(T obj)
         {
-            InternalToJson(obj, typeof(T));
+            InternalToJson(obj, obj.GetType());
 
             string json = CachedSB.ToString();
             CachedSB.Clear();

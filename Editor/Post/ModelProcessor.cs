@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,10 +10,10 @@ public class ModelProcessor : AssetPostprocessor
     {
         if (!CommonAssetProcessor.FirstImport(assetImporter)) return;
         ModelImporter importer = assetImporter as ModelImporter;
-        FormatModel(importer);
+        FormatModel(importer, go);
     }
     
-    public static void FormatModel(ModelImporter importer)
+    public static void FormatModel(ModelImporter importer, GameObject go = null)
     {
         string assetPath = importer.assetPath;
         // --------model--------
@@ -32,20 +31,14 @@ public class ModelProcessor : AssetPostprocessor
         importer.importBlendShapes = false;
         importer.importAnimation = true;
 
-        // animation
-        importer.animationType = ModelImporterAnimationType.Generic;
-        importer.optimizeGameObjects = true;
-        importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-        importer.resampleCurves = false;
-        importer.animationCompression = ModelImporterAnimationCompression.Optimal;
-        importer.animationRotationError = 0.1f;
-        importer.animationPositionError = 0.5f;
-        importer.animationScaleError = 1f;
 
         // ------- Mat -----
         importer.materialImportMode = ModelImporterMaterialImportMode.None;
+        importer.animationType = ModelImporterAnimationType.None;
+        EditorUtility.SetDirty(go);
         importer.SaveAndReimport();
-        var go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        if (go == null)
+            go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
         if (go == null) return;
         // 去除无用骨骼节点，后缀为 Nub 的
         foreach (var child in go.GetComponentsInChildren<Transform>())
@@ -109,6 +102,15 @@ public class ModelProcessor : AssetPostprocessor
         bool hasAnimation = animationClips.Count > 0;
         if (hasAnimation)
         {
+            // animation
+            importer.animationType = ModelImporterAnimationType.Generic;
+            importer.optimizeGameObjects = true;
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+            importer.resampleCurves = false;
+            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
+            importer.animationRotationError = 0.1f;
+            importer.animationPositionError = 0.5f;
+            importer.animationScaleError = 1f;
             try
             {
                 foreach (var clip in animationClips)
@@ -148,6 +150,7 @@ public class ModelProcessor : AssetPostprocessor
                 Debug.LogError($"压缩动画失败，path:{assetPath} , error:{e}");
             }
         }
+        importer.SaveAndReimport();
     }
 
     private static List<AnimationClip> CheckHasAnimation(string path)
