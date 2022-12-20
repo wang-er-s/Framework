@@ -25,7 +25,7 @@ namespace Framework
         public GameObject Go { get; private set; }
         public ViewModel ViewModel { get; private set; }
         protected readonly UIBindFactory Binding;
-        internal event Action OnDestroy;
+        private event Action OnDestroy;
         public IRes Res { get; }
 
         public View()
@@ -91,7 +91,6 @@ namespace Framework
             if (vm == null || ViewModel == vm) return;
             ViewModel = vm;
             Binding.Reset();
-            Res.Dispose();
             if (ViewModel != null)
             {
                 OnVmChange();
@@ -114,6 +113,7 @@ namespace Framework
         public void Hide()
         {
             Visible(false);
+            ViewModel?.OnViewHide();
             OnHide();
         }
 
