@@ -106,9 +106,12 @@ namespace Framework.Editor
         {
             InternalScanObject<GameObject>("t:prefab", (go, path) =>
             {
-                var renderers = go.GetComponentsInChildren<Renderer>();
-                foreach (var renderer in renderers)
+                go.transform.GetAllChildRecursion(out var children);
+                children.Add(go.transform);
+                foreach (var child in children)
                 {
+                    var renderer = child.GetComponent<Renderer>();
+                    if(renderer == null) continue;
                     if (AssetDatabase.GetAssetPath(renderer.sharedMaterial) == DefaultMatStr)
                     {
                         ScanResult.Add(new object[] { path, renderer.GetRelativePath(go.transform) });
