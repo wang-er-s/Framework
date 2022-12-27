@@ -245,6 +245,10 @@ namespace Framework.Editor
             var objs = GetRes<T>(filter, out var paths);
             for (int i = 0; i < objs.Count; i++)
             {
+                if (objs[i] == null)
+                {
+                    continue; 
+                }
                 ShowProgress(paths[i], i * 1.0f / objs.Count);
                 action(objs[i], paths[i]);
             }
@@ -261,6 +265,10 @@ namespace Framework.Editor
             {
                 ShowProgress(assetImporter[i].assetPath, i * 1.0f / assetImporter.Count);
                 TObject obj = AssetDatabase.LoadAssetAtPath<TObject>(assetImporter[i].assetPath);
+                if (obj == null)
+                {
+                    continue; 
+                }
                 action(obj, assetImporter[i]);
             }
 

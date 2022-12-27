@@ -15,24 +15,29 @@ public class CommonAssetProcessor : AssetPostprocessor
         return path.ToLower().Contains("/ui/");
     }
 
+    public static bool IsNormal(string path)
+    {
+        return path.ToLower().EndsWith("_n");
+    }
+
     public static bool AnimationHasScale(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_scale");
+        return Path.GetFileNameWithoutExtension(path).ToLower().EndsWith("_scale");
     }
 
     public static bool ReadWrite(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_rw");
+        return Path.GetFileNameWithoutExtension(path).ToLower().EndsWith("_rw");
     }
 
     public static bool HasExtraUv(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_uv1");
+        return Path.GetFileNameWithoutExtension(path).ToLower().EndsWith("_uv1");
     }
 
     public static bool HasVertexColor(string path)
     {
-        return Path.GetFileNameWithoutExtension(path).ToLower().Contains("_vc");
+        return Path.GetFileNameWithoutExtension(path).ToLower().EndsWith("_vc");
     }
 
     public static bool FirstImport(AssetImporter importer)
