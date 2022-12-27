@@ -35,7 +35,7 @@ public class ModelProcessor : AssetPostprocessor
         importer.optimizeMeshPolygons = true;
         importer.optimizeMeshVertices = true;
         importer.meshCompression = ModelImporterMeshCompression.Medium;
-        importer.importNormals = ModelImporterNormals.None;
+        importer.importNormals = ModelImporterNormals.Import;
         importer.importTangents = ModelImporterTangents.None;
         importer.importCameras = false;
         importer.importLights = false;
