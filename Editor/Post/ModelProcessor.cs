@@ -68,7 +68,12 @@ public class ModelProcessor : AssetPostprocessor
 
     private static void FormatGameObject(GameObject go, string assetPath)
     {
-        if (go == null) return;
+        if (go == null)
+        {
+            go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+            if(go == null)
+                return;
+        }
         // 去除无用骨骼节点，后缀为 Nub 的
         foreach (var child in go.GetComponentsInChildren<Transform>())
         {
