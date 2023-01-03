@@ -44,6 +44,8 @@ public class BuildAbNode : IBuildTask , IPostprocessBuildWithReport
             var buildOutPath =
                 $"{buildParameters.OutputRoot}/{buildParameters.BuildTarget}";
             DirectoryInfo buildOutDir = new DirectoryInfo(buildOutPath);
+            buildOutDir.Create();
+            Directory.CreateDirectory(cdnPath);
             buildOutDir.CopyTo(cdnPath);
             Debug.Log($"拷贝到{cdnPath}成功");
             return String.Empty;

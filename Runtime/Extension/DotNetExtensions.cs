@@ -283,6 +283,42 @@ public static class IEnumerableExtension
         return list[list.Count - 1];
     }
 
+    /// <summary>
+    /// 返回的是和val最小差异的值的索引
+    /// </summary>
+    public static int FindClosestIndex(this IList<int> list, int val)
+    {
+        int min = int.MaxValue;
+        int resultIndex = 0;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (Mathf.Abs(list[i] - val) < min)
+            {
+                resultIndex = i;
+            }
+        }
+
+        return resultIndex;
+    }
+    
+    /// <summary>
+    /// 返回的是和val最小差异的值的索引
+    /// </summary>
+    public static int FindClosestIndex(this IList<float> list, float val)
+    {
+        float min = float.MaxValue;
+        int resultIndex = 0;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (Mathf.Abs(list[i] - val) < min)
+            {
+                resultIndex = i;
+            }
+        }
+
+        return resultIndex;
+    }
+
     public static T First<T>(this IList<T> list)
     {
         return list[0];

@@ -48,10 +48,11 @@ namespace Framework
             return result;
         }
 
-        public static RecyclableList<T> Create(IEnumerable<T> collection, int count)
+        public static RecyclableList<T> Create(IEnumerable<T> collection, int count = -1)
         {
             var result = Create(count);
-            result.AddRange(collection);
+            if (collection != null)
+                result.AddRange(collection);
             return result;
         }
 

@@ -116,7 +116,7 @@ namespace YooAsset.Editor
 							var shader = shaderRef.objectReferenceValue as Shader;
 							if (shader == null)
 							{
-								throw new Exception("Invalid shader in ShaderVariantCollection file.");
+								throw new Exception($"Invalid shader in ShaderVariantCollection file. {shaderRef.objectReferenceValue}");
 							}
 
 							string shaderAssetPath = AssetDatabase.GetAssetPath(shader);

@@ -45,11 +45,11 @@ public class ModelProcessor : AssetPostprocessor
 
         // ------- Mat -----
         importer.materialImportMode = ModelImporterMaterialImportMode.None;
-        importer.animationType = ModelImporterAnimationType.Generic;
+        importer.animationType = ModelImporterAnimationType.None;
 
         List<AnimationClip> animationClips = CheckHasAnimation(assetPath);
         bool hasAnimation = animationClips.Count > 0;
-        if (!hasAnimation)
+        if (hasAnimation)
         {
             // animation
             if (importer.animationType != ModelImporterAnimationType.Human)

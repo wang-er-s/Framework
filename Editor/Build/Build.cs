@@ -44,7 +44,7 @@ namespace Framework.Editor
         [LabelText("增量ab打包")]
         public bool Incremental;
         [LabelText("资源离线")]
-        public bool ResOffline;
+        public bool ResOffline = true;
 
         [Button(ButtonSizes.Large, Name = "打包")]
         private void BuildPlatform()
@@ -52,7 +52,7 @@ namespace Framework.Editor
             var target = (BuildTarget) Enum.Parse(typeof(BuildTarget), Platform);
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildPipeline.GetBuildTargetGroup(target), target);
             var buildContext = new BuildContext(target, ResOffline, DebugMode, UseHotfix, Incremental,
-                "../../share/build", IsUpVersion, ExportAab);
+                "Build", IsUpVersion, ExportAab);
             List<IBuildTask> buildTasks = new List<IBuildTask>()
             {
                 new BuildIlrNode(),
