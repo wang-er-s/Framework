@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Framework
 {
@@ -71,6 +72,11 @@ namespace Framework
             {
                 cache.Add(this);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"[ {string.Join(" | ", this)} ]";
         }
     }
 }
