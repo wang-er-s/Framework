@@ -3,9 +3,9 @@
     "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro",
-        "ILRuntime",
         "YooAsset",
-        "CatJson"
+        "CatJson",
+        "BetterStreamingAssets"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -14,11 +14,9 @@
     "precompiledReferences": [
         "Debugger.dll",
         "Sirenix.OdinInspector.Attributes.dll",
-        "Google.Protobuf.dll",
         "DOTweenPro.dll",
         "DOTween.dll",
-        "Sirenix.Serialization.dll",
-        "XAsset.dll"
+        "Sirenix.Serialization.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
