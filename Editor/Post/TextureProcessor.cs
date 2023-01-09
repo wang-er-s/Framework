@@ -11,7 +11,7 @@ public class TextureProcessor : AssetPostprocessor
 
     public static void FormatTexture(TextureImporter importer)
     {
-        importer.isReadable = true;
+        importer.isReadable = false;
         importer.wrapMode = TextureWrapMode.Clamp;
         importer.anisoLevel = 1;
         importer.filterMode = FilterMode.Bilinear;

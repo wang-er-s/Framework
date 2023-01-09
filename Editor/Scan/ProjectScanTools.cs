@@ -109,7 +109,7 @@ namespace Framework.Editor
             // 需要等待一下 不然odin会报错
             await Task.Delay(10);
             var selected = EditorUtility.OpenFolderPanel("添加目录", Application.dataPath, "");
-            addList.Add(Path.GetRelativePath(Application.dataPath, selected));
+            addList.Add(Path.GetRelativePath(Path.Combine(Application.dataPath,".."), selected));
         }
 
         public static string ParseCSVItem(object obj)

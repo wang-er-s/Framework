@@ -67,7 +67,8 @@ namespace Framework.Editor
             {
                 foreach (var scanRule in ruleList.Rules)
                 {
-                    scanRule.Scan();
+                    if (scanRule.IsEnable)
+                        scanRule.Scan();
                 }
             }     
         }
