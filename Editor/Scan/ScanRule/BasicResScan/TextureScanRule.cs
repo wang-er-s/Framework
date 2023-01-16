@@ -97,6 +97,8 @@ namespace Framework.Editor
 
         private bool HasMoreTransparentPixels(Texture2D texture, out float rate)
         {
+            rate = 0;
+            if (texture.width == 0 || texture.height == 0) return false;
             texture = ProjectScanTools.CreateRwTexture2D(texture);
             var pixels = texture.GetPixels();
             int count = 0;
@@ -209,6 +211,7 @@ namespace Framework.Editor
 
         public static bool IsPureTexture(Texture2D texture)
         {
+            if (texture.width == 0 || texture.height == 0) return false;
             texture = ProjectScanTools.CreateRwTexture2D(texture);
             var pixels = texture.GetPixels();
             Color defaultColor = pixels.First();
@@ -240,6 +243,7 @@ namespace Framework.Editor
 
         private static bool IsTextureAlphaAllOne(Texture2D texture)
         {
+            if (texture.width == 0 || texture.height == 0) return false;
             texture = ProjectScanTools.CreateRwTexture2D(texture);
             var pixels = texture.GetPixels();
             foreach (var color in pixels)

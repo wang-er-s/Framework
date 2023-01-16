@@ -213,8 +213,12 @@ namespace Framework.Editor
             }
 
             var guids = AssetDatabase.FindAssets(filter, targetFolders.ToArray()).ToList();
-            var ignoreGuids = AssetDatabase.FindAssets(filter, ignoreFolders.ToArray());
-            guids.RemoveRange(ignoreGuids);
+            if (ignoreFolders.Count > 0)
+            {
+                var ignoreGuids = AssetDatabase.FindAssets(filter, ignoreFolders.ToArray());
+                guids.RemoveRange(ignoreGuids);
+            }
+
             List<T> result = new List<T>(guids.Count);
             foreach (var guid in guids)
             {
