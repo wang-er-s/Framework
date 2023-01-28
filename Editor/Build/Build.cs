@@ -36,11 +36,40 @@ namespace Framework.Editor
         public bool IsUpVersion;
         [LabelText("是否使用热更")]
         public bool UseHotfix;
+
+        private bool debugMode = true;
+
         [LabelText("Debug模式")]
-        [InfoBox("Debug模式会生成pdb，方便查询报错堆栈，上线包请关闭")]
-        public bool DebugMode = true;
+        [ShowInInspector]
+        [InfoBox("Debug模式会生成pdb，且开启Development")]
+        public bool DebugMode
+        {
+            get => debugMode;
+            set
+            {
+                debugMode = value;
+                if (debugMode)
+                {
+                    exportAab = false;
+                }
+            }
+        }
+
+        private bool exportAab;
         [LabelText("是否到处AAB(仅限安卓)")]
-        public bool ExportAab;
+        [ShowInInspector]
+        public bool ExportAab
+        {
+            get => exportAab;
+            set
+            {
+                exportAab = value;
+                if (exportAab)
+                {
+                    DebugMode = false;
+                }
+            }
+        }
         [LabelText("增量ab打包")]
         public bool Incremental;
         [LabelText("资源离线")]

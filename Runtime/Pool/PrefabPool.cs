@@ -7,14 +7,14 @@ namespace Framework
 {
     public class PrefabPool<TComponent> : Pool<TComponent> where TComponent : Component
     {
-        private TComponent template;
+        private Transform root;
         private bool autoActive;
         public PrefabPool(TComponent prefab, int initCount = 1, Action<TComponent> onAlloc = null,
             Action<TComponent> onFree = null, Action<TComponent> onDispose = null, bool autoActive = true, Transform parent = null) : base(
             () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
         {
-            template = prefab;
             this.autoActive = autoActive;
+            root = new GameObject($"POOL_{prefab.name}").transform;
         }
 
         public override TComponent Allocate()
@@ -28,54 +28,51 @@ namespace Framework
         public override void Free(TComponent obj)
         {
             base.Free(obj);
+            obj.transform.SetParent(root);
             if (autoActive)
                 obj.gameObject.SetActive(false);
         }
         
         public override void Dispose()
         {
-            while (CacheStack.Count > 0)
-            {
-                TComponent item = CacheStack.Pop();
-                OnDispose?.Invoke(item);
-                Object.Destroy(item.gameObject);
-            }
+            Object.Destroy(root);
             CacheStack.Clear();
         }
     }
 
     public class PrefabPool : Pool<GameObject>
     {
-        private GameObject template;
 
+        private Transform root;
+        private bool autoActive;
+        
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
-            Action<GameObject> onFree = null, Action<GameObject> onDispose = null, Transform parent = null) : base(
+            Action<GameObject> onFree = null, Action<GameObject> onDispose = null, bool autoActive = true, Transform parent = null) : base(
             () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
         {
-            template = prefab;
+            root = new GameObject($"POOL_{prefab.name}").transform;
+            this.autoActive = autoActive;
         }
 
         public override GameObject Allocate()
         {
             var result = base.Allocate();
-            result.gameObject.SetActive(true);
+            if (autoActive)
+                result.gameObject.SetActive(true);
             return result;
         }
 
         public override void Free(GameObject obj)
         {
             base.Free(obj);
-            obj.gameObject.SetActive(false);
+            obj.transform.SetParent(root);
+            if (autoActive)
+                obj.gameObject.SetActive(false);
         }
         
         public override void Dispose()
         {
-            while (CacheStack.Count > 0)
-            {
-                var item = CacheStack.Pop();
-                OnDispose?.Invoke(item);
-                Object.Destroy(item.gameObject);
-            }
+            Object.Destroy(root.gameObject);
             CacheStack.Clear();
         }
     }
@@ -105,4 +102,5 @@ namespace Framework
             obj.gameObject.SetActive(false);
         }
     }
+    
 }

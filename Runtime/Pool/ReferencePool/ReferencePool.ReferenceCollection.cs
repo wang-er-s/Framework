@@ -89,7 +89,7 @@ namespace Framework
                 }
             }
 
-            public T Acquire<T>() where T : class, IReference, new()
+            public T Allocate<T>() where T : class, IReference, new()
             {
                 if (typeof(T) != m_ReferenceType)
                 {
@@ -110,7 +110,7 @@ namespace Framework
                 return new T();
             }
 
-            public IReference Acquire()
+            public IReference Allocate()
             {
                 m_UsingReferenceCount++;
                 m_AcquireReferenceCount++;
@@ -126,7 +126,7 @@ namespace Framework
                 return (IReference)Activator.CreateInstance(m_ReferenceType);
             }
 
-            public void Release(IReference reference)
+            public void Free(IReference reference)
             {
                 reference.Clear();
                 lock (m_References)
