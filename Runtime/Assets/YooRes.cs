@@ -190,7 +190,7 @@ namespace Framework
             loadProgress.Add(promise);
             var loader = YooAssets.LoadAssetAsync<T>(key);
             handles[key] = loader;
-            while (!loader.IsDone)
+            while (loader.IsValid && !loader.IsDone)
             {
                 promise.UpdateProgress(loader.Progress);
                 yield return null;
@@ -222,7 +222,6 @@ namespace Framework
             handles.Clear();
             defaultPackage.UnloadUnusedAssets();
         }
-        
 
         public override T LoadAsset<T>(string key)
         {

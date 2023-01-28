@@ -192,9 +192,14 @@ namespace Framework
             dic[key] = value;
         }
 
-        public TValue GetByIndex(int index)
+        public TValue GetValueByIndex(int index)
         {
             return dic[keyList[index]];
+        }
+
+        public TKey GetKeyByIndex(int index)
+        {
+            return keyList[index];
         }
 
         public bool ContainsKey(TKey key)
