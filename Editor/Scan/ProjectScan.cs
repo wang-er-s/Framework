@@ -26,9 +26,7 @@ namespace Framework.Editor
                 if (scanMenu.IsEnable)
                     scanMenu.Scan();
             }
-            SaveScanResultJson();
-            SaveScanResultToCsv();
-            EditorUtility.OpenWithDefaultApp(ProjectScanPath.ProjectConfigRootPath);
+            SaveResult();
         }
 
 
@@ -133,6 +131,13 @@ namespace Framework.Editor
             }
 
             GlobalConfig.Save();
+        }
+
+        public static void SaveResult()
+        {
+            SaveScanResultJson();
+            SaveScanResultToCsv();
+            EditorUtility.OpenWithDefaultApp(ProjectScanPath.ProjectConfigRootPath);
         }
         
         private static void SaveScanResultToCsv()

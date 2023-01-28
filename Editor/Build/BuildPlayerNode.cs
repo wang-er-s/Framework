@@ -75,7 +75,6 @@ namespace Framework.Editor
                 EditorUserBuildSettings.buildAppBundle = exportAab;
             }
             EditorUserBuildSettings.development = isDebug;
-            EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
             AssetDatabase.SaveAssets();
             PlayerSettings.keystorePass = keyStorePwd;
             PlayerSettings.keyaliasPass = keyAliasPwd;

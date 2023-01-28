@@ -1,4 +1,7 @@
-﻿namespace Framework.Editor
+﻿using System.Collections.Generic;
+using Sirenix.OdinInspector;
+
+namespace Framework.Editor
 {
     public class BasicResCheckMenu : ScanMenu
     {

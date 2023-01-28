@@ -6,11 +6,14 @@ namespace Framework.Editor
 {
     public abstract class ScanMenu 
     {
-        [PropertyOrder(1)]
+        [PropertyOrder(999)]
         [ShowInInspector]
         [DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.OneLine, IsReadOnly = true, KeyLabel = "类型", ValueLabel = "")]
         [HideIf("@Rules.Count <= 0")]
         protected Dictionary<string, ShowRules> Rules = new();
+        [ToggleLeft]
+        [ShowInInspector]
+        [PropertyOrder(2)]
         public bool IsEnable { get; set; } = true;
         public abstract string Name { get; }
         public virtual int Priority { get; protected set; } = 1;
@@ -61,6 +64,16 @@ namespace Framework.Editor
             }
         }
 
+        [PropertyOrder(1)]
+        [ShowIf("@Rules.Count > 0")]
+        [ButtonGroup("Top")]
+        [Button("扫描", ButtonSizes.Large)]
+        protected void ScanInternal()
+        {
+            Scan();
+            ProjectScan.SaveResult();
+        }
+        
         public void Scan()
         {
             foreach (var ruleList in Rules.Values)
@@ -72,9 +85,9 @@ namespace Framework.Editor
                 }
             }     
         }
-
         
         [PropertyOrder(0)]
+        [ButtonGroup("Top")]
         [ShowIf("@hasFixRule")]
         [Button("打开资源修复面板", ButtonSizes.Large)]
         private void ShowFixWindow()
