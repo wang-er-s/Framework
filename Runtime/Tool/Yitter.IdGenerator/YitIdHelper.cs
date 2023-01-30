@@ -33,7 +33,7 @@ namespace Framework
 
         static YitIdHelper()
         {
-            var options = new IdGeneratorOptions(1);
+            var options = new IdGeneratorOptions((ushort)DateTime.Now.Ticks);
             SetIdGenerator(options);
         }
 
