@@ -40,5 +40,14 @@ namespace Framework
              pool.Dispose();
              gameObjectPool.Remove(path);
          }
+
+         public static void Dispose()
+         {
+             foreach (var pool in gameObjectPool.Values)
+             {
+                 pool.Dispose();
+             } 
+             gameObjectPool.Clear();
+         }
     }
 }

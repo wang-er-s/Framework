@@ -257,6 +257,24 @@ public static class IEnumerableExtension
     {
         return UnityEngine.Random.Range(0, list.Count);
     }
+
+    public static T GetRandomValue<T>(this ICollection<T> collection)
+    {
+        if (collection.Count <= 0)
+        {
+            throw new Exception("collection count <= 0");
+        }
+        var targetIndex = UnityEngine.Random.Range(0, collection.Count);
+        int index = 0;
+        foreach (var item in collection)
+        {
+            if (index == targetIndex)
+                return item;
+            index++;
+        }
+
+        return default;
+    }
     
     public static int GetRandomIndex(this ICollection list, float min, float max)
     {

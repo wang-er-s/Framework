@@ -17,11 +17,11 @@ public class Launch : MonoBehaviour
 #if !UNITY_EDITOR
         Application.targetFrameRate = 60;
 #endif
-        float memory = SystemInfo.systemMemorySize / 1024f;
-        if (memory < 3)
+        int memory = Mathf.RoundToInt(SystemInfo.systemMemorySize / 1024f);
+        if (memory <= 3)
         {
             ScalableBufferManager.ResizeBuffers(0.7f,0.7f);
-        }else if (memory < 5)
+        }else if (memory <= 5)
         {
             ScalableBufferManager.ResizeBuffers(0.8f,0.8f);
         }
