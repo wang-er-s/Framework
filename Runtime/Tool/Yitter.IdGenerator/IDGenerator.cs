@@ -16,7 +16,7 @@ namespace Framework
     /// <summary>
     /// 这是一个调用的例子，默认情况下，单机集成者可以直接使用 NextId()。
     /// </summary>
-    public class YitIdHelper
+    public class IDGenerator
     {
         private static IIdGenerator _IdGenInstance = null;
 
@@ -31,9 +31,9 @@ namespace Framework
             _IdGenInstance = new DefaultIdGenerator(options);
         }
 
-        static YitIdHelper()
+        static IDGenerator()
         {
-            var options = new IdGeneratorOptions((ushort)DateTime.Now.Ticks);
+            var options = new IdGeneratorOptions((ushort)UnityEngine.Random.Range(0,20));
             SetIdGenerator(options);
         }
 
