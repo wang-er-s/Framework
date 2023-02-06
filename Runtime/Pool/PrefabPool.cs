@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -15,6 +14,7 @@ namespace Framework
         {
             this.autoActive = autoActive;
             root = new GameObject($"POOL_{prefab.name}").transform;
+            root.SetParent(PrefabPool.PrefabPoolRoot);
         }
 
         public override TComponent Allocate()
@@ -35,22 +35,36 @@ namespace Framework
         
         public override void Dispose()
         {
-            Object.Destroy(root);
+            Object.Destroy(root.gameObject);
             CacheStack.Clear();
         }
     }
 
     public class PrefabPool : Pool<GameObject>
     {
+        private static Transform prefabPoolRoot;
 
+        public static Transform PrefabPoolRoot
+        {
+            get
+            {
+                if (prefabPoolRoot == null)
+                {
+                    prefabPoolRoot = new GameObject("POOL").transform;
+                }
+
+                return prefabPoolRoot;
+            }
+        }
         private Transform root;
         private bool autoActive;
-        
+
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
             Action<GameObject> onFree = null, Action<GameObject> onDispose = null, bool autoActive = true, Transform parent = null) : base(
             () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
         {
             root = new GameObject($"POOL_{prefab.name}").transform;
+            root.SetParent(PrefabPoolRoot);
             this.autoActive = autoActive;
         }
 
