@@ -58,11 +58,13 @@ namespace Framework
         }
         private Transform root;
         private bool autoActive;
+        private Transform parent;
 
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
             Action<GameObject> onFree = null, Action<GameObject> onDispose = null, bool autoActive = true, Transform parent = null) : base(
-            () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
+            () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
         {
+            this.parent = parent;
             root = new GameObject($"POOL_{prefab.name}").transform;
             root.SetParent(PrefabPoolRoot);
             this.autoActive = autoActive;
@@ -71,6 +73,7 @@ namespace Framework
         public override GameObject Allocate()
         {
             var result = base.Allocate();
+            result.transform.SetParent(parent);
             if (autoActive)
                 result.gameObject.SetActive(true);
             return result;

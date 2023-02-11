@@ -212,6 +212,11 @@ namespace Framework
             return dic.TryGetValue(key, out value);
         }
 
+        public IReadOnlyList<TKey> Keys()
+        {
+            return keyList;
+        }
+
         public bool Remove(TKey key)
         {
             if (!dic.ContainsKey(key))
