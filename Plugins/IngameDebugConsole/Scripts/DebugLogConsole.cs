@@ -189,7 +189,7 @@ namespace IngameDebugConsole
 				DebugLogManager.Instance.ExpandLatestPendingLog();
 		}
 
-		private static StringBuilder AppendSysInfoIfPresent( this StringBuilder sb, string info, string postfix = null )
+		private static StringBuilder AppendSysInfoIfPresent( this StringBuilder sb, string info, string postfix = "|" )
 		{
 			if( info != SystemInfo.unsupportedIdentifier )
 			{

@@ -7,19 +7,26 @@ namespace Framework
     public class PrefabPool<TComponent> : Pool<TComponent> where TComponent : Component
     {
         private Transform root;
+        private Transform parent;
         private bool autoActive;
         public PrefabPool(TComponent prefab, int initCount = 1, Action<TComponent> onAlloc = null,
             Action<TComponent> onFree = null, Action<TComponent> onDispose = null, bool autoActive = true, Transform parent = null) : base(
-            () => Object.Instantiate(prefab, parent), initCount, onAlloc, onFree, onDispose)
+            () => Object.Instantiate(prefab, parent), 0, onAlloc, onFree, onDispose)
         {
+            this.parent = parent;
             this.autoActive = autoActive;
             root = new GameObject($"POOL_{prefab.name}").transform;
             root.SetParent(PrefabPool.PrefabPoolRoot);
+            for (int i = 0; i < initCount; i++)
+            {
+                Free(Allocate());
+            } 
         }
 
         public override TComponent Allocate()
         {
             var result = base.Allocate();
+            result.transform.SetParent(parent);
             if (autoActive)
                 result.gameObject.SetActive(true);
             return result;
@@ -62,12 +69,16 @@ namespace Framework
 
         public PrefabPool(GameObject prefab, int initCount = 1, Action<GameObject> onAlloc = null,
             Action<GameObject> onFree = null, Action<GameObject> onDispose = null, bool autoActive = true, Transform parent = null) : base(
-            () => Object.Instantiate(prefab), initCount, onAlloc, onFree, onDispose)
+            () => Object.Instantiate(prefab, parent), 0, onAlloc, onFree, onDispose)
         {
             this.parent = parent;
             root = new GameObject($"POOL_{prefab.name}").transform;
             root.SetParent(PrefabPoolRoot);
             this.autoActive = autoActive;
+            for (int i = 0; i < initCount; i++)
+            {
+                Free(Allocate());
+            }
         }
 
         public override GameObject Allocate()

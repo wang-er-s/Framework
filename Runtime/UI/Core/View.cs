@@ -90,7 +90,6 @@ namespace Framework
         {
             if (vm == null || ViewModel == vm) return;
             ViewModel = vm;
-            Binding.Reset();
             if (ViewModel != null)
             {
                 OnVmChange();
