@@ -92,6 +92,7 @@ namespace Framework
             ViewModel = vm;
             if (ViewModel != null)
             {
+                Binding.Reset();
                 OnVmChange();
             }
         }
