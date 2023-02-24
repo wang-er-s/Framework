@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Framework
 {
     public class ProcedureContext : Context
@@ -14,6 +16,7 @@ namespace Framework
         public override void Dispose()
         {
             res.Dispose();
+            GC.Collect();
         }
     }
 }

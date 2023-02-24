@@ -25,13 +25,13 @@ namespace Framework
             RenderUpdateEvent += f => { };
         }
 
-        private static FrameworkEngine mono;
+        public static FrameworkEngine Mono;
         public static void AddModule(IEnumerable<IGameModule> modules)
         {
-            if (mono == null)
+            if (Mono == null)
             {
-                mono = new GameObject(nameof(FrameworkEngine)).AddComponent<FrameworkEngine>();
-                DontDestroyOnLoad(mono.gameObject);
+                Mono = new GameObject(nameof(FrameworkEngine)).AddComponent<FrameworkEngine>();
+                DontDestroyOnLoad(Mono.gameObject);
             }
             gameModules.AddRange(modules);
         }

@@ -55,26 +55,32 @@ namespace Framework
 
         private void InternalOpenAsync<T>(Type type, ProgressResult<float, T> promise, ViewModel viewModel) where T : View
         {
-            View view = null;
             var path = (GetClassData(type).Attribute as UIAttribute).Path;
             promise.Callbackable().OnCallback(progressResult =>
             {
-                Sort(view);
-                view.Show();
+                Sort(progressResult.Result);
+                progressResult.Result.Show();
             });
-            if (openedSingleViews.TryGetValue(type, out var view1))
+            if (openedSingleViews.TryGetValue(type, out var view))
             {
                 promise.UpdateProgress(1);
-                promise.SetResult(view1);
+                promise.SetResult(view);
             }
             else
             {
                 view = ReflectionHelper.CreateInstance(type) as View;
                 Executors.RunOnCoroutineNoReturn(CreateViewGo(promise, view, path, viewModel));
             }
-            openedViews.Add(view);
+            
             if (view.IsSingle)
+            {
                 openedSingleViews[type] = view;
+                openedViews.TryAddSingle(view);
+            }
+            else
+            {
+                openedViews.Add(view);    
+            }
         }
 
         public IProgressResult<float, T> CreateViewAsync<T>(ViewModel vm) where T : View
@@ -125,9 +131,15 @@ namespace Framework
         public T Open<T>(ViewModel viewModel = null) where T : View
         {
             var view = CreateView(typeof(T), viewModel) as T;
-            openedViews.Add(view);
             if (view.IsSingle)
+            {
                 openedSingleViews[typeof(T)] = view;
+                openedViews.TryAddSingle(view);
+            }
+            else
+            {
+                openedViews.Add(view);    
+            }
             return view;
         }
 

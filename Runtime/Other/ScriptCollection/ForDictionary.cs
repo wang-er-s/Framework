@@ -212,10 +212,7 @@ namespace Framework
             return dic.TryGetValue(key, out value);
         }
 
-        public IReadOnlyList<TKey> Keys()
-        {
-            return keyList;
-        }
+        public IReadOnlyList<TKey> Keys => keyList;
 
         public bool Remove(TKey key)
         {

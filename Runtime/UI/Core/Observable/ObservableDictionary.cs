@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace Framework
 {
-    public class ObservableDictionary<TKey,TValue>  : IDictionary<TKey, TValue>, IDictionary , IObservable
+    public class ObservableDictionary<TKey,TValue>  : IDictionary<TKey, TValue>, IDictionary , IObservable , IReference
     {
         
         private event Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey,TValue>> CollectionChanged;
-        private event Action<Dictionary<TKey, TValue>> dicChanged; 
+        private event Action<Dictionary<TKey, TValue>> dicChanged;
 
-        protected Dictionary<TKey, TValue> Dictionary;
+        private Dictionary<TKey, TValue> dictionary;
 
         static ObservableDictionary()
         {
@@ -24,44 +24,44 @@ namespace Framework
 
         public ObservableDictionary()
         {
-            this.Dictionary = new Dictionary<TKey, TValue>();
+            this.dictionary = new Dictionary<TKey, TValue>();
         }
 
         public ObservableDictionary(IDictionary<TKey, TValue> dictionary)
         {
-            this.Dictionary = new Dictionary<TKey, TValue>(dictionary);
+            this.dictionary = new Dictionary<TKey, TValue>(dictionary);
         }
         public ObservableDictionary(IEqualityComparer<TKey> comparer)
         {
-            this.Dictionary = new Dictionary<TKey, TValue>(comparer);
+            this.dictionary = new Dictionary<TKey, TValue>(comparer);
         }
         public ObservableDictionary(int capacity)
         {
-            this.Dictionary = new Dictionary<TKey, TValue>(capacity);
+            this.dictionary = new Dictionary<TKey, TValue>(capacity);
         }
         public ObservableDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
         {
-            this.Dictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
+            this.dictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
         }
         public ObservableDictionary(int capacity, IEqualityComparer<TKey> comparer)
         {
-            this.Dictionary = new Dictionary<TKey, TValue>(capacity, comparer);
+            this.dictionary = new Dictionary<TKey, TValue>(capacity, comparer);
         }
 
         public TValue this[TKey key]
         {
             get
             {
-                if (!Dictionary.ContainsKey(key))
+                if (!dictionary.ContainsKey(key))
                     return default;
-                return Dictionary[key];
+                return dictionary[key];
             }
             set => Insert(key, value, false);
         }
 
-        public ICollection<TKey> Keys => Dictionary.Keys;
+        public ICollection<TKey> Keys => dictionary.Keys;
 
-        public ICollection<TValue> Values => Dictionary.Values;
+        public ICollection<TValue> Values => dictionary.Values;
 
         public void Add(TKey key, TValue value)
         {
@@ -74,8 +74,8 @@ namespace Framework
                 throw new ArgumentNullException(nameof(key));
 
             TValue value;
-            Dictionary.TryGetValue(key, out value);
-            var removed = Dictionary.Remove(key);
+            dictionary.TryGetValue(key, out value);
+            var removed = dictionary.Remove(key);
             if (removed)
             {
                 OnCollectionChanged(NotifyCollectionChangedAction.Remove, default,
@@ -87,7 +87,7 @@ namespace Framework
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return Dictionary.TryGetValue(key, out value);
+            return dictionary.TryGetValue(key, out value);
         }
 
         public bool TryRemove(TKey key)
@@ -102,7 +102,7 @@ namespace Framework
 
         public bool ContainsKey(TKey key)
         {
-            return Dictionary.ContainsKey(key);
+            return dictionary.ContainsKey(key);
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
@@ -118,7 +118,7 @@ namespace Framework
 
         public UnRegister AddListener(Action<Dictionary<TKey, TValue>> changeCb)
         {
-            changeCb(Dictionary);
+            changeCb(dictionary);
             dicChanged += changeCb;
             return new UnRegister(() => dicChanged -= changeCb);
         }
@@ -148,26 +148,26 @@ namespace Framework
         
         public void Clear()
         {
-            if (Dictionary.Count > 0)
+            if (dictionary.Count > 0)
             {
-                Dictionary.Clear();
+                dictionary.Clear();
                 OnCollectionChanged(NotifyCollectionChangedAction.Reset, default, default);
             }
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            return Dictionary.Contains(item);
+            return dictionary.Contains(item);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            ((IDictionary)this.Dictionary).CopyTo(array, arrayIndex);
+            ((IDictionary)this.dictionary).CopyTo(array, arrayIndex);
         }
 
-        public int Count => Dictionary.Count;
+        public int Count => dictionary.Count;
 
-        public bool IsReadOnly => ((IDictionary)this.Dictionary).IsReadOnly;
+        public bool IsReadOnly => ((IDictionary)this.dictionary).IsReadOnly;
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
@@ -176,12 +176,12 @@ namespace Framework
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return Dictionary.GetEnumerator();
+            return dictionary.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)Dictionary).GetEnumerator();
+            return ((IEnumerable)dictionary).GetEnumerator();
         }
 
         public void AddRange(IDictionary<TKey, TValue> items)
@@ -191,19 +191,19 @@ namespace Framework
 
             if (items.Count > 0)
             {
-                if (this.Dictionary.Count > 0)
+                if (this.dictionary.Count > 0)
                 {
-                    if (items.Keys.Any((k) => this.Dictionary.ContainsKey(k)))
+                    if (items.Keys.Any((k) => this.dictionary.ContainsKey(k)))
                         throw new ArgumentException("An item with the same key has already been added.");
                     else
                     {
                         foreach (var item in items)
-                            ((IDictionary<TKey, TValue>)this.Dictionary).Add(item);
+                            ((IDictionary<TKey, TValue>)this.dictionary).Add(item);
                     }
                 }
                 else
                 {
-                    this.Dictionary = new Dictionary<TKey, TValue>(items);
+                    this.dictionary = new Dictionary<TKey, TValue>(items);
                 }
 
                 foreach (var value in items)
@@ -218,7 +218,7 @@ namespace Framework
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
 
-            if (Dictionary.TryGetValue(key, out var item))
+            if (dictionary.TryGetValue(key, out var item))
             {
                 if (add)
                     throw new ArgumentException("An item with the same key has already been added.");
@@ -226,12 +226,12 @@ namespace Framework
                 if (Equals(item, value))
                     return;
 
-                Dictionary[key] = value;
+                dictionary[key] = value;
                 OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
             }
             else
             {
-                Dictionary[key] = value;
+                dictionary[key] = value;
                 OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value), default);
             }
         }
@@ -240,23 +240,29 @@ namespace Framework
         private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> newItem, KeyValuePair<TKey, TValue> oldItem)
         {
             CollectionChanged?.Invoke(action, newItem, oldItem);
-            dicChanged?.Invoke(Dictionary);
+            dicChanged?.Invoke(dictionary);
         }
+        
+        void IReference.Clear()
+        {
+            dictionary.Clear();
+            ClearListener();
+        } 
         
 
         object IDictionary.this[object key]
         {
-            get => ((IDictionary)this.Dictionary)[key];
+            get => ((IDictionary)this.dictionary)[key];
             set => Insert((TKey)key, (TValue)value, false);
         }
 
-        ICollection IDictionary.Keys => ((IDictionary)this.Dictionary).Keys;
+        ICollection IDictionary.Keys => ((IDictionary)this.dictionary).Keys;
 
-        ICollection IDictionary.Values => ((IDictionary)this.Dictionary).Values;
+        ICollection IDictionary.Values => ((IDictionary)this.dictionary).Values;
 
         bool IDictionary.Contains(object key)
         {
-            return ((IDictionary)this.Dictionary).Contains(key);
+            return ((IDictionary)this.dictionary).Contains(key);
         }
 
         void IDictionary.Add(object key, object value)
@@ -266,7 +272,7 @@ namespace Framework
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
-            return ((IDictionary)this.Dictionary).GetEnumerator();
+            return ((IDictionary)this.dictionary).GetEnumerator();
         }
 
         void IDictionary.Remove(object key)
@@ -274,20 +280,20 @@ namespace Framework
             this.Remove((TKey)key);
         }
 
-        bool IDictionary.IsFixedSize => ((IDictionary)this.Dictionary).IsFixedSize;
+        bool IDictionary.IsFixedSize => ((IDictionary)this.dictionary).IsFixedSize;
 
         void ICollection.CopyTo(Array array, int index)
         {
-            ((IDictionary)Dictionary).CopyTo(array, index);
+            ((IDictionary)dictionary).CopyTo(array, index);
         }
 
-        object ICollection.SyncRoot => ((IDictionary)this.Dictionary).SyncRoot;
+        object ICollection.SyncRoot => ((IDictionary)this.dictionary).SyncRoot;
 
-        bool ICollection.IsSynchronized => ((IDictionary)this.Dictionary).IsSynchronized;
+        bool ICollection.IsSynchronized => ((IDictionary)this.dictionary).IsSynchronized;
         
         public static implicit operator Dictionary<TKey, TValue>(ObservableDictionary<TKey, TValue> self)
         {
-            return self.Dictionary;
+            return self.dictionary;
         }
 
         void IObservable.AddRawListener(Action<object> listener)
@@ -295,12 +301,12 @@ namespace Framework
             dicChanged += dic => listener(dic);
         }
 
-        object IObservable.RawValue => Dictionary;
+        object IObservable.RawValue => dictionary;
         
-        Type IObservable.RawType => Dictionary.GetType();
+        Type IObservable.RawType => dictionary.GetType();
         void IObservable.InitRawValueWithoutCb(object val)
         {
-            Dictionary = (Dictionary<TKey,TValue>)val;
+            dictionary = (Dictionary<TKey,TValue>)val;
         }
         void IObservable.ForceTrigger()
         {

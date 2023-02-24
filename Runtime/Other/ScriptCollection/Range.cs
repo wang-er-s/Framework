@@ -15,7 +15,7 @@ namespace Framework
             Max = max;
         }
 
-        public bool InRange(T val, bool includeMin = true, bool includeMax = true, Comparison<T> comparison = null)
+        public readonly bool InRange(T val, bool includeMin = true, bool includeMax = true, Comparison<T> comparison = null)
         {
             if (comparison != null)
             {

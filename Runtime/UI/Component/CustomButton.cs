@@ -27,7 +27,8 @@ namespace Framework
         private Text textComponent;
         private TextMeshProUGUI tmp;
         private string text;
-
+        public static Action ClickSoundAction;
+        
         public string Text
         {
             get
@@ -58,6 +59,10 @@ namespace Framework
             }
 
             selfMat = targetGraphic.material;
+            onClick.AddListener(() =>
+            {
+                ClickSoundAction?.Invoke();
+            });
         }
 
         public ButtonClickedEvent OnSingleClick { get; } = new ButtonClickedEvent();
@@ -110,6 +115,7 @@ namespace Framework
         {
             if (upTime - lastUpTime < singleClickIntervalTime) return false;
             OnSingleClick.Invoke();
+            ClickSoundAction?.Invoke();
             return true;
         }
 

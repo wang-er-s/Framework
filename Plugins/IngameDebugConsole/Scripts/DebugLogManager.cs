@@ -451,9 +451,9 @@ namespace IngameDebugConsole
 			DebugLogConsole.OnCommandChanged -= RefreshMethodButtons;
 		}
 
-		private void Start()
+		public void VisiblePop(bool visible)
 		{
-			if( ( enablePopup && startInPopupMode ) || ( !enablePopup && startMinimized ) )
+			if(visible)
 				HideLogWindow();
 			else
 				ShowLogWindow();

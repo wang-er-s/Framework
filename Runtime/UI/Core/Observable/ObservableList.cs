@@ -6,7 +6,7 @@ using CatJson;
 
 namespace Framework
 {
-    public class ObservableList<T> : IList<T> , IObservable, IList
+    public class ObservableList<T> : IList<T> , IObservable, IList, IReference
     {
         private event Action<NotifyCollectionChangedAction, T, int> CollectionChanged;
         
@@ -93,6 +93,12 @@ namespace Framework
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
             ClearItems();
+        }
+
+        void IReference.Clear()
+        {
+            _items.Clear();
+            ClearListener();
         }
 
         public bool Contains(object value)

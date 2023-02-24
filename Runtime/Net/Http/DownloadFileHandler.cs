@@ -101,11 +101,14 @@ namespace Framework
             this._totalSize = (int) contentLength;
         }
 
-        ~DownloadFileHandler()
+        public override void Dispose()
         {
+            base.Dispose();
             if (_fileStream == null) return;
             _fileStream.Dispose();
             _fileStream = null;
+            if (_tmpFileInfo.Exists)
+                _tmpFileInfo.Delete();
         }
     }
 }

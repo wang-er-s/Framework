@@ -12,17 +12,12 @@ namespace Framework
         private object[] @params = new object[1];
         private ProgressResult<float> asyncResult;
         public IProgressResult<float> LoadAsync => asyncResult;
-        public bool Loaded { get; private set; }
         public static Func<string, string> CustomLoadPath;
 
         public override void OnStart()
         {
             asyncResult = new ProgressResult<float>();
             Executors.RunOnCoroutineNoReturn(Load(asyncResult));
-            asyncResult.Callbackable().OnCallback(result =>
-            {
-                Loaded = true;
-            });
         }
 
         IEnumerator Load(IProgressPromise<float> promise)

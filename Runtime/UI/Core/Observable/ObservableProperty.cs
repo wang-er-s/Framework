@@ -2,7 +2,7 @@
 
 namespace Framework
 {
-    public class ObservableProperty<T> : IClearable , IObservable
+    public class ObservableProperty<T> : IClearable , IObservable, IReference
     {
         public ObservableProperty(T value)
         {
@@ -84,6 +84,7 @@ namespace Framework
         public void Clear()
         {
             OnValueChanged = null;
+            _value = default;
         }
     }
 }
