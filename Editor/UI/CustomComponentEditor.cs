@@ -37,6 +37,7 @@ namespace Framework.Editor
             FindAndReplace<Slider, CustomSlider>(gameObject);
             FindAndReplace<InputField, CustomInputField>(gameObject);
             FindAndReplace<TMP_InputField, CustomInputFieldTMP>(gameObject);
+            FindAndReplace<TextMeshPro, CustomTextMesh3D>(gameObject);
 
             var img = gameObject.GetComponent<Image>();
             if (img)

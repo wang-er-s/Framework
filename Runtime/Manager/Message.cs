@@ -162,7 +162,7 @@ namespace Framework
                 events = new List<MessageEvent>();
                 foreach (var method in methods)
                 {
-                    var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), false);
+                    var methodAttr = method.GetCustomAttributes(typeof(SubscriberAttribute), true);
                     var HasAttr = methodAttr.Length > 0;
                     if (!HasAttr)
                     {

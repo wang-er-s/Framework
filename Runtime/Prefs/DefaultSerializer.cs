@@ -77,14 +77,15 @@ namespace Framework
 
                         return encoder.Decode(type, input);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        throw new NotSupportedException(
+                            $"This value \"{input}\" cannot be converted to the type \"{type.Name}\"\n {e}");
                     }
                 }
-
             }
-
-            throw new NotSupportedException($"This value \"{input}\" cannot be converted to the type \"{type.Name}\"");
+            throw new NotSupportedException(
+                $"This value \"{input}\" cannot be converted to the type \"{type.Name}\"\n ");
         }
 
         public virtual string Serialize(object value)

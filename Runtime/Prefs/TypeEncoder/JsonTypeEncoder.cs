@@ -31,7 +31,13 @@ namespace Framework
     public class JsonTypeEncoder : ITypeEncoder
     {
         public int Priority { get; set; } = -1000;
+        private JsonParser jsonParser;
 
+        public JsonTypeEncoder()
+        {
+            jsonParser = new JsonParser();;
+        }
+        
         public bool IsSupport(Type type)
         {
             return true;
@@ -41,7 +47,7 @@ namespace Framework
         {
             try
             {
-                return JsonParser.Default.ToJson(value);
+                return jsonParser.ToJson(value);
             }
             catch (Exception e)
             {
@@ -53,7 +59,7 @@ namespace Framework
         {
             try
             {
-                return JsonParser.Default.ParseJson(value, type);
+                return jsonParser.ParseJson(value, type);
             }
             catch (Exception e)
             {

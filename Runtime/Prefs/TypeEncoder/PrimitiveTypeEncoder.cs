@@ -32,6 +32,7 @@ namespace Framework
 
         public bool IsSupport(Type type)
         {
+            if (type.IsEnum) return false;
             TypeCode typeCode = Type.GetTypeCode(type);
 
             switch (typeCode)

@@ -7,7 +7,7 @@ using YooAsset;
 using YooAsset.Editor;
 using BuildReport = UnityEditor.Build.Reporting.BuildReport;
 
-public class BuildAbNode : IBuildTask , IPostprocessBuildWithReport
+public class BuildAbNode : IBuildTask , IPostprocessBuildWithReport , IPreprocessBuildWithReport
 {
     public string Run(BuildContext context)
     {
@@ -53,6 +53,14 @@ public class BuildAbNode : IBuildTask , IPostprocessBuildWithReport
     }
 
     public int callbackOrder { get; }
+
+    public void OnPreprocessBuild(BuildReport report)
+    {
+        if (YooAssetSettingsData.Setting.PlayMode == EPlayMode.EditorSimulateMode)
+            YooAssetSettingsData.Setting.PlayMode = EPlayMode.OfflinePlayMode;
+        YooAssetSettingsData.Save();
+    }
+
     public void OnPostprocessBuild(BuildReport report)
     {
         YooAssetSettingsData.Setting.PlayMode = EPlayMode.EditorSimulateMode;

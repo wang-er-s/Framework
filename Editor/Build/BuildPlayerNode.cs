@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -82,7 +83,7 @@ namespace Framework.Editor
             PlayerSettings.Android.keyaliasName = keyAliasName;
             AssetDatabase.SaveAssets();
             BuildReport build = null;
-            var apkName = Application.productName + ".apk";
+            var apkName = Regex.Match(Application.productName,@"\w+").Value + ".apk";
             if (isDebug)
             {
                 build = BuildPipeline.BuildPlayer(GetBuildScenes(), Path.Combine(path, apkName),

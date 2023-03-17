@@ -35,11 +35,21 @@ namespace Framework
         protected override void Awake()
         {
             base.Awake();
-            Message.defaultEvent.Register(this, "Language", () =>
+            if (Application.isPlaying)
             {
+                Message.defaultEvent.Register(this, "Language", () =>
+                {
+                    if (GetLanguageStr != null && !string.IsNullOrEmpty(languageKey))
+                        text = GetLanguageStr(languageKey);
+                });
                 if (GetLanguageStr != null && !string.IsNullOrEmpty(languageKey)) text = GetLanguageStr(languageKey);
-            });
-            if (GetLanguageStr != null && !string.IsNullOrEmpty(languageKey)) text = GetLanguageStr(languageKey);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(languageKey))
+                    text = languageKey;
+            }
+
             ShowOutline();
             ShowShadow();
         }
