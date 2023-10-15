@@ -144,35 +144,63 @@ namespace Framework.Editor
         {
             Directory.CreateDirectory(_config.UIConfig.GenUIScriptsPath);
             var fileName = $"{panelCodeInfo.BehaviourName}.cs";
+            // 生成view
+            string viewTemplate = String.Empty;
             var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, fileName);
-            var strBuilder = new StringBuilder();
-            if (TryGetTemplate(fileName, Application.dataPath, out var tempPath))
+            if (TryGetTemplate(panelCodeInfo.BehaviourName, out var templatePath))
             {
-                generateFilePath = tempPath;
+                generateFilePath = templatePath;
+                viewTemplate = File.ReadAllText(templatePath);
             }
-            var template = File.Exists(generateFilePath)
-                ? File.ReadAllText(generateFilePath)
-                : Resources.Load<TextAsset>("ViewTemplate").text;
+            else
+            {
+                viewTemplate = Resources.Load<TextAsset>("ViewTemplate").text;
+            }
+
             string vmName = $"{panelCodeInfo.BehaviourName}VM";
-            template = template.Replace("#ClassName", panelCodeInfo.BehaviourName);
-            template = template.Replace("#VMName", vmName);
-            template = template.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
+            viewTemplate = viewTemplate.Replace("#ClassName", panelCodeInfo.BehaviourName);
+            viewTemplate = viewTemplate.Replace("#VMName", vmName);
+            viewTemplate = viewTemplate.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
+
+            viewTemplate = Regex.Replace(viewTemplate, @"\[UI\(""(.*)?""", $"[UI(\"{panelCodeInfo.PanelPath}\"");
+
+            StringBuilder componentData = new StringBuilder();
+            string componentItemStr = @"
+        private #type #lowName;
+        public #type #name
+        {
+            get
+            {
+                if (#lowName == null)
+                {
+                    #lowName = go.transform.Find(""#path"").GetComponent<#type>();
+                }
+                return #lowName;
+            }
+        }";
             foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark)
             {
                 foreach (var uiMark in uiMarks.Value)
                 {
-                    var transformPath = uiMark.transform == panelCodeInfo.PanelGo.transform ? "" :uiMarks.Key;
-                    strBuilder.AppendLine($"\t[TransformPath(\"{transformPath}\")]");
-                    var fieldName = uiMark.transform == panelCodeInfo.PanelGo.transform ? "self" : uiMark.fieldName;
-                    strBuilder.AppendLine(
-                        $"\tprotected {uiMark.component.GetType().FullName} {fieldName};");
+                    var transformPath = uiMark.transform == panelCodeInfo.PanelGo.transform ? "" : uiMarks.Key;
+                    var fieldName = uiMark.fieldName;
+                    char first = fieldName[0];
+                    var lowFieldName = char.ToLower(first) + fieldName.Substring(1);
+                    fieldName = char.ToUpper(first) + fieldName.Substring(1);
+                    var type = uiMark.component.GetType().FullName;
+                    string item = componentItemStr.Replace("#type", type);
+                    item = item.Replace("#lowName", lowFieldName);
+                    item = item.Replace("#name", fieldName);
+                    item = item.Replace("#path", transformPath);
+                    componentData.AppendLine(item);
                 }
             }
-            var markStr = strBuilder.ToString() + "\t";
-            template = Regex.Replace(template, @"(#region Components\r*\n*)([\s\S]*?)(#endregion)",
-                $"$1{markStr}$3");
-            template = Regex.Replace(template, @"\[UI\((.*)\)\]", $"[UI(\"{panelCodeInfo.PanelPath}\")]");
-            File.WriteAllText(generateFilePath, template);
+
+            viewTemplate = Regex.Replace(viewTemplate, @"#region component[\w\W]*?#endregion", $"#region component\n{componentData}\n#endregion");
+            var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
+            sw.Write(viewTemplate);
+            sw.Flush();
+            sw.Close();
         }
 
         private static void GeneratorVM(PanelCodeInfo panelCodeInfo)
@@ -180,33 +208,27 @@ namespace Framework.Editor
             string className = $"{panelCodeInfo.BehaviourName}VM";
             var fileName = className + ".cs";
             var generateFilePath = Path.Combine(_config.UIConfig.GenUIScriptsPath, fileName);
-            if (TryGetTemplate(fileName, Application.dataPath, out var tempPath))
+            if (TryGetTemplate(panelCodeInfo.BehaviourName, out var tempPath))
             {
                 generateFilePath = tempPath;
             }
+
             if (File.Exists(generateFilePath)) return;
-            var sw = new StreamWriter(generateFilePath, false, Encoding.UTF8);
             var template = Resources.Load<TextAsset>("VMTemplate").text;
             template = template.Replace("#ClassName", className);
-            sw.Write(template);
-            sw.Flush();
-            sw.Close();
+            File.WriteAllText(generateFilePath,template);
         }
 
-        public static bool TryGetTemplate(string fileName, string dirPath, out string path)
+        private static bool TryGetTemplate(string fileName, out string path)
         {
             path = string.Empty;
-            DirectoryInfo dir = new DirectoryInfo(dirPath);
-            var files = dir.GetFiles(fileName);
-            if (files.Length > 0)
+            var guids = AssetDatabase.FindAssets($"t:script {fileName}");
+            foreach (var guid in guids)
             {
-                path = files[0].FullName;
-                return true;
-            }
-            foreach (var directoryInfo in dir.GetDirectories())
-            {
-                if (TryGetTemplate(fileName, directoryInfo.FullName, out path))
+                var path1 = AssetDatabase.GUIDToAssetPath(guid);
+                if (Path.GetFileNameWithoutExtension(path1) == fileName)
                 {
+                    path = path1;
                     return true;
                 }
             }

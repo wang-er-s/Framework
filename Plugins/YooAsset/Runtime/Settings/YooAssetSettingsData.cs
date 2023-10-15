@@ -41,42 +41,42 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 获取补丁清单文件完整名称
+		/// 获取清单文件完整名称
 		/// </summary>
-		public static string GetPatchManifestFileName(string packageName, string packageVersion)
+		public static string GetManifestBinaryFileName(string packageName, string packageVersion)
 		{
 			return $"{Setting.PatchManifestFileName}_{packageName}_{packageVersion}.bytes";
 		}
 
 		/// <summary>
-		/// 获取补丁清单哈希文件完整名称
+		/// 获取清单文件完整名称
 		/// </summary>
-		public static string GetPatchManifestHashFileName(string packageName, string packageVersion)
+		public static string GetManifestJsonFileName(string packageName, string packageVersion)
+		{
+			return $"{Setting.PatchManifestFileName}_{packageName}_{packageVersion}.json";
+		}
+
+		/// <summary>
+		/// 获取包裹的哈希文件完整名称
+		/// </summary>
+		public static string GetPackageHashFileName(string packageName, string packageVersion)
 		{
 			return $"{Setting.PatchManifestFileName}_{packageName}_{packageVersion}.hash";
 		}
 
 		/// <summary>
-		/// 获取补丁清单版本文件完整名称
+		/// 获取包裹的版本文件完整名称
 		/// </summary>
-		public static string GetPatchManifestVersionFileName(string packageName)
+		public static string GetPackageVersionFileName(string packageName)
 		{
 			return $"{Setting.PatchManifestFileName}_{packageName}.version";
 		}
 
-#if UNITY_EDITOR
 		public static void Save()
 		{
-			UnityEditor.EditorUtility.SetDirty(Setting);
-			UnityEditor.AssetDatabase.SaveAssets();
-		}
+#if UNITY_EDITOR
+			UnityEditor.AssetDatabase.CreateAsset(_setting,"Assets/Resources/YooAssetSettings.asset");
 #endif
-
-		/// <summary>
-		/// 获取着色器资源包全名称（包含后缀名）
-		/// </summary>
-		public static string GetUnityShadersBundleFullName()
-		{
-			return $"{YooAssetSettings.UnityShadersBundleName}.{Setting.AssetBundleFileVariant}";
-		}	}
+		}
+	}
 }

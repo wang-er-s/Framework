@@ -109,7 +109,7 @@ namespace Framework.Editor
                 [Button("@path")]
                 private void Path()
                 {
-                    Selection.activeObject = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
+                    Selection.activeObject = AssetDatabase.LoadAssetAtPath(path, typeof(ETObject));
                 }
 
                 [PropertyOrder(1)]

@@ -8,6 +8,9 @@ namespace Framework.Editor
     [CustomEditor(typeof(CustomTextMeshPro), true), CanEditMultipleObjects]
     public class CustomTMPEditor : TMP_EditorPanelUI
     {
+    
+        private SerializedProperty faceDilate;
+        
         private SerializedProperty customOutlineColor;
         private SerializedProperty customOutlineWidth;
         private SerializedProperty languageKey;
@@ -48,6 +51,7 @@ namespace Framework.Editor
         {
             textMeshPro = target as CustomTextMeshPro;
             base.OnEnable();
+            faceDilate = serializedObject.FindProperty("faceDilate");
             customOutlineColor = serializedObject.FindProperty("customOutLineColor");
             customOutlineWidth = serializedObject.FindProperty("customOutLineWidth");
             shadow = serializedObject.FindProperty("shadow");
@@ -63,6 +67,8 @@ namespace Framework.Editor
         {
             EditorGUILayout.LabelField("<b><color=white>Additional configs</color></b>", caption);
             EditorGUILayout.Space(5);
+            EditorGUILayout.PropertyField(faceDilate, new GUIContent("扩大面"));
+            EditorGUILayout.Space(5);
             EditorGUILayout.PropertyField(customOutlineColor,new GUIContent("描边颜色"));
             EditorGUILayout.PropertyField(customOutlineWidth,new GUIContent("描边宽度"));
             EditorGUILayout.PropertyField(languageKey,new GUIContent("多语言Key"));
@@ -77,8 +83,7 @@ namespace Framework.Editor
             }
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("<b><color=white>For original ScrollRect</color></b>", caption);
-            textMeshPro.ShowOutline();
-            textMeshPro.ShowShadow();
+            textMeshPro.Refresh();
             serializedObject.ApplyModifiedProperties();
             base.OnInspectorGUI();
         }

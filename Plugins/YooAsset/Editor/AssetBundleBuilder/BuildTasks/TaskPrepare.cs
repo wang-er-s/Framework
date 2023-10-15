@@ -21,7 +21,7 @@ namespace YooAsset.Editor
 				throw new Exception("请选择目标平台");
 			if (string.IsNullOrEmpty(buildParameters.PackageName))
 				throw new Exception("包裹名称不能为空");
-			if(string.IsNullOrEmpty(buildParameters.PackageVersion))
+			if (string.IsNullOrEmpty(buildParameters.PackageVersion))
 				throw new Exception("包裹版本不能为空");
 
 			if (buildParameters.BuildMode != EBuildMode.SimulateBuild)
@@ -45,7 +45,7 @@ namespace YooAsset.Editor
 				// 检测包裹输出目录是否存在
 				string packageOutputDirectory = buildParametersContext.GetPackageOutputDirectory();
 				if (Directory.Exists(packageOutputDirectory))
-					Directory.Delete(packageOutputDirectory, true);
+					throw new Exception($"本次构建的补丁目录已经存在：{packageOutputDirectory}");
 
 				// 保存改动的资源
 				AssetDatabase.SaveAssets();

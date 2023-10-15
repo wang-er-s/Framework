@@ -185,7 +185,7 @@ namespace YooAsset.Editor
 
 			// Status
 			StyleColor textColor;
-			if (bundleInfo.Status == (int)AssetBundleLoaderBase.EStatus.Failed)
+			if (bundleInfo.Status == BundleLoaderBase.EStatus.Failed.ToString())
 				textColor = new StyleColor(Color.yellow);
 			else
 				textColor = label1.style.color;

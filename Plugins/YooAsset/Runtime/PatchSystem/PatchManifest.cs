@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace YooAsset
 {
@@ -52,19 +52,19 @@ namespace YooAsset
 		/// 资源包集合（提供BundleName获取PatchBundle）
 		/// </summary>
 		[NonSerialized]
-		public readonly Dictionary<string, PatchBundle> BundleDic = new Dictionary<string, PatchBundle>();
+		public Dictionary<string, PatchBundle> BundleDic;
 
 		/// <summary>
 		/// 资源映射集合（提供AssetPath获取PatchAsset）
 		/// </summary>
 		[NonSerialized]
-		public readonly Dictionary<string, PatchAsset> AssetDic = new Dictionary<string, PatchAsset>();
+		public Dictionary<string, PatchAsset> AssetDic;
 
 		/// <summary>
 		/// 资源路径映射集合
 		/// </summary>
 		[NonSerialized]
-		public readonly Dictionary<string, string> AssetPathMapping = new Dictionary<string, string>();
+		public Dictionary<string, string> AssetPathMapping;
 
 		// 资源路径映射相关
 		private bool _isInitAssetPathMapping = false;
@@ -85,6 +85,7 @@ namespace YooAsset
 				if (locationToLower)
 					YooLogger.Error("Addressable not support location to lower !");
 
+				AssetPathMapping = new Dictionary<string, string>(AssetList.Count);
 				foreach (var patchAsset in AssetList)
 				{
 					string location = patchAsset.Address;
@@ -97,6 +98,7 @@ namespace YooAsset
 			else
 			{
 				_locationToLower = locationToLower;
+				AssetPathMapping = new Dictionary<string, string>(AssetList.Count * 2);
 				foreach (var patchAsset in AssetList)
 				{
 					string location = patchAsset.AssetPath;
@@ -219,6 +221,22 @@ namespace YooAsset
 		}
 
 		/// <summary>
+		/// 获取资源包名称
+		/// </summary>
+		public string GetBundleName(int bundleID)
+		{
+			if (bundleID >= 0 && bundleID < BundleList.Count)
+			{
+				var patchBundle = BundleList[bundleID];
+				return patchBundle.BundleName;
+			}
+			else
+			{
+				throw new Exception($"Invalid bundle id : {bundleID}");
+			}
+		}
+
+		/// <summary>
 		/// 尝试获取补丁资源
 		/// </summary>
 		public bool TryGetPatchAsset(string assetPath, out PatchAsset result)
@@ -237,57 +255,77 @@ namespace YooAsset
 		/// <summary>
 		/// 是否包含资源文件
 		/// </summary>
-		public bool IsIncludeBundleFile(string fileName)
+		public bool IsIncludeBundleFile(string cacheGUID)
 		{
 			foreach (var patchBundle in BundleList)
 			{
-				if (patchBundle.FileName == fileName)
+				if (patchBundle.CacheGUID == cacheGUID)
 					return true;
 			}
 			return false;
 		}
 
-
 		/// <summary>
-		/// 序列化
+		/// 获取资源信息列表
 		/// </summary>
-		public static void Serialize(string savePath, PatchManifest patchManifest)
+		public AssetInfo[] GetAssetsInfoByTags(string[] tags)
 		{
-			string json = JsonUtility.ToJson(patchManifest);
-			FileUtility.CreateFile(savePath, json);
+			List<AssetInfo> result = new List<AssetInfo>(100);
+			foreach (var patchAsset in AssetList)
+			{
+				if (patchAsset.HasTag(tags))
+				{
+					AssetInfo assetInfo = new AssetInfo(patchAsset);
+					result.Add(assetInfo);
+				}
+			}
+			return result.ToArray();
 		}
 
 		/// <summary>
-		/// 反序列化
+		/// 资源定位地址转换为资源信息类，失败时内部会发出错误日志。
 		/// </summary>
-		public static PatchManifest Deserialize(string jsonData)
+		/// <returns>如果转换失败会返回一个无效的资源信息类</returns>
+		public AssetInfo ConvertLocationToAssetInfo(string location, System.Type assetType)
 		{
-			PatchManifest patchManifest = JsonUtility.FromJson<PatchManifest>(jsonData);
+			DebugCheckLocation(location);
 
-			// 检测文件版本
-			if (patchManifest.FileVersion != YooAssetSettings.PatchManifestFileVersion)
-				throw new Exception($"The manifest file version are not compatible : {patchManifest.FileVersion} != {YooAssetSettings.PatchManifestFileVersion}");
-
-			// BundleList
-			foreach (var patchBundle in patchManifest.BundleList)
+			string assetPath = MappingToAssetPath(location);
+			if (TryGetPatchAsset(assetPath, out PatchAsset patchAsset))
 			{
-				patchBundle.ParseFlagsValue();
-				patchBundle.ParseFileName(patchManifest.OutputNameStyle);
-				patchManifest.BundleDic.Add(patchBundle.BundleName, patchBundle);
+				AssetInfo assetInfo = new AssetInfo(patchAsset, assetType);
+				return assetInfo;
 			}
-
-			// AssetList
-			foreach (var patchAsset in patchManifest.AssetList)
+			else
 			{
-				// 注意：我们不允许原始路径存在重名
-				string assetPath = patchAsset.AssetPath;
-				if (patchManifest.AssetDic.ContainsKey(assetPath))
-					throw new Exception($"AssetPath have existed : {assetPath}");
+				string error;
+				if (string.IsNullOrEmpty(location))
+					error = $"The location is null or empty !";
 				else
-					patchManifest.AssetDic.Add(assetPath, patchAsset);
+					error = $"The location is invalid : {location}";
+				AssetInfo assetInfo = new AssetInfo(error);
+				return assetInfo;
 			}
-
-			return patchManifest;
 		}
+
+		#region 调试方法
+		[Conditional("DEBUG")]
+		private void DebugCheckLocation(string location)
+		{
+			if (string.IsNullOrEmpty(location) == false)
+			{
+				// 检查路径末尾是否有空格
+				int index = location.LastIndexOf(" ");
+				if (index != -1)
+				{
+					if (location.Length == index + 1)
+						YooLogger.Warning($"Found blank character in location : \"{location}\"");
+				}
+
+				if (location.IndexOfAny(System.IO.Path.GetInvalidPathChars()) >= 0)
+					YooLogger.Warning($"Found illegal character in location : \"{location}\"");
+			}
+		}
+		#endregion
 	}
 }

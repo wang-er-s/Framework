@@ -1,7 +1,7 @@
 {
     "name": "com.tuyoogame.yooasset",
     "displayName": "YooAsset",
-    "version": "1.2.2",
+    "version": "1.4.6-preview",
     "unity": "2019.4",
     "description": "unity3d resources management system.",
     "author": {
@@ -10,19 +10,19 @@
     },
     "samples": [
         {
-            "displayName": "Basic Sample",
+            "displayName": "Space Shooter",
             "description": "YooAsset runtime sample, Include resource update, resource download, resource loading and other functions.",
-            "path": "Samples~/BasicSample"
+            "path": "Samples~/Space Shooter"
         },
         {
             "displayName": "Extension Sample",
             "description": "YooAsset editor extension sample, Include patcher combine, patcher compare, patcher importer and other functions.",
-            "path": "Samples~/ExtensionSample"
+            "path": "Samples~/Extension Sample"
         },
         {
             "displayName": "UniTask Sample",
             "description": "UniTask extension sample, Include extension scprits, Please Read the README documentation in the extension sample .",
-            "path": "Samples~/UniTaskSample"
+            "path": "Samples~/UniTask Sample"
         }
     ],
     "repository": {

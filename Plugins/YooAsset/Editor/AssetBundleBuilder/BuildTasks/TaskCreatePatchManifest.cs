@@ -8,6 +8,11 @@ using UnityEditor.Build.Pipeline.Interfaces;
 
 namespace YooAsset.Editor
 {
+	public class PatchManifestContext : IContextObject
+	{
+		internal PatchManifest Manifest;
+	}
+
 	[TaskAttribute("创建补丁清单文件")]
 	public class TaskCreatePatchManifest : IBuildTask
 	{
@@ -24,7 +29,7 @@ namespace YooAsset.Editor
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
 			var buildParametersContext = context.GetContextObject<BuildParametersContext>();
 			var buildParameters = buildParametersContext.Parameters;
-			string pipelineOutputDirectory = buildParametersContext.GetPipelineOutputDirectory();
+			string packageOutputDirectory = buildParametersContext.GetPackageOutputDirectory();
 
 			// 创建新补丁清单
 			PatchManifest patchManifest = new PatchManifest();
@@ -42,32 +47,65 @@ namespace YooAsset.Editor
 				if (buildParameters.BuildMode == EBuildMode.IncrementalBuild)
 				{
 					var buildResultContext = context.GetContextObject<TaskBuilding_SBP.BuildResultContext>();
-					UpdateBuiltInBundleReference(patchManifest, buildResultContext.Results);
+					UpdateBuiltInBundleReference(patchManifest, buildResultContext, buildMapContext.ShadersBundleName);
 				}
 			}
-			
-			// 创建补丁清单文件
-			string packageHash = string.Empty;
+
+			// 更新资源包之间的引用关系
+			if (buildParameters.BuildPipeline == EBuildPipeline.ScriptableBuildPipeline)
 			{
-				string fileName = YooAssetSettingsData.GetPatchManifestFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-				string filePath = $"{pipelineOutputDirectory}/{fileName}";
-				PatchManifest.Serialize(filePath, patchManifest);
+				if (buildParameters.BuildMode == EBuildMode.IncrementalBuild)
+				{
+					var buildResultContext = context.GetContextObject<TaskBuilding_SBP.BuildResultContext>();
+					UpdateScriptPipelineReference(patchManifest, buildResultContext);
+				}
+			}
+
+			// 更新资源包之间的引用关系
+			if (buildParameters.BuildPipeline == EBuildPipeline.BuiltinBuildPipeline)
+			{
+				if (buildParameters.BuildMode != EBuildMode.SimulateBuild)
+				{
+					var buildResultContext = context.GetContextObject<TaskBuilding.BuildResultContext>();
+					UpdateBuiltinPipelineReference(patchManifest, buildResultContext, buildMapContext);
+				}
+			}
+
+			// 创建补丁清单文本文件
+			{
+				string fileName = YooAssetSettingsData.GetManifestJsonFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string filePath = $"{packageOutputDirectory}/{fileName}";
+				PatchManifestTools.SerializeToJson(filePath, patchManifest);
+				BuildRunner.Log($"创建补丁清单文件：{filePath}");
+			}
+
+			// 创建补丁清单二进制文件
+			string packageHash;
+			{
+				string fileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string filePath = $"{packageOutputDirectory}/{fileName}";
+				PatchManifestTools.SerializeToBinary(filePath, patchManifest);
 				packageHash = HashUtility.FileMD5(filePath);
 				BuildRunner.Log($"创建补丁清单文件：{filePath}");
+
+				PatchManifestContext patchManifestContext = new PatchManifestContext();
+				byte[] bytesData = FileUtility.ReadAllBytes(filePath);
+				patchManifestContext.Manifest = PatchManifestTools.DeserializeFromBinary(bytesData);
+				context.SetContextObject(patchManifestContext);
 			}
 
 			// 创建补丁清单哈希文件
 			{
-				string fileName = YooAssetSettingsData.GetPatchManifestHashFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-				string filePath = $"{pipelineOutputDirectory}/{fileName}";		
+				string fileName = YooAssetSettingsData.GetPackageHashFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string filePath = $"{packageOutputDirectory}/{fileName}";
 				FileUtility.CreateFile(filePath, packageHash);
 				BuildRunner.Log($"创建补丁清单哈希文件：{filePath}");
 			}
 
 			// 创建补丁清单版本文件
 			{
-				string fileName = YooAssetSettingsData.GetPatchManifestVersionFileName(buildParameters.PackageName);
-				string filePath = $"{pipelineOutputDirectory}/{fileName}";
+				string fileName = YooAssetSettingsData.GetPackageVersionFileName(buildParameters.PackageName);
+				string filePath = $"{packageOutputDirectory}/{fileName}";
 				FileUtility.CreateFile(filePath, buildParameters.PackageVersion);
 				BuildRunner.Log($"创建补丁清单版本文件：{filePath}");
 			}
@@ -78,58 +116,15 @@ namespace YooAsset.Editor
 		/// </summary>
 		private List<PatchBundle> GetAllPatchBundle(BuildContext context)
 		{
-			var buildParametersContext = context.GetContextObject<BuildParametersContext>();
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
-			var encryptionContext = context.GetContextObject<TaskEncryption.EncryptionContext>();
 
 			List<PatchBundle> result = new List<PatchBundle>(1000);
 			foreach (var bundleInfo in buildMapContext.BundleInfos)
 			{
-				// NOTE：检测路径长度不要超过260字符。
-				string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
-				if (filePath.Length >= 260)
-					throw new Exception($"The output bundle name is too long {filePath.Length} chars : {filePath}");
-
-				var bundleName = bundleInfo.BundleName;
-				string fileHash = GetBundleFileHash(bundleInfo, buildParametersContext);
-				string fileCRC = GetBundleFileCRC(bundleInfo, buildParametersContext);
-				long fileSize = GetBundleFileSize(bundleInfo, buildParametersContext);
-				string[] tags = buildMapContext.GetBundleTags(bundleName);
-				bool isEncrypted = encryptionContext.IsEncryptFile(bundleName);
-				bool isRawFile = bundleInfo.IsRawFile;
-
-				PatchBundle patchBundle = new PatchBundle(bundleName, fileHash, fileCRC, fileSize, tags);
-				patchBundle.SetFlagsValue(isRawFile, isEncrypted);
+				var patchBundle = bundleInfo.CreatePatchBundle();
 				result.Add(patchBundle);
 			}
 			return result;
-		}
-		private string GetBundleFileHash(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
-		{
-			var buildMode = buildParametersContext.Parameters.BuildMode;
-			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
-				return "00000000000000000000000000000000"; //32位
-
-			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
-			return HashUtility.FileMD5(filePath);
-		}
-		private string GetBundleFileCRC(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
-		{
-			var buildMode = buildParametersContext.Parameters.BuildMode;
-			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
-				return "00000000"; //8位
-
-			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
-			return HashUtility.FileCRC32(filePath);
-		}
-		private long GetBundleFileSize(BuildBundleInfo bundleInfo, BuildParametersContext buildParametersContext)
-		{
-			var buildMode = buildParametersContext.Parameters.BuildMode;
-			if (buildMode == EBuildMode.DryRunBuild || buildMode == EBuildMode.SimulateBuild)
-				return 0;
-
-			string filePath = $"{buildParametersContext.GetPipelineOutputDirectory()}/{bundleInfo.BundleName}";
-			return FileUtility.GetFileSize(filePath);
 		}
 
 		/// <summary>
@@ -152,7 +147,7 @@ namespace YooAsset.Editor
 						patchAsset.Address = string.Empty;
 					patchAsset.AssetPath = assetInfo.AssetPath;
 					patchAsset.AssetTags = assetInfo.AssetTags.ToArray();
-					patchAsset.BundleID = GetAssetBundleID(assetInfo.GetBundleName(), patchManifest);
+					patchAsset.BundleID = GetAssetBundleID(assetInfo.BundleName, patchManifest);
 					patchAsset.DependIDs = GetAssetBundleDependIDs(patchAsset.BundleID, assetInfo, patchManifest);
 					result.Add(patchAsset);
 				}
@@ -166,7 +161,7 @@ namespace YooAsset.Editor
 			{
 				if (dependAssetInfo.HasBundleName())
 				{
-					int bundleID = GetAssetBundleID(dependAssetInfo.GetBundleName(), patchManifest);
+					int bundleID = GetAssetBundleID(dependAssetInfo.BundleName, patchManifest);
 					if (mainBundleID != bundleID)
 					{
 						if (result.Contains(bundleID) == false)
@@ -189,16 +184,19 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 更新Unity内置资源包的引用关系
 		/// </summary>
-		private void UpdateBuiltInBundleReference(PatchManifest patchManifest, IBundleBuildResults buildResults)
+		private void UpdateBuiltInBundleReference(PatchManifest patchManifest, TaskBuilding_SBP.BuildResultContext buildResultContext, string shadersBunldeName)
 		{
 			// 获取所有依赖着色器资源包的资源包列表
-			string shadersBunldeName = YooAssetSettingsData.GetUnityShadersBundleFullName();
 			List<string> shaderBundleReferenceList = new List<string>();
-			foreach (var valuePair in buildResults.BundleInfos)
+			foreach (var valuePair in buildResultContext.Results.BundleInfos)
 			{
 				if (valuePair.Value.Dependencies.Any(t => t == shadersBunldeName))
 					shaderBundleReferenceList.Add(valuePair.Key);
 			}
+
+			// 注意：没有任何资源依赖着色器
+			if (shaderBundleReferenceList.Count == 0)
+				return;
 
 			// 获取着色器资源包索引
 			Predicate<PatchBundle> predicate = new Predicate<PatchBundle>(s => s.BundleName == shadersBunldeName);
@@ -231,6 +229,80 @@ namespace YooAsset.Editor
 				result.Add(dependBundle);
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// 更新资源包之间的引用关系
+		/// </summary>
+		private void UpdateScriptPipelineReference(PatchManifest patchManifest, TaskBuilding_SBP.BuildResultContext buildResultContext)
+		{
+			foreach (var patchBundle in patchManifest.BundleList)
+			{
+				patchBundle.ReferenceIDs = GetScriptPipelineRefrenceIDs(patchManifest, patchBundle, buildResultContext);
+			}
+		}
+		private int[] GetScriptPipelineRefrenceIDs(PatchManifest patchManifest, PatchBundle patchBundle, TaskBuilding_SBP.BuildResultContext buildResultContext)
+		{
+			if (buildResultContext.Results.BundleInfos.TryGetValue(patchBundle.BundleName, out var details) == false)
+			{
+				throw new Exception("Should never get here !");
+			}
+
+			List<string> referenceList = new List<string>();
+			foreach (var keyValuePair in buildResultContext.Results.BundleInfos)
+			{
+				string bundleName = keyValuePair.Key;
+				if (bundleName == patchBundle.BundleName)
+					continue;
+				if (keyValuePair.Value.Dependencies.Contains(patchBundle.BundleName))
+				{
+					referenceList.Add(bundleName);
+				}
+			}
+
+			List<int> result = new List<int>();
+			foreach (var bundleName in referenceList)
+			{
+				int bundleID = GetAssetBundleID(bundleName, patchManifest);
+				if (result.Contains(bundleID) == false)
+					result.Add(bundleID);
+			}
+			return result.ToArray();
+		}
+
+		/// <summary>
+		/// 更新资源包之间的引用关系
+		/// </summary>
+		private void UpdateBuiltinPipelineReference(PatchManifest patchManifest, TaskBuilding.BuildResultContext buildResultContext, BuildMapContext buildMapContext)
+		{
+			foreach (var patchBundle in patchManifest.BundleList)
+			{
+				patchBundle.ReferenceIDs = GetBuiltinPipelineRefrenceIDs(patchManifest, patchBundle, buildResultContext, buildMapContext);
+			}
+		}
+		private int[] GetBuiltinPipelineRefrenceIDs(PatchManifest patchManifest, PatchBundle patchBundle, TaskBuilding.BuildResultContext buildResultContext, BuildMapContext buildMapContext)
+		{
+			List<string> referenceList = new List<string>();
+			foreach (var bundleInfo in buildMapContext.BundleInfos)
+			{
+				string bundleName = bundleInfo.BundleName;
+				if (bundleName == patchBundle.BundleName)
+					continue;
+				string[] dependencies = buildResultContext.UnityManifest.GetDirectDependencies(bundleName);
+				if (dependencies.Contains(patchBundle.BundleName))
+				{
+					referenceList.Add(bundleName);
+				}
+			}
+
+			List<int> result = new List<int>();
+			foreach (var bundleName in referenceList)
+			{
+				int bundleID = GetAssetBundleID(bundleName, patchManifest);
+				if (result.Contains(bundleID) == false)
+					result.Add(bundleID);
+			}
+			return result.ToArray();
 		}
 	}
 }

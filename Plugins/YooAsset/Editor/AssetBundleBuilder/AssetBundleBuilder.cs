@@ -54,8 +54,10 @@ namespace YooAsset.Editor
 					new TaskPrepare(), //前期准备工作
 					new TaskGetBuildMap(), //获取构建列表
 					new TaskBuilding(), //开始执行构建
+					new TaskCopyRawFile(), //拷贝原生文件
 					new TaskVerifyBuildResult(), //验证构建结果
 					new TaskEncryption(), //加密资源文件
+					new TaskUpdateBuildInfo(), //更新构建信息
 					new TaskCreatePatchManifest(), //创建清单文件
 					new TaskCreateReport(), //创建报告文件
 					new TaskCreatePatchPackage(), //制作补丁包
@@ -69,8 +71,10 @@ namespace YooAsset.Editor
 					new TaskPrepare(), //前期准备工作
 					new TaskGetBuildMap(), //获取构建列表
 					new TaskBuilding_SBP(), //开始执行构建
+					new TaskCopyRawFile(), //拷贝原生文件
 					new TaskVerifyBuildResult_SBP(), //验证构建结果
 					new TaskEncryption(), //加密资源文件
+					new TaskUpdateBuildInfo(), //更新构建信息
 					new TaskCreatePatchManifest(), //创建清单文件
 					new TaskCreateReport(), //创建报告文件
 					new TaskCreatePatchPackage(), //制作补丁包

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace YooAsset
 {
-	public sealed class AssetOperationHandle : OperationHandleBase
+	public sealed class AssetOperationHandle : OperationHandleBase, IDisposable
 	{
 		private System.Action<AssetOperationHandle> _callback;
 
@@ -22,7 +23,7 @@ namespace YooAsset
 		{
 			add
 			{
-				if (IsValid == false)
+				if (IsValidWithWarning == false)
 					throw new System.Exception($"{nameof(AssetOperationHandle)} is invalid");
 				if (Provider.IsDone)
 					value.Invoke(this);
@@ -31,34 +32,10 @@ namespace YooAsset
 			}
 			remove
 			{
-				if (IsValid == false)
+				if (IsValidWithWarning == false)
 					throw new System.Exception($"{nameof(AssetOperationHandle)} is invalid");
 				_callback -= value;
 			}
-		}
-
-		/// <summary>
-		/// 资源对象
-		/// </summary>
-		public UnityEngine.Object AssetObject
-		{
-			get
-			{
-				if (IsValid == false)
-					return null;
-				return Provider.AssetObject;
-			}
-		}
-
-		/// <summary>
-		/// 获取资源对象
-		/// </summary>
-		/// <typeparam name="TAsset">资源类型</typeparam>
-		public TAsset GetAssetObject<TAsset>() where TAsset : UnityEngine.Object
-		{
-			if (IsValid == false)
-				return null;
-			return Provider.AssetObject as TAsset;
 		}
 
 		/// <summary>
@@ -66,7 +43,7 @@ namespace YooAsset
 		/// </summary>
 		public void WaitForAsyncComplete()
 		{
-			if (IsValid == false)
+			if (IsValidWithWarning == false)
 				return;
 			Provider.WaitForAsyncComplete();
 		}
@@ -79,6 +56,38 @@ namespace YooAsset
 			this.ReleaseInternal();
 		}
 
+		/// <summary>
+		/// 释放资源句柄
+		/// </summary>
+		public void Dispose()
+		{
+			this.ReleaseInternal();
+		}
+
+
+		/// <summary>
+		/// 资源对象
+		/// </summary>
+		public UnityEngine.Object AssetObject
+		{
+			get
+			{
+				if (IsValidWithWarning == false)
+					return null;
+				return Provider.AssetObject;
+			}
+		}
+
+		/// <summary>
+		/// 获取资源对象
+		/// </summary>
+		/// <typeparam name="TAsset">资源类型</typeparam>
+		public TAsset GetAssetObject<TAsset>() where TAsset : UnityEngine.Object
+		{
+			if (IsValidWithWarning == false)
+				return null;
+			return Provider.AssetObject as TAsset;
+		}
 
 		/// <summary>
 		/// 同步初始化游戏对象
@@ -124,7 +133,7 @@ namespace YooAsset
 
 		private GameObject InstantiateSyncInternal(Vector3 position, Quaternion rotation, Transform parent)
 		{
-			if (IsValid == false)
+			if (IsValidWithWarning == false)
 				return null;
 			if (Provider.AssetObject == null)
 				return null;

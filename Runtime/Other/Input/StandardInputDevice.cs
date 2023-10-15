@@ -6,7 +6,7 @@ namespace Framework
     {
         public override bool CanUse()
         {
-            return FApplication.IsEditor || FApplication.IsPC;
+            return ApplicationHelper.IsEditor || ApplicationHelper.IsPC;
         }
 
         private Vector2 mousePosDelta;

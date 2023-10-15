@@ -35,7 +35,7 @@ namespace Framework
                     var createParameters = new EditorSimulateModeParameters();
                     createParameters.SimulatePatchManifestPath =
                         EditorSimulateModeHelper.SimulateBuild("DefaultPackage");
-                        yield return defaultPackage.InitializeAsync(createParameters);
+                    yield return defaultPackage.InitializeAsync(createParameters);
                     break;
                 case YooAsset.EPlayMode.OfflinePlayMode:
                     var createParameters2 = new OfflinePlayModeParameters();
@@ -49,6 +49,7 @@ namespace Framework
                     yield return defaultPackage.InitializeAsync(createParameters3);
                     break;
             }
+
             promise.SetResult();
         }
 
@@ -56,23 +57,23 @@ namespace Framework
 
         public override string FallbackHostServerURL { get; set; }
 
-        public override IProgressResult<float,string> CheckDownloadSize()
+        public override IProgressResult<float, string> CheckDownloadSize()
         {
-            return Executors.RunOnCoroutine<float,string>(checkDownloadSize);
+            return Executors.RunOnCoroutine<float, string>(checkDownloadSize);
         }
 
-        private PatchDownloaderOperation downloader; 
-       
-        private IEnumerator checkDownloadSize(IProgressPromise<float,string> promise)
+        private PatchDownloaderOperation downloader;
+
+        private IEnumerator checkDownloadSize(IProgressPromise<float, string> promise)
         {
             if (YooAssetSettingsData.Setting.PlayMode != YooAsset.EPlayMode.HostPlayMode)
             {
                 promise.SetResult(string.Empty);
                 yield break;
             }
-            
+
             // 更新资源版本号
-            var versionOperation = defaultPackage.UpdateStaticVersionAsync(30);
+            var versionOperation = defaultPackage.UpdatePackageVersionAsync();
             yield return versionOperation;
             string resourceVersion = String.Empty;
             if (versionOperation.Status == EOperationStatus.Succeed)
@@ -84,15 +85,15 @@ namespace Framework
             {
                 promise.SetException(versionOperation.Error);
             }
-            
+
             // 更新补丁清单
-            var patchOperation = defaultPackage.UpdateManifestAsync(resourceVersion, 30);
+            var patchOperation = defaultPackage.UpdatePackageManifestAsync(resourceVersion);
             yield return patchOperation;
-            if(patchOperation.Status == EOperationStatus.Failed)
+            if (patchOperation.Status == EOperationStatus.Failed)
             {
                 promise.SetException(patchOperation.Error);
             }
-            
+
             int downloadingMaxNum = 10;
             int failedTryAgain = 3;
             downloader = YooAssets.CreatePatchDownloader(downloadingMaxNum, failedTryAgain);
@@ -106,7 +107,7 @@ namespace Framework
                 // 注意：开发者需要在下载前检测磁盘空间不足
                 int totalDownloadCount = downloader.TotalDownloadCount;
                 long totalDownloadBytes = downloader.TotalDownloadBytes;
-                promise.SetResult(CommonHelper.FormatBytes(totalDownloadBytes));
+                promise.SetResult(StringHelper.FormatSizeBytes(totalDownloadBytes));
             }
         }
 
@@ -122,11 +123,12 @@ namespace Framework
                 promise.SetResult();
                 yield break;
             }
-            
+
             if (downloader == null)
             {
                 throw new Exception("需要先调用 CheckDownloadSize()");
             }
+
             downloader.BeginDownload();
             // 采样时间，推荐每秒采样一次
             float sampleTime = 0.1f;
@@ -138,18 +140,18 @@ namespace Framework
                 if (Time.realtimeSinceStartup - lastSampleTime > sampleTime)
                 {
                     // 获取已经下载的内容大小
-                    var now = CommonHelper.FormatBytes(downloadedBytes);
+                    var now = StringHelper.FormatSizeBytes(downloadedBytes);
                     // 获取总大小
-                    var max = CommonHelper.FormatBytes(totalBytes);
+                    var max = StringHelper.FormatSizeBytes(totalBytes);
                     // 计算速度
                     var amount = downloadedBytes - lastSampleDownloadBytes;
-                    var speed = CommonHelper.FormatBytes(amount * (long)(1 / sampleTime));
+                    var speed = StringHelper.FormatSizeBytes(amount * (long)(1 / sampleTime));
                     lastSampleTime = Time.realtimeSinceStartup;
                     promise.UpdateProgress(new DownloadProgress(now, max, speed, downloader.Progress));
                     lastSampleDownloadBytes = downloadedBytes;
                 }
             };
-            
+
             while (!downloader.IsDone)
             {
                 yield return null;
@@ -175,6 +177,7 @@ namespace Framework
                 promise.UpdateProgress(loader.Progress);
                 yield return null;
             }
+
             if (loader.Status != EOperationStatus.Succeed)
             {
                 promise.SetException(loader.LastError);
@@ -195,7 +198,7 @@ namespace Framework
                 promise.UpdateProgress(loader.Progress);
                 yield return null;
             }
-            
+
             if (loader.Status != EOperationStatus.Succeed)
             {
                 promise.SetException(loader.LastError);
@@ -206,24 +209,26 @@ namespace Framework
             }
         }
 
-        public override void Dispose()
+        public override void Release()
         {
-            if(handles.Count <= 0) return;
+            if (handles.Count <= 0) return;
             foreach (var loadable in handles.Values)
             {
                 loadable?.Release();
             }
+
             foreach (var promise in loadProgress)
             {
-                if(!promise.IsDone)
+                if (!promise.IsDone)
                     promise.SetCancelled();
             }
+
             loadProgress.Clear();
             handles.Clear();
             defaultPackage.UnloadUnusedAssets();
         }
 
-        public override T LoadAsset<T>(string key)
+        public override T LoadAssetSync<T>(string key)
         {
             return YooAssets.LoadAssetSync<T>(key).AssetObject as T;
         }

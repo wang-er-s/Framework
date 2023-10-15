@@ -10,13 +10,14 @@ namespace YooAsset.Editor
 {
 	public class AssetBundleCollectorConfig
 	{
-		public const string ConfigVersion = "2.1";
+		public const string ConfigVersion = "2.3";
 
 		public const string XmlVersion = "Version";
 		public const string XmlCommon = "Common";
 		public const string XmlEnableAddressable = "AutoAddressable";
 		public const string XmlUniqueBundleName = "UniqueBundleName";
 		public const string XmlShowPackageView = "ShowPackageView";
+		public const string XmlShowEditorAlias = "ShowEditorAlias";
 
 		public const string XmlPackage = "Package";
 		public const string XmlPackageName = "PackageName";
@@ -33,6 +34,7 @@ namespace YooAsset.Editor
 		public const string XmlAddressRule = "AddressRule";
 		public const string XmlPackRule = "PackRule";
 		public const string XmlFilterRule = "FilterRule";
+		public const string XmlUserData = "UserData";
 		public const string XmlAssetTags = "AssetTags";
 
 		/// <summary>
@@ -65,6 +67,7 @@ namespace YooAsset.Editor
 			bool enableAddressable = false;
 			bool uniqueBundleName = false;
 			bool showPackageView = false;
+			bool showEditorAlias = false;
 			var commonNodeList = root.GetElementsByTagName(XmlCommon);
 			if (commonNodeList.Count > 0)
 			{
@@ -75,10 +78,13 @@ namespace YooAsset.Editor
 					throw new Exception($"Not found attribute {XmlUniqueBundleName} in {XmlCommon}");
 				if (commonElement.HasAttribute(XmlShowPackageView) == false)
 					throw new Exception($"Not found attribute {XmlShowPackageView} in {XmlCommon}");
+				if (commonElement.HasAttribute(XmlShowEditorAlias) == false)
+					throw new Exception($"Not found attribute {XmlShowEditorAlias} in {XmlCommon}");
 
 				enableAddressable = commonElement.GetAttribute(XmlEnableAddressable) == "True" ? true : false;
 				uniqueBundleName = commonElement.GetAttribute(XmlUniqueBundleName) == "True" ? true : false;
 				showPackageView = commonElement.GetAttribute(XmlShowPackageView) == "True" ? true : false;
+				showEditorAlias = commonElement.GetAttribute(XmlShowEditorAlias) == "True" ? true : false;
 			}
 
 			// 读取包裹配置
@@ -132,16 +138,19 @@ namespace YooAsset.Editor
 							throw new Exception($"Not found attribute {XmlPackRule} in {XmlCollector}");
 						if (collectorElement.HasAttribute(XmlFilterRule) == false)
 							throw new Exception($"Not found attribute {XmlFilterRule} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlUserData) == false)
+							throw new Exception($"Not found attribute {XmlUserData} in {XmlCollector}");
 						if (collectorElement.HasAttribute(XmlAssetTags) == false)
 							throw new Exception($"Not found attribute {XmlAssetTags} in {XmlCollector}");
 
 						AssetBundleCollector collector = new AssetBundleCollector();
 						collector.CollectPath = collectorElement.GetAttribute(XmlCollectPath);
 						collector.CollectorGUID = collectorElement.GetAttribute(XmlCollectorGUID);
-						collector.CollectorType = StringUtility.NameToEnum<ECollectorType>(collectorElement.GetAttribute(XmlCollectorType));
+						collector.CollectorType = EditorTools.NameToEnum<ECollectorType>(collectorElement.GetAttribute(XmlCollectorType));
 						collector.AddressRuleName = collectorElement.GetAttribute(XmlAddressRule);
 						collector.PackRuleName = collectorElement.GetAttribute(XmlPackRule);
 						collector.FilterRuleName = collectorElement.GetAttribute(XmlFilterRule);
+						collector.UserData = collectorElement.GetAttribute(XmlUserData);
 						collector.AssetTags = collectorElement.GetAttribute(XmlAssetTags);
 						group.Collectors.Add(collector);
 					}
@@ -153,6 +162,7 @@ namespace YooAsset.Editor
 			AssetBundleCollectorSettingData.Setting.EnableAddressable = enableAddressable;
 			AssetBundleCollectorSettingData.Setting.UniqueBundleName = uniqueBundleName;
 			AssetBundleCollectorSettingData.Setting.ShowPackageView = showPackageView;
+			AssetBundleCollectorSettingData.Setting.ShowEditorAlias = showEditorAlias;
 			AssetBundleCollectorSettingData.Setting.Packages.AddRange(packages);
 			AssetBundleCollectorSettingData.SaveFile();
 			Debug.Log($"导入配置完毕！");
@@ -183,6 +193,7 @@ namespace YooAsset.Editor
 			commonElement.SetAttribute(XmlEnableAddressable, AssetBundleCollectorSettingData.Setting.EnableAddressable.ToString());
 			commonElement.SetAttribute(XmlUniqueBundleName, AssetBundleCollectorSettingData.Setting.UniqueBundleName.ToString());
 			commonElement.SetAttribute(XmlShowPackageView, AssetBundleCollectorSettingData.Setting.ShowPackageView.ToString());
+			commonElement.SetAttribute(XmlShowEditorAlias, AssetBundleCollectorSettingData.Setting.ShowEditorAlias.ToString());
 			root.AppendChild(commonElement);
 
 			// 设置Package配置
@@ -212,6 +223,7 @@ namespace YooAsset.Editor
 						collectorElement.SetAttribute(XmlAddressRule, collector.AddressRuleName);
 						collectorElement.SetAttribute(XmlPackRule, collector.PackRuleName);
 						collectorElement.SetAttribute(XmlFilterRule, collector.FilterRuleName);
+						collectorElement.SetAttribute(XmlUserData, collector.UserData);
 						collectorElement.SetAttribute(XmlAssetTags, collector.AssetTags);
 						groupElement.AppendChild(collectorElement);
 					}
@@ -293,6 +305,45 @@ namespace YooAsset.Editor
 
 				// 更新版本
 				root.SetAttribute(XmlVersion, "2.1");
+				return UpdateXmlConfig(xmlDoc);
+			}
+
+			// 2.1 -> 2.2
+			if (configVersion == "2.1")
+			{
+				// 添加公共元素属性
+				var commonNodeList = root.GetElementsByTagName(XmlCommon);
+				if (commonNodeList.Count > 0)
+				{
+					XmlElement commonElement = commonNodeList[0] as XmlElement;
+					if (commonElement.HasAttribute(XmlShowEditorAlias) == false)
+						commonElement.SetAttribute(XmlShowEditorAlias, "False");
+				}
+
+				// 更新版本
+				root.SetAttribute(XmlVersion, "2.2");
+				return UpdateXmlConfig(xmlDoc);
+			}
+
+			// 2.2 -> 2.3
+			if (configVersion == "2.2")
+			{
+				// 获取所有分组元素
+				var groupNodeList = root.GetElementsByTagName(XmlGroup);
+				foreach (var groupNode in groupNodeList)
+				{
+					XmlElement groupElement = groupNode as XmlElement;
+					var collectorNodeList = groupElement.GetElementsByTagName(XmlCollector);
+					foreach (var collectorNode in collectorNodeList)
+					{
+						XmlElement collectorElement = collectorNode as XmlElement;
+						if (collectorElement.HasAttribute(XmlUserData) == false)
+							collectorElement.SetAttribute(XmlUserData, string.Empty);
+					}
+				}
+
+				// 更新版本
+				root.SetAttribute(XmlVersion, "2.3");
 				return UpdateXmlConfig(xmlDoc);
 			}
 

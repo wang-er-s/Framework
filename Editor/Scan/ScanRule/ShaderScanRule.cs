@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using YooAsset.Editor;
 
@@ -48,10 +50,11 @@ namespace Framework.Editor
 
         public override void Scan()
         {
+            var oldScene = EditorSceneManager.GetActiveScene();
             string tmpDir = "Assets/t2m5p921";
             string tmpPath = tmpDir + "/tmp.shadervariants";
             int limit = Value.ToInt();
-            ShaderVariantCollector.Run(tmpPath, () =>
+            ShaderVariantCollector.Run(tmpPath,String.Empty, int.MaxValue,() =>
             {
                 var files = tmpDir.DirGetSubFiles(pattern: "*.json", isRecursive: false);
                 if (files.Count != 1)
@@ -61,7 +64,7 @@ namespace Framework.Editor
                 }
 
                 var svc = AssetDatabase.LoadAssetAtPath<ShaderVariantCollection>(tmpPath);
-                var manifest = ShaderVariantCollectionReadme.Extract(svc);
+                var manifest = ShaderVariantCollectionManifest.Extract(svc);
 
                 foreach (var variantInfo in manifest.ShaderVariantInfos)
                 {
@@ -73,6 +76,7 @@ namespace Framework.Editor
                 }
 
                 AssetDatabase.DeleteAsset(tmpDir);
+                EditorSceneManager.SetActiveScene(oldScene);
             });
         }
     }

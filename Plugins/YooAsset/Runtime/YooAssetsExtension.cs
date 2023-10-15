@@ -82,25 +82,43 @@ namespace YooAsset
 
 		#region 原生文件
 		/// <summary>
-		/// 异步获取原生文件
+		/// 同步加载原生文件
 		/// </summary>
-		/// <param name="location">资源的定位地址</param>
-		/// <param name="copyPath">拷贝路径</param>
-		public static RawFileOperation GetRawFileAsync(string location, string copyPath = null)
+		/// <param name="assetInfo">资源信息</param>
+		public static RawFileOperationHandle LoadRawFileSync(AssetInfo assetInfo)
 		{
 			DebugCheckDefaultPackageValid();
-			return _defaultPackage.GetRawFileAsync(location, copyPath);
+			return _defaultPackage.LoadRawFileSync(assetInfo);
 		}
 
 		/// <summary>
-		/// 异步获取原生文件
+		/// 同步加载原生文件
 		/// </summary>
-		/// <param name="assetInfo">资源信息</param>
-		/// <param name="copyPath">拷贝路径</param>
-		public static RawFileOperation GetRawFileAsync(AssetInfo assetInfo, string copyPath = null)
+		/// <param name="location">资源的定位地址</param>
+		public static RawFileOperationHandle LoadRawFileSync(string location)
 		{
 			DebugCheckDefaultPackageValid();
-			return _defaultPackage.GetRawFileAsync(assetInfo, copyPath);
+			return _defaultPackage.LoadRawFileSync(location);
+		}
+
+		/// <summary>
+		/// 异步加载原生文件
+		/// </summary>
+		/// <param name="assetInfo">资源信息</param>
+		public static RawFileOperationHandle LoadRawFileAsync(AssetInfo assetInfo)
+		{
+			DebugCheckDefaultPackageValid();
+			return _defaultPackage.LoadRawFileAsync(assetInfo);
+		}
+
+		/// <summary>
+		/// 异步加载原生文件
+		/// </summary>
+		/// <param name="location">资源的定位地址</param>
+		public static RawFileOperationHandle LoadRawFileAsync(string location)
+		{
+			DebugCheckDefaultPackageValid();
+			return _defaultPackage.LoadRawFileAsync(location);
 		}
 		#endregion
 
@@ -302,19 +320,6 @@ namespace YooAsset
 			return _defaultPackage.CreatePatchDownloader(downloadingMaxNumber, failedTryAgain);
 		}
 
-
-		/// <summary>
-		/// 创建补丁下载器，用于下载更新指定的资源列表依赖的资源包文件
-		/// </summary>
-		/// <param name="locations">资源定位列表</param>
-		/// <param name="downloadingMaxNumber">同时下载的最大文件数</param>
-		/// <param name="failedTryAgain">下载失败的重试次数</param>
-		public static PatchDownloaderOperation CreateBundleDownloader(string[] locations, int downloadingMaxNumber, int failedTryAgain)
-		{
-			DebugCheckDefaultPackageValid();
-			return _defaultPackage.CreateBundleDownloader(locations, downloadingMaxNumber, failedTryAgain);
-		}
-
 		/// <summary>
 		/// 创建补丁下载器，用于下载更新指定的资源列表依赖的资源包文件
 		/// </summary>
@@ -362,19 +367,6 @@ namespace YooAsset
 		{
 			DebugCheckDefaultPackageValid();
 			return _defaultPackage.CreatePatchUnpacker(unpackingMaxNumber, failedTryAgain);
-		}
-		#endregion
-
-		#region 包裹更新
-		/// <summary>
-		/// 创建资源包裹下载器，用于下载更新指定资源版本所有的资源包文件
-		/// </summary>
-		/// <param name="packageVersion">指定更新的包裹版本</param>
-		/// <param name="timeout">超时时间</param>
-		public static UpdatePackageOperation UpdatePackageAsync(string packageVersion, int timeout = 60)
-		{
-			DebugCheckDefaultPackageValid();
-			return _defaultPackage.UpdatePackageAsync(packageVersion, timeout);
 		}
 		#endregion
 

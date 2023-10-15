@@ -57,14 +57,14 @@ namespace Framework
             _handles.Add(operation.asset);
         }
 
-        public override T LoadAsset<T>(string key)
+        public override T LoadAssetSync<T>(string key)
         {
             var obj = Resources.Load<T>(key);
             _handles.Add(obj);
             return obj;
         }
 
-        public override void Dispose()
+        public override void Release()
         {
             foreach (var handle in _handles)
             {

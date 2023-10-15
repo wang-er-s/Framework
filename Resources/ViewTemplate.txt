@@ -1,13 +1,33 @@
 using Framework;
+using UnityEngine;
 
-[UI("#PrefabPath")]
-public class #ClassName : View
+#region #ClassNameComponent
+public class #ClassNameComponent
+{
+    private GameObject go;
+    public #ClassNameComponent(GameObject go)
+    {
+        this.go = go;
+    }
+   
+    #region component
+
+    #endregion 
+}
+#endregion 
+
+[UI("#PrefabPath",true,true)]
+public class #ClassName : Window
 {
     private #VMName vm;
-	
-    #region Components
-    #endregion
-
+    private #ClassNameComponent components;
+    
+    protected override void OnCreated()
+    {
+        base.OnCreated();
+        components = new(GameObject);
+    }
+    
     protected override void OnVmChange()
     {
         vm = ViewModel as #VMName;

@@ -8,30 +8,30 @@ namespace YooAsset
 {
 	public static partial class YooAssets
 	{
-		private static bool _isInitialize = false;
+		public static bool IsInitialize { get; private set; }
+		private static GameObject _driver = null;
 		private static readonly List<AssetsPackage> _packages = new List<AssetsPackage>();
-
-		public static bool IsInitialize => _isInitialize;
 
 		/// <summary>
 		/// 初始化资源系统
 		/// </summary>
 		public static void Initialize()
 		{
-			if (_isInitialize)
+			if (IsInitialize)
 				throw new Exception($"{nameof(YooAssets)} is initialized !");
 
-			if (_isInitialize == false)
+			if (IsInitialize == false)
 			{
 				// 创建驱动器
-				_isInitialize = true;
-				UnityEngine.GameObject driverGo = new UnityEngine.GameObject($"[{nameof(YooAssets)}]");
-				driverGo.AddComponent<YooAssetsDriver>();
-				UnityEngine.Object.DontDestroyOnLoad(driverGo);
+				IsInitialize = true;
+				_driver = new UnityEngine.GameObject($"[{nameof(YooAssets)}]");
+				_driver.AddComponent<YooAssetsDriver>();
+				UnityEngine.Object.DontDestroyOnLoad(_driver);
+				YooLogger.Log($"{nameof(YooAssets)} initialize !");
 
 #if DEBUG
 				// 添加远程调试脚本
-				driverGo.AddComponent<RemoteDebuggerInRuntime>();
+				_driver.AddComponent<RemoteDebuggerInRuntime>();
 #endif
 
 				// 初始化异步系统
@@ -40,28 +40,11 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 更新资源系统
-		/// </summary>
-		internal static void Update()
-		{
-			if (_isInitialize)
-			{
-				OperationSystem.Update();
-				DownloadSystem.Update();
-
-				foreach (var package in _packages)
-				{
-					package.UpdatePackage();
-				}
-			}
-		}
-
-		/// <summary>
 		/// 销毁资源系统
 		/// </summary>
-		internal static void Destroy()
+		public static void Destroy()
 		{
-			if (_isInitialize)
+			if (IsInitialize)
 			{
 				OperationSystem.DestroyAll();
 				DownloadSystem.DestroyAll();
@@ -73,8 +56,27 @@ namespace YooAsset
 				}
 				_packages.Clear();
 
-				_isInitialize = false;
-				YooLogger.Log("YooAssets destroy all !");
+				IsInitialize = false;
+				if (_driver != null)
+					GameObject.Destroy(_driver);
+				YooLogger.Log($"{nameof(YooAssets)} destroy all !");
+			}
+		}
+
+		/// <summary>
+		/// 更新资源系统
+		/// </summary>
+		internal static void Update()
+		{
+			if (IsInitialize)
+			{
+				OperationSystem.Update();
+				DownloadSystem.Update();
+
+				for (int i = 0; i < _packages.Count; i++)
+				{
+					_packages[i].UpdatePackage();
+				}
 			}
 		}
 
@@ -85,7 +87,7 @@ namespace YooAsset
 		/// <param name="packageName">资源包名称</param>
 		public static AssetsPackage CreateAssetsPackage(string packageName)
 		{
-			if (_isInitialize == false)
+			if (IsInitialize == false)
 				throw new Exception($"{nameof(YooAssets)} not initialize !");
 
 			if (string.IsNullOrEmpty(packageName))
@@ -105,7 +107,19 @@ namespace YooAsset
 		/// <param name="packageName">资源包名称</param>
 		public static AssetsPackage GetAssetsPackage(string packageName)
 		{
-			if (_isInitialize == false)
+			var package = TryGetAssetsPackage(packageName);
+			if (package == null)
+				YooLogger.Warning($"Not found assets package : {packageName}");
+			return package;
+		}
+
+		/// <summary>
+		/// 尝试获取资源包
+		/// </summary>
+		/// <param name="packageName">资源包名称</param>
+		public static AssetsPackage TryGetAssetsPackage(string packageName)
+		{
+			if (IsInitialize == false)
 				throw new Exception($"{nameof(YooAssets)} not initialize !");
 
 			if (string.IsNullOrEmpty(packageName))
@@ -116,8 +130,6 @@ namespace YooAsset
 				if (package.PackageName == packageName)
 					return package;
 			}
-
-			YooLogger.Warning($"Not found assets package : {packageName}");
 			return null;
 		}
 
@@ -127,7 +139,7 @@ namespace YooAsset
 		/// <param name="packageName">资源包名称</param>
 		public static bool HasAssetsPackage(string packageName)
 		{
-			if (_isInitialize == false)
+			if (IsInitialize == false)
 				throw new Exception($"{nameof(YooAssets)} not initialize !");
 
 			foreach (var package in _packages)
@@ -173,6 +185,14 @@ namespace YooAsset
 		}
 
 		/// <summary>
+		/// 设置下载系统参数，自定义下载请求
+		/// </summary>
+		public static void SetDownloadSystemUnityWebRequest(DownloadRequestDelegate requestDelegate)
+		{
+			DownloadSystem.RequestDelegate = requestDelegate;
+		}
+
+		/// <summary>
 		/// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：毫秒）
 		/// </summary>
 		public static void SetOperationSystemMaxTimeSlice(long milliseconds)
@@ -196,16 +216,6 @@ namespace YooAsset
 
 		#region 沙盒相关
 		/// <summary>
-		/// 清理未使用的缓存文件
-		/// </summary>
-		public static ClearUnusedCacheFilesOperation ClearUnusedCacheFiles()
-		{
-			ClearUnusedCacheFilesOperation operation = new ClearUnusedCacheFilesOperation(_packages);
-			OperationSystem.StartOperation(operation);
-			return operation;
-		}
-
-		/// <summary>
 		/// 获取内置文件夹名称
 		/// </summary>
 		public static string GetStreamingAssetBuildinFolderName()
@@ -218,7 +228,7 @@ namespace YooAsset
 		/// </summary>
 		public static string GetSandboxRoot()
 		{
-			return PathHelper.MakePersistentRootPath();
+			return PathHelper.GetPersistentRootPath();
 		}
 
 		/// <summary>
@@ -226,7 +236,7 @@ namespace YooAsset
 		/// </summary>
 		public static void ClearSandbox()
 		{
-			SandboxHelper.DeleteSandbox();
+			PersistentHelper.DeleteSandbox();
 		}
 		#endregion
 

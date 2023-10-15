@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    public sealed class AudioManager : MonoSingleton<AudioManager>
+    public sealed class AudioManager : Singleton<AudioManager> , ISingletonAwake
     {
 
         /// <summary>
@@ -51,10 +51,12 @@ namespace Framework
         private readonly List<AudioSourcePlayer> _multipleAudio = new List<AudioSourcePlayer>();
         private readonly Dictionary<GameObject, AudioSource> _worldAudio = new Dictionary<GameObject, AudioSource>();
         private bool _isMute;
+        private GameObject gameObject;
         private IRes res;
 
-        private void Awake()
+        void ISingletonAwake.Awake()
         {
+            gameObject = new GameObject("Audio");
             _backgroundAudio = CreateAudioSource("BackgroundAudio", BackgroundPriority, BackgroundVolume);
             _singleAudio = CreateAudioSource("SingleAudio", SinglePriority, SoundEffectVolume);
             res = Res.Create();
@@ -158,7 +160,7 @@ namespace Framework
         /// </summary>
         public async void PlayBackgroundMusic(string clipName, bool isLoop = true, float speed = 1)
         {
-            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
+            var clip = await res.LoadAsset<AudioClip>(clipName);
             if (_backgroundAudio.isPlaying)
             {
                 _backgroundAudio.Stop();
@@ -219,7 +221,7 @@ namespace Framework
         /// </summary>
         public async void PlaySingleSound(string clipName, bool isLoop = false, float speed = 1)
         {
-            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
+            var clip = await res.LoadAsset<AudioClip>(clipName);
             if (_singleAudio.isPlaying)
             {
                 _singleAudio.Stop();
@@ -280,7 +282,7 @@ namespace Framework
         /// </summary>
         public async void PlayMultipleSound(string clipName, bool isLoop = false, float speed = 1)
         {
-            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
+            var clip = await res.LoadAsset<AudioClip>(clipName);
             PlayMultipleSound(clip, isLoop, speed);
         }
         
@@ -343,7 +345,7 @@ namespace Framework
         /// </summary>
         public async void PlayWorldSound(GameObject attachTarget, string clipName, bool isLoop = false, float speed = 1)
         {
-            var clip = await res.LoadAssetAsync<AudioClip>(clipName);
+            var clip = await res.LoadAsset<AudioClip>(clipName);
             if (_worldAudio.ContainsKey(attachTarget))
             {
                 AudioSource audio = _worldAudio[attachTarget];
@@ -499,13 +501,12 @@ namespace Framework
             return audio;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             StopBackgroundMusic();
             StopSingleSound();
             StopAllMultipleSound();
             StopAllWorldSound();
-            res.Dispose();
         }
     }
 }

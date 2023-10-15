@@ -63,9 +63,6 @@ public class AudioProcessor : AssetPostprocessor
             audioImporterSampleSettingsAndroid.compressionFormat = AudioCompressionFormat.Vorbis;
         }
 
-        //关闭预加载
-        importer.preloadAudioData = false;
-
         importer.SetOverrideSampleSettings(BuildTargetGroup.iOS.ToString(), audioImporterSampleSettingsios);
         importer.SetOverrideSampleSettings(BuildTargetGroup.Android.ToString(), audioImporterSampleSettingsAndroid);
 

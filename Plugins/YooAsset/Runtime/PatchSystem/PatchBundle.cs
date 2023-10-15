@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.IO;
 
 namespace YooAsset
 {
@@ -28,45 +27,86 @@ namespace YooAsset
 		public long FileSize;
 
 		/// <summary>
+		/// 是否为原生文件
+		/// </summary>
+		public bool IsRawFile;
+
+		/// <summary>
+		/// 加载方法
+		/// </summary>
+		public byte LoadMethod;
+
+		/// <summary>
 		/// 资源包的分类标签
 		/// </summary>
 		public string[] Tags;
 
 		/// <summary>
-		/// Flags
+		/// 引用该资源包的ID列表
 		/// </summary>
-		public int Flags;
+		public int[] ReferenceIDs;
 
+		
+		/// <summary>
+		/// 所属的包裹名称
+		/// </summary>
+		public string PackageName { private set; get; }
 
 		/// <summary>
-		/// 是否为原生文件
+		/// 缓存GUID
 		/// </summary>
-		public bool IsRawFile { private set; get; }
+		public string CacheGUID
+		{
+			get { return FileHash; }
+		}
 
 		/// <summary>
-		/// 是否为加密文件
+		/// 缓存的数据文件路径
 		/// </summary>
-		public bool IsEncrypted { private set; get; }
-
-		/// <summary>
-		/// 文件名称
-		/// </summary>	
-		public string FileName { private set; get; }
-
-		/// <summary>
-		/// 缓存文件路径
-		/// </summary>
-		private string _cachedFilePath;
-		public string CachedFilePath
+		private string _cachedDataFilePath;
+		public string CachedDataFilePath
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(_cachedFilePath) == false)
-					return _cachedFilePath;
+				if (string.IsNullOrEmpty(_cachedDataFilePath) == false)
+					return _cachedDataFilePath;
 
-				string cacheRoot = SandboxHelper.GetCacheFolderPath();
-				_cachedFilePath = $"{cacheRoot}/{FileName}";
-				return _cachedFilePath;
+				string cacheRoot = PersistentHelper.GetCacheFolderPath(PackageName);
+				_cachedDataFilePath = $"{cacheRoot}/{CacheGUID}/{YooAssetSettings.CacheBundleDataFileName}{_fileExtension}";
+				return _cachedDataFilePath;
+			}
+		}
+
+		/// <summary>
+		/// 缓存的信息文件路径
+		/// </summary>
+		private string _cachedInfoFilePath;
+		public string CachedInfoFilePath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_cachedInfoFilePath) == false)
+					return _cachedInfoFilePath;
+
+				string cacheRoot = PersistentHelper.GetCacheFolderPath(PackageName);
+				_cachedInfoFilePath = $"{cacheRoot}/{CacheGUID}/{YooAssetSettings.CacheBundleInfoFileName}";
+				return _cachedInfoFilePath;
+			}
+		}
+
+		/// <summary>
+		/// 临时的数据文件路径
+		/// </summary>
+		private string _tempDataFilePath;
+		public string TempDataFilePath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_tempDataFilePath) == false)
+					return _tempDataFilePath;
+
+				_tempDataFilePath = $"{CachedDataFilePath}.temp";
+				return _tempDataFilePath;
 			}
 		}
 
@@ -86,70 +126,47 @@ namespace YooAsset
 			}
 		}
 
-
-		public PatchBundle(string bundleName, string fileHash, string fileCRC, long fileSize, string[] tags)
+		/// <summary>
+		/// 文件名称
+		/// </summary>
+		private string _fileName;
+		public string FileName
 		{
-			BundleName = bundleName;
-			FileHash = fileHash;
-			FileCRC = fileCRC;
-			FileSize = fileSize;
-			Tags = tags;
+			get
+			{
+				if (string.IsNullOrEmpty(_fileName))
+					throw new Exception("Should never get here !");
+				return _fileName;
+			}
 		}
 
 		/// <summary>
-		/// 设置Flags
+		/// 文件后缀名
 		/// </summary>
-		public void SetFlagsValue(bool isRawFile, bool isEncrypted)
+		private string _fileExtension;
+		public string FileExtension
 		{
-			IsRawFile = isRawFile;
-			IsEncrypted = isEncrypted;
+			get
+			{
+				if (string.IsNullOrEmpty(_fileExtension))
+					throw new Exception("Should never get here !");
+				return _fileExtension;
+			}
+		}
 
-			BitMask32 mask = new BitMask32(0);
-			if (isRawFile) mask.Open(0);
-			if (isEncrypted) mask.Open(1);
-			Flags = mask;
+
+		public PatchBundle()
+		{
 		}
 
 		/// <summary>
-		/// 解析Flags
+		/// 解析资源包
 		/// </summary>
-		public void ParseFlagsValue()
+		public void ParseBundle(string packageName, int nameStype)
 		{
-			BitMask32 value = Flags;
-			IsRawFile = value.Test(0);
-			IsEncrypted = value.Test(1);
-		}
-
-		/// <summary>
-		/// 解析文件名称
-		/// </summary>
-		public void ParseFileName(int nameStype)
-		{
-			if (nameStype == 1)
-			{
-				FileName = FileHash;
-			}
-			else if (nameStype == 2)
-			{
-				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
-				FileName = $"{FileHash}{tempFileExtension}";
-			}
-			else if (nameStype == 3)
-			{
-				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
-				string tempBundleName = BundleName.Replace('/', '_').Replace(tempFileExtension, "");
-				FileName = $"{tempBundleName}_{FileHash}";
-			}
-			else if (nameStype == 4)
-			{
-				string tempFileExtension = System.IO.Path.GetExtension(BundleName);
-				string tempBundleName = BundleName.Replace('/', '_').Replace(tempFileExtension, "");
-				FileName = $"{tempBundleName}_{FileHash}{tempFileExtension}";
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+			PackageName = packageName;
+			_fileExtension = PatchManifestTools.GetRemoteBundleFileExtension(BundleName);
+			_fileName = PatchManifestTools.GetRemoteBundleFileName(nameStype, BundleName, _fileExtension, FileHash);
 		}
 
 		/// <summary>

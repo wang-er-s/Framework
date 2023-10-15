@@ -24,6 +24,12 @@ namespace YooAsset.Editor
 		public bool UniqueBundleName = false;
 
 		/// <summary>
+		/// 是否显示编辑器别名
+		/// </summary>
+		public bool ShowEditorAlias = false;
+
+
+		/// <summary>
 		/// 包裹列表
 		/// </summary>
 		public List<AssetBundleCollectorPackage> Packages = new List<AssetBundleCollectorPackage>();
@@ -94,8 +100,8 @@ namespace YooAsset.Editor
 			{
 				if (package.PackageName == packageName)
 				{
-					CollectCommand command = new CollectCommand(buildMode, EnableAddressable);
-					CollectResult collectResult = new CollectResult(package.PackageName, EnableAddressable, UniqueBundleName);
+					CollectCommand command = new CollectCommand(buildMode, package.PackageName, EnableAddressable, UniqueBundleName);
+					CollectResult collectResult = new CollectResult(command);
 					collectResult.SetCollectAssets(package.GetAllCollectAssets(command));
 					return collectResult;
 				}
@@ -112,8 +118,8 @@ namespace YooAsset.Editor
 			List<CollectResult> collectResultList = new List<CollectResult>(1000);
 			foreach (var package in Packages)
 			{
-				CollectCommand command = new CollectCommand(buildMode, EnableAddressable);
-				CollectResult collectResult = new CollectResult(package.PackageName, EnableAddressable, UniqueBundleName);
+				CollectCommand command = new CollectCommand(buildMode, package.PackageName, EnableAddressable, UniqueBundleName);
+				CollectResult collectResult = new CollectResult(command);
 				collectResult.SetCollectAssets(package.GetAllCollectAssets(command));
 				collectResultList.Add(collectResult);
 			}

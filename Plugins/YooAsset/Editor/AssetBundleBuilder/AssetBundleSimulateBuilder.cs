@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace YooAsset.Editor
 {
@@ -9,6 +10,7 @@ namespace YooAsset.Editor
 		/// </summary>
 		public static string SimulateBuild(string packageName)
 		{
+			Debug.Log($"Begin to create simulate package : {packageName}");
 			string defaultOutputRoot = AssetBundleBuilderHelper.GetDefaultOutputRoot();
 			BuildParameters buildParameters = new BuildParameters();
 			buildParameters.OutputRoot = defaultOutputRoot;
@@ -21,9 +23,8 @@ namespace YooAsset.Editor
 			var buildResult = builder.Run(buildParameters);
 			if (buildResult.Success)
 			{
-				string pipelineOutputDirectory = AssetBundleBuilderHelper.MakePipelineOutputDirectory(buildParameters.OutputRoot, buildParameters.PackageName, buildParameters.BuildTarget, buildParameters.BuildMode);
-				string manifestFileName = YooAssetSettingsData.GetPatchManifestFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-				string manifestFilePath = $"{pipelineOutputDirectory}/{manifestFileName}";
+				string manifestFileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+				string manifestFilePath = $"{buildResult.OutputPackageDirectory}/{manifestFileName}";
 				return manifestFilePath;
 			}
 			else

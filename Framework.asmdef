@@ -4,8 +4,8 @@
     "references": [
         "Unity.TextMeshPro",
         "YooAsset",
-        "CatJson",
-        "BetterStreamingAssets"
+        "BetterStreamingAssets",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

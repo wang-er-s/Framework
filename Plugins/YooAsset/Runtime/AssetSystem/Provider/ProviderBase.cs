@@ -13,8 +13,8 @@ namespace YooAsset
 			CheckBundle,
 			Loading,
 			Checking,
-			Success,
-			Fail,
+			Succeed,
+			Failed,
 		}
 
 		/// <summary>
@@ -47,6 +47,11 @@ namespace YooAsset
 		/// </summary>
 		public UnityEngine.SceneManagement.Scene SceneObject { protected set; get; }
 
+		/// <summary>
+		/// 原生文件路径
+		/// </summary>
+		public string RawFilePath { protected set; get; }
+
 
 		/// <summary>
 		/// 当前的加载状态
@@ -57,6 +62,11 @@ namespace YooAsset
 		/// 最近的错误信息
 		/// </summary>
 		public string LastError { protected set; get; } = string.Empty;
+
+		/// <summary>
+		/// 加载进度
+		/// </summary>
+		public float Progress { protected set; get; } = 0f;
 
 		/// <summary>
 		/// 引用计数
@@ -75,18 +85,7 @@ namespace YooAsset
 		{
 			get
 			{
-				return Status == EStatus.Success || Status == EStatus.Fail;
-			}
-		}
-
-		/// <summary>
-		/// 加载进度
-		/// </summary>
-		public virtual float Progress
-		{
-			get
-			{
-				return 0;
+				return Status == EStatus.Succeed || Status == EStatus.Failed;
 			}
 		}
 
@@ -113,6 +112,14 @@ namespace YooAsset
 		public virtual void Destroy()
 		{
 			IsDestroyed = true;
+		}
+
+		/// <summary>
+		/// 获取下载进度
+		/// </summary>
+		public virtual DownloadReport GetDownloadReport()
+		{
+			return DownloadReport.CreateDefaultReport();
 		}
 
 		/// <summary>
@@ -152,6 +159,8 @@ namespace YooAsset
 				handle = new SceneOperationHandle(this);
 			else if (typeof(T) == typeof(SubAssetsOperationHandle))
 				handle = new SubAssetsOperationHandle(this);
+			else if (typeof(T) == typeof(RawFileOperationHandle))
+				handle = new RawFileOperationHandle(this);
 			else
 				throw new System.NotImplementedException();
 
@@ -212,6 +221,9 @@ namespace YooAsset
 		private TaskCompletionSource<object> _taskCompletionSource;
 		protected void InvokeCompletion()
 		{
+			// 进度百分百完成
+			Progress = 1f;
+
 			// 注意：创建临时列表是为了防止外部逻辑在回调函数内创建或者释放资源句柄。
 			List<OperationHandleBase> tempers = new List<OperationHandleBase>(_handles);
 			foreach (var hande in tempers)

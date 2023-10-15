@@ -6,7 +6,7 @@ namespace Framework
     {
         public override bool CanUse()
         {
-            return FApplication.IsMobile;
+            return ApplicationHelper.IsMobile;
         }
         
         protected override float MouseX()

@@ -5,7 +5,7 @@ namespace YooAsset
 {
 	internal abstract class BundledProvider : ProviderBase
 	{
-		protected AssetBundleLoaderBase OwnerBundle { private set; get; }
+		protected BundleLoaderBase OwnerBundle { private set; get; }
 		protected DependAssetBundleGroup DependBundleGroup { private set; get; }
 
 		public BundledProvider(AssetSystemImpl impl, string providerGUID, AssetInfo assetInfo) : base(impl, providerGUID, assetInfo)
@@ -36,6 +36,23 @@ namespace YooAsset
 		}
 
 		/// <summary>
+		/// 获取下载报告
+		/// </summary>
+		public override DownloadReport GetDownloadReport()
+		{
+			DownloadReport result = new DownloadReport();
+			result.TotalSize = (ulong)OwnerBundle.MainBundleInfo.Bundle.FileSize;
+			result.DownloadedBytes = OwnerBundle.DownloadedBytes;
+			foreach (var dependBundle in DependBundleGroup.DependBundles)
+			{
+				result.TotalSize += (ulong)dependBundle.MainBundleInfo.Bundle.FileSize;
+				result.DownloadedBytes += dependBundle.DownloadedBytes;
+			}
+			result.Progress = (float)result.DownloadedBytes / result.TotalSize;
+			return result;
+		}
+
+		/// <summary>
 		/// 获取资源包的调试信息列表
 		/// </summary>
 		internal void GetBundleDebugInfos(List<DebugBundleInfo> output)
@@ -43,7 +60,7 @@ namespace YooAsset
 			var bundleInfo = new DebugBundleInfo();
 			bundleInfo.BundleName = OwnerBundle.MainBundleInfo.Bundle.BundleName;
 			bundleInfo.RefCount = OwnerBundle.RefCount;
-			bundleInfo.Status = (int)OwnerBundle.Status;
+			bundleInfo.Status = OwnerBundle.Status.ToString();
 			output.Add(bundleInfo);
 
 			DependBundleGroup.GetBundleDebugInfos(output);

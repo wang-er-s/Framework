@@ -48,7 +48,7 @@ namespace Framework
             return false;
         }
 
-        public static bool TouchedUI => EventSystem.current.IsPointerOverGameObject();
+        public static bool TouchedUI => UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
 
         public static float GetAxis(string name)
         {

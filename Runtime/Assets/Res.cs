@@ -30,49 +30,44 @@ namespace Framework
     public abstract class Res : IRes
     {
         public abstract IAsyncResult Init();
-        public static Type DefaultResType = typeof(ResourcesRes);
+        public static Type DefaultResType = typeof(YooRes);
         public abstract string HostServerURL { get; set; }
         public abstract string FallbackHostServerURL { get; set; }
-        public static IRes Default { get; protected set; }
-
-        internal static void SetDefaultRes(IRes res)
-        {
-            Default = res;
-        }
 
         public static IRes Create()
         {
             return Activator.CreateInstance(DefaultResType) as IRes;
         }
         
-        public abstract T LoadAsset<T>(string key) where T : Object;
+        public abstract T LoadAssetSync<T>(string key) where T : Object;
+        public abstract void Release();
+
         protected abstract IEnumerator LoadScene(IProgressPromise<float, string> promise, string path,
             LoadSceneMode loadSceneMode, bool allowSceneActivation = true);
 
         public abstract IProgressResult<float,string> CheckDownloadSize();
         public abstract IProgressResult<DownloadProgress> DownloadAssets();
         protected abstract IEnumerator loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
-        public abstract void Dispose();
         
         public IProgressResult<float,string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true)
         {
-            ProgressResult<float,string> progressResult = new ProgressResult<float, string>();
+            ProgressResult<float,string> progressResult = ProgressResult<float, string>.Create();
             Executors.RunOnCoroutineReturn(LoadScene(progressResult, path, loadSceneMode, allowSceneActivation));
             return progressResult;
         }
         
-        public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
+        public IProgressResult<float, T> LoadAsset<T>(string key) where T : Object
         {
-            ProgressResult<float, T> progressResult = new ProgressResult<float, T>(true);
+            ProgressResult<float, T> progressResult = ProgressResult<float, T>.Create();
             Executors.RunOnCoroutineReturn(loadAssetAsync(key, progressResult));
             return progressResult;
         }
         
-        public IProgressResult<float, T> InstantiateAsync<T>(string key, Transform parent = null,
+        public IProgressResult<float, T> Instantiate<T>(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
-            var progress = InstantiateAsync(key, parent, instantiateInWorldSpace);
-            ProgressResult<float, T> result = new ProgressResult<float, T>(true);
+            var progress = Instantiate(key, parent, instantiateInWorldSpace);
+            ProgressResult<float, T> result = ProgressResult<float, T>.Create(isFromPool: false);
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult =>
             {
@@ -88,11 +83,11 @@ namespace Framework
             return result;
         }
 
-        public IProgressResult<float, T> InstantiateAsync<T>(string key, Vector3 localPosition, Quaternion localRotation,
+        public IProgressResult<float, T> Instantiate<T>(string key, Vector3 localPosition, Quaternion localRotation,
             Transform parent = null)
         {
-            var progress = InstantiateAsync(key, localPosition, localRotation, parent);
-            ProgressResult<float, T> result = new ProgressResult<float, T>(true);
+            var progress = Instantiate(key, localPosition, localRotation, parent);
+            ProgressResult<float, T> result = ProgressResult<float, T>.Create();
             result.Callbackable().OnCallback((progressResult =>
             {
                 if (progressResult.IsCancelled)
@@ -103,23 +98,24 @@ namespace Framework
             progress.Callbackable().OnProgressCallback(result.UpdateProgress);
             progress.Callbackable().OnCallback(progressResult =>
             {
-                if (result.IsCancelled && progressResult.Result != null)
+                GameObject pr = progressResult.Result;
+                if (result.IsCancelled && pr != null)
                 {
-                    Object.Destroy(progressResult.Result);
+                    Object.Destroy(pr);
                 }
                 else
                 {
-                    result.SetResult(progressResult.Result.GetComponent<T>());
+                    result.SetResult(pr.GetComponent<T>());
                 }
             });
             return result;
         }
 
-        public IProgressResult<float, GameObject> InstantiateAsync(string key, Transform parent = null,
+        public IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
-            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>(true);
-            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
+            ProgressResult<float, GameObject> loadProgress = ProgressResult<float, GameObject>.Create(isFromPool: true);
+            ProgressResult<float, GameObject> resultProgress = ProgressResult<float, GameObject>.Create();
             loadProgress.Callbackable().OnCallback((result =>
             {
                 if(resultProgress.IsCancelled) return;
@@ -132,12 +128,12 @@ namespace Framework
             return resultProgress;
         }
 
-        public IProgressResult<float, GameObject> InstantiateAsync(string key, Vector3 localPosition,
+        public IProgressResult<float, GameObject> Instantiate(string key, Vector3 localPosition,
             Quaternion localRotation,
             Transform parent = null)
         {
-            ProgressResult<float, GameObject> loadProgress = new ProgressResult<float, GameObject>(true);
-            ProgressResult<float, GameObject> resultProgress = new ProgressResult<float, GameObject>(true);
+            ProgressResult<float, GameObject> loadProgress = ProgressResult<float, GameObject>.Create(isFromPool: true);
+            ProgressResult<float, GameObject> resultProgress = ProgressResult<float, GameObject>.Create();
             loadProgress.Callbackable().OnCallback((result =>
             {
                 if(resultProgress.IsCancelled) return;
@@ -152,10 +148,10 @@ namespace Framework
             return resultProgress;
         }
 
-        public GameObject Instantiate(string key, Transform parent = null,
+        public GameObject InstantiateSync(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
-            var trans = Object.Instantiate(LoadAsset<GameObject>(key)).transform;
+            var trans = Object.Instantiate(LoadAssetSync<GameObject>(key)).transform;
             trans.SetParent(parent, instantiateInWorldSpace);
             return trans.gameObject;
         }
@@ -166,7 +162,7 @@ namespace Framework
             {
                 string hostServerIP = HostServerURL;
                 string gameVersion = ConfigBase.Load<FrameworkRuntimeConfig>().GameVersion;
-                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(Application.platform)}/{gameVersion}";
+                return $"{hostServerIP}/CDN/{ApplicationHelper.GetPlatformPath(Application.platform)}/{gameVersion}";
             }
         }
         
@@ -177,9 +173,9 @@ namespace Framework
                 string hostServerIP = FallbackHostServerURL;
                 string gameVersion = ConfigBase.Load<FrameworkRuntimeConfig>().GameVersion;
 #if UNITY_EDITOR
-                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(UnityEditor.EditorUserBuildSettings.activeBuildTarget)}/{gameVersion}";
+                return $"{hostServerIP}/CDN/{ApplicationHelper.GetPlatformPath(UnityEditor.EditorUserBuildSettings.activeBuildTarget)}/{gameVersion}";
 #else
-                return $"{hostServerIP}/CDN/{FApplication.GetPlatformPath(Application.platform)}/{gameVersion}";
+                return $"{hostServerIP}/CDN/{ApplicationHelper.GetPlatformPath(Application.platform)}/{gameVersion}";
 #endif
             }
         }
