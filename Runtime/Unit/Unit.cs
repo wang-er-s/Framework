@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -159,6 +158,14 @@ namespace Framework
             Rotation = Transform.rotation;
             Scale = Transform.localScale;
             Transform.hasChanged = false;
+        }
+
+        public void DestroyGameObject()
+        {
+            if (transform != null)
+            {
+                domain.GetComponent<PrefabPool>().Free(transform.gameObject);
+            }
         }
     }
 }
