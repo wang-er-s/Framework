@@ -1,7 +1,5 @@
 项目里使用了Odin插件，如有需要自行购买
 
-[文档](https://www.yuque.com/books/share/2c4b21e9-f8e8-4841-92ff-e6fdb69b0e16?#)
-
 ## 特别鸣谢
 
 感谢JetBrains公司提供的使用许可证！
