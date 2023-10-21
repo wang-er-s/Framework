@@ -14,6 +14,30 @@ namespace Framework
             var result = ReferencePool.Allocate<RecyclableList<T>>();
             return result;
         }
+        
+        public static RecyclableList<T> Create(T value)
+        {
+            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            result.Add(value);
+            return result;
+        } 
+        
+        public static RecyclableList<T> Create(T value1, T value2)
+        {
+            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            result.Add(value1);
+            result.Add(value2);
+            return result;
+        } 
+        
+        public static RecyclableList<T> Create(T value1, T value2, T value3)
+        {
+            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            result.Add(value1);
+            result.Add(value2);
+            result.Add(value3);
+            return result;
+        } 
 
         public static RecyclableList<T> Create(IEnumerable<T> collection)
         {

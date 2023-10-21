@@ -2,7 +2,7 @@
 
 namespace Framework
 {
-    public class ObservableProperty<T> :  IObservable, IReference , IResetBind
+    public class ObservableProperty<T> :  IObservable, IReference , IResetBind , IDisposable
     {
         private ObservableProperty()
         {
@@ -91,6 +91,11 @@ namespace Framework
         {
             OnValueChanged = null;
             _value = default;
+        }
+
+        public void Dispose()
+        {
+            ReferencePool.Free(this);
         }
     }
 }

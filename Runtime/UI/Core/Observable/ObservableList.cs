@@ -228,7 +228,7 @@ namespace Framework
         public UnRegister AddListener(Action<NotifyCollectionChangedAction, T, int> listener)
         {
             CollectionChanged += listener;
-            return new UnRegister(() => CollectionChanged -= listener);
+            return new UnRegister(()=> RemoveListener(listener));
         }
 
         public void RemoveListener(Action<NotifyCollectionChangedAction, T, int> listener)

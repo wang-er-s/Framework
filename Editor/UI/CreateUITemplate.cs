@@ -162,7 +162,7 @@ namespace Framework.Editor
             viewTemplate = viewTemplate.Replace("#VMName", vmName);
             viewTemplate = viewTemplate.Replace("#PrefabPath", GetPanelPath(panelCodeInfo));
 
-            viewTemplate = Regex.Replace(viewTemplate, @"\[UI\(""(.*)?""", $"[UI(\"{panelCodeInfo.PanelPath}\"");
+            viewTemplate = Regex.Replace(viewTemplate, @"\[UI\(""(.*)?""", $"[UI(\"{GetPanelPath(panelCodeInfo)}\"");
 
             StringBuilder componentData = new StringBuilder();
             string componentItemStr = @"

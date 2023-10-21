@@ -2,14 +2,25 @@
 {
     public static class AsyncResultHelper
     {
-        public static IAsyncResult WaitAny(RecyclableList<IAsyncResult> results)
+        public static IAsyncResult<IAsyncResult> WaitAny(RecyclableList<IAsyncResult> results, bool autoStopOthers = false)
         {
-            AsyncResult asyncResult = AsyncResult.Create(isFromPool: true);
+            AsyncResult<IAsyncResult> asyncResult = AsyncResult<IAsyncResult>.Create();
             foreach (IAsyncResult result in results)
             {
-                result.Callbackable().OnCallback((r) =>
+                result.Callbackable().OnCallback(r =>
                 {
-                    asyncResult.SetResult();
+                    if (autoStopOthers)
+                    {
+                        foreach (IAsyncResult other in results)
+                        {
+                            if (other != r && !other.IsDone)
+                            {
+                                other.Cancel();
+                            }
+                        }
+                    }
+
+                    asyncResult.SetResult(r);
                 });
             }
             return asyncResult;

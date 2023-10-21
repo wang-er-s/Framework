@@ -11,6 +11,7 @@ namespace Framework
         FixedUpdate,
         RendererUpdate,
         BattleUpdate,
+        BattleRendererUpdate,
         Max,
     }
 

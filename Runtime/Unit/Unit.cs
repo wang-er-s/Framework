@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework
 {
-    public sealed class Unit : Entity, IAwakeSystem<bool>, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>, IRendererUpdateSystem
+    public sealed class Unit : Entity, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>, IRendererUpdateSystem
     {
         private Transform transform;
         public Transform Transform
@@ -28,13 +28,24 @@ namespace Framework
                 transform = value;
                 if (transform != null)
                 {
-                    transform.gameObject.GetOrAddComponent<GoConnectedUnitId>().SetUnitId(parent.Id);
+                    transform.gameObject.GetOrAddComponent<GoConnectedUnitId>().SetUnitId(Id);
 #if UNITY_EDITOR
                     transform.gameObject.GetOrAddComponent<EditorVisibleUnit>().SetUnit(parent as Unit);
 #endif
                 } 
             }
         }
+
+        public GameObject GameObject
+        {
+            get => transform.gameObject;
+            set
+            {
+                Transform = value.transform;
+            }
+        }
+        
+        public IAsyncResult<GameObject> LoadTransAsync { get; private set; }
         // 是否从transform同步位置
         private bool syncFromTrans;
         
@@ -111,33 +122,31 @@ namespace Framework
 
         protected override string ViewName => $"{GetType().Name} ({Id})";
 
-        public void Awake(bool syncFromTran,string path)
+        public void Awake(bool syncFromTran, string path)
         {
-            Awake(syncFromTran);
-            this.domain.GetComponent<PrefabPool>().Allocate(path).Callbackable().OnCallback((r) =>
+            syncFromTrans = syncFromTran;
+            LoadTransAsync = this.domain.GetComponent<PrefabPool>().Allocate(path);
+            LoadTransAsync.Callbackable().OnCallback(r =>
             {
                 if (r.Exception != null)
                 {
                     Log.Error(r.Exception);
                     return;
                 }
+
                 if (this.IsDisposed)
                 {
                     Object.Destroy(r.Result);
                 }
-                Awake(r.Result.transform);
+
+                Transform = r.Result.transform;
             });
         }
 
         public void Awake(bool syncFromTran,Transform trans)
         {
-            Awake(syncFromTran);
-            Transform = trans;
-        }
-
-        public void Awake(bool syncFromTran)
-        {
             syncFromTrans = syncFromTran;
+            Transform = trans;
         }
 
         public override string ToString()
