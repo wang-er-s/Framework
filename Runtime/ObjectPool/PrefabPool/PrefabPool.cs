@@ -31,14 +31,20 @@ namespace Framework
 
             if (prefab.Caches.Count > 0)
             {
-                ProgressResult<float, GameObject> result = ProgressResult<float, GameObject>.Create(isFromPool: true);
+                ProgressResult<float, GameObject> result = ProgressResult<float, GameObject>.Create();
                 var go = prefab.Caches.RemoveLast();
                 goInstanceId2PathHash.Add(go.Go.GetInstanceID(), pathHash);
                 result.SetResult(go.Go);
                 return result;
             }
 
-            return res.Instantiate(path);
+            var result2 = res.Instantiate(path);
+            result2.Callbackable().OnCallback((r) =>
+            {
+                var go = r.Result;
+                goInstanceId2PathHash.Add(go.GetInstanceID(), pathHash); 
+            });
+            return result2;
         }
 
         public GameObject AllocateSync(string path)
@@ -75,7 +81,6 @@ namespace Framework
             {
                 ResetGameObject(gameObject);
                 prefab.AddCache(gameObject);
-                pathHash2Prefab.Remove(pathHash);
             }
             else
             {

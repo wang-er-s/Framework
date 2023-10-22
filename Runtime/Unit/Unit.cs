@@ -155,7 +155,7 @@ namespace Framework
             {
                 return base.ToString();
             }
-            return $"{Transform.name}\n {base.ToString()}";
+            return $"{Transform.name}";
         }
 
         public void RenderUpdate(float deltaTime)
