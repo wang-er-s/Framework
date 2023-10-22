@@ -11,7 +11,7 @@ namespace Framework
             return path =>
             {
                 if(string.IsNullOrEmpty(path)) return;
-                (Container as View).ResComponent.LoadAssetAsync<Texture>(path).Callbackable()
+                (Container as View).ResComponent.LoadAsset<Texture>(path).Callbackable()
                     .OnCallback(result =>
                     {
                         if(result.IsCancelled) return;

@@ -28,31 +28,31 @@ namespace Framework
             set => res.FallbackHostServerURL = value;
         }
 
-        public IProgressResult<float, T> LoadAssetAsync<T>(string key) where T : Object
+        public IProgressResult<float, T> LoadAsset<T>(string key) where T : Object
         {
             return res.LoadAsset<T>(key);
         }
 
-        public IProgressResult<float, T> Instantiate<T>(string key, Transform parent = null,
+        internal IProgressResult<float, T> Instantiate<T>(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
             return res.Instantiate<T>(key, parent, instantiateInWorldSpace);
         }
 
-        public IProgressResult<float, T> Instantiate<T>(string key, Vector3 localPosition, Quaternion localRotation,
+        internal IProgressResult<float, T> Instantiate<T>(string key, Vector3 localPosition, Quaternion localRotation,
             Transform parent = null)
         {
             return res.Instantiate<T>(key, localPosition, localRotation, parent);
         }
 
-        public IProgressResult<float, GameObject> Instantiate(string key, Vector3 localPosition,
+        internal IProgressResult<float, GameObject> Instantiate(string key, Vector3 localPosition,
             Quaternion localRotation,
             Transform parent = null)
         {
             return res.Instantiate(key, localPosition, localRotation, parent);
         }
 
-        public IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
+        internal IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
             return res.Instantiate(key, parent, instantiateInWorldSpace);
@@ -74,12 +74,12 @@ namespace Framework
             return res.DownloadAssets();
         }
 
-        public GameObject InstantiateSync(string key, Transform parent = null, bool instantiateInWorldSpace = false)
+        internal GameObject InstantiateSync(string key, Transform parent = null, bool instantiateInWorldSpace = false)
         {
             return res.InstantiateSync(key, parent, instantiateInWorldSpace);
         }
 
-        public T LoadAsset<T>(string key) where T : Object
+        public T LoadAssetSync<T>(string key) where T : Object
         {
             return res.LoadAssetSync<T>(key);
         }

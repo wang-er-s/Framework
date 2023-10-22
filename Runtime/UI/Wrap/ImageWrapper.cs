@@ -11,7 +11,7 @@ namespace Framework
             return path =>
             {
                 if (string.IsNullOrEmpty(path)) return;
-                (Container as View).ResComponent.LoadAssetAsync<Sprite>(path).Callbackable()
+                (Container as View).ResComponent.LoadAsset<Sprite>(path).Callbackable()
                     .OnCallback(result =>
                     {
                         if (result.IsCancelled) return;
