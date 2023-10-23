@@ -349,7 +349,7 @@ namespace Framework
             }
         } 
 
-        public IProgressResult<float, T> AddSubView<T>(ViewModel viewModel = null) where T : View
+        public IProgressResult<float, T> AddSubView<T>(ViewModel viewModel) where T : View
         {
             var progressResult = this.RootScene().GetComponent<UIComponent>().CreateSubViewAsync<T>(viewModel);
             progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));

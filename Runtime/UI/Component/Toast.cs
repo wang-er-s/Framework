@@ -27,7 +27,7 @@ namespace Framework
 
             await toastContent.Show();
 
-            var result = toastContent.AddSubView<ToastWindow>();
+            var result = toastContent.AddSubView<ToastWindow>(null);
             await result;
             ToastWindow window = result.Result;
             if (window == null)

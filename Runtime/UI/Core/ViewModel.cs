@@ -12,6 +12,7 @@ namespace Framework
         
         public virtual void OnViewDestroy()
         {
+            if(references == null) return;
             foreach (var reference in references)
             {
                 ReferencePool.Free(reference);
