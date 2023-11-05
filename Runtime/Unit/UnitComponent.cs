@@ -5,7 +5,8 @@ namespace Framework
 {
     public class UnitComponent : Entity, IAwakeSystem, IDestroySystem
     {
-        public Dictionary<long, Unit> idUnits = new Dictionary<long, Unit>();
+        private Dictionary<long, Unit> idUnits = new Dictionary<long, Unit>();
+        public IReadOnlyDictionary<long, Unit> Units => idUnits;
 
         public void Awake()
         {
@@ -46,14 +47,8 @@ namespace Framework
             idUnits.Remove(id);
         }
 
-        public Unit[] GetAll()
-        {
-            return idUnits.Values.ToArray();
-        }
-
         public void OnDestroy()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

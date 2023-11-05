@@ -15,31 +15,28 @@
             this.entityId = this.entity.Id;
         }
 
-        public void SetEntity(T entity)
-        {
-            this.entity = entity;
-            this.entityId = this.entity.Id;
-        }
-
-        public T Entity => entity;
-
-        public bool IsDisposed
+        public T Entity
         {
             get
             {
-                if (this.entity == null) return true;
-                return entity.Id != entityId;
+                if (entity == null)
+                {
+                    return null;
+                }
+                
+                if (entity.IsDisposed || entity.Id != entityId)
+                {
+                    entity = null;
+                    return null;
+                }
+
+                return entity;
             }
         }
 
         public static implicit operator T(EntityRef<T> entityRef)
         {
-            if (!entityRef.IsDisposed)
-            {
-                return entityRef.Entity;
-            }
-
-            return null;
+            return entityRef.Entity;
         }
 
         public static implicit operator EntityRef<T>(T entity)
