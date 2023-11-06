@@ -72,6 +72,7 @@ namespace Framework
 #if MongoDb
         [BsonElement]
 #endif
+        [JsonProperty]
         [OnValueChanged(nameof(OnListChanged))]
         private List<SerializeDicKeyValue<TKey, TValue>> list = new List<SerializeDicKeyValue<TKey, TValue>>();
 
@@ -140,11 +141,10 @@ namespace Framework
     [Serializable]
     public struct SerializeDicKeyValue<TKey, TValue>
     {
-        [HorizontalGroup()]
+        [VerticalGroup()]
         [LabelWidth(50)]
         public TKey Key;
-        [HorizontalGroup()]
-        [LabelWidth(60)]
+        [VerticalGroup()]
         public TValue Value;
 
         public SerializeDicKeyValue(TKey key, TValue value)
