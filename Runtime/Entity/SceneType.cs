@@ -5,6 +5,7 @@
         All,
         Root = 31,
         Launch,
-        Battle,
+        Main,
+        Parkour,
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Framework
 {
-    public sealed class Scene : Entity
+    public class Scene : Entity
     {
         public SceneType SceneType { get; }
 
@@ -14,7 +14,7 @@ namespace Framework
 
         public Scene(long instanceId, SceneType sceneType, string name, Entity parent)
         {
-            SceneContext = new Context();
+            SceneContext = this.AddComponent<Context>();
             Id = instanceId;
             SceneType = sceneType;
             Name = name;
