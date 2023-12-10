@@ -14,12 +14,8 @@ namespace Framework
         Bg,
         Common,
         Pop,
-        Toast,
         Guide,
         FullScreen,
-
-        //这个放到最下边
-        Max,
     }
 
     public abstract class Window : View
@@ -99,7 +95,7 @@ namespace Framework
             if (Visibility)
                 return AsyncResult.Void();
             
-            UIComponent.Instance.ShowSort(this);
+            domain.GetComponent<UIComponent>().ShowSort(this);
             return DoShow(ignoreAnimation);
         }
 
@@ -120,13 +116,13 @@ namespace Framework
                     {
                         this.State = WindowState.ENTER_ANIMATION_END;
                         result.SetResult();
-                        UIComponent.Instance.ActiveWindow(this, ignoreAnimation);
+                        domain.GetComponent<UIComponent>().ActiveWindow(this, ignoreAnimation);
                     }).Play();
                 }
                 else
                 {
                     result.SetResult();
-                    UIComponent.Instance.ActiveWindow(this, ignoreAnimation);
+                    domain.GetComponent<UIComponent>().ActiveWindow(this, ignoreAnimation);
                 }
             }
             catch (Exception e)
@@ -156,7 +152,7 @@ namespace Framework
             if (!this.Visibility)
                 return AsyncResult.Void();
 
-            UIComponent.Instance.HideSort(this);
+            domain.GetComponent<UIComponent>().HideSort(this);
             return DoHide(ignoreAnimation);
         }
 
@@ -176,7 +172,7 @@ namespace Framework
                             this.State = WindowState.INVISIBLE;
                             this.OnHide();
                             result.SetResult();
-                            UIComponent.Instance.PassivateWindow(this, ignoreAnimation);
+                            domain.GetComponent<UIComponent>().PassivateWindow(this, ignoreAnimation);
                         }).Play();
                     }
                     else
@@ -185,7 +181,7 @@ namespace Framework
                         this.State = WindowState.INVISIBLE;
                         this.OnHide();
                         result.SetResult();
-                        UIComponent.Instance.PassivateWindow(this, ignoreAnimation);
+                        domain.GetComponent<UIComponent>().PassivateWindow(this, ignoreAnimation);
                     }
                 }
 
@@ -349,11 +345,17 @@ namespace Framework
             }
         } 
 
-        public IProgressResult<float, T> AddSubView<T>(ViewModel viewModel) where T : View
+        public IAsyncResult<T> AddSubView<T>(ViewModel viewModel) where T : View
         {
-            var progressResult = this.RootScene().GetComponent<UIComponent>().CreateSubViewAsync<T>(viewModel);
-            progressResult.Callbackable().OnCallback((result => AddSubView(result.Result)));
-            return progressResult;
+            AsyncResult<T> result = AsyncResult<T>.Create();
+            var progressResult = domain.GetComponent<UIComponent>().CreateSubViewAsync<T>(viewModel);
+            progressResult.Callbackable().OnCallback(r =>
+            {
+                AddSubView(r.Result);
+                result.SetResult(r.Result);
+                r.FreeFromPool();
+            });
+            return result;
         }
 
         public void RemoveSubView(View view)
@@ -380,7 +382,7 @@ namespace Framework
 
         protected void Close()
         {
-            this.RootScene().GetComponent<UIComponent>().Close(this);
+            this.domain.GetComponent<UIComponent>().Close(this);
         }
 
         public virtual UILevel UILevel { get; } = UILevel.Common;

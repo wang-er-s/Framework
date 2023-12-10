@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using Sirenix.OdinInspector;
 
 namespace Framework
 {
@@ -254,6 +255,7 @@ namespace Framework
         [BsonDefaultValue(0L)]
         [BsonElement]
         [BsonId]
+        [ShowInInspector]
         public long Id { get; set; }
 
         [BsonIgnore] protected Entity domain;

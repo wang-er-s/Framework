@@ -16,10 +16,6 @@ namespace Framework
         private Action<TComponent, TVm> onDestroy;
         private SinglePrefabPool<TComponent> singlePrefabPool;
 
-        private BindList()
-        {
-        }
-
         public void Reset(TComponent component, ObservableList<TVm> list, Action<TComponent, TVm> onCreate,
             Action<TComponent, TVm> onDestroy)
         {

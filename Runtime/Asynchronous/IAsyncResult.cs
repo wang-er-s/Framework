@@ -84,6 +84,8 @@ namespace Framework
         /// </summary>
         /// <returns></returns>
         object WaitForDone();
+
+        void FreeFromPool();
     }
     
     /// <summary>

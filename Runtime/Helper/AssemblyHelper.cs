@@ -20,5 +20,24 @@ namespace Framework
 
             return types;
         }
+        
+        /// <summary>
+        /// 获取Assembly
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static Assembly GetAssembly(string name)
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.FullName.StartsWith("JetBrains")) continue;
+                if (assembly.GetName().Name.Equals(name))
+                {
+                    return assembly;
+                }
+            }
+
+            return null;
+        }
     }
 }

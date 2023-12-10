@@ -23,17 +23,15 @@ namespace Framework
         private readonly Dictionary<Type, Window> createdSingleViews = new();
         private readonly Dictionary<Type, IAsyncResult> loadingView = new();
         private readonly Dictionary<UILevel, List<Window>> uiLevel2ShowedView = new();
-        public static UIComponent Instance { get; private set; }
         private Canvas canvas;
         private PrefabPool prefabPool;
         private ResComponent resComponent;
  
         public void Awake()
         {
-            Instance = this;
             this.canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
             resComponent = AddComponent<ResComponent>();
-            prefabPool = AddComponent<PrefabPool, ResComponent, string>(resComponent, "UI_PrefabPool");
+            prefabPool = AddComponent<PrefabPool, ResComponent, string>(resComponent, $"{this.DomainScene().Name}UI_PrefabPool");
             var canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
             Object.DontDestroyOnLoad(canvas.transform.parent.gameObject);
             foreach (var tuple in EventSystem.Instance.GetTypesAndAttribute(typeof(UIAttribute)))
@@ -86,7 +84,7 @@ namespace Framework
         public IProgressResult<float, T> CreateSubViewAsync<T>(ViewModel vm) where T : View
         {
             var type = typeof(T);
-            ProgressResult<float, T> progressResult = ProgressResult<float, T>.Create(isFromPool: false);
+            ProgressResult<float, T> progressResult = ProgressResult<float, T>.Create(isFromPool: true);
             var view = AddChild(type) as View;
             SetViewGmeObjectAndVM(progressResult, view, viewType2Attribute[type].Path, vm);
             return progressResult;
@@ -198,12 +196,8 @@ namespace Framework
         public void ShowSort(Window window)
         {
             var viewTransform = window.GameObject.transform;
-            // 此界面的上一个界面
-            Window lastWindow = null;
-            int index = Int32.MaxValue;
-
             // 把当前界面移动到当前层的最高位置
-            if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views) && views.Count > 0)
+            if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views))
             {
                 views.Remove(window);
                 views.Add(window);
@@ -214,39 +208,15 @@ namespace Framework
                 uiLevel2ShowedView.Add(window.UILevel, views);
                 views.Add(window);
             }
-
-            for (int i = (int)window.UILevel + 1; i < (int)UILevel.Max; i++)
-            {
-                UILevel level = (UILevel)i;
-                if (uiLevel2ShowedView.TryGetValue(level, out views) && views.Count > 0)
-                {
-                    lastWindow = views.Last();
-                    break;
-                }
-            }
-
-            viewTransform.SetParent(canvas.transform, false);
-            if (lastWindow == null)
-                viewTransform.SetAsLastSibling();
-            else
-                viewTransform.SetSiblingIndex(index);
+            viewTransform.SetParent(UIRootHelper.GetTargetRoot(this.RootScene(), window.UILevel), true);
+            viewTransform.LocalIdentity();
+            viewTransform.SetAsLastSibling();
             MaskViews(window, true);
         }
 
         public void HideSort(Window window)
         {
-            UILevel level = window.UILevel;
-            if (uiLevel2ShowedView.TryGetValue(level, out var views) && views.Count > 0)
-            {
-                for (int i = 0; i < views.Count; i++)
-                {
-                    if (views[i] == window)
-                    {
-                        views.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
+            window.GameObject.transform.SetAsFirstSibling();
             MaskViews(window, false);
         }
 

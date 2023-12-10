@@ -81,10 +81,6 @@ namespace Framework
         private object _lock = new object();
         private Action<IAsyncResult> _callback;
 
-        private Callbackable()
-        {
-        }
-        
         public static Callbackable Create(IAsyncResult result)
         {
             var val = ReferencePool.Allocate<Callbackable>();
@@ -242,10 +238,6 @@ namespace Framework
         private Action<IProgressResult<TProgress>> _callback;
         private Action<TProgress> _progressCallback;
 
-        private ProgressCallbackable()
-        {
-        }
-        
         public static ProgressCallbackable<TProgress> Create(IProgressResult<TProgress> result)
         {
             var val = ReferencePool.Allocate<ProgressCallbackable<TProgress>>();
@@ -390,10 +382,6 @@ namespace Framework
             var val = ReferencePool.Allocate<ProgressCallbackable<TProgress, TResult>>();
             val._result = result;
             return val;
-        }
-
-        private ProgressCallbackable()
-        {
         }
 
         public void RaiseOnCallback()

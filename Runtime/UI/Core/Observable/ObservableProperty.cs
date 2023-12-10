@@ -4,10 +4,7 @@ namespace Framework
 {
     public class ObservableProperty<T> :  IObservable, IReference , IResetBind , IDisposable
     {
-        private ObservableProperty()
-        {
-        }
-        
+
         public static ObservableProperty<T> Create(T value = default)
         {
             var res = ReferencePool.Allocate<ObservableProperty<T>>();

@@ -12,14 +12,11 @@ namespace Framework
 
         public override bool IsDone => currentProgress == null || base.IsDone;
 
-        private SequenceProgress()
-        {
-        }
-
-        public static SequenceProgress Create([CallerMemberName]string debugName = "",bool cancelable = true, bool isFromPool = false, params Func<IProgressResult<float>>[] allProgress)
+        public static SequenceProgress Create([CallerMemberName] string debugName = "", bool cancelable = true,
+            bool isFromPool = true, params Func<IProgressResult<float>>[] allProgress)
         {
             var result = isFromPool ? ReferencePool.Allocate<SequenceProgress>() : new SequenceProgress();
-            result.OnCreate(debugName, cancelable, isFromPool);
+            result.OnCreate(debugName, cancelable);
             result.AddAsyncResult(allProgress);
             return result;
         }

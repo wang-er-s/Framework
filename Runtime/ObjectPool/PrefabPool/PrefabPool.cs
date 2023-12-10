@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Framework
 {
@@ -6,8 +7,10 @@ namespace Framework
     {
         private RecyclableDic<int, OnePrefab> pathHash2Prefab;
         private RecyclableDic<int, int> goInstanceId2PathHash;
+        private List<ProgressResult<float, GameObject>> needInsGo;
         private ResComponent res;
         private Transform  root;
+        private static int NotRenderLayer = LayerMask.NameToLayer("NotRender");
 
         public void Awake(ResComponent res)
         {
@@ -15,7 +18,6 @@ namespace Framework
             pathHash2Prefab = RecyclableDic<int, OnePrefab>.Create();
             goInstanceId2PathHash = RecyclableDic<int, int>.Create();
             root = new GameObject("PrefabPool").transform;
-            root.gameObject.SetActive(false);
         }
         
         public void Awake(ResComponent res, string name)
@@ -37,13 +39,14 @@ namespace Framework
                 result.SetResult(go.Go);
                 return result;
             }
-
-            var result2 = res.Instantiate(path);
+            
+            var result2 = Instantiate(path);
             result2.Callbackable().OnCallback((r) =>
             {
                 var go = r.Result;
                 goInstanceId2PathHash.Add(go.GetInstanceID(), pathHash); 
             });
+            
             return result2;
         }
 
@@ -60,7 +63,7 @@ namespace Framework
             }
             else
             {
-                var go = res.InstantiateSync(path);
+                var go = InstantiateSync(path);
                 goInstanceId2PathHash.Add(go.GetInstanceID(), pathHash);
                 return go;
             }
@@ -77,6 +80,7 @@ namespace Framework
                 return;
             }
 
+            goInstanceId2PathHash.Remove(insId);
             if (pathHash2Prefab.TryGetValue(pathHash, out var prefab))
             {
                 ResetGameObject(gameObject);
@@ -88,6 +92,29 @@ namespace Framework
             }
         }
 
+        private IProgressResult<float, GameObject> Instantiate(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                ProgressResult<float, GameObject> result = ProgressResult<float, GameObject>.Create();
+                result.SetResult(new GameObject(nameof(GameObject)));
+                return result;
+            }
+
+            return res.Instantiate(path);
+        }
+
+        private GameObject InstantiateSync(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return new GameObject(nameof(GameObject));
+            }
+
+            return res.InstantiateSync(path);
+        }
+        
+       
         public void SetCacheData(string path, float delayDestroyTime, int maxCount)
         {
             int pathHash = path.GetHashCode();
@@ -102,7 +129,7 @@ namespace Framework
             {
                 prefab = ReferencePool.Allocate<OnePrefab>();
                 prefab.PathHash = pathHash;
-                prefab.DelayDestroyTime = 5;
+                prefab.DelayDestroyTime = 100000;
                 prefab.MaxCount = 30;
                 prefab.Caches = RecyclableList<DelayDestroyGo>.Create();
                 pathHash2Prefab.Add(pathHash, prefab);
@@ -113,7 +140,10 @@ namespace Framework
 
         private void ResetGameObject(GameObject gameObject)
         {
+#if UNITY_EDITOR
             gameObject.transform.SetParent(root);
+#endif
+            gameObject.layer = NotRenderLayer;
         }
 
         public void Update(float deltaTime)

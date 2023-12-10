@@ -14,7 +14,6 @@ namespace Framework
 
         public Scene(long instanceId, SceneType sceneType, string name, Entity parent)
         {
-            SceneContext = this.AddComponent<Context>();
             Id = instanceId;
             SceneType = sceneType;
             Name = name;
@@ -23,13 +22,14 @@ namespace Framework
             Parent = parent;
             Domain = this;
             IsRegister = true;
+            SceneContext = this.AddComponent<Context>();
             Log.Msg($"scene create: {SceneType} {Name} {Id} ");
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            SceneContext.Dispose();
+            SceneContext?.Dispose();
             SceneContext = null;
             Log.Msg($"scene dispose: {SceneType} {Name} {Id}");
         }

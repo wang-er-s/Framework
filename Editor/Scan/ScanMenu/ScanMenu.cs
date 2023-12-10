@@ -105,7 +105,7 @@ namespace Framework.Editor
         [HideLabel]
         protected class ShowRules
         {
-            [ListDrawerSettings(Expanded = true, IsReadOnly = true, ShowPaging = true, ShowIndexLabels = false,
+            [ListDrawerSettings(ShowFoldout = true, IsReadOnly = true, ShowPaging = true, ShowIndexLabels = false,
                 DraggableItems = false, HideAddButton = true, HideRemoveButton = true, ShowItemCount = false)]
             [HideReferenceObjectPicker]
             public List<ScanRule> Rules = new();

@@ -6,10 +6,6 @@ namespace Framework
 {
     public class UIBindFactory : BindFactory
     {
-        protected UIBindFactory()
-        {
-        }
-
         public void BindViewList<TItemVm, TItemView>
             (ObservableList<TItemVm> list,Transform root) where TItemVm : ViewModel
             where TItemView : Window
@@ -24,7 +20,7 @@ namespace Framework
                 bind = ReferencePool.Allocate<BindViewList<TItemVm, TItemView>>();
                 bind.Init(Container);
             }
-            bind.Reset(list, root);
+            bind.Reset(list,Container as Window, root);
             AddClearable(bind);
         }
         

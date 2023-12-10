@@ -167,7 +167,7 @@ namespace Framework
             }
         }
 
-        protected override IEnumerator LoadScene(IProgressPromise<float, string> promise, string path,
+        protected override IEnumerator LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path,
             LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
         {
             loadProgress.Add(promise);
@@ -184,7 +184,7 @@ namespace Framework
             }
             else
             {
-                promise.SetResult();
+                promise.SetResult(loader.SceneObject);
             }
         }
 

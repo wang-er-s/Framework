@@ -32,9 +32,6 @@ namespace Framework
     {
         protected List<Coroutine> Coroutines = new List<Coroutine>();
 
-        private CoroutineResult()
-        {
-        }
 
         public static CoroutineResult Create(bool cancelable = true)
         {
@@ -74,10 +71,6 @@ namespace Framework
     {
         protected List<Coroutine> coroutines = new List<Coroutine>();
 
-        private CoroutineResult()
-        {
-        }
-
         public static CoroutineResult<TResult> Create(bool cancelable = true)
         {
             var result = ReferencePool.Allocate<CoroutineResult<TResult>>();
@@ -115,10 +108,6 @@ namespace Framework
     public class CoroutineProgressResult<TProgress> : ProgressResult<TProgress>, ICoroutineProgressPromise<TProgress>
     {
         protected readonly List<Coroutine> Coroutines = new List<Coroutine>();
-
-        private CoroutineProgressResult()
-        {
-        }
 
         public static CoroutineProgressResult<TProgress> Create(bool cancelable = true)
         {
@@ -158,10 +147,6 @@ namespace Framework
         ICoroutineProgressPromise<TProgress, TResult>
     {
         protected List<Coroutine> Coroutines = new List<Coroutine>();
-
-        private CoroutineProgressResult()
-        {
-        }
 
         public static CoroutineProgressResult<TProgress, TResult> Create(bool cancelable = true)
         {

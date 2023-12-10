@@ -11,9 +11,21 @@ namespace Framework
     {
         private static readonly Dictionary<Type, Queue<object>> pool = new Dictionary<Type, Queue<object>>();
 
-        public static T Allocate<T>() where T : class
+        public static T Allocate<T>() where T : class , new()
         {
-            return Allocate(typeof(T)) as T;
+            Queue<object> queue = null;
+            var type = typeof(T);
+            if (!pool.TryGetValue(type, out queue))
+            {
+                return new T();
+            }
+
+            if (queue.Count == 0)
+            {
+                return new T();
+            }
+
+            return queue.Dequeue() as T;
         }
 
         public static object Allocate(Type type)

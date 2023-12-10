@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -25,7 +24,7 @@ namespace Framework
         IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false);
 
-        IProgressResult<float, string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true);
+        IProgressResult<float, UnityEngine.SceneManagement.Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true);
 
         IProgressResult<float, string> CheckDownloadSize();
         IProgressResult<DownloadProgress> DownloadAssets();

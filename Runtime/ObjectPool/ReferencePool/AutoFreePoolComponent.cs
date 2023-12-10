@@ -10,7 +10,7 @@ namespace Framework
             needFreeObj = ReferencePool.Allocate<HashSet<object>>();
         }
 
-        public T Allocate<T>() where T : class
+        public T Allocate<T>() where T : class, new()
         {
             var obj = ReferencePool.Allocate<T>();
             needFreeObj.Add(obj);

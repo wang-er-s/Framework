@@ -6,10 +6,6 @@ namespace Framework
 
     public class RecyclableDic<TKey,TValue> : Dictionary<TKey, TValue> , IDisposable , IReference
     {
-        private RecyclableDic()
-        {
-        }
-
         public static RecyclableDic<TKey,TValue> Create()
         {
             var result = ReferencePool.Allocate<RecyclableDic<TKey,TValue>>();

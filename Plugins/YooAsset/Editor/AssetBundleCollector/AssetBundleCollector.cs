@@ -28,7 +28,7 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 寻址规则类名
 		/// </summary>
-		public string AddressRuleName = nameof(AddressRuleName);
+		public string AddressRuleName = nameof(AddressByGroupAndFileName);
 
 		/// <summary>
 		/// 打包规则类名
