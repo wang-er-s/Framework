@@ -1,14 +1,13 @@
 ﻿using System.IO;
 using System;
-
 #if MongoDb
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 #endif
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
+using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 namespace Framework
 {
