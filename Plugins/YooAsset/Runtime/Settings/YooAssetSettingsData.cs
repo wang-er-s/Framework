@@ -75,7 +75,8 @@ namespace YooAsset
 		public static void Save()
 		{
 #if UNITY_EDITOR
-			UnityEditor.AssetDatabase.CreateAsset(_setting,"Assets/Resources/YooAssetSettings.asset");
+			UnityEditor.EditorUtility.SetDirty(Setting);
+			UnityEditor.AssetDatabase.SaveAssets(); 
 #endif
 		}
 	}

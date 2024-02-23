@@ -2,6 +2,6 @@
 {
     public interface ILateUpdateSystem : ISystemType
     {
-        void LateUpdate();
+        void LateUpdate(float deltaTime);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework
 {
-    public sealed class Unit : Entity,IAwakeSystem<string>, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>,IAwakeSystem<bool,bool,string>, IRendererUpdateSystem, IDestroySystem
+    public sealed class Unit : Entity,IAwakeSystem<string>,IAwakeSystem<Transform>, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>,IAwakeSystem<bool,bool,string>, IRendererUpdateSystem, IDestroySystem
     {
         private Transform transform;
         public Transform Transform
@@ -128,6 +128,11 @@ namespace Framework
             Awake(false, fromPool, path);
         }
 
+        public void Awake(Transform go)
+        {
+            Awake(false, go);
+        }
+
         public void Awake(bool syncFromTran,Transform trans)
         {
             syncFromTrans = syncFromTran;
@@ -166,7 +171,7 @@ namespace Framework
             return LoadTransAsync;
         }
 
-        private void OnAsyncLoadFinish(IAsyncResult<GameObject> asyncResult)
+        private async void OnAsyncLoadFinish(IAsyncResult<GameObject> asyncResult)
         {
             if (asyncResult.Exception != null)
             {
@@ -184,7 +189,6 @@ namespace Framework
             Transform.rotation = rotation;
             Transform.forward = Forward;
         }
-
 
         public override string ToString()
         {
@@ -231,7 +235,7 @@ namespace Framework
         {
             if (transform != null)
             {
-                domain.GetComponent<PrefabPool>().Free(transform.gameObject);
+                if(!domain.IsDisposed) domain.GetComponent<PrefabPool>().Free(transform.gameObject);
                 transform = null;
             }
         }

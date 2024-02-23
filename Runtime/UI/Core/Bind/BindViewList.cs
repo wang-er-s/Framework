@@ -36,7 +36,7 @@ namespace Framework
 
         private void InitEvent()
         {
-            _list.AddListener(BindListFunc);
+            _list.AddListenerWithoutCall(BindListFunc);
         }
 
         protected override void OnReset()
@@ -83,6 +83,7 @@ namespace Framework
                 view.SetGameObject(go);
                 view.SetVm(vm);
                 view.Visibility = true;
+                view.Interactable = true;
                 _views.Insert(index, view);
             });
         }

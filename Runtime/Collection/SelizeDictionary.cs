@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 #endif
-using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -45,7 +44,7 @@ namespace Framework
             else
             {
                 if (HasSameKey) return;
-                list.Add(new SerializeDicKeyValue<TKey, TValue>(Key, Value));
+                list.Add(new SerializeKeyValue<TKey, TValue>(Key, Value));
                 Key = default;
                 Value = default;
             }
@@ -72,14 +71,12 @@ namespace Framework
 #if MongoDb
         [BsonElement]
 #endif
-        [JsonProperty]
         [OnValueChanged(nameof(OnListChanged))]
-        private List<SerializeDicKeyValue<TKey, TValue>> list = new List<SerializeDicKeyValue<TKey, TValue>>();
+        private List<SerializeKeyValue<TKey, TValue>> list = new List<SerializeKeyValue<TKey, TValue>>();
 
 #if MongoDb
         [BsonIgnore]
 #endif
-        [JsonIgnore]
         public IReadOnlyDictionary<TKey, TValue> Dic
         {
             get
@@ -96,7 +93,7 @@ namespace Framework
         private Dictionary<TKey, TValue> dic;
 
         private bool hasCustomAddFunc => CustomAddFunc != null && CustomAddFunc.GetInvocationList().Length > 0;
-        public event Action<List<SerializeDicKeyValue<TKey,TValue>>> CustomAddFunc;
+        public event Action<List<SerializeKeyValue<TKey,TValue>>> CustomAddFunc;
 
         private void OnListChanged()
         {
@@ -116,7 +113,7 @@ namespace Framework
                 return false;
             }
 
-            list.Add(new SerializeDicKeyValue<TKey, TValue>(key,value));
+            list.Add(new SerializeKeyValue<TKey, TValue>(key,value));
             dic[key] = value;
             return true;
         }
@@ -139,7 +136,7 @@ namespace Framework
     }
 
     [Serializable]
-    public struct SerializeDicKeyValue<TKey, TValue>
+    public struct SerializeKeyValue<TKey, TValue>
     {
         [VerticalGroup()]
         [LabelWidth(50)]
@@ -147,7 +144,7 @@ namespace Framework
         [VerticalGroup()]
         public TValue Value;
 
-        public SerializeDicKeyValue(TKey key, TValue value)
+        public SerializeKeyValue(TKey key, TValue value)
         {
             Key = key;
             Value = value;

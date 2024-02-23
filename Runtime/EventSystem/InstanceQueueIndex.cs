@@ -10,8 +10,9 @@ namespace Framework
         LateUpdate,
         FixedUpdate,
         RendererUpdate,
-        BattleUpdate,
-        BattleRendererUpdate,
+        ParkourUpdate,
+        ParkourRendererUpdate,
+        ParkourLateUpdate,
         Max,
     }
 

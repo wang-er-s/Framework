@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,12 +28,13 @@ public class FillSlicedImage : Image
             padding = Vector4.zero;
             border = Vector4.zero;
         }
+
         Rect rect = GetPixelAdjustedRect();
         Rect fillRect = rect;
         fillRect.width = fillRect.width * fillAmount;
         Vector4 adjustedBorders = GetAdjustedBorders(border / pixelsPerUnit, rect);
         padding = padding / pixelsPerUnit;
-        
+
         s_VertScratch[0] = new Vector2(padding.x, padding.y);
         s_VertScratch[3] = new Vector2(rect.width - padding.z, rect.height - padding.w);
 
@@ -66,17 +68,25 @@ public class FillSlicedImage : Image
                 if (fillOrigin == 0)
                 {
                     float w = s_VertScratch[x2].x - s_VertScratch[x].x;
-                    float uvw = s_UVScratch[x2].x - s_UVScratch[x].x;
-                    float realAmount = (fillRect.x + fillRect.width - s_VertScratch[x].x) / w;
-                    if (realAmount < 0) {
-                        realAmount = 0;
+                    if (w != 0)
+                    {
+                        float uvw = s_UVScratch[x2].x - s_UVScratch[x].x;
+                        float realAmount = (fillRect.x + fillRect.width - s_VertScratch[x].x) / w;
+                        if (realAmount < 0)
+                        {
+                            realAmount = 0;
+                        }
+
+                        if (realAmount > 1)
+                        {
+                            realAmount = 1;
+                        }
+
+                        s_VertScratch[x2].x = s_VertScratch[x].x + w * realAmount;
+                        s_UVScratch[x2].x = s_UVScratch[x].x + uvw * realAmount;
                     }
-                    if (realAmount > 1) {
-                        realAmount = 1;
-                    }
-                    s_VertScratch[x2].x = s_VertScratch[x].x + w * realAmount;
-                    s_UVScratch[x2].x = s_UVScratch[x].x + uvw * realAmount;
                 }
+
                 AddQuad(toFill,
                     new Vector2(s_VertScratch[x].x, s_VertScratch[y].y),
                     new Vector2(s_VertScratch[x2].x, s_VertScratch[y2].y),
@@ -101,6 +111,7 @@ public class FillSlicedImage : Image
                 border[axis + 2] *= borderScaleRatio;
             }
         }
+
         return border;
     }
 
@@ -114,7 +125,8 @@ public class FillSlicedImage : Image
         }
     }
 
-    static void AddQuad(VertexHelper vertexHelper, Vector2 posMin, Vector2 posMax, Color32 color, Vector2 uvMin, Vector2 uvMax)
+    static void AddQuad(VertexHelper vertexHelper, Vector2 posMin, Vector2 posMax, Color32 color, Vector2 uvMin,
+        Vector2 uvMax)
     {
         int startIndex = vertexHelper.currentVertCount;
 
@@ -126,5 +138,4 @@ public class FillSlicedImage : Image
         vertexHelper.AddTriangle(startIndex, startIndex + 1, startIndex + 2);
         vertexHelper.AddTriangle(startIndex + 2, startIndex + 3, startIndex);
     }
-
 }

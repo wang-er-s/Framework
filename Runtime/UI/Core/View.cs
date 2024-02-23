@@ -18,7 +18,7 @@ namespace Framework
         {
             Binding = ReferencePool.Allocate<UIBindFactory>();
             Binding.Init(this);
-            AddComponent<ResComponent>();
+            ResComponent = AddComponent<ResComponent>();
         }
 
         public virtual void OnDestroy()
@@ -119,8 +119,8 @@ namespace Framework
             {
                 Log.Error(e);
             }
-        } 
-        
+        }
+
         public virtual bool Visibility
         {
             get => this.GameObject != null && this.GameObject.activeSelf;

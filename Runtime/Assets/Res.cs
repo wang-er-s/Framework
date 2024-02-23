@@ -29,7 +29,7 @@ namespace Framework
     
     public abstract class Res : IRes
     {
-        public abstract IAsyncResult Init();
+        public abstract IProgressResult<float> Init();
         public static Type DefaultResType = typeof(YooRes);
         public abstract string HostServerURL { get; set; }
         public abstract string FallbackHostServerURL { get; set; }

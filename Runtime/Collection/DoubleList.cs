@@ -9,6 +9,9 @@ namespace Framework
         private readonly List<K> keyList;
         private readonly List<V> valueList;
 
+        public IReadOnlyList<K> Keys => keyList;
+        public IReadOnlyList<V> Values => valueList;
+        
         public int Count => keyList.Count;
 
         public DoubleList(int capacity)
@@ -70,6 +73,8 @@ namespace Framework
             return new KeyValuePair<K, V>(keyList[index], valueList[index]);
         }
 
+        public V this[K key] => GetValueByKey(key);
+
         public K GetKeyByIndex(int index)
         {
             if (index < 0 || index >= keyList.Count)
@@ -89,6 +94,26 @@ namespace Framework
 
             return valueList[index];
         }
+        
+        public V GetValueByKey(K key)
+        {
+            int index = keyList.IndexOf(key);
+            if (index < 0)
+            {
+                throw new KeyNotFoundException();
+            }
+            return valueList[index];
+        } 
+        
+        public K GetKeyByValue(V value)
+        {
+            int index = valueList.IndexOf(value);
+            if (index < 0)
+            {
+                throw new KeyNotFoundException();
+            }
+            return keyList[index];
+        }  
 
         public IEnumerator<KeyValuePair<K, V>> GetEnumerator()
         {

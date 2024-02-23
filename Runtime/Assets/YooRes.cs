@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using YooAsset;
@@ -13,9 +14,9 @@ namespace Framework
         private List<IProgressPromise<float>> loadProgress = new List<IProgressPromise<float>>();
         private AssetsPackage defaultPackage;
 
-        public override IAsyncResult Init()
+        public override IProgressResult<float> Init()
         {
-            return Executors.RunOnCoroutine(init);
+            return Executors.RunOnCoroutine<float>(init);
         }
 
         public YooRes()
@@ -24,30 +25,38 @@ namespace Framework
                 defaultPackage = YooAssets.GetAssetsPackage("DefaultPackage");
         }
 
-        private IEnumerator init(IPromise promise)
+        private IEnumerator init(IProgressPromise<float> promise)
         {
             YooAssets.Initialize();
             defaultPackage = YooAssets.CreateAssetsPackage("DefaultPackage");
             YooAssets.SetDefaultAssetsPackage(defaultPackage);
+            InitializationOperation initializationOperation = null;
             switch (YooAssetSettingsData.Setting.PlayMode)
             {
                 case YooAsset.EPlayMode.EditorSimulateMode:
                     var createParameters = new EditorSimulateModeParameters();
                     createParameters.SimulatePatchManifestPath =
                         EditorSimulateModeHelper.SimulateBuild("DefaultPackage");
-                    yield return defaultPackage.InitializeAsync(createParameters);
+                    initializationOperation = defaultPackage.InitializeAsync(createParameters);
                     break;
                 case YooAsset.EPlayMode.OfflinePlayMode:
                     var createParameters2 = new OfflinePlayModeParameters();
-                    yield return defaultPackage.InitializeAsync(createParameters2);
+                    createParameters2.DecryptionServices = new Decryption();
+                    initializationOperation = defaultPackage.InitializeAsync(createParameters2);
                     break;
                 case YooAsset.EPlayMode.HostPlayMode:
                     var createParameters3 = new HostPlayModeParameters();
                     createParameters3.DecryptionServices = null;
                     createParameters3.DefaultHostServer = DownloadUrl;
                     createParameters3.FallbackHostServer = FallbackDownloadUrl;
-                    yield return defaultPackage.InitializeAsync(createParameters3);
+                    initializationOperation = defaultPackage.InitializeAsync(createParameters3);
                     break;
+            }
+            
+            while (!initializationOperation.IsDone)
+            {
+                promise.UpdateProgress(initializationOperation.Progress);
+                yield return null;
             }
 
             promise.SetResult();
@@ -232,5 +241,48 @@ namespace Framework
         {
             return YooAssets.LoadAssetSync<T>(key).AssetObject as T;
         }
+        private class Decryption : IDecryptionServices
+        {
+            public ulong LoadFromFileOffset(DecryptFileInfo fileInfo)
+            {
+                return (ulong)fileInfo.BundleName.Length;
+            }
+
+            public byte[] LoadFromMemory(DecryptFileInfo fileInfo)
+            {
+                throw new NotImplementedException();
+            }
+
+            public FileStream LoadFromStream(DecryptFileInfo fileInfo)
+            {
+                var bundleStream = new YooBundleStream(fileInfo.FilePath, fileInfo.BundleName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                return bundleStream;
+            }
+
+            public uint GetManagedReadBufferSize()
+            {
+                return 0U;
+            }
+        }
+        
+        public class FileStreamEncryption : IEncryptionServices
+        {
+            public EncryptResult Encrypt(EncryptFileInfo fileInfo)
+            {
+                int encryptOffset = YooBundleStream.CalcEncryptOffset(fileInfo.BundleName.Length);
+                byte[] fileData = File.ReadAllBytes(fileInfo.FilePath);
+                if (fileData.Length > encryptOffset)
+                {
+                    for (int i = 0; i < encryptOffset; i++)
+                    {
+                        fileData[i] ^= (byte)(fileInfo.BundleName[i % fileInfo.BundleName.Length] + i);
+                    }
+                }
+                EncryptResult result = new EncryptResult();
+                result.LoadMethod = EBundleLoadMethod.LoadFromStream;
+                result.EncryptedData = fileData;
+                return result;
+            }
+        } 
     }
 }

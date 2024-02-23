@@ -11,6 +11,7 @@ namespace Framework
         private ResComponent res;
         private Transform  root;
         private static int NotRenderLayer = LayerMask.NameToLayer("NotRender");
+        private static int DefaultLayer = LayerMask.NameToLayer("Default");
 
         public void Awake(ResComponent res)
         {
@@ -35,6 +36,7 @@ namespace Framework
             {
                 ProgressResult<float, GameObject> result = ProgressResult<float, GameObject>.Create();
                 var go = prefab.Caches.RemoveLast();
+                go.Go.gameObject.layer = DefaultLayer;
                 goInstanceId2PathHash.Add(go.Go.GetInstanceID(), pathHash);
                 result.SetResult(go.Go);
                 return result;
@@ -58,6 +60,7 @@ namespace Framework
             if (prefab.Caches.Count > 0)
             {
                 var go = prefab.Caches.RemoveLast();
+                go.Go.gameObject.layer = DefaultLayer;
                 goInstanceId2PathHash.Add(go.Go.GetInstanceID(), pathHash);
                 return go.Go;
             }
@@ -71,16 +74,19 @@ namespace Framework
 
         public void Free(GameObject gameObject)
         {
+            if (IsDisposed)
+            {
+                Object.Destroy(gameObject);
+            }
             if(gameObject == null) return;
             var insId = gameObject.GetInstanceID();
-            if (!goInstanceId2PathHash.TryGetValue(insId, out var pathHash))
+            if (!goInstanceId2PathHash.Remove(insId, out var pathHash))
             {
                 Log.Warning($"对象不是通过对象池取出来的==={gameObject.name}");
                 Object.Destroy(gameObject);
                 return;
             }
 
-            goInstanceId2PathHash.Remove(insId);
             if (pathHash2Prefab.TryGetValue(pathHash, out var prefab))
             {
                 ResetGameObject(gameObject);
@@ -140,9 +146,7 @@ namespace Framework
 
         private void ResetGameObject(GameObject gameObject)
         {
-#if UNITY_EDITOR
             gameObject.transform.SetParent(root);
-#endif
             gameObject.layer = NotRenderLayer;
         }
 

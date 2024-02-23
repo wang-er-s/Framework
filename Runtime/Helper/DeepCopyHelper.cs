@@ -20,7 +20,7 @@ namespace Framework
                 {
                     return null;
                 }
-
+        
                 return SerializeHelper.Deserialize<T>(obj.ToBson());
             }
             catch (Exception e)

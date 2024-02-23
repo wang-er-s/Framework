@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    [Event(SceneType.All)]
+    [Event(SceneType.Root)]
     public class ChangeSceneCleanEvent : AEvent<SceneChangedData>
     {
         protected override async ETTask Run(Scene scene, SceneChangedData a)
@@ -17,19 +18,19 @@ namespace Framework
         }
     }
 
-    public class UIComponent : Entity, IAwakeSystem
+    public class UIComponent : Entity, IAwakeSystem,IDestroySystem
     {
         private readonly Dictionary<Type, UIAttribute> viewType2Attribute = new();
         private readonly Dictionary<Type, Window> createdSingleViews = new();
         private readonly Dictionary<Type, IAsyncResult> loadingView = new();
         private readonly Dictionary<UILevel, List<Window>> uiLevel2ShowedView = new();
-        private Canvas canvas;
+        public Canvas Canvas { get; private set; }
         private PrefabPool prefabPool;
         private ResComponent resComponent;
  
         public void Awake()
         {
-            this.canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
+            this.Canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
             resComponent = AddComponent<ResComponent>();
             prefabPool = AddComponent<PrefabPool, ResComponent, string>(resComponent, $"{this.DomainScene().Name}UI_PrefabPool");
             var canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
@@ -48,6 +49,16 @@ namespace Framework
             ProgressResult<float, T> result1 = ProgressResult<float, T>.Create(isFromPool: false); 
             DoCreateWindow(result1, viewModel);
             return result1;
+        }
+
+        public T CreateViewWithGo<T>(ViewModel viewModel, GameObject gameObject) where T : View
+        {
+            var view = AddChild<T>() as View;
+            view.SetGameObject(gameObject);
+            gameObject.name = typeof(T).Name;
+
+            view.SetVm(viewModel);
+            return view as T;
         }
 
         private void DoCreateWindow<T>(ProgressResult<float, T> promise, ViewModel viewModel)
@@ -89,7 +100,7 @@ namespace Framework
             SetViewGmeObjectAndVM(progressResult, view, viewType2Attribute[type].Path, vm);
             return progressResult;
         }
-
+        
         private async void SetViewGmeObjectAndVM<T>(IProgressPromise<float, T> promise, View view, string path,
             ViewModel viewModel)
             where T : View
@@ -107,6 +118,12 @@ namespace Framework
 
             view.SetGameObject(go);
             go.name = type.Name;
+            if (view is Window window)
+            {
+                go.transform.SetParent(UIRootHelper.GetTargetRoot(this.RootScene(), window.UILevel));
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localScale = Vector3.one;
+            }
             view.SetVm(viewModel);
             promise.SetResult(view);
         }
@@ -151,6 +168,7 @@ namespace Framework
             createdSingleViews.Remove(type);
             uiLevel2ShowedView[window.UILevel].Remove(window);
             window.Dispose();
+            window.ViewModel?.Dispose();
             if (window.GameObject != null)
             {
                 if (viewType2Attribute[type].IsPool)
@@ -208,8 +226,8 @@ namespace Framework
                 uiLevel2ShowedView.Add(window.UILevel, views);
                 views.Add(window);
             }
-            viewTransform.SetParent(UIRootHelper.GetTargetRoot(this.RootScene(), window.UILevel), true);
-            viewTransform.LocalIdentity();
+            (viewTransform as  RectTransform).offsetMax = Vector2.zero;
+            (viewTransform as  RectTransform).offsetMin = Vector2.zero;
             viewTransform.SetAsLastSibling();
             MaskViews(window, true);
         }
@@ -232,6 +250,7 @@ namespace Framework
         public void ActiveWindow(Window window, bool ignoreAnim)
         {
             window.Activate(ignoreAnim);
+            if(window.UILevel == UILevel.Pop)return;
             if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views) && views.Count > 0)
             {
                 foreach (Window value in views)
@@ -282,6 +301,11 @@ namespace Framework
                     }
                 }
             }
+        }
+
+        public void OnDestroy()
+        {
+            CloseAll();
         }
     }
 }

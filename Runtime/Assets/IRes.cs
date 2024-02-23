@@ -6,7 +6,7 @@ namespace Framework
 {
     public interface IRes
     {
-        IAsyncResult Init();
+        IProgressResult<float> Init();
         string HostServerURL { get; set; }
         string FallbackHostServerURL { get; set; }
         IProgressResult<float, T> LoadAsset<T>(string key) where T : Object;

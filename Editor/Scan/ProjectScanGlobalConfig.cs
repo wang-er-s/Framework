@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace Framework.Editor
 {
@@ -11,8 +10,9 @@ namespace Framework.Editor
         public List<string> IgnoreDir = new() { "Assets/Ignore" };
         public Dictionary<string, ScanRuleConfig> RuleConfig = new();
         public Dictionary<string, bool> MenuEnable = new();
-        [JsonIgnore] public Dictionary<string, ScanRuleNameConfig> RuleNameConfig { get; } = new();
-        [JsonIgnore] public Dictionary<string, List<string>> WhiteListDic = new();
+        public Dictionary<string, ScanRuleNameConfig> RuleNameConfig { get; } = new();
+        public Dictionary<string, List<string>> WhiteListDic = new();
+
         public ProjectScanGlobalConfig()
         {
             string ruleContent = File.ReadAllText(ProjectScanPath.LocalScanRuleTxtPath);
@@ -65,7 +65,7 @@ namespace Framework.Editor
         public ScanRuleConfig()
         {
         }
-        
+
         public ScanRuleConfig(ScanRule scanRule)
         {
             Id = scanRule.RuleId;

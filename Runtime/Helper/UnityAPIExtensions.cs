@@ -90,10 +90,10 @@ public static class ColorExtension
         return false;
     }
 
-    /// <summary>
-    /// unity's color always new a color
-    /// </summary>
-    public static Color White = Color.white;
+    public static bool Equal(this Color32 c1, Color32 c2)
+    {
+        return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
+    }
 }
 
 /// <summary>

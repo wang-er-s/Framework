@@ -13,9 +13,9 @@ namespace Framework
         private List<Object> _handles = new List<Object>();
         private List<ResourceRequest> requests = new List<ResourceRequest>();
 
-        public override IAsyncResult Init()
+        public override IProgressResult<float> Init()
         {
-            return AsyncResult.Void();   
+            return ProgressResult<float>.Void();   
         }
 
         public override string HostServerURL { get; set; }

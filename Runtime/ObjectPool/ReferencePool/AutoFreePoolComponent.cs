@@ -37,7 +37,7 @@ namespace Framework
 
     public static class AutoFreePoolExtension
     {
-        public static T Allocate<T>(this Entity entity) where T : class
+        public static T Allocate<T>(this Entity entity) where T : class, new()
         {
             var auto = entity.GetComponent<AutoFreePoolComponent>();
             if (auto == null)
