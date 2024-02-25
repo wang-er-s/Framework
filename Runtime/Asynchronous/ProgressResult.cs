@@ -30,14 +30,11 @@ namespace Framework
     {
         private ProgressCallbackable<TProgress> _callbackable;
 
-        protected ProgressResult()
-        {
-        }
 
-        public new static ProgressResult<TProgress> Create([CallerMemberName]string debugName = "",bool isFromPool = false, bool cancelable = true)
+        public new static ProgressResult<TProgress> Create([CallerMemberName]string debugName = "",bool isFromPool = true, bool cancelable = true)
         {
             var result = isFromPool ? ReferencePool.Allocate<ProgressResult<TProgress>>() : new ProgressResult<TProgress>();
-            result.OnCreate(debugName,cancelable, isFromPool);
+            result.OnCreate(debugName,cancelable);
             return result;
         }
 
@@ -104,14 +101,11 @@ namespace Framework
         private ProgressCallbackable<TProgress, TResult> _progressCallbackable;
         private Synchronizable<TResult> _synchronizable;
 
-        protected ProgressResult()
-        {
-        }
 
-        public new static ProgressResult<TProgress, TResult> Create([CallerMemberName]string debugName = "",bool isFromPool = false,bool cancelable = true)
+        public new static ProgressResult<TProgress, TResult> Create([CallerMemberName]string debugName = "",bool isFromPool = true,bool cancelable = true)
         {
             var result = isFromPool ? ReferencePool.Allocate<ProgressResult<TProgress, TResult>>() : new ProgressResult<TProgress, TResult>();
-            result.OnCreate(debugName, cancelable, isFromPool);
+            result.OnCreate(debugName, cancelable);
             return result;
         }
 

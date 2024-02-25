@@ -3,62 +3,46 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public class Context : IDisposable
+    public class Context : Entity, IAwakeSystem, IDestroySystem
     {
-        private Context _contextBase;
-        private Dictionary<string, object> _attributes;
+        private Dictionary<string, object> _attributes ;
 
-        public Context() : this(null)
+        public virtual void Awake()
         {
+            _attributes = ReferencePool.Allocate<Dictionary<string,object>>();
         }
 
-        public Context(Context contextBase)
-        {
-            _attributes = new Dictionary<string, object>();
-            _contextBase = contextBase;
-        }
-
-        public virtual bool Contains(string name, bool cascade = true)
+        public virtual bool Contains(string name)
         {
             if (_attributes.ContainsKey(name))
             {
                 return true;
             }
 
-            if (cascade && _contextBase != null)
-            {
-                return _contextBase.Contains(name, cascade);
-            }
-
             return false;
         }
 
-        public virtual bool Contains<T>(bool cascade = true)
+        public virtual bool Contains<T>()
         {
-            return Contains(typeof(T).Name, cascade);
+            return Contains(typeof(T).Name);
         }
 
-        public virtual object Get(string name, bool cascade = true)
+        public virtual object Get(string name)
         {
-            return Get<object>(name, cascade);
+            return Get<object>(name);
         }
 
-        public virtual T Get<T>(bool cascade = true)
+        public virtual T Get<T>()
         {
-            return Get<T>(typeof(T).Name, cascade);
+            return Get<T>(typeof(T).Name);
         }
 
-        public virtual T Get<T>(string name, bool cascade = true)
+        public virtual T Get<T>(string name)
         {
             object v;
             if (_attributes.TryGetValue(name, out v))
             {
                 return (T)v;
-            }
-
-            if (cascade && _contextBase != null)
-            {
-                return _contextBase.Get<T>(name, cascade);
             }
 
             return default;
@@ -96,8 +80,10 @@ namespace Framework
             return (T)v;
         }
 
-        public virtual void Dispose()
+        public virtual void OnDestroy()
         {
+            _attributes.Clear();
+            ReferencePool.Free(_attributes);
         }
     }
 }

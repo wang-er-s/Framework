@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using Sirenix.OdinInspector;
 
 namespace Framework
 {
@@ -254,6 +255,7 @@ namespace Framework
         [BsonDefaultValue(0L)]
         [BsonElement]
         [BsonId]
+        [ShowInInspector]
         public long Id { get; set; }
 
         [BsonIgnore] protected Entity domain;
@@ -627,6 +629,16 @@ namespace Framework
             c.Dispose();
         }
 
+        public K GetComponentByBaseType<K>()
+        {
+            foreach (var com in components.Values)
+            {
+                if (com is K k) return k;
+            }
+
+            return default;
+        }
+        
         public K GetComponent<K>() where K : Entity
         {
             if (this.components == null)
@@ -936,6 +948,28 @@ namespace Framework
             EventSystem.Instance.Awake(component, a, b, c);
             EventSystem.Instance.Start(component);
             return component;
+        }
+
+        public void GetEntitiesRecursive<T>(List<T> result)
+        {
+            foreach (Entity entity in components.Values)
+            {
+                if (entity is T t)
+                {
+                    result.Add(t);
+                }
+                entity.GetEntitiesRecursive(result);
+            }
+
+            foreach (Entity entity in children.Values)
+            {
+                if (entity is T t)
+                {
+                    result.Add(t);
+                }
+
+                entity.GetEntitiesRecursive(result);
+            }
         }
     }
 }

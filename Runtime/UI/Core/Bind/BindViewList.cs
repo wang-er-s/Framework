@@ -6,20 +6,18 @@ using UnityEngine;
 
 namespace Framework
 {
-    public class BindViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : Window
+    public class BindViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {
         private Transform _content;
-        private List<Window> _views;
+        private List<View> _views;
         private ObservableList<TVm> _list;
         private Type viewType;
+        private Window parentView;
 
-        private BindViewList()
+        public void Reset(ObservableList<TVm> list,Window parent, Transform root)
         {
-        }
-
-        public void Reset(ObservableList<TVm> list, Transform root)
-        {
-            _views = new List<Window>();
+            _views = new List<View>();
+            parentView = parent;
             _content = root;
             _list = list;
             viewType = typeof(TView);
@@ -38,7 +36,7 @@ namespace Framework
 
         private void InitEvent()
         {
-            _list.AddListener(BindListFunc);
+            _list.AddListenerWithoutCall(BindListFunc);
         }
 
         protected override void OnReset()
@@ -70,15 +68,24 @@ namespace Framework
 
         private void AddItem(int index, ViewModel vm)
         {
-            var view = UIComponent.Instance.AddChild(viewType) as Window;
-            var go = UIComponent.Instance.CreateViewGameObject(viewType);
-            go.transform.SetParent(_content);
-            go.transform.SetSiblingIndex(index + 1);
-            go.ActiveShow();
-            view.SetGameObject(go);
-            view.SetVm(vm);
-            view.Show();
-            _views.Insert(index, view);
+            // 占位，防止一帧多次创建
+            var emptyGo = parentView.Domain.GetComponent<PrefabPool>().AllocateSync(String.Empty);
+            emptyGo.transform.SetParent(_content);
+            emptyGo.transform.SetSiblingIndex(index + 1);
+            parentView.AddSubView<TView>(vm).Callbackable().OnCallback(r =>
+            {
+                var view = r.Result;
+                var go = r.Result.GameObject;
+                go.transform.SetParent(_content);
+                go.transform.SetSiblingIndex(index + 1);
+                parentView.Domain.GetComponent<PrefabPool>().Free(emptyGo);
+                go.ActiveShow();
+                view.SetGameObject(go);
+                view.SetVm(vm);
+                view.Visibility = true;
+                view.Interactable = true;
+                _views.Insert(index, view);
+            });
         }
 
         private void RemoveItem(int index)
@@ -112,19 +119,17 @@ namespace Framework
         }
     }
 
-    public class BindIpairsViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : Window
+    public class BindIpairsViewList<TVm, TView> : BaseBind where TVm : ViewModel where TView : View
     {
         private ObservableList<TVm> _list;
-        private List<Window> _views;
+        private List<View> _views;
         private Type viewType;
+        private Window parentWindow;
 
-        private BindIpairsViewList()
-        {
-        }
-
-        public void SetViewType(Type type)
+        public void SetViewType(Type type,Window parent)
         {
             viewType = type;
+            parentWindow = parent;
         }
 
         public void Reset(ObservableList<TVm> list, string itemName, Transform root)
@@ -139,9 +144,9 @@ namespace Framework
             InitEvent();
         }
 
-        private void ParseItems(string itemName, Transform root)
+        private async void ParseItems(string itemName, Transform root)
         {
-            _views = new List<Window>();
+            _views = new List<View>();
             var regex = new Regex(@"(\w+)?\[\?\]");
             var match = regex.Match(itemName);
             Log.Assert(match.Success, $"{itemName} not match (skill[?]) pattern.");
@@ -152,7 +157,7 @@ namespace Framework
                 var child = root.GetChild(i);
                 if (regex.IsMatch(child.name))
                 {
-                    var view = UIComponent.Instance.AddChild(viewType) as Window;
+                    var view = await parentWindow.Domain.GetComponent<UIComponent>().CreateSubViewAsync<TView>(null);
                     view.SetGameObject(child.gameObject);
                     _views.Add(view);
                 }

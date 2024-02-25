@@ -29,16 +29,12 @@ namespace Framework
 
         private bool isAllDone = false;
 
-        private MulAsyncResult()
-        {
-        }
-
-        public static MulAsyncResult Create([CallerMemberName]string debugName = "", bool cancelable = true, bool isFromPool = false, params IAsyncResult[] allProgress)
+        public static MulAsyncResult Create([CallerMemberName]string debugName = "", bool cancelable = true, bool isFromPool = true, params IAsyncResult[] allProgress)
         {
             var result = isFromPool ? ReferencePool.Allocate<MulAsyncResult>() : new MulAsyncResult();
             result._allProgress = RecyclableList<IAsyncResult>.Create();
             result.progressFinishState = RecyclableList<bool>.Create();
-            result.OnCreate(debugName, cancelable, isFromPool);
+            result.OnCreate(debugName, cancelable);
             result.AddAsyncResult(allProgress);
             return result;
         }
@@ -150,16 +146,12 @@ namespace Framework
 
         private bool isAllDone = false;
 
-        private MulProgressResult()
-        {
-        }
-
-        public static MulProgressResult Create([CallerMemberName]string debugName = "",bool cancelable = true,bool isFromPool = false, params IProgressResult<float>[] allProgress)
+        public static MulProgressResult Create([CallerMemberName]string debugName = "",bool cancelable = true,bool isFromPool = true, params IProgressResult<float>[] allProgress)
         {
             var result = isFromPool ? ReferencePool.Allocate<MulProgressResult>() : new MulProgressResult();
             result._allProgress = RecyclableList<IProgressResult<float>>.Create();
             result.progressFinishState = RecyclableList<bool>.Create();
-            result.OnCreate(debugName, cancelable, isFromPool);
+            result.OnCreate(debugName, cancelable);
             result.AddAsyncResult(allProgress);
             return result;
         }

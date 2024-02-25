@@ -14,9 +14,6 @@ namespace Framework
         private ObservableProperty<TData> _property;
         private object _defaultWrapper;
 
-        private ConvertBindField()
-        {
-        }
 
         public void Reset(TComponent component, ObservableProperty<TData> property,
             Action<TResult> propChangeCb,

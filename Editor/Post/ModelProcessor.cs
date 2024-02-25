@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -35,8 +36,8 @@ public class ModelProcessor : AssetPostprocessor
         importer.optimizeMeshPolygons = true;
         importer.optimizeMeshVertices = true;
         importer.meshCompression = ModelImporterMeshCompression.Medium;
-        importer.importNormals = ModelImporterNormals.Import;
-        importer.importTangents = ModelImporterTangents.Import;
+        importer.importNormals = ModelImporterNormals.Calculate;
+        importer.importTangents = ModelImporterTangents.None;
         importer.importCameras = false;
         importer.importLights = false;
         importer.importVisibility = false;
@@ -71,9 +72,10 @@ public class ModelProcessor : AssetPostprocessor
         if (go == null)
         {
             go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-            if(go == null)
+            if (go == null)
                 return;
         }
+
         // 去除无用骨骼节点，后缀为 Nub 的
         foreach (var child in go.GetComponentsInChildren<Transform>())
         {
@@ -82,6 +84,14 @@ public class ModelProcessor : AssetPostprocessor
                 Object.DestroyImmediate(child.gameObject);
             }
         }
+
+        //关闭MotionVector
+        SkinnedMeshRenderer[] smrs2 = go.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var smr in smrs2)
+        {
+            smr.skinnedMotionVectors = false;
+        }
+
 
         if (!CommonAssetProcessor.HasExtraUv(assetPath))
         {
@@ -127,18 +137,36 @@ public class ModelProcessor : AssetPostprocessor
             }
         }
 
-        //关闭MotionVector
-        SkinnedMeshRenderer[] smrs2 = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-        foreach (var smr in smrs2)
-        {
-            smr.skinnedMotionVectors = false;
-        }
-
+        ModelImporter importer = AssetImporter.GetAtPath(assetPath) as ModelImporter;
         var animationClips = CheckHasAnimation(assetPath);
         var hasAnimation = animationClips.Count > 0;
         if (hasAnimation)
         {
+            // animation
+            if (importer.animationType != ModelImporterAnimationType.Human)
+                importer.animationType = ModelImporterAnimationType.Generic;
+            importer.optimizeGameObjects = true;
+            importer.resampleCurves = false;
+            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
+            importer.animationRotationError = 0.1f;
+            importer.animationPositionError = 0.5f;
+            importer.animationScaleError = 1f;
+        }
+        else
+        {
+            importer.importAnimation = false;
+            importer.animationType = ModelImporterAnimationType.None;
+        }
 
+        importer.SaveAndReimport();
+    }
+
+    private static void FormatAnimation(string assetPath)
+    {
+        var animationClips = CheckHasAnimation(assetPath);
+        var hasAnimation = animationClips.Count > 0;
+        if (hasAnimation)
+        {
             try
             {
                 foreach (var clip in animationClips)
@@ -190,9 +218,6 @@ public class ModelProcessor : AssetPostprocessor
             if (o is AnimationClip clip)
                 animationClips.Add(clip);
         }
-
-        if (animationClips.Count <= 0)
-            animationClips.AddRange(Object.FindObjectsOfType<AnimationClip>());
         return animationClips;
     }
 }

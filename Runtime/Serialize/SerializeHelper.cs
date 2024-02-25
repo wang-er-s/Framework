@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System;
+using LitJson;
+using JsonWriter = LitJson.JsonWriter;
+
 #if MongoDb
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 #endif
-using Newtonsoft.Json;
-using JsonConvert = Newtonsoft.Json.JsonConvert;
-using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 namespace Framework
 {
@@ -17,7 +17,7 @@ namespace Framework
         {
             return (T)Deserialize(typeof(T), bytes, index, count);
         }
-        
+
         public static object Deserialize(Type type, byte[] bytes, int index = 0, int count = -1)
         {
 #if MongoDb
@@ -38,22 +38,24 @@ namespace Framework
 
         public static object NTDeserialize(Type type, string json)
         {
-            return JsonConvert.DeserializeObject(json, type);
+            return JsonMapper.ToObject(json, type);
         }
 
         public static object NTDeserialize(Type type, byte[] bytes, int index = 0, int count = -1)
         {
-            JsonSerializer serializer = new JsonSerializer();
-            using MemoryStream memoryStream = new MemoryStream(bytes,index, count);
-            using StreamReader reader = new StreamReader(memoryStream);
-            return serializer.Deserialize(reader, type);
+            // JsonSerializer serializer = new JsonSerializer();
+            // using MemoryStream memoryStream = new MemoryStream(bytes,index, count);
+            // using StreamReader reader = new StreamReader(memoryStream);
+            // return serializer.Deserialize(reader, type);
+            return null;
         }
 
         public static object NTDeserialize(Type type, Stream stream)
         {
-            JsonSerializer serializer = new JsonSerializer();
-            using StreamReader reader = new StreamReader(stream);
-            return serializer.Deserialize(reader, type);
+            // JsonSerializer serializer = new JsonSerializer();
+            // using StreamReader reader = new StreamReader(stream);
+            // return serializer.Deserialize(reader, type);
+            return null;
         }
 
         public static object Deserialize(Type type, string json)
@@ -71,9 +73,8 @@ namespace Framework
 
         public static T DeserializeNT<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            return (T)NTDeserialize(typeof(T), json);
         }
-
         
         public static byte[] Serialize(object message)
         {
@@ -115,22 +116,31 @@ namespace Framework
         /// 使用Newtonsoft.json，优点不需要增加额外属性就可以序列化字典
         /// 缺点是慢，特殊情况使用
         /// </summary>
-        public static string ToNTJson(this object obj)
+        public static string ToNTJson(this object obj, bool format = false)
         {
-            return JsonConvert.SerializeObject(obj, Formatting.Indented);
+            if (format)
+            {
+                jsonWriter.Reset();
+                JsonMapper.ToJson(obj, jsonWriter);
+                return jsonWriter.ToString();
+            }
+
+            return JsonMapper.ToJson(obj);
         }
+
+        private static JsonWriter jsonWriter = new JsonWriter() { PrettyPrint = true, IndentValue = 1};
 
         public static void NTSerialize(object message, Stream stream)
         {
-            JsonSerializer serializer = new JsonSerializer();
-            using (StreamWriter writer = new StreamWriter(stream))
-            using (JsonWriter jsonWriter = new JsonTextWriter(writer))
-            {
-                serializer.Serialize(jsonWriter, message);
-                jsonWriter.Flush();
-                // 将Stream的位置重置到起始位置
-                stream.Position = 0; 
-            }
+            // JsonSerializer serializer = new JsonSerializer();
+            // using (StreamWriter writer = new StreamWriter(stream))
+            // using (JsonWriter jsonWriter = new JsonTextWriter(writer))
+            // {
+            //     serializer.Serialize(jsonWriter, message);
+            //     jsonWriter.Flush();
+            //     // 将Stream的位置重置到起始位置
+            //     stream.Position = 0; 
+            // }
         }
     }
 }

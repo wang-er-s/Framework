@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace Framework
 
         private readonly Dictionary<Type, ISingleton> allConfig = new Dictionary<Type, ISingleton>();
         private IRes res = Res.Create();
+        private ProgressResult<float> loadProgress;
+        public IProgressResult<float> LoadProgress => loadProgress;
 
         public override void Dispose()
         {
@@ -45,9 +48,11 @@ namespace Framework
                 Log.Error($"找不到{configType.Name}的配置表");
             }
 
-            byte[] oneConfigBytes = res.LoadAssetSync<TextAsset>(path).bytes;
+            var oneConfigBytes = res.LoadAssetSync<TextAsset>(path).text;
 
-            object category = SerializeHelper.Deserialize(configType, oneConfigBytes, 0, oneConfigBytes.Length);
+            var method = configType.GetMethod("Load", BindingFlags.Instance | BindingFlags.NonPublic);
+            object category = Activator.CreateInstance(configType);
+            method.Invoke(category, new[] { oneConfigBytes });
             ISingleton singleton = category as ISingleton;
             singleton.Register();
 
@@ -64,44 +69,43 @@ namespace Framework
             foreach ((BaseAttribute attribute, Type type) item in typeAndAttribute)
             {
                 var oneConfigBytes =
-                    res.LoadAssetSync<TextAsset>((item.attribute as ConfigAttribute).Path).bytes;
+                    res.LoadAssetSync<TextAsset>((item.attribute as ConfigAttribute).Path).text;
                 LoadOneInThread(item.type, oneConfigBytes);
             }
         }
 
         public IProgressResult<float> LoadAsync()
         {
-            ProgressResult<float> result = ProgressResult<float>.Create(isFromPool: true);
-            InternalLoadAsync(result);
-            return result;
+            loadProgress = ProgressResult<float>.Create(isFromPool: true);
+            InternalLoadAsync(loadProgress);
+            return loadProgress;
         }
 
         private async void InternalLoadAsync(IProgressPromise<float> promise)
         {
             this.allConfig.Clear();
             var typeAndAttribute = EventSystem.Instance.GetTypesAndAttribute(typeof(ConfigAttribute));
-            using RecyclableList<Task> recyclableListTasks = RecyclableList<Task>.Create();
             float totalCount = typeAndAttribute.Count * 1.0f;
             foreach ((BaseAttribute attribute, Type type) item in typeAndAttribute)
             {
                 var path = (item.attribute as ConfigAttribute).Path;
                 var oneConfigBytes =
                     (await res.LoadAsset<TextAsset>(path)).text;
-                Task task = Task.Run(() =>
-                {
-                    LoadOneInThread(item.type, oneConfigBytes);
-                    promise.UpdateProgress(allConfig.Count / totalCount);
-                });
-                recyclableListTasks.Add(task);
+                //Task task = Task.Run(() =>
+                //{
+                LoadOneInThread(item.type, oneConfigBytes);
+                promise.UpdateProgress(allConfig.Count / totalCount);
+                //});
             }
 
-            await Task.WhenAll(recyclableListTasks.ToArray());
             promise.SetResult();
         }
 
         private void LoadOneInThread(Type configType, byte[] oneConfigBytes)
         {
-            object category = SerializeHelper.Deserialize(configType, oneConfigBytes, 0, oneConfigBytes.Length);
+            var method = configType.GetMethod("Load", BindingFlags.Instance | BindingFlags.NonPublic);
+            object category = Activator.CreateInstance(configType);
+            method.Invoke(category, new object[] { oneConfigBytes });
 
             lock (this)
             {
@@ -113,7 +117,9 @@ namespace Framework
         
         private void LoadOneInThread(Type configType, string content)
         {
-            object category = SerializeHelper.Deserialize(configType, content);
+            var method = configType.GetMethod("Load", BindingFlags.Instance | BindingFlags.NonPublic);
+            object category = Activator.CreateInstance(configType);
+            method.Invoke(category, new object[] { content });
 
             lock (this)
             {

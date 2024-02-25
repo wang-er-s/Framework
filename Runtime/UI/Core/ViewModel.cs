@@ -20,7 +20,7 @@ namespace Framework
             references.Dispose();
         }
 
-        protected T AllocateObservable<T>() where T : class, IObservable, IReference
+        protected T AllocateObservable<T>() where T : class, IObservable, IReference, new()
         {
             if(references == null)
                 references = RecyclableList<IReference>.Create();
@@ -28,5 +28,15 @@ namespace Framework
             references.Add(result);
             return result;
         }
+        
+        protected ObservableProperty<T> AllocateObservableProperty<T>(T val)
+        {
+            if(references == null)
+                references = RecyclableList<IReference>.Create();
+            var result = ReferencePool.Allocate<ObservableProperty<T>>();
+            result.Value = val;
+            references.Add(result);
+            return result;
+        } 
     }
 }

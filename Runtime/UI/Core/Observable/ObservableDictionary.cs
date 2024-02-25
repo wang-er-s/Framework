@@ -70,8 +70,8 @@ namespace Framework
             var removed = dictionary.Remove(key);
             if (removed)
             {
-                OnCollectionChanged(NotifyCollectionChangedAction.Remove, default,
-                    new KeyValuePair<TKey, TValue>(key, value));
+                OnCollectionChanged(NotifyCollectionChangedAction.Remove,
+                    new KeyValuePair<TKey, TValue>(key, value), default);
             }
 
             return removed;
@@ -102,10 +102,20 @@ namespace Framework
             Insert(item.Key, item.Value, true);
         }
 
+        public void AddListenerWithoutCall(
+            Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)
+        {
+            CollectionChanged += changeCb;
+        }
+        
         public void AddListener(
             Action<NotifyCollectionChangedAction, KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> changeCb)
         {
             CollectionChanged += changeCb;
+            foreach (var value in this)
+            {
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, value, default);
+            }
         }
 
         public UnRegister AddListener(Action<Dictionary<TKey, TValue>> changeCb)

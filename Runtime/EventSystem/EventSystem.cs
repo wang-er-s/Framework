@@ -370,7 +370,7 @@ namespace Framework
 
                 if (component is ILateUpdateSystem iLateUpdateSystem)
                 {
-                    iLateUpdateSystem.LateUpdate();
+                    iLateUpdateSystem.LateUpdate(deltaTime);
                 }
             }
         }
@@ -418,7 +418,7 @@ namespace Framework
             SceneType sceneType = scene.SceneType;
             foreach (EventInfo eventInfo in iEvents)
             {
-                if (eventInfo.SceneType != SceneType.All && eventInfo.SceneType != sceneType) continue;
+                if (eventInfo.SceneType != SceneType.Root && eventInfo.SceneType != sceneType) continue;
                 if (!(eventInfo.IEvent is AEvent<T> aEvent))
                 {
                     Log.Error($"event error: {eventInfo.IEvent.GetType().Name}");

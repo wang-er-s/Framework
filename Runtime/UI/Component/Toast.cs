@@ -120,14 +120,14 @@ namespace Framework
         {
         }
 
-        public override UILevel UILevel { get; } = UILevel.Toast;
+        public override UILevel UILevel { get; } = UILevel.Pop;
     }
     
     [UI("Assets/Framework/Runtime/UI/Res/Toast.prefab", false, false)]
     public class ToastWindow : Window
     {
         public Text Text;
-        public override UILevel UILevel { get; } = UILevel.Toast;
+        public override UILevel UILevel { get; } = UILevel.Pop;
 
         public LayoutElement LayoutElement { get; private set; }
 

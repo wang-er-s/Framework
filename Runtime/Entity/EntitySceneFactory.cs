@@ -10,6 +10,7 @@
             {
                 scene.AddComponent<ResComponent>();
                 scene.AddComponent<PrefabPool, ResComponent,string>(scene.GetComponent<ResComponent>(),$"{sceneType}_PrefabPool");
+                scene.AddComponent<UIComponent>();
             }
             return scene;
         }

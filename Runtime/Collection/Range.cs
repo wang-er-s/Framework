@@ -102,4 +102,27 @@ namespace Framework
             return $"min:{Min} max:{Max}";
         }
     }
+
+    public static class RangeExtension
+    {
+        public static bool InRange(this Range<float> self, Range<float> other)
+        {
+            return self.Min <= other.Max && self.Max >= other.Min;
+        }
+        
+        public static bool InRange(this Range<int> self, Range<int> other)
+        {
+            return self.Min <= other.Max && self.Max >= other.Min;
+        }
+        
+        public static bool InRange(this Range<long> self, Range<long> other)
+        {
+            return self.Min <= other.Max && self.Max >= other.Min;
+        }
+        
+        public static bool InRange(this Range<double> self, Range<double> other)
+        {
+            return self.Min <= other.Max && self.Max >= other.Min;
+        }
+    }
 }

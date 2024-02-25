@@ -29,7 +29,7 @@ namespace Framework
     
     public abstract class Res : IRes
     {
-        public abstract IAsyncResult Init();
+        public abstract IProgressResult<float> Init();
         public static Type DefaultResType = typeof(YooRes);
         public abstract string HostServerURL { get; set; }
         public abstract string FallbackHostServerURL { get; set; }
@@ -42,16 +42,18 @@ namespace Framework
         public abstract T LoadAssetSync<T>(string key) where T : Object;
         public abstract void Release();
 
-        protected abstract IEnumerator LoadScene(IProgressPromise<float, string> promise, string path,
+        protected abstract IEnumerator LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path,
             LoadSceneMode loadSceneMode, bool allowSceneActivation = true);
 
         public abstract IProgressResult<float,string> CheckDownloadSize();
         public abstract IProgressResult<DownloadProgress> DownloadAssets();
         protected abstract IEnumerator loadAssetAsync<T>(string key, IProgressPromise<float, T> promise) where T : Object;
         
-        public IProgressResult<float,string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single, bool allowSceneActivation = true)
+        public IProgressResult<float, UnityEngine.SceneManagement.Scene> LoadScene(string path,
+            LoadSceneMode loadSceneMode = LoadSceneMode.Single,
+            bool allowSceneActivation = true)
         {
-            ProgressResult<float,string> progressResult = ProgressResult<float, string>.Create();
+            ProgressResult<float,UnityEngine.SceneManagement.Scene> progressResult = ProgressResult<float, UnityEngine.SceneManagement.Scene>.Create();
             Executors.RunOnCoroutineReturn(LoadScene(progressResult, path, loadSceneMode, allowSceneActivation));
             return progressResult;
         }

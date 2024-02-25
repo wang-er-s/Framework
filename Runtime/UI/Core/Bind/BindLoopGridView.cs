@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ScrollView;
+using SuperScrollView;
 using UnityEngine;
 
 namespace Framework
 {
-    public class BindLoopGridView<TVm, TloopView> : BaseBind where TVm : ViewModel
-        where TloopView : LoopGridItemView
+    public class BindLoopGridView<TVm, TLoopView> : BaseBind where TVm : ViewModel
+        where TLoopView : LoopGridViewItem
     {
         private Window baseView;
         private Coroutine delayRefreshCoroutine;
-        private LoopGrid loopGrid;
-        private LoopGridItemPoolBase pool;
         private ObservableList<TVm> vms;
+        private LoopGridView loopGridView;
+        private GameObject template;
 
         public override void Init(object container)
         {
@@ -20,16 +20,13 @@ namespace Framework
             baseView = container as Window;
         }
 
-        public void Reset(ObservableList<TVm> inVms, LoopGrid inLoopList)
+        public void Reset(ObservableList<TVm> inVms, LoopGridView loopGridView, GameObject item)
         {
-            loopGrid = inLoopList;
+            this.loopGridView = loopGridView;
+            template = item;
             vms = inVms;
             vms.AddListener(OnListChanged);
-            pool = new LoopGridItemPool<TloopView>();
-            pool.OnRecycleItem += OnRecycleItem;
-            loopGrid.InitGridView(pool, inVms.Count, OnGetItemByIndex);
         }
-
 
         private void OnListChanged(List<TVm> inlist)
         {
@@ -40,43 +37,43 @@ namespace Framework
         private IEnumerator DelayRefreshList()
         {
             yield return null;
-            loopGrid.SetListItemCount(vms.Count, false);
-            loopGrid.RefreshAllShownItem();
+            if (!loopGridView.IsInited)
+            {
+                loopGridView.InitGridView(vms.Count, OnGetItemByRowColumn,
+                    () => baseView.Domain.GetComponent<UIComponent>()
+                        .CreateViewWithGo<TLoopView>(null, Object.Instantiate(template)),
+                    template.name);
+            }
+
             delayRefreshCoroutine = null;
-        }
-
-
-        private LoopGridItemView OnGetItemByIndex(LoopGrid inLoopGrid, int inIndex, int row, int column)
-        {
-            var view = inLoopGrid.NewListViewItem(out var go);
-            view.SetGameObject(go);
-            view.SetVm(vms[inIndex]);
-            baseView.AddSubView(view);
-            view.Visibility = true;
-            return view;
-        }
-
-        private void OnRecycleItem(LoopGridItemView arg1, GameObject arg2)
-        {
-            baseView.RemoveSubView(arg1);
+            loopGridView.SetListItemCount(vms.Count);
+            loopGridView.RefreshAllShownItem();
         }
 
         protected override void OnReset()
         {
-            loopGrid.Clear();
         }
 
         protected override void OnClear()
         {
             if (delayRefreshCoroutine != null) Executors.StopCoroutine(delayRefreshCoroutine);
-            loopGrid.SetListItemCount(0);
-            loopGrid.RefreshAllShownItem();
-            loopGrid.Clear();
-            vms.RemoveListener(OnListChanged);
-            pool.DestroyAllItem();
-            pool.OnRecycleItem -= OnRecycleItem;
+            vms?.RemoveListener(OnListChanged);
+            vms = null;
             delayRefreshCoroutine = null;
             baseView = null;
+        }
+
+        LoopGridViewItem OnGetItemByRowColumn(LoopGridView gridView, int index, int row, int column)
+        {
+            if (index < 0 || index >= vms.Count)
+            {
+                return null;
+            }
+
+            var vm = vms[index];
+            var item = loopGridView.NewListViewItem(template.name);
+            item.SetVm(vm);
+            return item;
         }
     }
 }

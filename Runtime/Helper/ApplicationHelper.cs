@@ -75,54 +75,6 @@ namespace Framework
        
         #endregion
 
-        /// <summary>
-        /// UnityWebRequest加载
-        /// StreamingAssets 下， mac/win要加file:///  安卓不能加
-        /// persistent下 都要加file:///
-        ///
-        /// File加载
-        /// StreamingAssets是打进压缩包，不能使用
-        /// persistent按正常文件加载
-        /// </summary>
-#if UNITY_STANDALONE_OSX
-        public static string PathPrefix = "file://";
-#else
-        public static string PathPrefix = "file:///";
-#endif
-        
-        public static string streamingAssetsPath
-        {
-            get
-            {
-                if (Application.platform == RuntimePlatform.Android ||
-                    Application.platform == RuntimePlatform.IPhonePlayer)
-                {
-                    return Application.streamingAssetsPath;
-                }
-                if (Application.platform == RuntimePlatform.WindowsEditor ||
-                    Application.platform == RuntimePlatform.OSXEditor)
-                {
-                    return PathPrefix + Application.streamingAssetsPath;
-                }
-                return Application.streamingAssetsPath;
-            }
-        }
-        
-        public static string persistentDataPath
-        {
-            get
-            {
-                if (Application.platform == RuntimePlatform.Android ||
-                    Application.platform == RuntimePlatform.IPhonePlayer ||
-                    Application.platform == RuntimePlatform.WindowsEditor ||
-                    Application.platform == RuntimePlatform.OSXEditor)
-                {
-                    return PathPrefix + Application.persistentDataPath;
-                }
-                return Application.persistentDataPath;
-            }
-        }
-
         public static bool IsMobile => Application.platform == RuntimePlatform.Android ||
                                        Application.platform == RuntimePlatform.IPhonePlayer;
 
@@ -132,6 +84,21 @@ namespace Framework
 
         public static bool IsPC => Application.platform == RuntimePlatform.WindowsPlayer ||
                                    Application.platform == RuntimePlatform.OSXPlayer;
+
+        public static bool IsOnUi
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+#endif
+#if UNITY_ANDROID
+                if (Input.touchCount <= 0) return false;
+                Touch touch = Input.touches[0];
+                return UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touch.fingerId);
+#endif
+            }
+        }
                                    
         /// <summary>
         /// 网络可用

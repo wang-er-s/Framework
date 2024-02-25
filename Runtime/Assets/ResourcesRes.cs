@@ -13,15 +13,16 @@ namespace Framework
         private List<Object> _handles = new List<Object>();
         private List<ResourceRequest> requests = new List<ResourceRequest>();
 
-        public override IAsyncResult Init()
+        public override IProgressResult<float> Init()
         {
-            return AsyncResult.Void();   
+            return ProgressResult<float>.Void();   
         }
 
         public override string HostServerURL { get; set; }
         public override string FallbackHostServerURL { get; set; }
 
-        protected override IEnumerator LoadScene(IProgressPromise<float, string> promise, string path, LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
+        protected override IEnumerator LoadScene(IProgressPromise<float, UnityEngine.SceneManagement.Scene> promise, string path,
+            LoadSceneMode loadSceneMode, bool allowSceneActivation = true)
         {
             var operation = SceneManager.LoadSceneAsync(path, loadSceneMode);
             operation.allowSceneActivation = allowSceneActivation;

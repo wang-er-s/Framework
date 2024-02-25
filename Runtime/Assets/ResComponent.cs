@@ -45,20 +45,20 @@ namespace Framework
             return res.Instantiate<T>(key, localPosition, localRotation, parent);
         }
 
-        internal IProgressResult<float, GameObject> Instantiate(string key, Vector3 localPosition,
+        public IProgressResult<float, GameObject> Instantiate(string key, Vector3 localPosition,
             Quaternion localRotation,
             Transform parent = null)
         {
             return res.Instantiate(key, localPosition, localRotation, parent);
         }
 
-        internal IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
+        public IProgressResult<float, GameObject> Instantiate(string key, Transform parent = null,
             bool instantiateInWorldSpace = false)
         {
             return res.Instantiate(key, parent, instantiateInWorldSpace);
         }
 
-        public IProgressResult<float, string> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single,
+        public IProgressResult<float, UnityEngine.SceneManagement.Scene> LoadScene(string path, LoadSceneMode loadSceneMode = LoadSceneMode.Single,
             bool allowSceneActivation = true)
         {
             return res.LoadScene(path, loadSceneMode, allowSceneActivation);

@@ -5,10 +5,6 @@ namespace Framework
 {
     public class RecyclableList<T> : List<T>, IDisposable , IReference
     {
-        private RecyclableList()
-        {
-        }
-
         public static RecyclableList<T> Create()
         {
             var result = ReferencePool.Allocate<RecyclableList<T>>();
@@ -17,14 +13,14 @@ namespace Framework
         
         public static RecyclableList<T> Create(T value)
         {
-            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            var result = Create();
             result.Add(value);
             return result;
         } 
         
         public static RecyclableList<T> Create(T value1, T value2)
         {
-            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            var result = Create();
             result.Add(value1);
             result.Add(value2);
             return result;
@@ -32,7 +28,7 @@ namespace Framework
         
         public static RecyclableList<T> Create(T value1, T value2, T value3)
         {
-            var result = ReferencePool.Allocate<RecyclableList<T>>();
+            var result = Create();
             result.Add(value1);
             result.Add(value2);
             result.Add(value3);

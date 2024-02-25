@@ -12,6 +12,7 @@ namespace Framework
         RendererUpdate,
         BattleUpdate,
         BattleRendererUpdate,
+        BattleLateUpdate,
         Max,
     }
 

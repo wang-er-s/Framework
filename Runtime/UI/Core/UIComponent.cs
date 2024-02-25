@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Framework
 {
-    [Event(SceneType.All)]
+    [Event(SceneType.Root)]
     public class ChangeSceneCleanEvent : AEvent<SceneChangedData>
     {
         protected override async ETTask Run(Scene scene, SceneChangedData a)
@@ -17,23 +18,21 @@ namespace Framework
         }
     }
 
-    public class UIComponent : Entity, IAwakeSystem
+    public class UIComponent : Entity, IAwakeSystem,IDestroySystem
     {
         private readonly Dictionary<Type, UIAttribute> viewType2Attribute = new();
         private readonly Dictionary<Type, Window> createdSingleViews = new();
         private readonly Dictionary<Type, IAsyncResult> loadingView = new();
         private readonly Dictionary<UILevel, List<Window>> uiLevel2ShowedView = new();
-        public static UIComponent Instance { get; private set; }
-        private Canvas canvas;
+        public Canvas Canvas { get; private set; }
         private PrefabPool prefabPool;
         private ResComponent resComponent;
  
         public void Awake()
         {
-            Instance = this;
-            this.canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
+            this.Canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
             resComponent = AddComponent<ResComponent>();
-            prefabPool = AddComponent<PrefabPool, ResComponent, string>(resComponent, "UI_PrefabPool");
+            prefabPool = AddComponent<PrefabPool, ResComponent, string>(resComponent, $"{this.DomainScene().Name}UI_PrefabPool");
             var canvas = this.RootScene().GetComponent<GlobalReferenceComponent>().UICanvas;
             Object.DontDestroyOnLoad(canvas.transform.parent.gameObject);
             foreach (var tuple in EventSystem.Instance.GetTypesAndAttribute(typeof(UIAttribute)))
@@ -50,6 +49,16 @@ namespace Framework
             ProgressResult<float, T> result1 = ProgressResult<float, T>.Create(isFromPool: false); 
             DoCreateWindow(result1, viewModel);
             return result1;
+        }
+
+        public T CreateViewWithGo<T>(ViewModel viewModel, GameObject gameObject) where T : View
+        {
+            var view = AddChild<T>() as View;
+            view.SetGameObject(gameObject);
+            gameObject.name = typeof(T).Name;
+
+            view.SetVm(viewModel);
+            return view as T;
         }
 
         private void DoCreateWindow<T>(ProgressResult<float, T> promise, ViewModel viewModel)
@@ -86,12 +95,12 @@ namespace Framework
         public IProgressResult<float, T> CreateSubViewAsync<T>(ViewModel vm) where T : View
         {
             var type = typeof(T);
-            ProgressResult<float, T> progressResult = ProgressResult<float, T>.Create(isFromPool: false);
+            ProgressResult<float, T> progressResult = ProgressResult<float, T>.Create(isFromPool: true);
             var view = AddChild(type) as View;
             SetViewGmeObjectAndVM(progressResult, view, viewType2Attribute[type].Path, vm);
             return progressResult;
         }
-
+        
         private async void SetViewGmeObjectAndVM<T>(IProgressPromise<float, T> promise, View view, string path,
             ViewModel viewModel)
             where T : View
@@ -109,6 +118,12 @@ namespace Framework
 
             view.SetGameObject(go);
             go.name = type.Name;
+            if (view is Window window)
+            {
+                go.transform.SetParent(UIRootHelper.GetTargetRoot(this.RootScene(), window.UILevel));
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localScale = Vector3.one;
+            }
             view.SetVm(viewModel);
             promise.SetResult(view);
         }
@@ -153,6 +168,7 @@ namespace Framework
             createdSingleViews.Remove(type);
             uiLevel2ShowedView[window.UILevel].Remove(window);
             window.Dispose();
+            window.ViewModel?.Dispose();
             if (window.GameObject != null)
             {
                 if (viewType2Attribute[type].IsPool)
@@ -198,12 +214,8 @@ namespace Framework
         public void ShowSort(Window window)
         {
             var viewTransform = window.GameObject.transform;
-            // 此界面的上一个界面
-            Window lastWindow = null;
-            int index = Int32.MaxValue;
-
             // 把当前界面移动到当前层的最高位置
-            if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views) && views.Count > 0)
+            if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views))
             {
                 views.Remove(window);
                 views.Add(window);
@@ -214,39 +226,15 @@ namespace Framework
                 uiLevel2ShowedView.Add(window.UILevel, views);
                 views.Add(window);
             }
-
-            for (int i = (int)window.UILevel + 1; i < (int)UILevel.Max; i++)
-            {
-                UILevel level = (UILevel)i;
-                if (uiLevel2ShowedView.TryGetValue(level, out views) && views.Count > 0)
-                {
-                    lastWindow = views.Last();
-                    break;
-                }
-            }
-
-            viewTransform.SetParent(canvas.transform, false);
-            if (lastWindow == null)
-                viewTransform.SetAsLastSibling();
-            else
-                viewTransform.SetSiblingIndex(index);
+            (viewTransform as  RectTransform).offsetMax = Vector2.zero;
+            (viewTransform as  RectTransform).offsetMin = Vector2.zero;
+            viewTransform.SetAsLastSibling();
             MaskViews(window, true);
         }
 
         public void HideSort(Window window)
         {
-            UILevel level = window.UILevel;
-            if (uiLevel2ShowedView.TryGetValue(level, out var views) && views.Count > 0)
-            {
-                for (int i = 0; i < views.Count; i++)
-                {
-                    if (views[i] == window)
-                    {
-                        views.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
+            window.GameObject.transform.SetAsFirstSibling();
             MaskViews(window, false);
         }
 
@@ -262,6 +250,7 @@ namespace Framework
         public void ActiveWindow(Window window, bool ignoreAnim)
         {
             window.Activate(ignoreAnim);
+            if(window.UILevel == UILevel.Pop)return;
             if (uiLevel2ShowedView.TryGetValue(window.UILevel, out var views) && views.Count > 0)
             {
                 foreach (Window value in views)
@@ -312,6 +301,11 @@ namespace Framework
                     }
                 }
             }
+        }
+
+        public void OnDestroy()
+        {
+            CloseAll();
         }
     }
 }

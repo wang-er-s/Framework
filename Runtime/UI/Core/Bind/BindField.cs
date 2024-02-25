@@ -15,10 +15,6 @@ namespace Framework
         private object _defaultWrapper;
         private BindType _bindType;
 
-        private BindField()
-        {
-        }
-
         public void Reset(TComponent component, ObservableProperty<TData> property,
             Action<TData> propChangeCb,
             UnityEvent<TData> componentEvent, BindType bindType,
@@ -124,10 +120,6 @@ namespace Framework
         private ObservableProperty<TData2> _property2;
         private Func<TData1, TData2, TResult> _wrapFunc;
         private object _defaultWrapper;
-
-        private BindField()
-        {
-        }
 
         public void Reset(TComponent component, ObservableProperty<TData1> property1,
             ObservableProperty<TData2> property2,

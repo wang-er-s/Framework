@@ -21,7 +21,9 @@ namespace Framework
                     var configPath = (typeof(T).GetCustomAttribute(typeof(ConfigAttribute)) as ConfigAttribute)
                         .Path;
                     var bytes = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(configPath).text;
-                    instance = SerializeHelper.Deserialize<T>(bytes); 
+                    var method = typeof(T).GetMethod("Load", BindingFlags.Instance | BindingFlags.NonPublic);
+                    instance = new T();
+                    method.Invoke(instance, new[] { bytes });
                 }
                 else
 #endif

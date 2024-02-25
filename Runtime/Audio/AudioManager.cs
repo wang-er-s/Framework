@@ -32,13 +32,13 @@ namespace Framework
         /// <summary>
         /// 背景音乐音量
         /// </summary>
-        private float BackgroundVolume
+        public float BackgroundVolume
         {
             get => _backgroundVolume;
             set
             {
                 _backgroundVolume = value;
-                _backgroundAudio.volume = value;
+                _backgroundAudio.Volume = value;
             }
         }
         /// <summary>
@@ -46,8 +46,8 @@ namespace Framework
         /// </summary>
         public float SoundEffectVolume = 1;
 
-        private AudioSource _backgroundAudio;
-        private AudioSource _singleAudio;
+        private AudioSourcePlayer _backgroundAudio;
+        private AudioSourcePlayer _singleAudio;
         private readonly List<AudioSourcePlayer> _multipleAudio = new List<AudioSourcePlayer>();
         private readonly Dictionary<GameObject, AudioSource> _worldAudio = new Dictionary<GameObject, AudioSource>();
         private bool _isMute;
@@ -57,8 +57,9 @@ namespace Framework
         void ISingletonAwake.Awake()
         {
             gameObject = new GameObject("Audio");
-            _backgroundAudio = CreateAudioSource("BackgroundAudio", BackgroundPriority, BackgroundVolume);
-            _singleAudio = CreateAudioSource("SingleAudio", SinglePriority, SoundEffectVolume);
+            _backgroundAudio =
+                new AudioSourcePlayer(CreateAudioSource("BackgroundAudio", BackgroundPriority, BackgroundVolume));
+            _singleAudio = new AudioSourcePlayer(CreateAudioSource("SingleAudio", SinglePriority, SoundEffectVolume));
             res = Res.Create();
         }
         
@@ -86,6 +87,8 @@ namespace Framework
                 set => _audioSource.mute = value;
             }
 
+            private string clipPath;
+
             public AudioSourcePlayer(AudioSource audioSource)
             {
                 this._audioSource = audioSource;
@@ -101,12 +104,18 @@ namespace Framework
                 return _audioSource.clip.name == name;
             }
 
-            public void SetParams(AudioClip clip, bool isLoop, float speed)
+            public bool IsSameClipPath(string clipPath)
+            {
+                return this.clipPath == clipPath;
+            }
+
+            public void SetParams(AudioClip clip, bool isLoop, float speed, string clipPath = "")
             {
                 _audioSource.clip = clip;
                 _audioSource.loop = isLoop;
                 _audioSource.pitch = speed;
                 _audioSource.spatialBlend = 0;
+                this.clipPath = clipPath;
             }
 
             public void Play()
@@ -141,8 +150,8 @@ namespace Framework
             set
             {
                 _isMute = value;
-                _backgroundAudio.mute = value;
-                _singleAudio.mute = value;
+                _backgroundAudio.Mute = value;
+                _singleAudio.Mute = value;
                 foreach (var audio in _multipleAudio)
                 {
                     audio.Mute = value;
@@ -161,15 +170,12 @@ namespace Framework
         public async void PlayBackgroundMusic(string clipName, bool isLoop = true, float speed = 1)
         {
             var clip = await res.LoadAsset<AudioClip>(clipName);
-            if (_backgroundAudio.isPlaying)
+            if (_backgroundAudio.IsPlaying)
             {
                 _backgroundAudio.Stop();
             }
 
-            _backgroundAudio.clip = clip;
-            _backgroundAudio.loop = isLoop;
-            _backgroundAudio.pitch = speed;
-            _backgroundAudio.spatialBlend = 0;
+            _backgroundAudio.SetParams(clip, isLoop, speed, clipName);
             _backgroundAudio.Play();
         }
 
@@ -178,14 +184,14 @@ namespace Framework
         /// </summary>
         public void PauseBackgroundMusic(bool isGradual = true)
         {
-            if (!_backgroundAudio.isPlaying) return;
+            if (!_backgroundAudio.IsPlaying) return;
             // if (isGradual)
             // {
             //     _backgroundAudio.DOFade(0, 2);
             // }
             // else
             {
-                _backgroundAudio.volume = 0;
+                _backgroundAudio.Volume = 0;
             }
         }
 
@@ -194,14 +200,14 @@ namespace Framework
         /// </summary>
         public void UnPauseBackgroundMusic(bool isGradual = true)
         {
-            if (!_backgroundAudio.isPlaying) return;
+            if (!_backgroundAudio.IsPlaying) return;
             // if (isGradual)
             // {
             //     _backgroundAudio.DOFade(BackgroundVolume, 2);
             // }
             // else
             {
-                _backgroundAudio.volume = BackgroundVolume;
+                _backgroundAudio.Volume = BackgroundVolume;
             }
         }
 
@@ -210,27 +216,28 @@ namespace Framework
         /// </summary>
         public void StopBackgroundMusic()
         {
-            if (_backgroundAudio.isPlaying)
+            if (_backgroundAudio.IsPlaying)
             {
                 _backgroundAudio.Stop();
             }
         }
 
+        public bool IsPlayingSingleSound()
+        {
+            return _singleAudio.IsPlaying;
+        }
         /// <summary>
         /// 播放单通道音效
         /// </summary>
         public async void PlaySingleSound(string clipName, bool isLoop = false, float speed = 1)
         {
             var clip = await res.LoadAsset<AudioClip>(clipName);
-            if (_singleAudio.isPlaying)
+            if (_singleAudio.IsPlaying)
             {
                 _singleAudio.Stop();
             }
 
-            _singleAudio.clip = clip;
-            _singleAudio.loop = isLoop;
-            _singleAudio.pitch = speed;
-            _singleAudio.spatialBlend = 0;
+            _singleAudio.SetParams(clip, isLoop, speed, clipName);
             _singleAudio.Play();
         }
 
@@ -239,14 +246,14 @@ namespace Framework
         /// </summary>
         public void PauseSingleSound(bool isGradual = true)
         {
-            if (!_singleAudio.isPlaying) return;
+            if (!_singleAudio.IsPlaying) return;
             // if (isGradual)
             // {
             //     _singleAudio.DOFade(0, 2);
             // }
             // else
             {
-                _singleAudio.volume = 0;
+                _singleAudio.Volume = 0;
             }
         }
 
@@ -255,14 +262,14 @@ namespace Framework
         /// </summary>
         public void UnPauseSingleSound(bool isGradual = true)
         {
-            if (!_singleAudio.isPlaying) return;
+            if (!_singleAudio.IsPlaying) return;
             // if (isGradual)
             // {
             //     _singleAudio.DOFade(SoundEffectVolume, 2);
             // }
             // else
             {
-                _singleAudio.volume = SoundEffectVolume;
+                _singleAudio.Volume = SoundEffectVolume;
             }
         }
 
@@ -271,7 +278,7 @@ namespace Framework
         /// </summary>
         public void StopSingleSound()
         {
-            if (_singleAudio.isPlaying)
+            if (_singleAudio.IsPlaying)
             {
                 _singleAudio.Stop();
             }
@@ -282,6 +289,7 @@ namespace Framework
         /// </summary>
         public async void PlayMultipleSound(string clipName, bool isLoop = false, float speed = 1)
         {
+            if(SoundEffectVolume<=0)return;
             var clip = await res.LoadAsset<AudioClip>(clipName);
             PlayMultipleSound(clip, isLoop, speed);
         }

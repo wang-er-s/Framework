@@ -1,4 +1,6 @@
-﻿namespace Framework
+﻿using UnityEngine;
+
+namespace Framework
 {
     public static class AsyncResultAwaiterExtensions
     {

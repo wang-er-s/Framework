@@ -388,23 +388,21 @@ public static class IEnumerableExtension
         list[j] = temp;
     }
     
-    public static RecyclableList<T> RandomSort<T>(this IList<T> list)
+    public static void RandomSort<T>(this IList<T> list)
     {
         if (list.IsReadOnly)
         {
             throw new Exception("readonly list can not modify");
         }
-        RecyclableList<T> result = RecyclableList<T>.Create(list);
-        System.Random rnd = new System.Random();
         int n = list.Count;
         while (n > 1)
         {
             n--;
             int k = UnityEngine.Random.Range(0, n + 1);
-            result.Swap(k, n);
+            list.Swap(k, n);
         }
-        return result;
-    }    /// <summary>
+    }
+    /// <summary>
     /// 根据权值来获取索引
     /// </summary>
     /// <param name="powers"></param>

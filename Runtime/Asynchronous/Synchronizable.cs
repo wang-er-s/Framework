@@ -80,10 +80,6 @@ namespace Framework
         private IAsyncResult _result;
         private object _lock;
 
-        private Synchronizable()
-        {
-        }
-
         public static Synchronizable Create(IAsyncResult result, object @lock)
         {
             var value = ReferencePool.Allocate<Synchronizable>();
@@ -195,9 +191,6 @@ namespace Framework
         private IAsyncResult<TResult> _result;
         private object _lock;
 
-        private Synchronizable()
-        {
-        }
 
         public static Synchronizable<TResult> Create(IAsyncResult<TResult> result, object @lock)
         {

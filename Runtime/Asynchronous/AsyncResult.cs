@@ -38,7 +38,6 @@ namespace Framework
         private bool _cancelled;
         protected bool Cancelable;
         protected bool CancellationRequested;
-        private bool isFromPool;
 
         protected readonly object Lock = new object();
 
@@ -47,23 +46,18 @@ namespace Framework
         
         public string debugName;
 
-        protected AsyncResult()
-        {
-        }
-
-        public static AsyncResult Create([CallerMemberName] string debugName = "", bool isFromPool = false,
+        public static AsyncResult Create([CallerMemberName] string debugName = "", bool isFromPool = true,
             bool cancelable = true)
         {
              var result = isFromPool ? ReferencePool.Allocate<AsyncResult>() : new AsyncResult();
-             result.OnCreate(debugName, cancelable, isFromPool);
+             result.OnCreate(debugName, cancelable);
              return result;
         }
 
-        protected virtual void OnCreate(string debugName,bool cancelable, bool isFromPool)
+        protected virtual void OnCreate(string debugName,bool cancelable)
         {
             this.debugName = debugName;
             this.Cancelable = cancelable;
-            this.isFromPool = isFromPool;
         }
 
         /// <summary>
@@ -90,7 +84,6 @@ namespace Framework
                 }
 
                 object ret = _result;
-                FreeFormPool();
                 if (_exception != null)
                 {
                     throw _exception;
@@ -217,13 +210,11 @@ namespace Framework
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        protected void FreeFormPool()
+        public void FreeFromPool()
         {
-            if (!isFromPool) return;
-            if (HasFree) return;
             ReferencePool.Free(this);
         }
-        
+
         private static IAsyncResult voidResult;
         
         public static IAsyncResult Void()
@@ -236,8 +227,6 @@ namespace Framework
             }
             return voidResult;
         }
-
-        public bool HasFree { get; set; }
 
         public virtual void Clear()
         {
@@ -255,7 +244,6 @@ namespace Framework
 
         public void Dispose()
         {
-            FreeFormPool();
         }
     }
 
@@ -266,15 +254,11 @@ namespace Framework
         private Synchronizable<TResult> _synchronizable;
         private Callbackable<TResult> _callbackable;
 
-        protected AsyncResult()
-        {
-        }
-
-        public new static AsyncResult<TResult> Create([CallerMemberName] string debugName = "", bool isFromPool = false,
+        public new static AsyncResult<TResult> Create([CallerMemberName] string debugName = "", bool isFromPool = true,
             bool cancelable = true)
         {
             var result = isFromPool ? ReferencePool.Allocate<AsyncResult<TResult>>() : new AsyncResult<TResult>();
-            result.OnCreate(debugName, cancelable, isFromPool);
+            result.OnCreate(debugName, cancelable);
             return result;
         } 
 
@@ -292,7 +276,6 @@ namespace Framework
                 }
 
                 TResult result = base.Result != null ? (TResult)base.Result : default;
-                FreeFormPool();
                 if (Exception != null)
                 {
                     throw Exception;

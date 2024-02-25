@@ -1,4 +1,4 @@
-using ScrollView;
+using SuperScrollView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,10 +6,6 @@ namespace Framework
 {
     public class UIBindFactory : BindFactory
     {
-        protected UIBindFactory()
-        {
-        }
-
         public void BindViewList<TItemVm, TItemView>
             (ObservableList<TItemVm> list,Transform root) where TItemVm : ViewModel
             where TItemView : Window
@@ -24,13 +20,31 @@ namespace Framework
                 bind = ReferencePool.Allocate<BindViewList<TItemVm, TItemView>>();
                 bind.Init(Container);
             }
-            bind.Reset(list, root);
+            bind.Reset(list,Container as Window, root);
             AddClearable(bind);
         }
         
         public void BindViewList<TItemVm, TItemView>
-            (ObservableList<TItemVm> list,LoopGrid root) where TItemVm : ViewModel
-            where TItemView : LoopGridItemView, new()
+            (ObservableList<TItemVm> list,LoopListView2 root, GameObject template) where TItemVm : ViewModel
+            where TItemView : LoopListViewItem2, new()
+        {
+            BindLoopListView<TItemVm, TItemView> bind;
+            if (CacheBinds.Count > 0)
+            {
+                bind = (BindLoopListView<TItemVm, TItemView>) CacheBinds.Dequeue();
+            }
+            else
+            {
+                bind = ReferencePool.Allocate<BindLoopListView<TItemVm, TItemView>>();
+                bind.Init(Container);
+            }
+            bind.Reset(list, root, template);
+            AddClearable(bind);
+        }
+        
+        public void BindViewList<TItemVm, TItemView>
+            (ObservableList<TItemVm> list,LoopGridView root, GameObject template) where TItemVm : ViewModel
+            where TItemView : LoopGridViewItem, new()
         {
             BindLoopGridView<TItemVm, TItemView> bind;
             if (CacheBinds.Count > 0)
@@ -42,7 +56,7 @@ namespace Framework
                 bind = ReferencePool.Allocate<BindLoopGridView<TItemVm, TItemView>>();
                 bind.Init(Container);
             }
-            bind.Reset(list, root);
+            bind.Reset(list, root, template);
             AddClearable(bind);
         }
 

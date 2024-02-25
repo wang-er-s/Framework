@@ -47,7 +47,8 @@ public class CommonAssetProcessor : AssetPostprocessor
     }
 
     private static bool Ignore(string path)
-    { 
+    {
+        return false;
         if (path.Contains("Assets/Res/"))
         {
             return false;

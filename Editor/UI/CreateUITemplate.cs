@@ -178,6 +178,19 @@ namespace Framework.Editor
                 return #lowName;
             }
         }";
+            string gameobjectItemStr = @"
+        private #type #lowName;
+        public #type #name
+        {
+            get
+            {
+                if (#lowName == null)
+                {
+                    #lowName = go.transform.Find(""#path"").gameObject;
+                }
+                return #lowName;
+            }
+        }";
             foreach (var uiMarks in panelCodeInfo.FieldFullPathToUIMark)
             {
                 foreach (var uiMark in uiMarks.Value)
@@ -187,8 +200,17 @@ namespace Framework.Editor
                     char first = fieldName[0];
                     var lowFieldName = char.ToLower(first) + fieldName.Substring(1);
                     fieldName = char.ToUpper(first) + fieldName.Substring(1);
+                    
+                    string item = String.Empty;
                     var type = uiMark.component.GetType().FullName;
-                    string item = componentItemStr.Replace("#type", type);
+                    if (uiMark.component is GameObject)
+                    {
+                        item = gameobjectItemStr.Replace("#type", type);
+                    }
+                    else
+                    {
+                        item = componentItemStr.Replace("#type", type);
+                    }
                     item = item.Replace("#lowName", lowFieldName);
                     item = item.Replace("#name", fieldName);
                     item = item.Replace("#path", transformPath);

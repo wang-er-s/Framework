@@ -47,7 +47,7 @@ namespace Framework
             if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
             ProgressInfo progressInfo = new ProgressInfo {TotalCount = 1};
-            using UnityWebRequest www = new UnityWebRequest(path);
+            using UnityWebRequest www = new UnityWebRequest(new Uri(path));
             var downloadFileHandler = new DownloadFileHandler(fileInfo);
             www.downloadHandler = downloadFileHandler;
             _ = www.SendWebRequest();
@@ -158,7 +158,7 @@ namespace Framework
                 if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                     fileInfo.Directory.Create();
 
-                UnityWebRequest www = new UnityWebRequest(path);
+                UnityWebRequest www = new UnityWebRequest(new Uri(path));
                 www.downloadHandler = new DownloadFileHandler(fileInfo);
 
                 _ = www.SendWebRequest();

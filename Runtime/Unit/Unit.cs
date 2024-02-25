@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework
 {
-    public sealed class Unit : Entity, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>, IRendererUpdateSystem
+    public sealed class Unit : Entity,IAwakeSystem<string>,IAwakeSystem<Transform>, IAwakeSystem<bool,string>, IAwakeSystem<bool,Transform>,IAwakeSystem<bool,bool,string>, IRendererUpdateSystem, IDestroySystem
     {
         private Transform transform;
         public Transform Transform
@@ -30,7 +30,7 @@ namespace Framework
                 {
                     transform.gameObject.GetOrAddComponent<GoConnectedUnitId>().SetUnitId(Id);
 #if UNITY_EDITOR
-                    transform.gameObject.GetOrAddComponent<EditorVisibleUnit>().SetUnit(parent as Unit);
+                    transform.gameObject.GetOrAddComponent<EditorVisibleUnit>().SetUnit(this);
 #endif
                 } 
             }
@@ -48,6 +48,7 @@ namespace Framework
         public IAsyncResult<GameObject> LoadTransAsync { get; private set; }
         // 是否从transform同步位置
         private bool syncFromTrans;
+        private bool isFromPool;
         
         private float3 position; //坐标
         
@@ -122,31 +123,71 @@ namespace Framework
 
         protected override string ViewName => $"{GetType().Name} ({Id})";
 
-        public void Awake(bool syncFromTran, string path)
+        public void Awake(bool fromPool, string path)
         {
-            syncFromTrans = syncFromTran;
-            LoadTransAsync = this.domain.GetComponent<PrefabPool>().Allocate(path);
-            LoadTransAsync.Callbackable().OnCallback(r =>
-            {
-                if (r.Exception != null)
-                {
-                    Log.Error(r.Exception);
-                    return;
-                }
+            Awake(false, fromPool, path);
+        }
 
-                if (this.IsDisposed)
-                {
-                    Object.Destroy(r.Result);
-                }
-
-                Transform = r.Result.transform;
-            });
+        public void Awake(Transform go)
+        {
+            Awake(false, go);
         }
 
         public void Awake(bool syncFromTran,Transform trans)
         {
             syncFromTrans = syncFromTran;
             Transform = trans;
+        }
+        
+        public void Awake(bool syncFromTran, bool isFromPool, string path)
+        {
+            syncFromTrans = syncFromTran;
+            this.isFromPool = isFromPool;
+            Load(path);
+        }
+
+        public void Awake(string path)
+        {
+            Awake(false,false, path);
+        }
+        
+        public IAsyncResult<GameObject> Load(string path)
+        {
+            if (LoadTransAsync != null && !LoadTransAsync.IsDone)
+            {
+                LoadTransAsync.Cancel();
+            }
+            if (isFromPool)
+            {
+                LoadTransAsync = this.domain.GetComponent<PrefabPool>().Allocate(path);
+                LoadTransAsync.Callbackable().OnCallback(OnAsyncLoadFinish);
+            }
+            else
+            {
+                LoadTransAsync = this.domain.GetComponent<ResComponent>().Instantiate(path);
+                LoadTransAsync.Callbackable().OnCallback(OnAsyncLoadFinish);
+            }
+
+            return LoadTransAsync;
+        }
+
+        private async void OnAsyncLoadFinish(IAsyncResult<GameObject> asyncResult)
+        {
+            if (asyncResult.Exception != null)
+            {
+                Log.Error(asyncResult.Exception);
+                return;
+            }
+
+            if (this.IsDisposed || asyncResult.IsCancelled)
+            {
+                Object.Destroy(asyncResult.Result);
+            }
+
+            Transform = asyncResult.Result.transform;
+            Transform.position = position;
+            Transform.rotation = rotation;
+            Transform.forward = Forward;
         }
 
         public override string ToString()
@@ -156,6 +197,18 @@ namespace Framework
                 return base.ToString();
             }
             return $"{Transform.name}";
+        }
+
+        public void OnDestroy()
+        {
+            if (isFromPool)
+            {
+                DestroyGameObjectToPool();
+            }
+            else
+            {
+                DestroyGameObject();
+            }
         }
 
         public void RenderUpdate(float deltaTime)
@@ -173,7 +226,17 @@ namespace Framework
         {
             if (transform != null)
             {
-                domain.GetComponent<PrefabPool>().Free(transform.gameObject);
+                Object.Destroy(transform.gameObject);
+                transform = null;
+            }
+        }
+        
+        public void DestroyGameObjectToPool()
+        {
+            if (transform != null)
+            {
+                if(!domain.IsDisposed) domain.GetComponent<PrefabPool>().Free(transform.gameObject);
+                transform = null;
             }
         }
     }

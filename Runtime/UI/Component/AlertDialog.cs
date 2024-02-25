@@ -358,7 +358,7 @@ namespace Framework
         public AlertDialogVM()
         {
             Closed = AllocateObservable<ObservableProperty<bool>>();
-            CanceledOnTouchOutside = AllocateObservable<ObservableProperty<bool>>();
+            CanceledOnTouchOutside = AllocateObservableProperty(true);
             CancelButtonText = AllocateObservable<ObservableProperty<string>>();
             ConfirmButtonText = AllocateObservable<ObservableProperty<string>>();
             NeutralButtonText = AllocateObservable<ObservableProperty<string>>();
