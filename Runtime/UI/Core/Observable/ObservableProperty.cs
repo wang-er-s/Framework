@@ -74,7 +74,7 @@ namespace Framework
             _value = (T)val;
         }
 
-        void IObservable.ForceTrigger()
+        public void ForceTrigger()
         {
             OnValueChanged?.Invoke(_value);
         }
