@@ -242,8 +242,9 @@ namespace Framework
             _callbackable = null;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
+            ReferencePool.Free(this);
         }
     }
 
