@@ -69,6 +69,11 @@ public static class RandomHelper
         int value = random.Next(lower, upper);
         return value;
     }
+    
+    public static float RandomNumber(float lower, float upper)
+    {
+        return RandFloat01() * (upper - lower) + lower;
+    }
 
     public static long NextLong(long minValue, long maxValue)
     {
