@@ -26,6 +26,11 @@ namespace Framework
             }
         }
 
+        public void SetValueWithoutCall(T val)
+        {
+            _value = val;
+        }
+
         private void ValueChanged(T newValue)
         {
             OnValueChanged?.Invoke(newValue);
